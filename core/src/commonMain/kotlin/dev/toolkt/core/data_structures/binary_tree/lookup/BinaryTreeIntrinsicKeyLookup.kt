@@ -13,13 +13,13 @@ fun <PayloadT, KeyT : Comparable<KeyT>, ColorT> BinaryTree<PayloadT, ColorT>.fin
 )
 
 /**
- * A guide locating a payload that's partially comparable (has a property called
+ * A navigator locating a payload that's partially comparable (has a property called
  * "key" that is comparable). Assumes that the tree's structural order corresponds
  * to the natural order of the payload keys.
  */
 private class KeyOrderBinaryTreeNavigator<PayloadT, KeyT : Comparable<KeyT>>(
     /**
-     * The key that the guide is looking for.
+     * The key that the navigator is looking for.
      */
     private val locatedKey: KeyT,
     /**

@@ -16,11 +16,11 @@ fun <PayloadT, KeyT : Comparable<KeyT>, ColorT> MutableBalancedBinaryTree<Payloa
 
 private class VolatileKeyOrderBinaryTreeNavigator<PayloadT, ColorT, KeyT : Comparable<KeyT>>(
     /**
-     * The tree that the guide is operating on.
+     * The tree that the navigator is operating on.
      */
     private val tree: MutableBalancedBinaryTree<PayloadT, ColorT>,
     /**
-     * The key that the guide is looking for.
+     * The key that the navigator is looking for.
      */
     private val locatedKey: KeyT,
     /**

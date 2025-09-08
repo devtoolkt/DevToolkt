@@ -4,9 +4,9 @@ import dev.toolkt.core.data_structures.binary_tree.BinaryTree
 import dev.toolkt.core.data_structures.binary_tree.getChildLocation
 
 /**
- * A guide that can be used to find a specific location in the binary tree. A
- * guide (typically) takes some assumptions about the structure of the tree,
- * i.e. how the node's index in the order corresponds to its payload.
+ * A navigator that can be used to find a specific location in the binary tree.
+ * Navigators typically take some assumptions about the structure of the tree,
+ * i.e. how the node's position in the order corresponds to its payload.
  */
 interface BinaryTreeNavigator<in PayloadT> {
     /**
