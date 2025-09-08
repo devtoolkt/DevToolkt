@@ -68,12 +68,10 @@ interface MutableBalancedBinaryTree<PayloadT, ColorT> : BalancedBinaryTree<Paylo
      * May result in the tree re-balancing.
      *
      * @throws IllegalArgumentException if the node is not a leaf
-     * @return the location of the highest subtree root that was rotated
      */
-    // TODO: Figure out if it's actually needed to return the location
     fun remove(
         nodeHandle: BinaryTree.NodeHandle<PayloadT, ColorT>,
-    ): BinaryTree.Location<PayloadT, ColorT>
+    )
 }
 
 fun <PayloadT, ColorT> MutableBalancedBinaryTree<PayloadT, ColorT>.insertAll(

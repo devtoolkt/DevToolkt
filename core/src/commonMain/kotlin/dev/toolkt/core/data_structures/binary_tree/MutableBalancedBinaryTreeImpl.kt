@@ -57,11 +57,11 @@ internal class MutableBalancedBinaryTreeImpl<PayloadT, ColorT> private construct
 
     override fun remove(
         nodeHandle: BinaryTree.NodeHandle<PayloadT, ColorT>,
-    ): BinaryTree.Location<PayloadT, ColorT> {
+    ) {
         val leftChildHandle = internalTree.getLeftChild(nodeHandle = nodeHandle)
         val rightChildHandle = internalTree.getRightChild(nodeHandle = nodeHandle)
 
-        val swapResult = if (leftChildHandle != null && rightChildHandle != null) {
+        if (leftChildHandle != null && rightChildHandle != null) {
             // If the node has two children, we can't directly remove it, but we can swap it with its
             // successor
             // After the swap, the node has at most one child (as the successor was guaranteed to have at most one child)
@@ -69,19 +69,9 @@ internal class MutableBalancedBinaryTreeImpl<PayloadT, ColorT> private construct
                 nodeHandle = nodeHandle,
                 side = BinaryTree.Side.Right,
             )
-        } else null
-
-        val rebalanceResult = removeDirectly(nodeHandle = nodeHandle)
-
-        return when (swapResult) {
-            null -> rebalanceResult.finalLocation
-
-            else -> when {
-                rebalanceResult.retractionHeight > swapResult.neighbourDepth -> rebalanceResult.finalLocation
-
-                else -> locate(swapResult.neighbourHandle)
-            }
         }
+
+        removeDirectly(nodeHandle = nodeHandle)
     }
 
     /**
