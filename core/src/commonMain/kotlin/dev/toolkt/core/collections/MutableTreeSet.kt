@@ -88,7 +88,6 @@ class MutableTreeSet<E : Comparable<E>> internal constructor() : AbstractMutable
         val location = elementTree.find(element)
         return elementTree.resolve(location = location) != null
     }
-
 }
 
 fun <E : Comparable<E>> mutableTreeSetOf(
