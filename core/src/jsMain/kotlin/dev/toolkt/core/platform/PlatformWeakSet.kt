@@ -2,7 +2,7 @@
 
 package dev.toolkt.core.platform
 
-import dev.toolkt.core.iterator.nextOrNull
+import dev.toolkt.core.utils.iterator.nextOrNull
 
 actual class PlatformWeakSet<T : Any> : AbstractMutableSet<T>() {
     private val weakRefSet = mutableSetOf<WeakRef<T>>()

@@ -2,7 +2,7 @@ package dev.toolkt.core.data_structures.binary_tree
 
 import dev.toolkt.core.data_structures.binary_tree.balancing_strategies.red_black.RedBlackColor
 import dev.toolkt.core.data_structures.binary_tree.balancing_strategies.red_black.RedBlackTreeBalancingStrategy
-import dev.toolkt.core.iterable.uncons
+import dev.toolkt.core.utils.iterable.uncons
 
 /**
  * A generic balanced binary tree that supports adding, removing and updating the payloads, while guaranteeing that the

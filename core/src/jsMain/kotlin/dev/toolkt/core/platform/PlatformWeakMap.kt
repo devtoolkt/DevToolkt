@@ -1,6 +1,6 @@
 package dev.toolkt.core.platform
 
-import dev.toolkt.core.iterator.nextOrNull
+import dev.toolkt.core.utils.iterator.nextOrNull
 
 actual class PlatformWeakMap<K : Any, V : Any> : AbstractMutableMap<K, V>() {
     actual data class Handle<K : Any, V : Any> internal constructor(

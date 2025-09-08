@@ -3,7 +3,7 @@ package dev.toolkt.core.data_structures.binary_tree.balancing_strategies.red_bla
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree
 import dev.toolkt.core.data_structures.binary_tree.MutableBalancedBinaryTree
 import dev.toolkt.core.data_structures.binary_tree.lookup.getRandomFreeLocation
-import dev.toolkt.core.iterable.append
+import dev.toolkt.core.utils.iterable.append
 import kotlinx.benchmark.Benchmark
 import kotlinx.benchmark.Scope
 import kotlinx.benchmark.Setup
