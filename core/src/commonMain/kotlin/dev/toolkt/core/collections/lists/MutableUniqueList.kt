@@ -101,7 +101,6 @@ class MutableUniqueList<E>() : AbstractMutableList<E>() {
         }
     }
 
-    // FIXME: Don't add if it's already present.
     /**
      * Inserts an element into the list at the specified [index].
      * Guarantees logarithmic time complexity.
@@ -144,7 +143,7 @@ class MutableUniqueList<E>() : AbstractMutableList<E>() {
             }
         }
 
-        handleIndex.put(element, newHandle)
+        handleIndex[element] = newHandle
     }
 
     /**
@@ -156,19 +155,18 @@ class MutableUniqueList<E>() : AbstractMutableList<E>() {
     override fun removeAt(
         index: Int,
     ): E {
-        val handle = mutableTotalOrder.get(index = index) ?: throw IndexOutOfBoundsException(
+        val handle = mutableTotalOrder.get(
+            index = index,
+        ) ?: throw IndexOutOfBoundsException(
             "Index $index is out of bounds for size ${handleIndex.size}."
         )
 
         val removedElement = mutableTotalOrder.get(handle = handle)
 
+        handleIndex.remove(key = removedElement)
+            ?: throw AssertionError("Handle for removed element $removedElement was not found in handleIndex")
+
         mutableTotalOrder.remove(handle = handle)
-
-        val removedHandle = handleIndex.remove(key = removedElement)
-
-        if (removedHandle == null) {
-            throw AssertionError("Handle for removed element $removedElement was not found in handleIndex")
-        }
 
         return removedElement
     }
