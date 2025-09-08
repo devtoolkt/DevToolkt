@@ -2,7 +2,7 @@ package dev.toolkt.core.collections.maps
 
 import dev.toolkt.core.collections.EntryHandle
 import dev.toolkt.core.collections.StableAssociativeCollection
-import dev.toolkt.core.collections.StableSet
+import dev.toolkt.core.collections.sets.StableSet
 
 /**
  * A read-only map providing stable handles to its entries.

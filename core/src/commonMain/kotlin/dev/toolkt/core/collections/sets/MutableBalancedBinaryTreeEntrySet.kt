@@ -1,5 +1,6 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.sets
 
+import dev.toolkt.core.collections.MutableBalancedBinaryTreeIterator
 import dev.toolkt.core.data_structures.binary_tree.MutableBalancedBinaryTree
 
 internal class MutableBalancedBinaryTreeEntrySet<K : Comparable<K>, V, ColorT>(

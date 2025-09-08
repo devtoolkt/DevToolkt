@@ -1,7 +1,7 @@
 package dev.toolkt.core.collections.maps
 
 import dev.toolkt.core.collections.EntryHandle
-import dev.toolkt.core.collections.MutableBalancedBinaryTreeEntrySet
+import dev.toolkt.core.collections.sets.MutableBalancedBinaryTreeEntrySet
 import dev.toolkt.core.collections.MutableBalancedBinaryTreeStableIterator
 import dev.toolkt.core.collections.MutableStableIterator
 import dev.toolkt.core.collections.StableIterator

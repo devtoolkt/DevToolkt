@@ -1,5 +1,6 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.sets
 
+import dev.toolkt.core.collections.StableCollection
 import dev.toolkt.core.collections.StableCollection.Handle
 
 /**
