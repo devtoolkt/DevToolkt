@@ -32,3 +32,7 @@
   - Status checks that are required:
     - `test`
 - Allowed merge methods: **Rebase** (default: **Rebase, Merge, Squash**)
+
+## License
+
+Currently, this code has [no license](https://choosealicense.com/no-permission/).
