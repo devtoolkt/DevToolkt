@@ -1,12 +1,6 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.utils.collections
 
-object SetUtils {
-    fun <E> backed(
-        collection: Collection<E>,
-    ): Set<E> = CollectionBackedSet(collection)
-}
-
-private class CollectionBackedSet<E>(
+internal class CollectionBackedSet<E>(
     private val backingCollection: Collection<E>,
 ) : Set<E> {
     override val size: Int
