@@ -9,9 +9,7 @@ class WeakLazy<T : Any>(
     private var cachedValue: PlatformWeakReference<T>? = null
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        val cachedValue = this.cachedValue?.get()
-
-        when (cachedValue) {
+        when (val cachedValue = this.cachedValue?.get()) {
             null -> {
                 val newCachedValue = initializer()
                 this.cachedValue = PlatformWeakReference(newCachedValue)

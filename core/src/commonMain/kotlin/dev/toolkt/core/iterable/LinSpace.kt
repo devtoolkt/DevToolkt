@@ -1,5 +1,8 @@
 package dev.toolkt.core.iterable
 
+// Thought: The "linspace" could be moved to the math module, possibly introducing
+// an abstraction over linear space / geometric space. The non-abstracted similar sequence
+// utils could live in the core module.
 data class LinSpace(
     val range: ClosedFloatingPointRange<Double> = 0.0..1.0,
     val sampleCount: Int,
