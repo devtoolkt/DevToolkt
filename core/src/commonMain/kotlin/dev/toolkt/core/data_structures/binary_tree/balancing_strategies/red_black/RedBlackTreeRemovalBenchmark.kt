@@ -10,6 +10,7 @@ import kotlinx.benchmark.Setup
 import kotlinx.benchmark.State
 import kotlin.random.Random
 
+@Suppress("unused")
 @State(Scope.Benchmark)
 class RedBlackTreeRemovalBenchmark {
     companion object {
