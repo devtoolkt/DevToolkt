@@ -4,12 +4,29 @@ import dev.toolkt.core.iterable.uncons
 
 interface MutableBalancedBinaryTree<PayloadT, ColorT> : BinaryTree<PayloadT, ColorT> {
     companion object {
-        fun <PayloadT> redBlack(
-            internalTree: MutableUnbalancedBinaryTree<PayloadT, RedBlackColor> = MutableUnbalancedBinaryTree.create(),
-        ): MutableBalancedBinaryTree<PayloadT, RedBlackColor> = BalancedBinaryTree(
+        /**
+         * Creates mutable red-black tree, taking ownership of the given [internalTree].
+         *
+         * @param internalTree Binary tree that's assumed to be balanced according to the [RedBlackTreeBalancingStrategy].
+         * The ownership of this tree is transferred to the [MutableBalancedBinaryTree] object being created. The
+         * constructed object will not behave correctly if this tree is not properly balanced or if the ownership is not
+         * truly transferred.
+         */
+        fun <PayloadT> internalizeRedBlack(
+            internalTree: MutableUnbalancedBinaryTree<PayloadT, RedBlackColor>,
+        ): MutableBalancedBinaryTree<PayloadT, RedBlackColor> = BalancedBinaryTree.internalize(
             internalTree = internalTree,
             balancingStrategy = RedBlackTreeBalancingStrategy(),
         )
+
+        /**
+         * Creates an empty mutable red-black tree.
+         */
+        fun <PayloadT> createRedBlack(): MutableBalancedBinaryTree<PayloadT, RedBlackColor> =
+            BalancedBinaryTree.internalize(
+                internalTree = MutableUnbalancedBinaryTree.create(),
+                balancingStrategy = RedBlackTreeBalancingStrategy(),
+            )
     }
 
     /**

@@ -105,7 +105,7 @@ object RedBlackTreeTestUtils {
 
         internalTree.verify()
 
-        return MutableBalancedBinaryTree.redBlack(
+        return MutableBalancedBinaryTree.internalizeRedBlack(
             internalTree = internalTree,
         )
     }

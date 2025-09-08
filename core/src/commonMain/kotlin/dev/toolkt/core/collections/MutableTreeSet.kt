@@ -14,7 +14,7 @@ class MutableTreeSet<E : Comparable<E>> internal constructor() : AbstractMutable
         internal val nodeHandle: BinaryTree.NodeHandle<E, RedBlackColor>,
     ) : Handle<E>
 
-    private val elementTree = MutableBalancedBinaryTree.redBlack<E>()
+    private val elementTree = MutableBalancedBinaryTree.createRedBlack<E>()
 
     override val size: Int
         get() = elementTree.size

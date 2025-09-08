@@ -4,15 +4,29 @@ import dev.toolkt.core.data_structures.binary_tree.BinaryTreeBalancingStrategy.R
 import dev.toolkt.core.errors.assert
 import dev.toolkt.core.iterable.uncons
 
-/**
- * @constructor The constructor that accepts an existing mutable [internalTree]
- * is a low-level functionality. The ownership of that tree passes to this object.
- * The given tree is assumed to initially be a properly balanced tree.
- */
-class BalancedBinaryTree<PayloadT, ColorT>(
+
+class BalancedBinaryTree<PayloadT, ColorT> private constructor(
     private val internalTree: MutableUnbalancedBinaryTree<PayloadT, ColorT>,
     private val balancingStrategy: BinaryTreeBalancingStrategy<PayloadT, ColorT>,
 ) : MutableBalancedBinaryTree<PayloadT, ColorT>, BinaryTree<PayloadT, ColorT> by internalTree {
+    companion object {
+        /**
+         * Creates a balanced binary tree that uses the given [balancingStrategy] for maintaining balance.
+         *
+         * @param internalTree Binary tree that's assumed to be balanced according to the [balancingStrategy]. The ownership
+         * of this tree is transferred to the [BalancedBinaryTree] object being created. The constructed object will not
+         * behave correctly if this tree is not properly balanced or if the ownership is not truly transferred.
+         * @param balancingStrategy The strategy to use for balancing the tree.
+         */
+        fun <PayloadT, ColorT> internalize(
+            internalTree: MutableUnbalancedBinaryTree<PayloadT, ColorT>,
+            balancingStrategy: BinaryTreeBalancingStrategy<PayloadT, ColorT>,
+        ): BalancedBinaryTree<PayloadT, ColorT> = BalancedBinaryTree(
+            internalTree = internalTree,
+            balancingStrategy = balancingStrategy,
+        )
+    }
+
     override fun setPayload(
         nodeHandle: BinaryTree.NodeHandle<PayloadT, ColorT>,
         payload: PayloadT,

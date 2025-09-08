@@ -8,7 +8,7 @@ import dev.toolkt.core.data_structures.binary_tree.traverse
 import kotlin.jvm.JvmInline
 
 class MutableTreeMap<K : Comparable<K>, V> internal constructor(
-    private val entryTree: MutableBalancedBinaryTree<MutableMap.MutableEntry<K, V>, RedBlackColor> = MutableBalancedBinaryTree.redBlack(),
+    private val entryTree: MutableBalancedBinaryTree<MutableMap.MutableEntry<K, V>, RedBlackColor> = MutableBalancedBinaryTree.createRedBlack(),
 ) : AbstractMutableStableMap<K, V>(
     MutableBalancedBinaryTreeEntrySet(entryTree = entryTree),
 ) {
