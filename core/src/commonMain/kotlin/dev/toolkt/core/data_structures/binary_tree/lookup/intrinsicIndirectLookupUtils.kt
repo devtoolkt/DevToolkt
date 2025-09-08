@@ -7,6 +7,9 @@ import dev.toolkt.core.data_structures.binary_tree.BinaryTree
  * that the tree's structural order corresponds to the natural order of the payload
  * keys.
  *
+ * In other words, this method assumes that the tree is a binary search tree ordered bt the natural ordering of the
+ * payload keys.
+ *
  * @param key The key to look for.
  * @param selector A function extracting a comparable key from the payload.
  */

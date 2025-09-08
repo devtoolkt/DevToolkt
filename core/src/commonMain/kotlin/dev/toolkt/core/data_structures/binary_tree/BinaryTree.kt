@@ -2,10 +2,24 @@ package dev.toolkt.core.data_structures.binary_tree
 
 /**
  * A generic binary tree. Methods in this interface support only read-only access to the tree; read/write access is
- * supported through the [MutableUnconstrainedBinaryTree] / [MutableBalancedBinaryTree] interfaces.
+ * supported through [MutableUnconstrainedBinaryTree] / [MutableBalancedBinaryTree] interfaces.
  *
  * This interface doesn't require the tree to be balanced, but practical implementations will typically be balanced to
  * ensure good performance of tree operations.
+ *
+ * This interface **does not guarantee that the tree is a binary search tree**. Whether the tree is a binary search tree
+ * or not is up to the specific way it is used. See [dev.toolkt.core.data_structures.binary_tree.lookup.find] and
+ * [dev.toolkt.core.data_structures.binary_tree.lookup.findBy]. The responsibility to ensure that the tree stays in a
+ * desired order lies on the user of the tree (typically, a _collection_).
+ *
+ * Although a tree's order might not allow binary searching, it might still be meaningful in some other way. In such a
+ * case, a particular tree might be considered an _ordered_ binary tree (but not a _binary search_ tree). Although
+ * this use-case in not the most common one, it is still valid and extremely useful in some known scenarios. This
+ * interface and its implementations were explicitly designed with this use-case in mind. See
+ * [dev.toolkt.core.data_structures.binary_tree.select] and [dev.toolkt.core.data_structures.binary_tree.getRank].
+ *
+ * Please note that balancing and ordering are both important potential constraints on the tree, but they are
+ * orthogonal to each other. A balanced tree may or may not be ordered, and an ordered tree may or may not be balanced.
  *
  * @param PayloadT The type of the payload stored in the tree's nodes
  * @param ColorT The type of the color stored in the tree's nodes. The meaning of "color" is unspecified and is up to
