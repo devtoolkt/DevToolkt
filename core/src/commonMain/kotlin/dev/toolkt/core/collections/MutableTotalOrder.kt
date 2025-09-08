@@ -1,3 +1,6 @@
+/**
+ * Thought: Shouldn't this be removed in favor of [dev.toolkt.core.collections.lists.MutableTreeList]?
+ */
 package dev.toolkt.core.collections
 
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree
@@ -105,7 +108,6 @@ private val OrderRelation.Inequal.side: BinaryTree.Side
 
 private fun <E> MutableTotalOrder.Handle<E>.unpack(): BinaryTree.NodeHandle<E, RedBlackColor> = this.nodeHandle
 
-private fun <E> BinaryTree.NodeHandle<E, RedBlackColor>.pack(): MutableTotalOrder.Handle<E> =
-    MutableTotalOrder.Handle(
-        nodeHandle = this,
-    )
+private fun <E> BinaryTree.NodeHandle<E, RedBlackColor>.pack(): MutableTotalOrder.Handle<E> = MutableTotalOrder.Handle(
+    nodeHandle = this,
+)

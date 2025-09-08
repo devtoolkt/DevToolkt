@@ -1,12 +1,12 @@
 package dev.toolkt.core.collections.lists
 
+import dev.toolkt.core.collections.StableCollection.Handle
 import dev.toolkt.core.collections.iterators.MutableBalancedBinaryTreeStableIterator
 import dev.toolkt.core.collections.iterators.MutableStableIterator
-import dev.toolkt.core.collections.StableCollection.Handle
 import dev.toolkt.core.collections.iterators.StableIterator
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree
-import dev.toolkt.core.data_structures.binary_tree.balancing_strategies.red_black.RedBlackColor
 import dev.toolkt.core.data_structures.binary_tree.MutableBalancedBinaryTree
+import dev.toolkt.core.data_structures.binary_tree.balancing_strategies.red_black.RedBlackColor
 import dev.toolkt.core.data_structures.binary_tree.getNextInOrderFreeLocation
 import dev.toolkt.core.data_structures.binary_tree.getRank
 import dev.toolkt.core.data_structures.binary_tree.getSideMostFreeLocation
@@ -196,7 +196,7 @@ class MutableTreeList<E>() : AbstractMutableList<E>(), MutableIndexedList<E> {
         index: Int,
         elements: List<E>,
     ) {
-        if (index < 0 || index > size) {
+        if (index !in 0..size) {
             throw IndexOutOfBoundsException(
                 "Index $index is out of bounds for size ${size}."
             )
@@ -229,13 +229,15 @@ class MutableTreeList<E>() : AbstractMutableList<E>(), MutableIndexedList<E> {
         index: Int,
         element: E,
     ): Handle<E> {
-        if (index < 0 || index > size) {
+        if (index !in 0..size) {
             throw IndexOutOfBoundsException(
                 "Index $index is out of bounds for size ${size}."
             )
         }
 
-        val referenceNodeHandle = elementTree.select(index = index)
+        val referenceNodeHandle = elementTree.select(
+            index = index,
+        )
 
         val insertedNodeHandle = when (referenceNodeHandle) {
             null -> elementTree.insert(
@@ -285,7 +287,7 @@ class MutableTreeList<E>() : AbstractMutableList<E>(), MutableIndexedList<E> {
         return elementTree.takeOut(nodeHandle = nodeHandle)
     }
 
-    override fun mutableStableIterator(): MutableStableIterator<E>? = MutableBalancedBinaryTreeStableIterator.Companion.iterate(
+    override fun mutableStableIterator(): MutableStableIterator<E>? = MutableBalancedBinaryTreeStableIterator.iterate(
         mutableTree = elementTree,
     )
 
@@ -312,9 +314,7 @@ class MutableTreeList<E>() : AbstractMutableList<E>(), MutableIndexedList<E> {
      * use [indexOfVia] with a handle.
      */
     @Suppress("RedundantOverride")
-    override fun indexOf(element: E): Int {
-        return super.indexOf(element)
-    }
+    override fun indexOf(element: E): Int = super.indexOf(element)
 }
 
 fun <E> mutableTreeListOf(
@@ -330,7 +330,7 @@ fun <E> mutableTreeListOf(
 }
 
 private fun <E> Handle<E>.unpack(): BinaryTree.NodeHandle<E, RedBlackColor>? {
-    this as? MutableTreeList.TreeListHandle<E> ?: throw IllegalArgumentException(
+    this as? MutableTreeList.TreeListHandle ?: throw IllegalArgumentException(
         "Handle is not a TreeListHandle: $this"
     )
 
