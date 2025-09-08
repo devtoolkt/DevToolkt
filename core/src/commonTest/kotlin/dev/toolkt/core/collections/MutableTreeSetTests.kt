@@ -1,6 +1,6 @@
 package dev.toolkt.core.collections
 
-import kotlin.test.Ignore
+import dev.toolkt.core.collections.sets.mutableTreeSetOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

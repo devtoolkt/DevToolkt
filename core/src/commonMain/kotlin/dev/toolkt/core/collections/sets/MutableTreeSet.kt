@@ -1,6 +1,10 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.sets
 
+import dev.toolkt.core.collections.MutableBalancedBinaryTreeIterator
+import dev.toolkt.core.collections.MutableBalancedBinaryTreeStableIterator
+import dev.toolkt.core.collections.MutableStableIterator
 import dev.toolkt.core.collections.StableCollection.Handle
+import dev.toolkt.core.collections.StableIterator
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree
 import dev.toolkt.core.data_structures.binary_tree.balancing_strategies.red_black.RedBlackColor
 import dev.toolkt.core.data_structures.binary_tree.MutableBalancedBinaryTree
@@ -80,7 +84,7 @@ class MutableTreeSet<E : Comparable<E>> internal constructor() : AbstractMutable
         return removedElement
     }
 
-    override fun mutableStableIterator(): MutableStableIterator<E>? = MutableBalancedBinaryTreeStableIterator.iterate(
+    override fun mutableStableIterator(): MutableStableIterator<E>? = MutableBalancedBinaryTreeStableIterator.Companion.iterate(
         mutableTree = elementTree,
     )
 

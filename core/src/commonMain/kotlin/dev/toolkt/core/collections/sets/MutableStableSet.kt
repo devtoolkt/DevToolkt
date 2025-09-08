@@ -1,4 +1,6 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.sets
+
+import dev.toolkt.core.collections.MutableStableCollection
 
 /**
  * A mutable set providing stable handles to its elements.
