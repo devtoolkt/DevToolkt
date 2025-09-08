@@ -2,6 +2,11 @@ package dev.toolkt.core.data_structures.binary_tree.lookup
 
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree
 
+/**
+ * Finds the location of the [payload] in a binary tree, assuming that the payloads
+ * are fully comparable and that the tree's structural order is the same as the
+ * natural order of the payloads.
+ */
 fun <PayloadT : Comparable<PayloadT>, ColorT> BinaryTree<PayloadT, ColorT>.find(
     payload: PayloadT,
 ): BinaryTree.Location<PayloadT, ColorT> = findLocationGuided(
@@ -10,14 +15,7 @@ fun <PayloadT : Comparable<PayloadT>, ColorT> BinaryTree<PayloadT, ColorT>.find(
     ),
 )
 
-/**
- * A navigator locating a payload that's fully comparable. Assumes that the tree's
- * structural order is the same as the natural order of the payloads.
- */
 private class IntrinsicOrderBinaryTreeNavigator<PayloadT : Comparable<PayloadT>>(
-    /**
-     * The payload that the navigator is looking for.
-     */
     private val locatedPayload: PayloadT,
 ) : BinaryTreeNavigator<PayloadT> {
     override fun instruct(

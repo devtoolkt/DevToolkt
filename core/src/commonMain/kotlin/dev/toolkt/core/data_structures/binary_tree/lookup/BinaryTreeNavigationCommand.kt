@@ -5,7 +5,7 @@ import dev.toolkt.core.data_structures.binary_tree.BinaryTree
 /**
  * An instruction on how to proceed with the search in a binary tree.
  */
-sealed class BinaryTreeNavigationCommand {
+internal sealed class BinaryTreeNavigationCommand {
     /**
      * An instruction to turn to (recurse to) a side of the tree.
      */

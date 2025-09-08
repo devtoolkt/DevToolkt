@@ -3,6 +3,14 @@ package dev.toolkt.core.data_structures.binary_tree.lookup
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree
 import kotlin.random.Random
 
+/**
+ * Finds a random free location in the binary tree by navigating randomly
+ * until a free location is reached. Takes no actual assumptions about the
+ * structure of the tree.
+ *
+ * The probability distribution is non-uniform, meaning that the chance on reaching
+ * a given free location might be different for different locations.
+ */
 fun <PayloadT, ColorT> BinaryTree<PayloadT, ColorT>.getRandomFreeLocation(
     random: Random,
 ): BinaryTree.Location<PayloadT, ColorT> = findLocationGuided(
@@ -11,12 +19,6 @@ fun <PayloadT, ColorT> BinaryTree<PayloadT, ColorT>.getRandomFreeLocation(
     ),
 )
 
-/**
- * A navigator that's turning randomly, but not stopping until a free location is
- * reached. Takes no actual assumptions about the structure of the tree.
- * The probability distribution is non-uniform, meaning that the chance on reaching
- * a given free location might be different for different locations.
- */
 private class RandomBinaryTreeNavigator<PayloadT>(
     private val random: Random,
 ) : BinaryTreeNavigator<PayloadT> {
