@@ -1,8 +1,7 @@
 package dev.toolkt.core.collections.mutable_stable_multivalued_map
 
-import dev.toolkt.core.collections.MapEntry
-import dev.toolkt.core.collections.addEx
-import dev.toolkt.core.collections.mutableStableWeakMultiValuedMapOf
+import dev.toolkt.core.collections.maps.MapEntry
+import dev.toolkt.core.collections.maps.mutableStableWeakMultiValuedMapOf
 import dev.toolkt.core.collections.verifyIntegrity
 import dev.toolkt.core.platform.test_utils.runTestDefault
 import dev.toolkt.core.platform.test_utils.waitUntil

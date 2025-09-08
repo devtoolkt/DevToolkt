@@ -1,5 +1,6 @@
 package dev.toolkt.core.collections
 
+import dev.toolkt.core.collections.maps.MultiValuedMap
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

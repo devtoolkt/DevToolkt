@@ -1,5 +1,7 @@
 package dev.toolkt.core.collections
 
+import dev.toolkt.core.collections.maps.StableMap
+
 typealias EntryHandle<K, V> = StableCollection.Handle<Map.Entry<K, V>>
 
 /**

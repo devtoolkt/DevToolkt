@@ -1,4 +1,6 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.maps
+
+import dev.toolkt.core.collections.AssociativeCollection
 
 /**
  * A collection associating a set of keys with a set of values in a one-to-one relation.

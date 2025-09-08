@@ -1,5 +1,6 @@
 package dev.toolkt.core.collections
 
+import dev.toolkt.core.collections.maps.StableMap
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue

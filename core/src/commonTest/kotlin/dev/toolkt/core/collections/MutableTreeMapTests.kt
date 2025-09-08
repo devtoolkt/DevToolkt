@@ -1,6 +1,7 @@
 package dev.toolkt.core.collections
 
-import kotlin.test.Ignore
+import dev.toolkt.core.collections.maps.addEx
+import dev.toolkt.core.collections.maps.mutableTreeMapOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

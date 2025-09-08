@@ -1,5 +1,7 @@
 package dev.toolkt.core.collections
 
+import dev.toolkt.core.collections.maps.MapEntry
+
 /**
  * A mutable associative collection providing stable handles to its elements.
  */

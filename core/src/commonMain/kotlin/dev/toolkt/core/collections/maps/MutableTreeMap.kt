@@ -1,5 +1,10 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.maps
 
+import dev.toolkt.core.collections.EntryHandle
+import dev.toolkt.core.collections.MutableBalancedBinaryTreeEntrySet
+import dev.toolkt.core.collections.MutableBalancedBinaryTreeStableIterator
+import dev.toolkt.core.collections.MutableStableIterator
+import dev.toolkt.core.collections.StableIterator
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree
 import dev.toolkt.core.data_structures.binary_tree.balancing_strategies.red_black.RedBlackColor
 import dev.toolkt.core.data_structures.binary_tree.MutableBalancedBinaryTree
@@ -108,7 +113,7 @@ class MutableTreeMap<K : Comparable<K>, V> internal constructor(
     }
 
     override fun mutableStableIterator(): MutableStableIterator<MutableMap.MutableEntry<K, V>>? =
-        MutableBalancedBinaryTreeStableIterator.iterate(
+        MutableBalancedBinaryTreeStableIterator.Companion.iterate(
             mutableTree = entryTree,
         )
 

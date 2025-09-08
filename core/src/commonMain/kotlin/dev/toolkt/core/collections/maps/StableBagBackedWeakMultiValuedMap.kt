@@ -1,5 +1,11 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.maps
 
+import dev.toolkt.core.collections.EntryHandle
+import dev.toolkt.core.collections.maps.MapEntry
+import dev.toolkt.core.collections.MutableStableBag
+import dev.toolkt.core.collections.MutableStableIterator
+import dev.toolkt.core.collections.StableIterator
+import dev.toolkt.core.collections.nextAndRemove
 import dev.toolkt.core.platform.PlatformWeakReference
 import kotlin.jvm.JvmInline
 

@@ -1,4 +1,7 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.maps
+
+import dev.toolkt.core.collections.EntryHandle
+import dev.toolkt.core.collections.StableAssociativeCollection
 
 /**
  * A multivalued map providing stable handles to its elements.
