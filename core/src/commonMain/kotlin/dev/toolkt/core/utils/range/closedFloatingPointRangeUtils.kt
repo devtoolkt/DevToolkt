@@ -1,8 +1,8 @@
 package dev.toolkt.core.utils.range
 
 import dev.toolkt.core.utils.iterable.LinSpace
-import dev.toolkt.core.math.avgOf
-import dev.toolkt.core.math.linearlyInterpolate
+import dev.toolkt.core.utils.avgOf
+import dev.toolkt.core.utils.linearlyInterpolate
 import dev.toolkt.core.numeric.NumericTolerance
 import dev.toolkt.core.numeric.equalsZeroWithTolerance
 

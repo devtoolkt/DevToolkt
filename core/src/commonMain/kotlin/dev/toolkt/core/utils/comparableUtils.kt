@@ -1,4 +1,4 @@
-package dev.toolkt.core.math
+package dev.toolkt.core.utils
 
 fun <T, R : Comparable<R>> maxBy(
     a: T,
