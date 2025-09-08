@@ -20,7 +20,6 @@ fun <PayloadT, KeyT : Comparable<KeyT>, ColorT> BinaryTree<PayloadT, ColorT>.fin
     ),
 )
 
-
 private class KeyOrderBinaryTreeNavigator<PayloadT, KeyT : Comparable<KeyT>>(
     private val locatedKey: KeyT,
     private val selector: (PayloadT) -> KeyT,
