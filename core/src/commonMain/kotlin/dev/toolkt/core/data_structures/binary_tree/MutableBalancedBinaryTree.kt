@@ -2,6 +2,13 @@ package dev.toolkt.core.data_structures.binary_tree
 
 import dev.toolkt.core.iterable.uncons
 
+/**
+ * A generic balanced binary tree that supports adding and removing elements. See [BinaryTree] for more details on the
+ * read-only aspects of this interface.
+ *
+ * This interface requires the implementation to maintain the balancing of the tree after insertions and removals and
+ * specifies the operations that can affect the balancing.
+ */
 interface MutableBalancedBinaryTree<PayloadT, ColorT> : BinaryTree<PayloadT, ColorT> {
     companion object {
         /**
@@ -14,7 +21,7 @@ interface MutableBalancedBinaryTree<PayloadT, ColorT> : BinaryTree<PayloadT, Col
          */
         fun <PayloadT> internalizeRedBlack(
             internalTree: MutableUnbalancedBinaryTree<PayloadT, RedBlackColor>,
-        ): MutableBalancedBinaryTree<PayloadT, RedBlackColor> = BalancedBinaryTree.internalize(
+        ): MutableBalancedBinaryTree<PayloadT, RedBlackColor> = MutableBalancedBinaryTreeImpl.internalize(
             internalTree = internalTree,
             balancingStrategy = RedBlackTreeBalancingStrategy(),
         )
@@ -23,7 +30,7 @@ interface MutableBalancedBinaryTree<PayloadT, ColorT> : BinaryTree<PayloadT, Col
          * Creates an empty mutable red-black tree.
          */
         fun <PayloadT> createRedBlack(): MutableBalancedBinaryTree<PayloadT, RedBlackColor> =
-            BalancedBinaryTree.internalize(
+            MutableBalancedBinaryTreeImpl.internalize(
                 internalTree = MutableUnbalancedBinaryTree.create(),
                 balancingStrategy = RedBlackTreeBalancingStrategy(),
             )

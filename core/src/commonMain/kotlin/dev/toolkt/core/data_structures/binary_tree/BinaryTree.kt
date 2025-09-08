@@ -1,5 +1,16 @@
 package dev.toolkt.core.data_structures.binary_tree
 
+/**
+ * A generic binary tree. Methods in this interface support only read-only access to the tree; read/write access is
+ * supported through the [MutableUnbalancedBinaryTree] / [MutableBalancedBinaryTree] interfaces.
+ *
+ * This interface doesn't require the tree to be balanced, but practical implementations will typically be balanced to
+ * ensure good performance of tree operations.
+ *
+ * @param PayloadT The type of the payload stored in the tree's nodes
+ * @param ColorT The type of the color stored in the tree's nodes. The meaning of "color" is unspecified and is up to
+ * the specific implementation of the tree balancing strategy.
+ */
 interface BinaryTree<out PayloadT, out ColorT> {
     /**
      * A side of the tree or the tree's node, either left or right.

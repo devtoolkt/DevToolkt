@@ -4,8 +4,7 @@ import dev.toolkt.core.data_structures.binary_tree.BinaryTreeBalancingStrategy.R
 import dev.toolkt.core.errors.assert
 import dev.toolkt.core.iterable.uncons
 
-
-class BalancedBinaryTree<PayloadT, ColorT> private constructor(
+class MutableBalancedBinaryTreeImpl<PayloadT, ColorT> private constructor(
     private val internalTree: MutableUnbalancedBinaryTree<PayloadT, ColorT>,
     private val balancingStrategy: BinaryTreeBalancingStrategy<PayloadT, ColorT>,
 ) : MutableBalancedBinaryTree<PayloadT, ColorT>, BinaryTree<PayloadT, ColorT> by internalTree {
@@ -14,14 +13,14 @@ class BalancedBinaryTree<PayloadT, ColorT> private constructor(
          * Creates a balanced binary tree that uses the given [balancingStrategy] for maintaining balance.
          *
          * @param internalTree Binary tree that's assumed to be balanced according to the [balancingStrategy]. The ownership
-         * of this tree is transferred to the [BalancedBinaryTree] object being created. The constructed object will not
+         * of this tree is transferred to the [MutableBalancedBinaryTreeImpl] object being created. The constructed object will not
          * behave correctly if this tree is not properly balanced or if the ownership is not truly transferred.
          * @param balancingStrategy The strategy to use for balancing the tree.
          */
         fun <PayloadT, ColorT> internalize(
             internalTree: MutableUnbalancedBinaryTree<PayloadT, ColorT>,
             balancingStrategy: BinaryTreeBalancingStrategy<PayloadT, ColorT>,
-        ): BalancedBinaryTree<PayloadT, ColorT> = BalancedBinaryTree(
+        ): MutableBalancedBinaryTreeImpl<PayloadT, ColorT> = MutableBalancedBinaryTreeImpl(
             internalTree = internalTree,
             balancingStrategy = balancingStrategy,
         )
@@ -134,7 +133,7 @@ class BalancedBinaryTree<PayloadT, ColorT> private constructor(
     }
 }
 
-fun <PayloadT, ColorT> BalancedBinaryTree<PayloadT, ColorT>.insertAll(
+fun <PayloadT, ColorT> MutableBalancedBinaryTreeImpl<PayloadT, ColorT>.insertAll(
     location: BinaryTree.Location<PayloadT, ColorT>,
     payloads: List<PayloadT>,
 ) {
