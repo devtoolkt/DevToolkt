@@ -1,4 +1,4 @@
-package dev.toolkt.core.math
+package dev.toolkt.core.numeric
 
 import kotlin.math.hypot
 import kotlin.math.withSign
