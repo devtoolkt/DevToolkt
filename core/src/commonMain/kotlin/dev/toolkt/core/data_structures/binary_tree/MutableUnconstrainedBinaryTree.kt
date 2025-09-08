@@ -5,9 +5,10 @@ package dev.toolkt.core.data_structures.binary_tree
  * guaranteeing that it remains internally consistent. See [BinaryTree] for more details on the read-only aspects of this
  * interface.
  *
- * While this interface intentionally doesn't guarantee any balancing (as it would contradict its purpose), in practice
- * most objects implementing this interface _are_ being balanced, but the responsibility of maintaining the balance is
- * delegated balancing strategies.
+ * While this interface intentionally doesn't guarantee any balancing (as it would contradict its purpose), it's designed
+ * in a way that allows to maintain balance using popular balancing strategies. In practice, most objects implementing
+ * this interface _are_ being balanced, but the responsibility of maintaining the balance is delegated to balancing
+ * strategies.
  *
  * See [MutableBalancedBinaryTree] for a similar interface that guarantees balancing.
  */

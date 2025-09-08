@@ -3,6 +3,9 @@ package dev.toolkt.core.data_structures.binary_tree
 /**
  * Select the node at the given [index] in the binary tree's order.
  *
+ * Performance of this operation depends on the performance of [BinaryTree.getSubtreeSize] implementation. If it's
+ * constant (the size is cached), this operation is logarithmic in the size of the tree.
+ *
  * @return the handle to the node at the given index, or null if the index is out of bounds.
  */
 fun <PayloadT, ColorT> BinaryTree<PayloadT, ColorT>.select(
@@ -14,6 +17,27 @@ fun <PayloadT, ColorT> BinaryTree<PayloadT, ColorT>.select(
         nodeHandle = rootHandle,
         index = index,
     )
+}
+
+/**
+ * Get the rank of the node corresponding to the given [nodeHandle] in the whole tree (the number of nodes that are
+ * preceding it in an in-order traversal)
+ *
+ * Performance of this operation depends on the performance of [BinaryTree.getSubtreeSize] implementation. If it's
+ * constant (the size is cached), this operation is logarithmic in the size of the tree.
+ */
+fun <PayloadT, ColorT> BinaryTree<PayloadT, ColorT>.getRank(
+    nodeHandle: BinaryTree.NodeHandle<PayloadT, ColorT>,
+): Int {
+    val downRank = getDownRank(
+        nodeHandle = nodeHandle,
+    )
+
+    val upRank = getUpRank(
+        nodeHandle = nodeHandle,
+    )
+
+    return downRank + upRank
 }
 
 private tailrec fun <PayloadT, ColorT> BinaryTree<PayloadT, ColorT>.select(
@@ -46,20 +70,6 @@ private tailrec fun <PayloadT, ColorT> BinaryTree<PayloadT, ColorT>.select(
             )
         }
     }
-}
-
-fun <PayloadT, ColorT> BinaryTree<PayloadT, ColorT>.getRank(
-    nodeHandle: BinaryTree.NodeHandle<PayloadT, ColorT>,
-): Int {
-    val downRank = getDownRank(
-        nodeHandle = nodeHandle,
-    )
-
-    val upRank = getUpRank(
-        nodeHandle = nodeHandle,
-    )
-
-    return downRank + upRank
 }
 
 /**

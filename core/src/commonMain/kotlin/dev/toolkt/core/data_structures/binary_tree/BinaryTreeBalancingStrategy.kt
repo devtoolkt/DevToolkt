@@ -1,6 +1,6 @@
 package dev.toolkt.core.data_structures.binary_tree
 
-abstract class BinaryTreeBalancingStrategy<PayloadT, ColorT> {
+internal abstract class BinaryTreeBalancingStrategy<PayloadT, ColorT> {
     data class RebalanceResult<PayloadT, ColorT>(
         /**
          * The highest location that was reached during rebalancing

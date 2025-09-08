@@ -4,7 +4,7 @@ import dev.toolkt.core.data_structures.binary_tree.BinaryTreeBalancingStrategy.R
 import dev.toolkt.core.errors.assert
 import dev.toolkt.core.iterable.uncons
 
-class MutableBalancedBinaryTreeImpl<PayloadT, ColorT> private constructor(
+internal class MutableBalancedBinaryTreeImpl<PayloadT, ColorT> private constructor(
     private val internalTree: MutableUnconstrainedBinaryTree<PayloadT, ColorT>,
     private val balancingStrategy: BinaryTreeBalancingStrategy<PayloadT, ColorT>,
 ) : MutableBalancedBinaryTree<PayloadT, ColorT>, BinaryTree<PayloadT, ColorT> by internalTree {
@@ -131,24 +131,4 @@ class MutableBalancedBinaryTreeImpl<PayloadT, ColorT> private constructor(
             }
         }
     }
-}
-
-fun <PayloadT, ColorT> MutableBalancedBinaryTreeImpl<PayloadT, ColorT>.insertAll(
-    location: BinaryTree.Location<PayloadT, ColorT>,
-    payloads: List<PayloadT>,
-) {
-    val (firstPayload, trailingPayloads) = payloads.uncons() ?: return
-
-    val nodeHandle = insert(
-        location = location,
-        payload = firstPayload,
-    )
-
-    insertAll(
-        location = getNextInOrderFreeLocation(
-            nodeHandle = nodeHandle,
-            side = BinaryTree.Side.Right,
-        ),
-        payloads = trailingPayloads,
-    )
 }

@@ -2,7 +2,7 @@ package dev.toolkt.core.data_structures.binary_tree
 
 import dev.toolkt.core.errors.assert
 
-class RedBlackTreeBalancingStrategy<PayloadT>() : BinaryTreeBalancingStrategy<PayloadT, RedBlackColor>() {
+internal class RedBlackTreeBalancingStrategy<PayloadT>() : BinaryTreeBalancingStrategy<PayloadT, RedBlackColor>() {
     override val defaultColor: RedBlackColor
         get() = RedBlackColor.Red
 
