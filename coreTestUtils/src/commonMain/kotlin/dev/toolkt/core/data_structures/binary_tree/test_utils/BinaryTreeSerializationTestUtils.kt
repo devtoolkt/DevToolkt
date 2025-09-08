@@ -1,7 +1,7 @@
 package dev.toolkt.core.data_structures.binary_tree.test_utils
 
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree
-import dev.toolkt.core.data_structures.binary_tree.MutableUnbalancedBinaryTree
+import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTree
 import dev.toolkt.core.data_structures.binary_tree.getLeftChild
 import dev.toolkt.core.data_structures.binary_tree.getLeftChildLocation
 import dev.toolkt.core.data_structures.binary_tree.getRightChild
@@ -14,7 +14,7 @@ data class NodeData<PayloadT, ColorT>(
     val rightChild: NodeData<PayloadT, ColorT>? = null,
 ) {
     fun put(
-        tree: MutableUnbalancedBinaryTree<PayloadT, ColorT>,
+        tree: MutableUnconstrainedBinaryTree<PayloadT, ColorT>,
         location: BinaryTree.Location<PayloadT, ColorT>,
     ) {
         val nodeHandle = tree.attach(
@@ -53,10 +53,10 @@ fun <PayloadT, ColorT> BinaryTree<PayloadT, ColorT>.dump(
     )
 }
 
-fun <PayloadT, ColorT> MutableUnbalancedBinaryTree.Companion.load(
+fun <PayloadT, ColorT> MutableUnconstrainedBinaryTree.Companion.load(
     rootData: NodeData<PayloadT, ColorT>
-): MutableUnbalancedBinaryTree<PayloadT, ColorT> {
-    val tree = MutableUnbalancedBinaryTree.create<PayloadT, ColorT>()
+): MutableUnconstrainedBinaryTree<PayloadT, ColorT> {
+    val tree = MutableUnconstrainedBinaryTree.create<PayloadT, ColorT>()
 
     rootData.put(
         tree = tree,

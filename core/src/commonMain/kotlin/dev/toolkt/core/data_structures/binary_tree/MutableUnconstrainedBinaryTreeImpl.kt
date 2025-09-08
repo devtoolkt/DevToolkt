@@ -1,15 +1,15 @@
 package dev.toolkt.core.data_structures.binary_tree
 
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree.Side
-import dev.toolkt.core.data_structures.binary_tree.MutableUnbalancedBinaryTree.SwapResult
-import dev.toolkt.core.data_structures.binary_tree.MutableUnbalancedBinaryTreeImpl.NodeHandleImpl
-import dev.toolkt.core.data_structures.binary_tree.MutableUnbalancedBinaryTreeImpl.ProperNode
-import dev.toolkt.core.data_structures.binary_tree.MutableUnbalancedBinaryTreeImpl.ProperNode.InOrderNeighbourRelation
+import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTree.SwapResult
+import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTreeImpl.NodeHandleImpl
+import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTreeImpl.ProperNode
+import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTreeImpl.ProperNode.InOrderNeighbourRelation
 import kotlin.jvm.JvmInline
 
-class MutableUnbalancedBinaryTreeImpl<PayloadT, ColorT> internal constructor(
+class MutableUnconstrainedBinaryTreeImpl<PayloadT, ColorT> internal constructor(
     internal val origin: OriginNode<PayloadT, ColorT> = OriginNode(),
-) : MutableUnbalancedBinaryTree<PayloadT, ColorT> {
+) : MutableUnconstrainedBinaryTree<PayloadT, ColorT> {
     internal sealed interface ParentNode<PayloadT, ColorT> {
         fun buildUpLink(
             child: ProperNode<PayloadT, ColorT>,
@@ -694,9 +694,9 @@ class MutableUnbalancedBinaryTreeImpl<PayloadT, ColorT> internal constructor(
     }
 
     private fun collapse(
-        node: MutableUnbalancedBinaryTreeImpl.ProperNode<PayloadT, ColorT>,
+        node: MutableUnconstrainedBinaryTreeImpl.ProperNode<PayloadT, ColorT>,
         side: Side,
-    ): MutableUnbalancedBinaryTreeImpl.ProperNode<PayloadT, ColorT>? {
+    ): MutableUnconstrainedBinaryTreeImpl.ProperNode<PayloadT, ColorT>? {
         val upLink = node.upLink
 
         val oppositeDownLink = node.getDownLink(
@@ -1027,7 +1027,7 @@ class MutableUnbalancedBinaryTreeImpl<PayloadT, ColorT> internal constructor(
 private val <PayloadT, ColorT> ProperNode<PayloadT, ColorT>?.subtreeSizeOrZero: Int
     get() = this?.subtreeSize ?: 0
 
-private val <PayloadT, ColorT> MutableUnbalancedBinaryTreeImpl.ParentNode<PayloadT, ColorT>.asProper: ProperNode<PayloadT, ColorT>?
+private val <PayloadT, ColorT> MutableUnconstrainedBinaryTreeImpl.ParentNode<PayloadT, ColorT>.asProper: ProperNode<PayloadT, ColorT>?
     get() = this as? ProperNode<PayloadT, ColorT>
 
 private fun <PayloadT, ColorT> BinaryTree.NodeHandle<PayloadT, ColorT>.unpack(): ProperNode<PayloadT, ColorT> {

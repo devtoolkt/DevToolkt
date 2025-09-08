@@ -2,7 +2,7 @@ package dev.toolkt.core.data_structures.binary_tree
 
 /**
  * A generic binary tree. Methods in this interface support only read-only access to the tree; read/write access is
- * supported through the [MutableUnbalancedBinaryTree] / [MutableBalancedBinaryTree] interfaces.
+ * supported through the [MutableUnconstrainedBinaryTree] / [MutableBalancedBinaryTree] interfaces.
  *
  * This interface doesn't require the tree to be balanced, but practical implementations will typically be balanced to
  * ensure good performance of tree operations.
