@@ -1,4 +1,4 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.lists
 
 interface MutableIndexedList<E> : MutableStableList<E>, IndexedList<E>
 

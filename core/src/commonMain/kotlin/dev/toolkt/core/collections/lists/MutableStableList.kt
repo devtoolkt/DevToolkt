@@ -1,4 +1,4 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.lists
 
 import dev.toolkt.core.collections.StableCollection.Handle
 import dev.toolkt.core.collections.bags.MutableStableBag

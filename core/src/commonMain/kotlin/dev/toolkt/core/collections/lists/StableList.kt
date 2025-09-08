@@ -1,5 +1,6 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.lists
 
+import dev.toolkt.core.collections.StableCollection
 import dev.toolkt.core.collections.StableCollection.Handle
 import dev.toolkt.core.utils.iterable.indexOfOrNull
 
@@ -33,7 +34,7 @@ interface StableList<out E> : StableCollection<E>, List<E> {
  * Guarantees linear time complexity.
  */
 fun <E> StableList<E>.indexOfVia(
-    handle: StableCollection.Handle<@UnsafeVariance E>,
+    handle: Handle<@UnsafeVariance E>,
 ): Int = handles.indexOfOrNull(handle) ?: throw IllegalArgumentException(
     "The handle does not belong to this list."
 )

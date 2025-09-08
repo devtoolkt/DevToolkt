@@ -2,7 +2,7 @@ package dev.toolkt.core.collections.bags
 
 import dev.toolkt.core.collections.MutableStableCollection
 import dev.toolkt.core.collections.StableCollection.Handle
-import dev.toolkt.core.collections.mutableStableListOf
+import dev.toolkt.core.collections.lists.mutableStableListOf
 
 interface MutableStableBag<E> : MutableBag<E>, StableBag<E>, MutableStableCollection<E> {
     /**

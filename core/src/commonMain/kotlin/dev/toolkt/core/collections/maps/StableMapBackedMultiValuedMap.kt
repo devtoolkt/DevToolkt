@@ -9,7 +9,7 @@ import dev.toolkt.core.collections.forceMutable
 import dev.toolkt.core.collections.getValueVia
 import dev.toolkt.core.collections.getWithHandle
 import dev.toolkt.core.collections.bags.mutableStableBagOf
-import dev.toolkt.core.collections.mutableStableListOf
+import dev.toolkt.core.collections.lists.mutableStableListOf
 
 class StableMapBackedMultiValuedMap<K, V>(
     private val bucketMap: MutableStableMap<K, MutableStableBag<V>>,
