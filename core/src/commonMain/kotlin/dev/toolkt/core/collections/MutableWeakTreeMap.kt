@@ -10,7 +10,7 @@ import dev.toolkt.core.platform.PlatformWeakReference
 import kotlin.jvm.JvmInline
 
 class MutableWeakTreeMap<K : Comparable<K>, V> internal constructor(
-    private val entryTree: MutableBalancedBinaryTree<WeakMutableMapEntry<K, V>, RedBlackColor> = MutableBalancedBinaryTree.redBlack(),
+    private val entryTree: MutableBalancedBinaryTree<WeakMutableMapEntry<K, V>, RedBlackColor> = MutableBalancedBinaryTree.createRedBlack(),
 ) : AbstractMutableStableMap<K, V>(
     MutableBalancedBinaryTreeWeakEntrySet(entryTree = entryTree),
 ) {

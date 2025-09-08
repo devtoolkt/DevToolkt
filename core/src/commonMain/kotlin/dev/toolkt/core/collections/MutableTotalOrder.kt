@@ -12,7 +12,7 @@ import dev.toolkt.core.order.OrderRelation
 import kotlin.jvm.JvmInline
 
 class MutableTotalOrder<E> {
-    private val tree = MutableBalancedBinaryTree.redBlack<E>()
+    private val tree = MutableBalancedBinaryTree.createRedBlack<E>()
 
     @JvmInline
     value class Handle<E> internal constructor(

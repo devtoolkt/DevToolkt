@@ -24,7 +24,7 @@ class MutableTreeList<E>() : AbstractMutableList<E>(), MutableIndexedList<E> {
         val nodeHandle: BinaryTree.NodeHandle<E, RedBlackColor>,
     ) : Handle<E>
 
-    private val elementTree = MutableBalancedBinaryTree.redBlack<E>()
+    private val elementTree = MutableBalancedBinaryTree.createRedBlack<E>()
 
     override val size: Int
         get() = elementTree.size

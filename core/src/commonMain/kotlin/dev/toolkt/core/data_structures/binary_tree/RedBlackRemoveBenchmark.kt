@@ -14,7 +14,7 @@ class RedBlackTreeRemoveBenchmark {
         private const val treeMaxSize = 10_000_000
     }
 
-    private val tree = MutableBalancedBinaryTree.redBlack<Int>()
+    private val tree = MutableBalancedBinaryTree.createRedBlack<Int>()
 
     private val random = Random(0)
 
