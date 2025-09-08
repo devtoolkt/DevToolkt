@@ -1,5 +1,7 @@
 package dev.toolkt.core.data_structures.binary_tree
 
+import dev.toolkt.core.data_structures.binary_tree.balancing_strategies.red_black.RedBlackColor
+import dev.toolkt.core.data_structures.binary_tree.balancing_strategies.red_black.RedBlackTreeBalancingStrategy
 import dev.toolkt.core.iterable.uncons
 
 /**
@@ -16,7 +18,7 @@ interface MutableBalancedBinaryTree<PayloadT, ColorT> : BinaryTree<PayloadT, Col
         /**
          * Creates mutable red-black tree, taking ownership of the given [internalTree].
          *
-         * @param internalTree Binary tree that's assumed to be balanced according to the [RedBlackTreeBalancingStrategy].
+         * @param internalTree Binary tree that's assumed to be balanced according to the [dev.toolkt.core.data_structures.binary_tree.balancing_strategies.red_black.RedBlackTreeBalancingStrategy].
          * The ownership of this tree is transferred to the [MutableBalancedBinaryTree] object being created. The
          * constructed object will not behave correctly if this tree is not properly balanced or if the ownership is not
          * truly transferred.

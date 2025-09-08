@@ -1,4 +1,7 @@
-package dev.toolkt.core.data_structures.binary_tree
+package dev.toolkt.core.data_structures.binary_tree.balancing_strategies
+
+import dev.toolkt.core.data_structures.binary_tree.BinaryTree
+import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTree
 
 internal abstract class BinaryTreeBalancingStrategy<PayloadT, ColorT> {
     data class RebalanceResult<PayloadT, ColorT>(
