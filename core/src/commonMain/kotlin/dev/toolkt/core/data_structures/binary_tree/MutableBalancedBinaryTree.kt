@@ -13,7 +13,7 @@ import dev.toolkt.core.iterable.uncons
  * In practice, simplest best way to implement this interface is to compose a [MutableUnconstrainedBinaryTree] instance
  * and restore the balance as needed.
  */
-interface MutableBalancedBinaryTree<PayloadT, ColorT> : BinaryTree<PayloadT, ColorT> {
+interface MutableBalancedBinaryTree<PayloadT, ColorT> : BalancedBinaryTree<PayloadT, ColorT> {
     companion object {
         /**
          * Creates mutable red-black tree, taking ownership of the given [internalTree].
