@@ -1,13 +1,16 @@
 package dev.toolkt.core.data_structures.binary_tree
 
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree.Side
-import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTree.SwapResult
 import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTreeImpl.NodeHandleImpl
-import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTreeImpl.OriginNode
 import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTreeImpl.ProperNode
 import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTreeImpl.ProperNode.InOrderNeighbourRelation
 import kotlin.jvm.JvmInline
 
+/**
+ * Implementation of the [MutableUnconstrainedBinaryTree] interface which caches
+ * the subtree size within the node, ensuring O(1) performance for the
+ * [getSubtreeSize] method.
+ */
 internal class MutableUnconstrainedBinaryTreeImpl<PayloadT, ColorT> private constructor(
     internal val origin: OriginNode<PayloadT, ColorT>,
 ) : MutableUnconstrainedBinaryTree<PayloadT, ColorT> {
@@ -167,7 +170,7 @@ internal class MutableUnconstrainedBinaryTreeImpl<PayloadT, ColorT> private cons
         companion object {
             fun <PayloadT, ColorT> linkUp(
                 descendant: ProperNode<PayloadT, ColorT>,
-                side: BinaryTree.Side,
+                side: Side,
                 ascendant: ProperNode<PayloadT, ColorT>?,
             ) {
                 descendant.setDownLink(
@@ -749,7 +752,7 @@ internal class MutableUnconstrainedBinaryTreeImpl<PayloadT, ColorT> private cons
     override fun swap(
         nodeHandle: BinaryTree.NodeHandle<PayloadT, ColorT>,
         side: Side,
-    ): SwapResult<PayloadT, ColorT> {
+    ) {
         val topNode = nodeHandle.unpack()
         val topUpLink = topNode.upLink
 
@@ -802,11 +805,6 @@ internal class MutableUnconstrainedBinaryTreeImpl<PayloadT, ColorT> private cons
 
         // Relink the neighbour's subtree from the primary side
         relinkTopNode()
-
-        return SwapResult(
-            neighbourHandle = neighbourRelation.neighbour.pack(),
-            neighbourDepth = neighbourRelation.depth,
-        )
     }
 
     /**
@@ -936,11 +934,15 @@ internal class MutableUnconstrainedBinaryTreeImpl<PayloadT, ColorT> private cons
         // The ascending node has exactly the same set of descendants as the pivot
         // node had before (with the exception that the parent-child relation
         // inverted, but that doesn't affect the subtree size)
-        ascendingChild.setSubtreeSize(originalPivotNodeSubtreeSize)
+        ascendingChild.setSubtreeSize(
+            size = originalPivotNodeSubtreeSize,
+        )
 
         // The pivot node lost descendants in the subtree of its original
         // distant grandchild. It also lost the ascending child.
-        pivotNode.setSubtreeSize(originalPivotNodeSubtreeSize - originalDistantGrandchildSize - 1)
+        pivotNode.setSubtreeSize(
+            size = originalPivotNodeSubtreeSize - originalDistantGrandchildSize - 1,
+        )
 
         return ascendingChild.pack()
     }
