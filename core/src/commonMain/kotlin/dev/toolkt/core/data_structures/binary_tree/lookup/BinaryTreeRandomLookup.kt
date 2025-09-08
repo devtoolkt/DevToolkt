@@ -12,7 +12,7 @@ fun <PayloadT, ColorT> BinaryTree<PayloadT, ColorT>.getRandomFreeLocation(
 )
 
 /**
- * A guide that's turning randomly, but not stopping until a free location is
+ * A navigator that's turning randomly, but not stopping until a free location is
  * reached. Takes no actual assumptions about the structure of the tree.
  * The probability distribution is non-uniform, meaning that the chance on reaching
  * a given free location might be different for different locations.
