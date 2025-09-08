@@ -8,7 +8,7 @@ import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTre
 import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTreeImpl.ProperNode.InOrderNeighbourRelation
 import kotlin.jvm.JvmInline
 
-class MutableUnconstrainedBinaryTreeImpl<PayloadT, ColorT> private constructor(
+internal class MutableUnconstrainedBinaryTreeImpl<PayloadT, ColorT> private constructor(
     internal val origin: OriginNode<PayloadT, ColorT>,
 ) : MutableUnconstrainedBinaryTree<PayloadT, ColorT> {
     internal sealed interface ParentNode<PayloadT, ColorT> {
