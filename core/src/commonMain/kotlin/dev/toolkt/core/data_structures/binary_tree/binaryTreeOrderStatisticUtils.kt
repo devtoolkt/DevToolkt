@@ -1,10 +1,16 @@
+/**
+ * Utils implementing the order statistics on ordered binary trees
+ */
 package dev.toolkt.core.data_structures.binary_tree
 
 /**
  * Select the node at the given [index] in the binary tree's order.
  *
+ * This method doesn't take any assumptions on the nature of the tree's order (in particular, it doesn't assume that
+ * the tree is a binary search tree).
+ *
  * Performance of this operation depends on the performance of [BinaryTree.getSubtreeSize] implementation. If it's
- * constant (the size is cached), this operation is logarithmic in the size of the tree.
+ * constant (the size is cached) and the tree is balanced, this operation is logarithmic in the size of the tree.
  *
  * @return the handle to the node at the given index, or null if the index is out of bounds.
  */
@@ -23,8 +29,11 @@ fun <PayloadT, ColorT> BinaryTree<PayloadT, ColorT>.select(
  * Get the rank of the node corresponding to the given [nodeHandle] in the whole tree (the number of nodes that are
  * preceding it in an in-order traversal)
  *
+ * This method doesn't take any assumptions on the nature of the tree's order (in particular, it doesn't assume that
+ * the tree is a binary search tree).
+ *
  * Performance of this operation depends on the performance of [BinaryTree.getSubtreeSize] implementation. If it's
- * constant (the size is cached), this operation is logarithmic in the size of the tree.
+ * constant (the size is cached) and the tree is balanced, this operation is logarithmic in the size of the tree.
  */
 fun <PayloadT, ColorT> BinaryTree<PayloadT, ColorT>.getRank(
     nodeHandle: BinaryTree.NodeHandle<PayloadT, ColorT>,
