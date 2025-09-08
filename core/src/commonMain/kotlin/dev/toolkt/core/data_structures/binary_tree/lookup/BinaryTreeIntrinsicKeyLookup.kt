@@ -2,6 +2,14 @@ package dev.toolkt.core.data_structures.binary_tree.lookup
 
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree
 
+/**
+ * Finds the location of a payload in a binary tree by a comparable key. Assumes
+ * that the tree's structural order corresponds to the natural order of the payload
+ * keys.
+ *
+ * @param key The key to look for.
+ * @param selector A function extracting a comparable key from the payload.
+ */
 fun <PayloadT, KeyT : Comparable<KeyT>, ColorT> BinaryTree<PayloadT, ColorT>.findBy(
     key: KeyT,
     selector: (PayloadT) -> KeyT,
@@ -12,19 +20,9 @@ fun <PayloadT, KeyT : Comparable<KeyT>, ColorT> BinaryTree<PayloadT, ColorT>.fin
     ),
 )
 
-/**
- * A navigator locating a payload that's partially comparable (has a property called
- * "key" that is comparable). Assumes that the tree's structural order corresponds
- * to the natural order of the payload keys.
- */
+
 private class KeyOrderBinaryTreeNavigator<PayloadT, KeyT : Comparable<KeyT>>(
-    /**
-     * The key that the navigator is looking for.
-     */
     private val locatedKey: KeyT,
-    /**
-     * A function extracting a key from the payload.
-     */
     private val selector: (PayloadT) -> KeyT,
 ) : BinaryTreeNavigator<PayloadT> {
     override fun instruct(

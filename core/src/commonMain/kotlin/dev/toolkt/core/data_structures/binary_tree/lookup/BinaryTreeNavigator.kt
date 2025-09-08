@@ -8,7 +8,7 @@ import dev.toolkt.core.data_structures.binary_tree.getChildLocation
  * Navigators typically take some assumptions about the structure of the tree,
  * i.e. how the node's position in the order corresponds to its payload.
  */
-interface BinaryTreeNavigator<in PayloadT> {
+internal interface BinaryTreeNavigator<in PayloadT> {
     /**
      * Instructs on how to proceed with the given [payload].
      */
@@ -17,7 +17,7 @@ interface BinaryTreeNavigator<in PayloadT> {
     ): BinaryTreeNavigationCommand
 }
 
-fun <PayloadT, ColorT> BinaryTree<PayloadT, ColorT>.findLocationGuided(
+internal fun <PayloadT, ColorT> BinaryTree<PayloadT, ColorT>.findLocationGuided(
     navigator: BinaryTreeNavigator<PayloadT>,
 ): BinaryTree.Location<PayloadT, ColorT> = this.findLocationGuided(
     location = BinaryTree.RootLocation,
