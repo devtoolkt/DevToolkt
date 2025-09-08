@@ -2,7 +2,6 @@ package dev.toolkt.core.data_structures.binary_tree
 
 import dev.toolkt.core.data_structures.binary_tree.balancing_strategies.BinaryTreeBalancingStrategy
 import dev.toolkt.core.data_structures.binary_tree.balancing_strategies.BinaryTreeBalancingStrategy.RebalanceResult
-import dev.toolkt.core.errors.assert
 
 internal class MutableBalancedBinaryTreeImpl<PayloadT, ColorT> private constructor(
     private val internalTree: MutableUnconstrainedBinaryTree<PayloadT, ColorT>,

@@ -6,7 +6,7 @@ import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTre
 import dev.toolkt.core.data_structures.binary_tree.balancing_strategies.red_black.RedBlackColor
 import dev.toolkt.core.data_structures.binary_tree.getLeftChild
 import dev.toolkt.core.data_structures.binary_tree.getRightChild
-import dev.toolkt.core.range.split
+import dev.toolkt.core.utils.range.split
 import kotlin.random.Random
 
 private data class ColorVerificationResult(

@@ -1,7 +1,7 @@
 package dev.toolkt.core.collections
 
 import dev.toolkt.core.collections.StableCollection.Handle
-import dev.toolkt.core.iterable.indexOfOrNull
+import dev.toolkt.core.utils.iterable.indexOfOrNull
 
 /**
  * A read-only list providing stable handles to its elements.
