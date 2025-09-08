@@ -1,6 +1,9 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.lists
 
+import dev.toolkt.core.collections.MutableBalancedBinaryTreeStableIterator
+import dev.toolkt.core.collections.MutableStableIterator
 import dev.toolkt.core.collections.StableCollection.Handle
+import dev.toolkt.core.collections.StableIterator
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree
 import dev.toolkt.core.data_structures.binary_tree.balancing_strategies.red_black.RedBlackColor
 import dev.toolkt.core.data_structures.binary_tree.MutableBalancedBinaryTree
@@ -282,7 +285,7 @@ class MutableTreeList<E>() : AbstractMutableList<E>(), MutableIndexedList<E> {
         return elementTree.takeOut(nodeHandle = nodeHandle)
     }
 
-    override fun mutableStableIterator(): MutableStableIterator<E>? = MutableBalancedBinaryTreeStableIterator.iterate(
+    override fun mutableStableIterator(): MutableStableIterator<E>? = MutableBalancedBinaryTreeStableIterator.Companion.iterate(
         mutableTree = elementTree,
     )
 

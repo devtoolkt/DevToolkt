@@ -1,4 +1,6 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.lists
+
+import dev.toolkt.core.collections.lists.PrefixSumIndexedList
 
 interface MutablePrefixSumIndexedList<E> : MutableStableList<E>, PrefixSumIndexedList<E>
 

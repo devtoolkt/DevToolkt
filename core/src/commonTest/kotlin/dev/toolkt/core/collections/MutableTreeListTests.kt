@@ -1,6 +1,9 @@
 package dev.toolkt.core.collections
 
-import kotlin.test.Ignore
+import dev.toolkt.core.collections.lists.MutableTreeList
+import dev.toolkt.core.collections.lists.StableList
+import dev.toolkt.core.collections.lists.indexOfVia
+import dev.toolkt.core.collections.lists.mutableTreeListOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails

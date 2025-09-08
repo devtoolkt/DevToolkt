@@ -1,4 +1,4 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.lists
 
 import dev.toolkt.core.collections.StableCollection.Handle
 
@@ -25,6 +25,6 @@ interface IndexedList<out E> : StableList<E> {
      * already been removed
      */
     fun indexOfVia(
-        handle: StableCollection.Handle<@UnsafeVariance E>,
+        handle: Handle<@UnsafeVariance E>,
     ): Int?
 }

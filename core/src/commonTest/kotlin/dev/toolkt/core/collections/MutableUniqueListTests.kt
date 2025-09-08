@@ -1,5 +1,7 @@
 package dev.toolkt.core.collections
 
+import dev.toolkt.core.collections.lists.MutableUniqueList
+import dev.toolkt.core.collections.lists.mutableUniqueListOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails

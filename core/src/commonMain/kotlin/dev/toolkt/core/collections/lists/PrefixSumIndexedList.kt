@@ -1,4 +1,4 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.lists
 
 /**
  * An indexed list of integers providing an additional efficient operation for
