@@ -704,9 +704,9 @@ internal class MutableUnconstrainedBinaryTreeImpl<PayloadT, ColorT> private cons
     }
 
     private fun collapse(
-        node: MutableUnconstrainedBinaryTreeImpl.ProperNode<PayloadT, ColorT>,
+        node: ProperNode<PayloadT, ColorT>,
         side: Side,
-    ): MutableUnconstrainedBinaryTreeImpl.ProperNode<PayloadT, ColorT>? {
+    ): ProperNode<PayloadT, ColorT>? {
         val upLink = node.upLink
 
         val oppositeDownLink = node.getDownLink(
@@ -732,7 +732,9 @@ internal class MutableUnconstrainedBinaryTreeImpl<PayloadT, ColorT> private cons
             }
         }
 
-        upLink.relink(singleChild)
+        upLink.relink(
+            newChild = singleChild,
+        )
 
         ProperNode.linkUp(
             descendant = descendantNeighbour,
@@ -1040,8 +1042,7 @@ private val <PayloadT, ColorT> MutableUnconstrainedBinaryTreeImpl.ParentNode<Pay
     get() = this as? ProperNode<PayloadT, ColorT>
 
 private fun <PayloadT, ColorT> BinaryTree.NodeHandle<PayloadT, ColorT>.unpack(): ProperNode<PayloadT, ColorT> {
-    @Suppress("UNCHECKED_CAST") val nodeHandleImpl =
-        this as? NodeHandleImpl<PayloadT, ColorT> ?: throw IllegalArgumentException("Unrelated handle type")
+    val nodeHandleImpl = this as? NodeHandleImpl ?: throw IllegalArgumentException("Unrelated handle type")
 
     return nodeHandleImpl.resolve()
 }
