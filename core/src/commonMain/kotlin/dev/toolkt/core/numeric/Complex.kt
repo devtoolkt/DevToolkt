@@ -6,7 +6,7 @@ import kotlin.math.withSign
 data class Complex(
     val real: Double,
     val imaginary: Double,
-) : Comparable<Complex> {
+) : Comparable<Complex>, NumericObject {
     companion object {
         val ZERO: Complex = Complex(0.0, 0.0)
 
@@ -145,11 +145,20 @@ data class Complex(
         )
     }
 
-
     operator fun div(other: Double): Complex = Complex(
         real = real / other,
         imaginary = imaginary / other,
     )
+
+    override fun equalsWithTolerance(
+        other: NumericObject,
+        tolerance: NumericTolerance,
+    ): Boolean = when {
+        other !is Complex -> false
+        !real.equalsWithTolerance(other.real, tolerance = tolerance) -> false
+        !imaginary.equalsWithTolerance(other.imaginary, tolerance = tolerance) -> false
+        else -> true
+    }
 }
 
 operator fun Double.plus(other: Complex): Complex = other + this
