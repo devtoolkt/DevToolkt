@@ -9,6 +9,7 @@ import dev.toolkt.core.data_structures.binary_tree.getRightChild
 import dev.toolkt.core.data_structures.binary_tree.select
 import dev.toolkt.core.data_structures.binary_tree.traverse
 import dev.toolkt.core.utils.iterable.withNeighboursOrNull
+import dev.toolkt.core.utils.sorted
 
 private data class IntegrityVerificationResult(
     val computedSubtreeSize: Int,

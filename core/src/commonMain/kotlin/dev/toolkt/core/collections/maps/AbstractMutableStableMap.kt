@@ -14,9 +14,9 @@ abstract class AbstractMutableStableMap<K, V>(
     final override fun isEmpty(): Boolean = size == 0
 
     final override fun get(key: K): V? {
-        val entryHandle = StableMap.resolve(key = key) ?: return null
+        val entryHandle = resolve(key = key) ?: return null
 
-        return StableCollection.getVia(handle = entryHandle)?.value
+        return getVia(handle = entryHandle)?.value
     }
 
     final override fun remove(
@@ -39,7 +39,7 @@ abstract class AbstractMutableStableMap<K, V>(
     final override fun addAll(
         elements: Collection<Map.Entry<K, V>>,
     ): Boolean = elements.any {
-        val insertedHandle = MutableStableCollection.addEx(it)
+        val insertedHandle = addEx(it)
 
         insertedHandle != null
     }
@@ -54,13 +54,13 @@ abstract class AbstractMutableStableMap<K, V>(
 
     final override fun resolveAll(
         key: K,
-    ): Collection<EntryHandle<K, V>> = listOfNotNull(StableMap.resolve(key = key))
+    ): Collection<EntryHandle<K, V>> = listOfNotNull(resolve(key = key))
 
     final override fun lookup(
         element: Map.Entry<K, V>,
     ): EntryHandle<K, V>? {
         val key = element.key
-        return StableMap.resolve(key = key)
+        return resolve(key = key)
     }
 
     final override fun getAll(
