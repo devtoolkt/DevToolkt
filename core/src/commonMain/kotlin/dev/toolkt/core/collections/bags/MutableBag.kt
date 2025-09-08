@@ -1,4 +1,4 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.bags
 
 interface MutableBag<E> : Bag<E>, MutableCollection<E> {
     /**
