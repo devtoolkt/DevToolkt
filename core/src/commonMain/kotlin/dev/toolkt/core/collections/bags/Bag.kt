@@ -1,4 +1,4 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.bags
 
 /**
  * Bag is a collection that allows duplicates, but doesn't guarantee meaningful

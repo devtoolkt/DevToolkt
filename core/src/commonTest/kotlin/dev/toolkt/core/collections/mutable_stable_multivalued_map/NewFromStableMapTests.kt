@@ -2,7 +2,7 @@ package dev.toolkt.core.collections.mutable_stable_multivalued_map
 
 import dev.toolkt.core.collections.maps.MapEntry
 import dev.toolkt.core.collections.maps.MutableStableMultiValuedMap
-import dev.toolkt.core.collections.mutableStableBagOf
+import dev.toolkt.core.collections.bags.mutableStableBagOf
 import dev.toolkt.core.collections.maps.mutableStableMapOf
 import dev.toolkt.core.collections.verifyIntegrity
 import kotlin.test.Test
