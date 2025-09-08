@@ -11,7 +11,7 @@ import dev.toolkt.core.data_structures.binary_tree.getSideMostFreeLocation
 import dev.toolkt.core.data_structures.binary_tree.insertRelative
 import dev.toolkt.core.data_structures.binary_tree.select
 import dev.toolkt.core.data_structures.binary_tree.traverse
-import dev.toolkt.core.order.OrderRelation
+import dev.toolkt.core.collections.OrderRelation
 import kotlin.jvm.JvmInline
 
 class MutableTotalOrder<E> {

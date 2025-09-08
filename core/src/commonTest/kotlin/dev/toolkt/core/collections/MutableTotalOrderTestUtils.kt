@@ -1,6 +1,6 @@
 package dev.toolkt.core.collections
 
-import dev.toolkt.core.order.OrderRelation
+import dev.toolkt.core.collections.OrderRelation
 import kotlin.test.assertEquals
 
 fun <E> MutableTotalOrder.Companion.of(

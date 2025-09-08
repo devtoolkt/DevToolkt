@@ -2,7 +2,7 @@ package dev.toolkt.core.collections.lists
 
 import dev.toolkt.core.collections.MutableTotalOrder
 import dev.toolkt.core.utils.collections.SetUtils
-import dev.toolkt.core.order.OrderRelation
+import dev.toolkt.core.collections.OrderRelation
 
 /**
  * A hybrid collection that combines the properties of a mutable list and a set.

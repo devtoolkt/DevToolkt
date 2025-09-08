@@ -1,4 +1,4 @@
-package dev.toolkt.core.order
+package dev.toolkt.core.collections
 
 sealed interface OrderRelation {
     sealed interface Inequal
