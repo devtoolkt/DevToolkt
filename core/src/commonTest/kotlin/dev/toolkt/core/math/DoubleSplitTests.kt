@@ -1,6 +1,7 @@
 package dev.toolkt.core.math
 
 import dev.toolkt.core.numeric.assertEqualsWithTolerance
+import dev.toolkt.core.utils.split
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

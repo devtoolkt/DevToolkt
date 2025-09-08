@@ -1,4 +1,4 @@
-package dev.toolkt.core.math
+package dev.toolkt.core.utils
 
 import kotlin.math.nextDown
 import kotlin.math.nextUp
