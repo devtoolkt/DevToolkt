@@ -1,4 +1,4 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.iterators
 
 fun <E> Iterator<E>.forceMutable(): MutableIterator<E> = ForcedMutableIterator(
     iterator = this,

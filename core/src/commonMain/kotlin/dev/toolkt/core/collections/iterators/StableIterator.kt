@@ -1,4 +1,4 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.iterators
 
 /**
  * An iterator over a stable collection. Allows to sequentially access the elements.

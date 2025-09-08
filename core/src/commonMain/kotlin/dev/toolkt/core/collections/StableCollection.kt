@@ -1,5 +1,7 @@
 package dev.toolkt.core.collections
 
+import dev.toolkt.core.collections.iterators.StableIterator
+
 interface StableCollection<out E> : Collection<E> {
     interface Handle<E>
 

@@ -2,9 +2,9 @@ package dev.toolkt.core.collections.maps
 
 import dev.toolkt.core.collections.EntryHandle
 import dev.toolkt.core.collections.bags.MutableStableBag
-import dev.toolkt.core.collections.MutableStableIterator
-import dev.toolkt.core.collections.StableIterator
-import dev.toolkt.core.collections.nextAndRemove
+import dev.toolkt.core.collections.iterators.MutableStableIterator
+import dev.toolkt.core.collections.iterators.StableIterator
+import dev.toolkt.core.collections.iterators.nextAndRemove
 import dev.toolkt.core.platform.PlatformWeakReference
 import kotlin.jvm.JvmInline
 

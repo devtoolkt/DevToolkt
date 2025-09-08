@@ -1,7 +1,6 @@
 package dev.toolkt.core.collections.maps
 
-import dev.toolkt.core.collections.maps.MapEntry
-import dev.toolkt.core.collections.forceMutable
+import dev.toolkt.core.collections.iterators.forceMutable
 
 class MapBackedMultiValuedMap<K, V>(
     // TODO: Switch to a mutable collection for the buckets!

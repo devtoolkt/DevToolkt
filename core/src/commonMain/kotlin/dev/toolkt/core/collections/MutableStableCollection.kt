@@ -1,6 +1,7 @@
 package dev.toolkt.core.collections
 
 import dev.toolkt.core.collections.StableCollection.Handle
+import dev.toolkt.core.collections.iterators.MutableStableIterator
 
 /**
  * A generic mutable collection that provides stable handles to its elements.

@@ -2,9 +2,9 @@ package dev.toolkt.core.collections.maps
 
 import dev.toolkt.core.collections.EntryHandle
 import dev.toolkt.core.collections.sets.MutableBalancedBinaryTreeEntrySet
-import dev.toolkt.core.collections.MutableBalancedBinaryTreeStableIterator
-import dev.toolkt.core.collections.MutableStableIterator
-import dev.toolkt.core.collections.StableIterator
+import dev.toolkt.core.collections.iterators.MutableBalancedBinaryTreeStableIterator
+import dev.toolkt.core.collections.iterators.MutableStableIterator
+import dev.toolkt.core.collections.iterators.StableIterator
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree
 import dev.toolkt.core.data_structures.binary_tree.balancing_strategies.red_black.RedBlackColor
 import dev.toolkt.core.data_structures.binary_tree.MutableBalancedBinaryTree
