@@ -2,10 +2,10 @@ package dev.toolkt.core.collections.maps
 
 import dev.toolkt.core.collections.EntryHandle
 import dev.toolkt.core.collections.bags.MutableStableBag
-import dev.toolkt.core.collections.MutableStableIterator
+import dev.toolkt.core.collections.iterators.MutableStableIterator
 import dev.toolkt.core.collections.StableCollection.Handle
-import dev.toolkt.core.collections.StableIterator
-import dev.toolkt.core.collections.forceMutable
+import dev.toolkt.core.collections.iterators.StableIterator
+import dev.toolkt.core.collections.iterators.forceMutable
 import dev.toolkt.core.collections.getValueVia
 import dev.toolkt.core.collections.getWithHandle
 import dev.toolkt.core.collections.bags.mutableStableBagOf

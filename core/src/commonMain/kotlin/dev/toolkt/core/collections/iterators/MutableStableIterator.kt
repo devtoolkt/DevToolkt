@@ -1,4 +1,4 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.iterators
 
 /**
  * An iterator over a mutable stable collection. Provides the ability to remove elements while iterating.

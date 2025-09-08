@@ -1,4 +1,4 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.iterators
 
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree
 import dev.toolkt.core.data_structures.binary_tree.MutableBalancedBinaryTree

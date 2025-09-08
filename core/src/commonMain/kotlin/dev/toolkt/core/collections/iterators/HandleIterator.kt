@@ -1,4 +1,4 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.iterators
 
 abstract class HandleIterator<E, HandleT : Any>(
     initialAdvancement: Advancement.Ahead<E, HandleT>?,
