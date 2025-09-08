@@ -1,6 +1,5 @@
 package dev.toolkt.core.numeric
 
-import dev.toolkt.core.math.Complex
 import dev.toolkt.core.utils.maxBy
 import kotlin.math.absoluteValue
 
