@@ -3,7 +3,7 @@ package dev.toolkt.core.iterable
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class AllPairsTests {
+class AllUniquePairsTests {
     @Test
     fun testAllUniquePairs_empty() {
         assertEquals(
