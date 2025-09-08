@@ -1,6 +1,17 @@
 package dev.toolkt.core.data_structures.binary_tree
 
-interface MutableUnbalancedBinaryTree<PayloadT, ColorT> : BinaryTree<PayloadT, ColorT> {
+/**
+ * A generic balanced binary tree that supports direct, unconstrained manipulation of the tree's logical structure, while
+ * guaranteeing that it remains internally consistent. See [BinaryTree] for more details on the read-only aspects of this
+ * interface.
+ *
+ * While this interface intentionally doesn't guarantee any balancing (as it would contradict its purpose), in practice
+ * most objects implementing this interface _are_ being balanced, but the responsibility of maintaining the balance is
+ * delegated balancing strategies.
+ *
+ * See [MutableBalancedBinaryTree] for a similar interface that guarantees balancing.
+ */
+interface MutableUnconstrainedBinaryTree<PayloadT, ColorT> : BinaryTree<PayloadT, ColorT> {
     data class SwapResult<PayloadT, ColorT>(
         val neighbourHandle: BinaryTree.NodeHandle<PayloadT, ColorT>,
         val neighbourDepth: Int,
@@ -11,8 +22,8 @@ interface MutableUnbalancedBinaryTree<PayloadT, ColorT> : BinaryTree<PayloadT, C
     }
 
     companion object {
-        fun <PayloadT, ColorT> create(): MutableUnbalancedBinaryTree<PayloadT, ColorT> =
-            MutableUnbalancedBinaryTreeImpl()
+        fun <PayloadT, ColorT> create(): MutableUnconstrainedBinaryTree<PayloadT, ColorT> =
+            MutableUnconstrainedBinaryTreeImpl()
     }
 
     /**
@@ -96,7 +107,7 @@ interface MutableUnbalancedBinaryTree<PayloadT, ColorT> : BinaryTree<PayloadT, C
     ): BinaryTree.NodeHandle<PayloadT, ColorT>
 }
 
-internal fun <PayloadT, ColorT> MutableUnbalancedBinaryTree<PayloadT, ColorT>.paint(
+internal fun <PayloadT, ColorT> MutableUnconstrainedBinaryTree<PayloadT, ColorT>.paint(
     nodeHandle: BinaryTree.NodeHandle<PayloadT, ColorT>,
     newColor: ColorT,
 ) {

@@ -9,7 +9,7 @@ class RedBlackTreeBalancingStrategy<PayloadT>() : BinaryTreeBalancingStrategy<Pa
     companion object;
 
     override fun rebalanceAfterAttach(
-        internalTree: MutableUnbalancedBinaryTree<PayloadT, RedBlackColor>,
+        internalTree: MutableUnconstrainedBinaryTree<PayloadT, RedBlackColor>,
         attachedNodeHandle: BinaryTree.NodeHandle<PayloadT, RedBlackColor>,
     ): RebalanceResult<PayloadT, RedBlackColor> = fixPotentialRedViolationRecursively(
         internalTree = internalTree,
@@ -21,7 +21,7 @@ class RedBlackTreeBalancingStrategy<PayloadT>() : BinaryTreeBalancingStrategy<Pa
      * to the [nodeHandle].
      */
     private fun fixPotentialRedViolationRecursively(
-        internalTree: MutableUnbalancedBinaryTree<PayloadT, RedBlackColor>,
+        internalTree: MutableUnconstrainedBinaryTree<PayloadT, RedBlackColor>,
         nodeHandle: BinaryTree.NodeHandle<PayloadT, RedBlackColor>,
     ): RebalanceResult<PayloadT, RedBlackColor> {
         val color = internalTree.getColor(nodeHandle = nodeHandle)
@@ -179,7 +179,7 @@ class RedBlackTreeBalancingStrategy<PayloadT>() : BinaryTreeBalancingStrategy<Pa
     }
 
     override fun rebalanceAfterCutOff(
-        internalTree: MutableUnbalancedBinaryTree<PayloadT, RedBlackColor>,
+        internalTree: MutableUnconstrainedBinaryTree<PayloadT, RedBlackColor>,
         cutOffLeafLocation: BinaryTree.RelativeLocation<PayloadT, RedBlackColor>,
         cutOffLeafColor: RedBlackColor,
     ): RebalanceResult<PayloadT, RedBlackColor> = when (cutOffLeafColor) {
@@ -196,7 +196,7 @@ class RedBlackTreeBalancingStrategy<PayloadT>() : BinaryTreeBalancingStrategy<Pa
     }
 
     private fun fixBlackViolationRecursively(
-        internalTree: MutableUnbalancedBinaryTree<PayloadT, RedBlackColor>,
+        internalTree: MutableUnconstrainedBinaryTree<PayloadT, RedBlackColor>,
         /**
          * A handle to the node to be fixed, null represents a null node
          */
@@ -500,7 +500,7 @@ class RedBlackTreeBalancingStrategy<PayloadT>() : BinaryTreeBalancingStrategy<Pa
     }
 
     override fun rebalanceAfterCollapse(
-        internalTree: MutableUnbalancedBinaryTree<PayloadT, RedBlackColor>,
+        internalTree: MutableUnconstrainedBinaryTree<PayloadT, RedBlackColor>,
         elevatedNodeHandle: BinaryTree.NodeHandle<PayloadT, RedBlackColor>,
     ): RebalanceResult<PayloadT, RedBlackColor> {
         // As the elevated node was a single child of its parent, it must be

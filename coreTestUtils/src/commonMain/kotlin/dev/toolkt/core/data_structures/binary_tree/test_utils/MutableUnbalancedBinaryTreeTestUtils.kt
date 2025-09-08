@@ -1,9 +1,9 @@
 package dev.toolkt.core.data_structures.binary_tree.test_utils
 
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree
-import dev.toolkt.core.data_structures.binary_tree.MutableUnbalancedBinaryTree
+import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTree
 
-fun <PayloadT : Comparable<PayloadT>, ColorT> MutableUnbalancedBinaryTree<PayloadT, ColorT>.attachVerified(
+fun <PayloadT : Comparable<PayloadT>, ColorT> MutableUnconstrainedBinaryTree<PayloadT, ColorT>.attachVerified(
     location: BinaryTree.Location<PayloadT, ColorT>,
     payload: PayloadT,
     color: ColorT,
@@ -19,7 +19,7 @@ fun <PayloadT : Comparable<PayloadT>, ColorT> MutableUnbalancedBinaryTree<Payloa
     return insertedNodeHandle
 }
 
-fun <PayloadT : Comparable<PayloadT>, ColorT> MutableUnbalancedBinaryTree<PayloadT, ColorT>.swapVerified(
+fun <PayloadT : Comparable<PayloadT>, ColorT> MutableUnconstrainedBinaryTree<PayloadT, ColorT>.swapVerified(
     nodeHandle: BinaryTree.NodeHandle<PayloadT, ColorT>,
     side: BinaryTree.Side,
 ) {
@@ -31,7 +31,7 @@ fun <PayloadT : Comparable<PayloadT>, ColorT> MutableUnbalancedBinaryTree<Payloa
     verifyIntegrity()
 }
 
-fun <PayloadT : Comparable<PayloadT>, ColorT> MutableUnbalancedBinaryTree<PayloadT, ColorT>.cutOffVerified(
+fun <PayloadT : Comparable<PayloadT>, ColorT> MutableUnconstrainedBinaryTree<PayloadT, ColorT>.cutOffVerified(
     leafHandle: BinaryTree.NodeHandle<PayloadT, ColorT>,
 ): BinaryTree.Location<PayloadT, ColorT> {
     val cutOffLeafLocation = this.cutOff(
@@ -47,7 +47,7 @@ fun <PayloadT : Comparable<PayloadT>, ColorT> MutableUnbalancedBinaryTree<Payloa
     return cutOffLeafLocation
 }
 
-fun <PayloadT : Comparable<PayloadT>, ColorT> MutableUnbalancedBinaryTree<PayloadT, ColorT>.rotateVerified(
+fun <PayloadT : Comparable<PayloadT>, ColorT> MutableUnconstrainedBinaryTree<PayloadT, ColorT>.rotateVerified(
     pivotNodeHandle: BinaryTree.NodeHandle<PayloadT, ColorT>,
     direction: BinaryTree.RotationDirection,
 ): BinaryTree.NodeHandle<PayloadT, ColorT> {
@@ -61,7 +61,7 @@ fun <PayloadT : Comparable<PayloadT>, ColorT> MutableUnbalancedBinaryTree<Payloa
     return newSubtreeRootHandle
 }
 
-fun <PayloadT : Comparable<PayloadT>, ColorT> MutableUnbalancedBinaryTree<PayloadT, ColorT>.collapseVerified(
+fun <PayloadT : Comparable<PayloadT>, ColorT> MutableUnconstrainedBinaryTree<PayloadT, ColorT>.collapseVerified(
     nodeHandle: BinaryTree.NodeHandle<PayloadT, ColorT>,
 ): BinaryTree.NodeHandle<PayloadT, ColorT> {
     val elevatedChildHandle = this.collapse(

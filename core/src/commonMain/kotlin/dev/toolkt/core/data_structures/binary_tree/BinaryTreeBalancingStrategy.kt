@@ -16,18 +16,18 @@ abstract class BinaryTreeBalancingStrategy<PayloadT, ColorT> {
     abstract val defaultColor: ColorT
 
     abstract fun rebalanceAfterAttach(
-        internalTree: MutableUnbalancedBinaryTree<PayloadT, ColorT>,
+        internalTree: MutableUnconstrainedBinaryTree<PayloadT, ColorT>,
         attachedNodeHandle: BinaryTree.NodeHandle<PayloadT, ColorT>,
     ): RebalanceResult<PayloadT, ColorT>
 
     abstract fun rebalanceAfterCutOff(
-        internalTree: MutableUnbalancedBinaryTree<PayloadT, ColorT>,
+        internalTree: MutableUnconstrainedBinaryTree<PayloadT, ColorT>,
         cutOffLeafLocation: BinaryTree.RelativeLocation<PayloadT, ColorT>,
         cutOffLeafColor: ColorT,
     ): RebalanceResult<PayloadT, ColorT>
 
     abstract fun rebalanceAfterCollapse(
-        internalTree: MutableUnbalancedBinaryTree<PayloadT, ColorT>,
+        internalTree: MutableUnconstrainedBinaryTree<PayloadT, ColorT>,
         elevatedNodeHandle: BinaryTree.NodeHandle<PayloadT, ColorT>,
     ): RebalanceResult<PayloadT, ColorT>
 }

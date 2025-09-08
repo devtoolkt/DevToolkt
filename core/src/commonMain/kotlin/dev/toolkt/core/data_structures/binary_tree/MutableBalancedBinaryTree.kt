@@ -3,11 +3,13 @@ package dev.toolkt.core.data_structures.binary_tree
 import dev.toolkt.core.iterable.uncons
 
 /**
- * A generic balanced binary tree that supports adding and removing elements. See [BinaryTree] for more details on the
- * read-only aspects of this interface.
+ * A generic balanced binary tree that supports adding, removing and updating the payloads, while guaranteeing that the
+ * tree remains balanced. See [BinaryTree] for more details on the read-only aspects of this interface.
  *
- * This interface requires the implementation to maintain the balancing of the tree after insertions and removals and
- * specifies the operations that can affect the balancing.
+ * See [MutableUnconstrainedBinaryTree] for a similar interface that does not guarantee balancing.
+ *
+ * In practice, simplest best way to implement this interface is to compose a [MutableUnconstrainedBinaryTree] instance
+ * and restore the balance as needed.
  */
 interface MutableBalancedBinaryTree<PayloadT, ColorT> : BinaryTree<PayloadT, ColorT> {
     companion object {
@@ -20,7 +22,7 @@ interface MutableBalancedBinaryTree<PayloadT, ColorT> : BinaryTree<PayloadT, Col
          * truly transferred.
          */
         fun <PayloadT> internalizeRedBlack(
-            internalTree: MutableUnbalancedBinaryTree<PayloadT, RedBlackColor>,
+            internalTree: MutableUnconstrainedBinaryTree<PayloadT, RedBlackColor>,
         ): MutableBalancedBinaryTree<PayloadT, RedBlackColor> = MutableBalancedBinaryTreeImpl.internalize(
             internalTree = internalTree,
             balancingStrategy = RedBlackTreeBalancingStrategy(),
@@ -31,7 +33,7 @@ interface MutableBalancedBinaryTree<PayloadT, ColorT> : BinaryTree<PayloadT, Col
          */
         fun <PayloadT> createRedBlack(): MutableBalancedBinaryTree<PayloadT, RedBlackColor> =
             MutableBalancedBinaryTreeImpl.internalize(
-                internalTree = MutableUnbalancedBinaryTree.create(),
+                internalTree = MutableUnconstrainedBinaryTree.create(),
                 balancingStrategy = RedBlackTreeBalancingStrategy(),
             )
     }

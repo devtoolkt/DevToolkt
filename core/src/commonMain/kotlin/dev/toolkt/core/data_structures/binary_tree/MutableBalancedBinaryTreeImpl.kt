@@ -5,7 +5,7 @@ import dev.toolkt.core.errors.assert
 import dev.toolkt.core.iterable.uncons
 
 class MutableBalancedBinaryTreeImpl<PayloadT, ColorT> private constructor(
-    private val internalTree: MutableUnbalancedBinaryTree<PayloadT, ColorT>,
+    private val internalTree: MutableUnconstrainedBinaryTree<PayloadT, ColorT>,
     private val balancingStrategy: BinaryTreeBalancingStrategy<PayloadT, ColorT>,
 ) : MutableBalancedBinaryTree<PayloadT, ColorT>, BinaryTree<PayloadT, ColorT> by internalTree {
     companion object {
@@ -18,7 +18,7 @@ class MutableBalancedBinaryTreeImpl<PayloadT, ColorT> private constructor(
          * @param balancingStrategy The strategy to use for balancing the tree.
          */
         fun <PayloadT, ColorT> internalize(
-            internalTree: MutableUnbalancedBinaryTree<PayloadT, ColorT>,
+            internalTree: MutableUnconstrainedBinaryTree<PayloadT, ColorT>,
             balancingStrategy: BinaryTreeBalancingStrategy<PayloadT, ColorT>,
         ): MutableBalancedBinaryTreeImpl<PayloadT, ColorT> = MutableBalancedBinaryTreeImpl(
             internalTree = internalTree,

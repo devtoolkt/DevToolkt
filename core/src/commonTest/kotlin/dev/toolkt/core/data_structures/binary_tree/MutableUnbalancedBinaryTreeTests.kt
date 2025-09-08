@@ -11,7 +11,6 @@ import dev.toolkt.core.data_structures.binary_tree.test_utils.swapVerified
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
-import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNull
 
@@ -22,7 +21,7 @@ class MutableUnbalancedBinaryTreeTests {
 
     @Test
     fun testInitial() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         assertNull(
             actual = tree.dump(),
@@ -31,7 +30,7 @@ class MutableUnbalancedBinaryTreeTests {
 
     @Test
     fun testAttach_root() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         val handle100 = tree.attachVerified(
             location = BinaryTree.RootLocation,
@@ -59,7 +58,7 @@ class MutableUnbalancedBinaryTreeTests {
 
     @Test
     fun testAttach_ordinaryLeaf() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         val handle100 = tree.attachVerified(
             location = BinaryTree.RootLocation,
@@ -116,7 +115,7 @@ class MutableUnbalancedBinaryTreeTests {
 
     @Test
     fun testCutOff_root() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         val handle100 = tree.attachVerified(
             location = BinaryTree.RootLocation,
@@ -139,7 +138,7 @@ class MutableUnbalancedBinaryTreeTests {
 
     @Test
     fun testCutOff_ordinaryLeaf_extremal() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         val handle100 = tree.attachVerified(
             location = BinaryTree.RootLocation,
@@ -184,7 +183,7 @@ class MutableUnbalancedBinaryTreeTests {
 
     @Test
     fun testCutOff_ordinaryLeaf_nonExtremal() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         val handle100 = tree.attachVerified(
             location = BinaryTree.RootLocation,
@@ -239,7 +238,7 @@ class MutableUnbalancedBinaryTreeTests {
 
     @Test
     fun testCutOff_nonLeaf() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         val handle100 = tree.attachVerified(
             location = BinaryTree.RootLocation,
@@ -280,7 +279,7 @@ class MutableUnbalancedBinaryTreeTests {
 
     @Test
     fun testCollapse_root() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         val handle100 = tree.attachVerified(
             location = BinaryTree.RootLocation,
@@ -320,7 +319,7 @@ class MutableUnbalancedBinaryTreeTests {
 
     @Test
     fun testCollapse_rootChild() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         val handle100 = tree.attachVerified(
             location = BinaryTree.RootLocation,
@@ -364,7 +363,7 @@ class MutableUnbalancedBinaryTreeTests {
      */
     @Test
     fun testCollapse_ordinarySingleChild_nonExtremal() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         val handle100 = tree.attachVerified(
             location = BinaryTree.RootLocation,
@@ -408,7 +407,7 @@ class MutableUnbalancedBinaryTreeTests {
      */
     @Test
     fun testCollapse_ordinarySingleChild_extremal() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         val handle100 = tree.attachVerified(
             location = BinaryTree.RootLocation,
@@ -458,7 +457,7 @@ class MutableUnbalancedBinaryTreeTests {
 
     @Test
     fun testCollapse_leaf() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         val handle100 = tree.attachVerified(
             location = BinaryTree.RootLocation,
@@ -499,7 +498,7 @@ class MutableUnbalancedBinaryTreeTests {
 
     @Test
     fun testCollapse_twoChildren() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         val handle100 = tree.attachVerified(
             location = BinaryTree.RootLocation,
@@ -548,7 +547,7 @@ class MutableUnbalancedBinaryTreeTests {
      */
     @Test
     fun testSwap_root_noOppositeChild_successor_distant_neighbourNoOppositeChild() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         // The swapped node (root)
         val handle200 = tree.attachVerified(
@@ -643,7 +642,7 @@ class MutableUnbalancedBinaryTreeTests {
      */
     @Test
     fun testSwap_nonRoot_noOppositeChild_extremal_predecessor_separated_neighbourHasOppositeChild() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         val handle100 = tree.attachVerified(
             location = BinaryTree.RootLocation,
@@ -759,7 +758,7 @@ class MutableUnbalancedBinaryTreeTests {
      */
     @Test
     fun testSwap_nonRoot_noOppositeChild_nonExtremal_successor_separated_neighbourNoOppositeChild() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         val handle50 = tree.attachVerified(
             location = BinaryTree.RootLocation,
@@ -863,7 +862,7 @@ class MutableUnbalancedBinaryTreeTests {
      */
     @Test
     fun testSwap_nonRoot_hasOppositeChild_successor_directChild_neighbourHasOppositeChild() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         val handle100 = tree.attachVerified(
             location = BinaryTree.RootLocation,
@@ -978,7 +977,7 @@ class MutableUnbalancedBinaryTreeTests {
      */
     @Test
     fun testSwap_nonRoot_hasOppositeChild_successor_separated_neighbourHasOppositeChild() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         val handle100 = tree.attachVerified(
             location = BinaryTree.RootLocation,
@@ -1108,7 +1107,7 @@ class MutableUnbalancedBinaryTreeTests {
      */
     @Test
     fun testRotate_ccw_ascendingHasEndChild() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         val handle100 = tree.attachVerified(
             location = BinaryTree.RootLocation,
@@ -1220,7 +1219,7 @@ class MutableUnbalancedBinaryTreeTests {
      */
     @Test
     fun testRotate_cw_ascendingNoEndChild() {
-        val tree = MutableUnbalancedBinaryTree.create<Int, TestColor>()
+        val tree = MutableUnconstrainedBinaryTree.create<Int, TestColor>()
 
         val handle150 = tree.attachVerified(
             location = BinaryTree.RootLocation,

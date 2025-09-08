@@ -2,7 +2,7 @@ package dev.toolkt.core.data_structures.binary_tree.test_utils
 
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree
 import dev.toolkt.core.data_structures.binary_tree.MutableBalancedBinaryTree
-import dev.toolkt.core.data_structures.binary_tree.MutableUnbalancedBinaryTree
+import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTree
 import dev.toolkt.core.data_structures.binary_tree.RedBlackColor
 import dev.toolkt.core.data_structures.binary_tree.getLeftChild
 import dev.toolkt.core.data_structures.binary_tree.getRightChild
@@ -99,7 +99,7 @@ object RedBlackTreeTestUtils {
     fun <PayloadT> loadVerified(
         rootData: NodeData<PayloadT, RedBlackColor>,
     ): MutableBalancedBinaryTree<PayloadT, RedBlackColor> {
-        val internalTree = MutableUnbalancedBinaryTree.load(
+        val internalTree = MutableUnconstrainedBinaryTree.load(
             rootData = rootData,
         )
 

@@ -17,7 +17,7 @@ class BinaryTreeTests {
 
     @Test
     fun testFind() {
-        val tree = MutableUnbalancedBinaryTree.load(
+        val tree = MutableUnconstrainedBinaryTree.load(
             rootData = NodeData(
                 payload = 100,
                 color = TestColor.Green,
@@ -79,7 +79,7 @@ class BinaryTreeTests {
     fun testFindBy() {
         fun <K, V> selectKey(pair: Pair<K, V>): K = pair.first
 
-        val tree = MutableUnbalancedBinaryTree.load(
+        val tree = MutableUnconstrainedBinaryTree.load(
             rootData = NodeData(
                 payload = 100 to "A",
                 color = TestColor.Green,
