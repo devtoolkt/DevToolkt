@@ -4,8 +4,8 @@ package dev.toolkt.core.collections
  * A collection associating a set of keys with a set of values in a possibly
  * many-to-many relation.
  *
- * See [AssociativeMap] for an implementation offering one-to-one relation.
- * See [MultiValuedMap] for an implementation offering one-to-many relation.
+ * See [dev.toolkt.core.collections.maps.AssociativeMap] for an implementation offering one-to-one relation.
+ * See [dev.toolkt.core.collections.maps.MultiValuedMap] for an implementation offering one-to-many relation.
  *
  * @param K the type of collection keys
  * @param V the type of collection values

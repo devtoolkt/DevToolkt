@@ -1,5 +1,7 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.maps
 
+import dev.toolkt.core.collections.MutableAssociativeCollection
+import dev.toolkt.core.collections.add
 import dev.toolkt.core.platform.mutableWeakMapOf
 
 interface MutableMultiValuedMap<K, V> : MultiValuedMap<K, V>, MutableAssociativeCollection<K, V> {

@@ -1,6 +1,7 @@
 package dev.toolkt.core.collections
 
-import dev.toolkt.core.collections.containsMapping
+import dev.toolkt.core.collections.maps.containsMapping
+import dev.toolkt.core.collections.maps.mutableMultiValuedMapOf
 import kotlin.test.Test
 import kotlin.test.assertFails
 import kotlin.test.assertFalse

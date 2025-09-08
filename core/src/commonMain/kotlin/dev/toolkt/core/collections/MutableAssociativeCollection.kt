@@ -1,10 +1,12 @@
 package dev.toolkt.core.collections
 
+import dev.toolkt.core.collections.maps.MapEntry
+
 /**
  * A mutable collection associating a set of keys with a set of values.
  *
- * See [MutableAssociativeMap] for an implementation offering one-to-one relation.
- * See [MutableMultiValuedMap] for an implementation offering one-to-many relation.
+ * See [dev.toolkt.core.collections.maps.MutableAssociativeMap] for an implementation offering one-to-one relation.
+ * See [dev.toolkt.core.collections.maps.MutableMultiValuedMap] for an implementation offering one-to-many relation.
  *
  * @param K the type of collection keys
  * @param V the type of collection values

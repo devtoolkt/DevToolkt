@@ -1,5 +1,8 @@
 package dev.toolkt.core.collections
 
+import dev.toolkt.core.collections.maps.MapEntry
+import dev.toolkt.core.collections.maps.MutableMultiValuedMap
+import dev.toolkt.core.collections.maps.containsMapping
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

@@ -1,4 +1,4 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.maps
 
 data class MapEntry<K, out V>(
     override val key: K,

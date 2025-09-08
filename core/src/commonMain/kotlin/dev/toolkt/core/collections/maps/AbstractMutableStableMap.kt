@@ -1,4 +1,9 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.maps
+
+import dev.toolkt.core.collections.EntryHandle
+import dev.toolkt.core.collections.MutableStableCollection
+import dev.toolkt.core.collections.StableCollection
+import dev.toolkt.core.collections.maps.StableMap
 
 abstract class AbstractMutableStableMap<K, V>(
     final override val entries: MutableSet<MutableMap.MutableEntry<K, V>>,
@@ -9,9 +14,9 @@ abstract class AbstractMutableStableMap<K, V>(
     final override fun isEmpty(): Boolean = size == 0
 
     final override fun get(key: K): V? {
-        val entryHandle = resolve(key = key) ?: return null
+        val entryHandle = StableMap.resolve(key = key) ?: return null
 
-        return getVia(handle = entryHandle)?.value
+        return StableCollection.getVia(handle = entryHandle)?.value
     }
 
     final override fun remove(
@@ -34,7 +39,7 @@ abstract class AbstractMutableStableMap<K, V>(
     final override fun addAll(
         elements: Collection<Map.Entry<K, V>>,
     ): Boolean = elements.any {
-        val insertedHandle = addEx(it)
+        val insertedHandle = MutableStableCollection.addEx(it)
 
         insertedHandle != null
     }
@@ -49,13 +54,13 @@ abstract class AbstractMutableStableMap<K, V>(
 
     final override fun resolveAll(
         key: K,
-    ): Collection<EntryHandle<K, V>> = listOfNotNull(resolve(key = key))
+    ): Collection<EntryHandle<K, V>> = listOfNotNull(StableMap.resolve(key = key))
 
     final override fun lookup(
         element: Map.Entry<K, V>,
     ): EntryHandle<K, V>? {
         val key = element.key
-        return resolve(key = key)
+        return StableMap.resolve(key = key)
     }
 
     final override fun getAll(

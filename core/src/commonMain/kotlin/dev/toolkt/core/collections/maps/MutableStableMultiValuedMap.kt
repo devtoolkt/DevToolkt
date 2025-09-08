@@ -1,5 +1,9 @@
-package dev.toolkt.core.collections
+package dev.toolkt.core.collections.maps
 
+import dev.toolkt.core.collections.maps.MapEntry
+import dev.toolkt.core.collections.MutableStableAssociativeCollection
+import dev.toolkt.core.collections.MutableStableBag
+import dev.toolkt.core.collections.mutableStableBagOf
 import dev.toolkt.core.platform.PlatformWeakReference
 
 /**

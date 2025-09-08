@@ -1,6 +1,7 @@
 package dev.toolkt.core.collections
 
-import dev.toolkt.core.collections.put
+import dev.toolkt.core.collections.maps.MapEntry
+import dev.toolkt.core.collections.maps.MutableMultiValuedMap
 import dev.toolkt.core.platform.PlatformWeakReference
 
 interface ElementRemover {
