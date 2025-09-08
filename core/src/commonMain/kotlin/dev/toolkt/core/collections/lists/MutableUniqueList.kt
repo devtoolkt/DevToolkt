@@ -1,7 +1,7 @@
 package dev.toolkt.core.collections.lists
 
 import dev.toolkt.core.collections.MutableTotalOrder
-import dev.toolkt.core.collections.SetUtils
+import dev.toolkt.core.utils.collections.SetUtils
 import dev.toolkt.core.order.OrderRelation
 
 /**
