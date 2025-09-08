@@ -22,8 +22,11 @@ interface MutableUnconstrainedBinaryTree<PayloadT, ColorT> : BinaryTree<PayloadT
     }
 
     companion object {
+        /**
+         * Creates an empty [MutableUnconstrainedBinaryTree] instance.
+         */
         fun <PayloadT, ColorT> create(): MutableUnconstrainedBinaryTree<PayloadT, ColorT> =
-            MutableUnconstrainedBinaryTreeImpl()
+            MutableUnconstrainedBinaryTreeImpl.create()
     }
 
     /**

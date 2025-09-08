@@ -3,12 +3,13 @@ package dev.toolkt.core.data_structures.binary_tree
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree.Side
 import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTree.SwapResult
 import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTreeImpl.NodeHandleImpl
+import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTreeImpl.OriginNode
 import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTreeImpl.ProperNode
 import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTreeImpl.ProperNode.InOrderNeighbourRelation
 import kotlin.jvm.JvmInline
 
-class MutableUnconstrainedBinaryTreeImpl<PayloadT, ColorT> internal constructor(
-    internal val origin: OriginNode<PayloadT, ColorT> = OriginNode(),
+class MutableUnconstrainedBinaryTreeImpl<PayloadT, ColorT> private constructor(
+    internal val origin: OriginNode<PayloadT, ColorT>,
 ) : MutableUnconstrainedBinaryTree<PayloadT, ColorT> {
     internal sealed interface ParentNode<PayloadT, ColorT> {
         fun buildUpLink(
@@ -39,7 +40,6 @@ class MutableUnconstrainedBinaryTreeImpl<PayloadT, ColorT> internal constructor(
                 origin = this,
             )
         }
-
     }
 
     internal class ProperNode<PayloadT, ColorT>(
@@ -582,6 +582,13 @@ class MutableUnconstrainedBinaryTreeImpl<PayloadT, ColorT> internal constructor(
 
             return properNode
         }
+    }
+
+    companion object {
+        internal fun <PayloadT, ColorT> create(): MutableUnconstrainedBinaryTreeImpl<PayloadT, ColorT> =
+            MutableUnconstrainedBinaryTreeImpl(
+                origin = OriginNode(),
+            )
     }
 
     override fun attach(
