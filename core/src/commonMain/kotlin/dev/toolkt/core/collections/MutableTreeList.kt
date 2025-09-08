@@ -2,7 +2,7 @@ package dev.toolkt.core.collections
 
 import dev.toolkt.core.collections.StableCollection.Handle
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree
-import dev.toolkt.core.data_structures.binary_tree.RedBlackColor
+import dev.toolkt.core.data_structures.binary_tree.balancing_strategies.red_black.RedBlackColor
 import dev.toolkt.core.data_structures.binary_tree.MutableBalancedBinaryTree
 import dev.toolkt.core.data_structures.binary_tree.getNextInOrderFreeLocation
 import dev.toolkt.core.data_structures.binary_tree.getRank

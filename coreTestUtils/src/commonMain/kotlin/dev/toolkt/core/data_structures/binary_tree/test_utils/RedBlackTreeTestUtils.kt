@@ -3,7 +3,7 @@ package dev.toolkt.core.data_structures.binary_tree.test_utils
 import dev.toolkt.core.data_structures.binary_tree.BinaryTree
 import dev.toolkt.core.data_structures.binary_tree.MutableBalancedBinaryTree
 import dev.toolkt.core.data_structures.binary_tree.MutableUnconstrainedBinaryTree
-import dev.toolkt.core.data_structures.binary_tree.RedBlackColor
+import dev.toolkt.core.data_structures.binary_tree.balancing_strategies.red_black.RedBlackColor
 import dev.toolkt.core.data_structures.binary_tree.getLeftChild
 import dev.toolkt.core.data_structures.binary_tree.getRightChild
 import dev.toolkt.core.range.split
