@@ -1,6 +1,6 @@
 package dev.toolkt.js.collections
 
-import dev.toolkt.js.Object
+import dev.toolkt.js.JsObjects
 import kotlin.js.collections.JsSet
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,7 +16,7 @@ class JsSetUtilsTests {
 
         assertEquals(
             expected = setConstructor.prototype,
-            actual = Object.getPrototypeOf(set),
+            actual = JsObjects.getPrototypeOf(set),
         )
 
         assertEquals(
@@ -52,7 +52,7 @@ class JsSetUtilsTests {
 
         assertEquals(
             expected = setConstructor.prototype,
-            actual = Object.getPrototypeOf(set),
+            actual = JsObjects.getPrototypeOf(set),
         )
 
         assertEquals(

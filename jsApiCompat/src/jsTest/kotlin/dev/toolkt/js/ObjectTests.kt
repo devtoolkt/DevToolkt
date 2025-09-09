@@ -15,7 +15,7 @@ class ObjectTests {
 
         assertEquals(
             expected = arrayOf("foo", "bar"),
-            actual = Object.keys(obj),
+            actual = JsObjects.keys(obj),
         )
     }
 
@@ -29,7 +29,7 @@ class ObjectTests {
 
         assertEquals(
             expected = arrayOf(1, "A"),
-            actual = Object.values(obj),
+            actual = JsObjects.values(obj),
         )
     }
 }
