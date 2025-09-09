@@ -17,6 +17,12 @@ subprojects {
     plugins.withId(kotlinMultiplatformPluginId) {
         configure<KotlinMultiplatformExtension> {
             compilerOptions {
+                optIn.addAll(
+                    // Experimental JS-collections API
+                    // https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.js/-experimental-js-collections-api/
+                    "kotlin.js.ExperimentalJsCollectionsApi",
+                )
+
                 freeCompilerArgs.addAll(
                     listOf(
                         // Consistent `copy` visiblity
