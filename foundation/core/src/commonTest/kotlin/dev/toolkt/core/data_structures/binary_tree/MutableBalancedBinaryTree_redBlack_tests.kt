@@ -11,7 +11,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-class RedBlackTreeTests {
+@Suppress("ClassName")
+class MutableBalancedBinaryTree_redBlack_tests {
     @Test
     fun testInitial() {
         val tree = MutableBalancedBinaryTree.createRedBlack<Int>()

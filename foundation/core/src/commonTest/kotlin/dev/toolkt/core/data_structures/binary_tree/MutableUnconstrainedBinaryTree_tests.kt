@@ -14,7 +14,8 @@ import kotlin.test.assertFails
 import kotlin.test.assertIs
 import kotlin.test.assertNull
 
-class MutableUnconstrainedBinaryTreeTests {
+@Suppress("ClassName")
+class MutableUnconstrainedBinaryTree_tests {
     private enum class TestColor {
         Green, Blue, Yellow, Pink,
     }
