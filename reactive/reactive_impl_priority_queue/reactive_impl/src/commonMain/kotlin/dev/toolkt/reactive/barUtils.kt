@@ -1,3 +1,3 @@
 package dev.toolkt.reactive
 
-fun bar(): Int = 43
+fun bar(): Int = 43 - 1

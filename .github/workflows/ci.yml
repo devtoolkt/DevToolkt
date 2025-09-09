@@ -44,6 +44,10 @@ jobs:
         run: ./gradlew allTest
         working-directory: foundation
 
-      - name: Build & test with Gradle (reactive)
-        run: ./gradlew allTest
+      - name: Build & test with Gradle (reactive / push_pull)
+        run: ./gradlew allTest -Dimpl=push_pull
+        working-directory: reactive
+
+      - name: Build & test with Gradle (reactive / priority_queue)
+        run: ./gradlew allTest -Dimpl=priority_queue
         working-directory: reactive
