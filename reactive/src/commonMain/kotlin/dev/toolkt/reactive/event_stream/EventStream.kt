@@ -4,24 +4,28 @@ import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.PureContext
 
 sealed interface EventStream<out EventT> {
+    interface Subscription {
+        fun cancel()
+    }
+
     companion object {
-        context(pureContext: PureContext) fun <EventT1, EventT2, ResultT> merge2(
-            eventStream1: EventStream<EventT1>,
-            eventStream2: EventStream<EventT2>,
-        ): EventStream<ResultT> = TODO()
+        context(pureContext: PureContext) fun <EventT> merge2(
+            eventStream1: EventStream<EventT>,
+            eventStream2: EventStream<EventT>,
+        ): EventStream<EventT> = TODO()
 
-        context(pureContext: PureContext) fun <EventT1, EventT2, EventT3, ResultT> merge3(
-            eventStream1: EventStream<EventT1>,
-            eventStream2: EventStream<EventT2>,
-            eventStream3: EventStream<EventT3>,
-        ): EventStream<ResultT> = TODO()
+        context(pureContext: PureContext) fun <EventT> merge3(
+            eventStream1: EventStream<EventT>,
+            eventStream2: EventStream<EventT>,
+            eventStream3: EventStream<EventT>,
+        ): EventStream<EventT> = TODO()
 
-        context(pureContext: PureContext) fun <EventT1, EventT2, EventT3, EventT4, ResultT> merge4(
-            eventStream1: EventStream<EventT1>,
-            eventStream2: EventStream<EventT2>,
-            eventStream3: EventStream<EventT3>,
-            eventStream4: EventStream<EventT4>,
-        ): EventStream<ResultT> = TODO()
+        context(pureContext: PureContext) fun <EventT> merge4(
+            eventStream1: EventStream<EventT>,
+            eventStream2: EventStream<EventT>,
+            eventStream3: EventStream<EventT>,
+            eventStream4: EventStream<EventT>,
+        ): EventStream<EventT> = TODO()
     }
 }
 
@@ -41,4 +45,15 @@ context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.take(
     count == 1 -> single()
 
     else -> TODO()
+}
+
+/**
+ * Subscribe to this event stream.
+ *
+ * This method should be only called from outside the reactive system.
+ */
+fun <EventT> EventStream<EventT>.subscribe(
+    handle: (EventT) -> Unit,
+): EventStream.Subscription {
+    TODO()
 }

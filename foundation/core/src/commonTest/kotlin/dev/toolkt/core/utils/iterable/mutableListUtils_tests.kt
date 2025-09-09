@@ -267,4 +267,19 @@ class mutableListUtils_tests {
             actual = mutableList,
         )
     }
+
+    @Test
+    fun testCopyAndClear() {
+        val mutableList = mutableListOf(0, 1, 2)
+
+        assertEquals(
+            expected = listOf(0, 1, 2),
+            actual = mutableList.copyAndClear(),
+        )
+
+        assertEquals(
+            expected = emptyList(),
+            actual = mutableList,
+        )
+    }
 }
