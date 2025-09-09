@@ -1,3 +1,7 @@
 package dev.toolkt.reactive
 
-class PureContext internal constructor()
+open class PureContext internal constructor() {
+    companion object {
+        val External = PureContext()
+    }
+}

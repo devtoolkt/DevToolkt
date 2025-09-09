@@ -62,3 +62,11 @@ fun <ElementT> MutableList<ElementT>.subList(
     fromIndex = indexRange.start,
     toIndex = indexRange.endExclusive,
 )
+
+fun <ElementT> MutableList<ElementT>.copyAndClear(): List<ElementT> {
+    val copy = toList()
+
+    clear()
+
+    return copy
+}
