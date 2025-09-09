@@ -27,6 +27,9 @@ jobs:
           java-version: "21"
           distribution: "temurin"
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
       - name: Check commit messages
         uses: GsActions/commit-message-checker@v2
         with:
@@ -37,7 +40,10 @@ jobs:
           checkAllCommitMessages: "true"
           accessToken: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build & test the Gradle project
-        uses: gradle/gradle-build-action@v3.5.0
-        with:
-          arguments: allTests
+      - name: Build & test with Gradle (foundation)
+        run: ./gradlew allTest
+        working-directory: foundation
+
+      - name: Build & test with Gradle (reactive)
+        run: ./gradlew allTest
+        working-directory: reactive
