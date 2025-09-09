@@ -4,7 +4,8 @@ import dev.toolkt.js.JsObjects
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class JsArraysTests {
+@Suppress("ClassName")
+class JsArrays_tests {
     private val arrayConstructor = js("Array")
 
     @Test

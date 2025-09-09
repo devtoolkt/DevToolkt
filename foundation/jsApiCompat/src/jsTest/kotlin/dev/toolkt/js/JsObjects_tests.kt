@@ -6,7 +6,8 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class JsObjectsTests {
+@Suppress("ClassName")
+class JsObjects_tests {
     @Test
     fun testKeys() {
         val obj = jsObject()

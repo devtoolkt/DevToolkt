@@ -7,7 +7,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class JsSetUtilsTests {
+@Suppress("ClassName")
+class jsSetUtils_tests {
     private val setConstructor = js("Set")
 
     @Test

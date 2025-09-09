@@ -4,7 +4,8 @@ import kotlin.js.collections.toList
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class JsObjectUtilsTests {
+@Suppress("ClassName")
+class jsObjectUtils_tests {
     private val objectConstructor = js("Object")
 
     @Test
