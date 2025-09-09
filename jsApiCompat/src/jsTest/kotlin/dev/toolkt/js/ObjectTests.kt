@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 
 class ObjectTests {
     @Test
-    @Ignore // TODO: Add proper support for JsArray
+    @Ignore // TODO: Add proper support for JsArrays
     fun testKeys() {
         val obj = jsObject()
 
@@ -20,7 +20,7 @@ class ObjectTests {
     }
 
     @Test
-    @Ignore // TODO: Add proper support for JsArray
+    @Ignore // TODO: Add proper support for JsArrays
     fun testValues() {
         val obj = jsObject()
 

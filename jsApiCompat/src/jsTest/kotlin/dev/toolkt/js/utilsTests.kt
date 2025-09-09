@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 
 class UtilsTests {
     @Test
-    @Ignore // TODO: Add proper support for JsArray
+    @Ignore // TODO: Add proper support for JsArrays
     fun testJsObject() {
         val obj = jsObject()
 
