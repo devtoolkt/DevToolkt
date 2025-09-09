@@ -1,0 +1,9 @@
+package dev.toolkt.js
+
+external object Object {
+    fun keys(o: dynamic): Array<String>
+
+    fun values(o: dynamic): Array<dynamic>
+
+    fun entries(o: dynamic): Array<Array<dynamic>>
+}
