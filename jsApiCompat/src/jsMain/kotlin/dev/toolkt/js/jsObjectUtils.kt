@@ -3,13 +3,12 @@ package dev.toolkt.js
 @Suppress("NOTHING_TO_INLINE")
 inline fun jsObject(): dynamic = js("({})")
 
-@Suppress("NOTHING_TO_INLINE")
-inline fun <reified MutableObjectT> jsObject(
-    block: MutableObjectT.() -> Unit,
-): MutableObjectT {
+inline fun jsObject(
+    block: dynamic.() -> Unit,
+): dynamic {
     val obj = jsObject()
 
-    (obj as MutableObjectT).block()
+    obj.block()
 
     return obj
 }
