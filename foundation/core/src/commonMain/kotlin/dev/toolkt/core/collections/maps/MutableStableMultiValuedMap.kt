@@ -14,9 +14,5 @@ interface MutableStableMultiValuedMap<K, V> : StableMultiValuedMap<K, V>, Mutabl
         ): MutableStableMultiValuedMap<K, V> = StableMapBackedMultiValuedMap(
             bucketMap = bucketMap,
         )
-
-        fun <K, V> newFromStableBag(
-            entryBag: MutableStableBag<Map.Entry<K, V>>,
-        ): MutableStableMultiValuedMap<K, V> = TODO()
     }
 }
