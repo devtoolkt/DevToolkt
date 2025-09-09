@@ -1,10 +1,9 @@
 package dev.toolkt.core.collections
 
-
-import dev.toolkt.core.collections.OrderRelation
 import kotlin.test.Test
 
-class MutableTotalOrderTests {
+@Suppress("ClassName")
+class MutableTotalOrder_tests {
     private enum class Fruit {
         Apple, Raspberry, Banana, Orange, Kiwi, Mango, Pineapple, Strawberry, Watermelon, Grape,
     }

@@ -7,7 +7,8 @@ import dev.toolkt.core.data_structures.binary_tree.test_utils.getHandle
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class MutableBalancedBinaryTreeTests {
+@Suppress("ClassName")
+class MutableBalancedBinaryTree_tests {
     @Test
     fun testInsertAll() {
         val tree = RedBlackTreeTestUtils.loadVerified(

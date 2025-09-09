@@ -1,17 +1,14 @@
-package dev.toolkt.core.collections.maps.mutable_stable_multivalued_map
+package dev.toolkt.core.collections.maps
 
-import dev.toolkt.core.collections.maps.MapEntry
-import dev.toolkt.core.collections.maps.MutableStableMultiValuedMap
 import dev.toolkt.core.collections.bags.mutableStableBagOf
-import dev.toolkt.core.collections.maps.mutableStableMapOf
-import dev.toolkt.core.collections.maps.verifyIntegrity
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class NewFromStableMapTests {
+@Suppress("ClassName")
+class MutableStableMultiValuedMap_newFromStableMap_tests {
     @Test
     fun testNewFromStableMap_initial() {
         val mutableMultiValuedMap = MutableStableMultiValuedMap.newFromStableMap(
