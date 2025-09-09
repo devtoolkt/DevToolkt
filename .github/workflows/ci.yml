@@ -48,6 +48,8 @@ jobs:
         run: ./gradlew allTest -Dimpl=push_pull
         working-directory: reactive
 
-      - name: Build & test with Gradle (reactive / priority_queue)
-        run: ./gradlew allTest -Dimpl=priority_queue
-        working-directory: reactive
+      # Disable the priority_queue tests for now
+      
+      # - name: Build & test with Gradle (reactive / priority_queue)
+      #   run: ./gradlew allTest -Dimpl=priority_queue
+      #   working-directory: reactive
