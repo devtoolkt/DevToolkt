@@ -8,7 +8,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class JsSetUtilsTests {
-    val setConstructor = js("Set")
+    private val setConstructor = js("Set")
 
     @Test
     fun testJsSetConstructorEmpty() {
@@ -59,6 +59,7 @@ class JsSetUtilsTests {
             expected = 3,
             actual = set.size,
         )
+
         assertTrue(
             actual = set.has(1),
         )
