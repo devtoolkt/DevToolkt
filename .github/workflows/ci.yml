@@ -28,7 +28,7 @@ jobs:
           distribution: "temurin"
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v4.4.3
 
       - name: Check commit messages
         uses: GsActions/commit-message-checker@v2
