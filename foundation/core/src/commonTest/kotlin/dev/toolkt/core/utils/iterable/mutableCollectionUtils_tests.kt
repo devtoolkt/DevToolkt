@@ -3,7 +3,8 @@ package dev.toolkt.core.utils.iterable
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class MutableCollectionUtilsTests {
+@Suppress("ClassName")
+class mutableCollectionUtils_tests {
     @Test
     fun testForEachRemoving_removingNone() {
         val originalList = listOf(1, 2, 3, 4, 5)

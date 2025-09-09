@@ -3,7 +3,8 @@ package dev.toolkt.core.utils.lazy
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class LazyUtilsTests {
+@Suppress("ClassName")
+class LazyUtils_tests {
     /**
      * An example entity class that benefits from looping
      */

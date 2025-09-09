@@ -4,7 +4,8 @@ import dev.toolkt.core.numeric.assertEqualsWithTolerance
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class doubleUtilsSplitTests {
+@Suppress("ClassName")
+class doubleUtilsSplit_tests {
     @Test
     fun testSplitZero() {
         assertEquals(

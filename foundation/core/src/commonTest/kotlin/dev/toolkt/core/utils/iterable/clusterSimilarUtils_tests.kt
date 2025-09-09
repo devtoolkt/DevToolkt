@@ -4,7 +4,8 @@ import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ClusterSimilarUtilsTests {
+@Suppress("ClassName")
+class clusterSimilarUtils_tests {
     @Test
     fun testClusterSimilarConsecutive_empty() {
         val actual = emptyList<Char>().clusterSimilarConsecutive { a, b -> a == b }

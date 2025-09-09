@@ -3,7 +3,8 @@ package dev.toolkt.core.utils.iterable
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class MapCarryingUtilsTests {
+@Suppress("ClassName")
+class mapCarryingUtils_tests {
     @Test
     fun testMapCarrying_empty() {
         val list = emptyList<String>()

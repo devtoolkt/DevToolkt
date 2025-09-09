@@ -5,7 +5,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertIs
 
-class CrackUtilsTests {
+@Suppress("ClassName")
+class crackUtils_tests {
     @Test
     fun testCrack2_emptyList() {
         assertIs<IndexOutOfBoundsException>(
