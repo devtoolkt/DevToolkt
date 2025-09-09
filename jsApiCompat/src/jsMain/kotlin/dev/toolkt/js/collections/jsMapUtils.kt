@@ -19,44 +19,6 @@ fun <K, V> JsReadonlyMap<K, V>.has(
 fun <K, V> JsReadonlyMap<K, V>.get(
     key: K,
 ): V? = (this as JsMapImpl).get(key)
-/*
-
-/**
- * Executes a provided function once for each array element.
- */
-fun <E, JsArrayT : JsReadonlyArray<E>> JsArrayT.forEach(
-    /**
-     * A function to execute for each element in the array. Its return value is discarded.
-     */
-    callback: (
-        /**
-         * The current element being processed in the array.
-         */
-        E,
-        /**
-         * The index of the current element being processed in the array.
-         */
-        Int,
-        /**
-         * The array [forEach] was called upon.
-         */
-        JsArrayT,
-    ) -> Unit,
-) {
-    @Suppress("UNCHECKED_CAST") val callback = callback as (E, Int, JsReadonlyArray<E>) -> Unit
-    @Suppress("UNCHECKED_CAST") (this as JsArrayImpl<E>).forEach(callback)
-}
-
- */
-
-// WRONG:
-//fun <K, V> JsReadonlyMap<K, V>.forEach(
-//    callback: (V, K, ) -> Unit,
-//) {
-//    (this as JsMapImpl).forEach(callback)
-//}
-
-// RIGHT( TODO):
 
 fun <K, V, JsMapT : JsReadonlyMap<K, V>> JsMapT.forEach(
     callback: (
