@@ -9,4 +9,10 @@ kotlin {
         browser {}
         nodejs {}
     }
+
+    sourceSets {
+        jsTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
+    }
 }
