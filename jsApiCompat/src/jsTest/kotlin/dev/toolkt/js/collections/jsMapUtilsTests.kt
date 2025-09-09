@@ -1,6 +1,6 @@
 package dev.toolkt.js.collections
 
-import dev.toolkt.js.Object
+import dev.toolkt.js.JsObjects
 import kotlin.js.collections.JsMap
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -17,7 +17,7 @@ class JsMapUtilsTests {
 
         assertEquals(
             expected = mapConstructor.prototype,
-            actual = Object.getPrototypeOf(map),
+            actual = JsObjects.getPrototypeOf(map),
         )
 
         assertEquals(
@@ -54,7 +54,7 @@ class JsMapUtilsTests {
 
         assertEquals(
             expected = mapConstructor.prototype,
-            actual = Object.getPrototypeOf(map),
+            actual = JsObjects.getPrototypeOf(map),
         )
 
         assertEquals(

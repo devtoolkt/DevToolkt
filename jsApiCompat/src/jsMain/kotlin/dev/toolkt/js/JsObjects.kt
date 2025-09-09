@@ -1,6 +1,7 @@
 package dev.toolkt.js
 
-external object Object {
+@JsName("Object")
+external object JsObjects {
     fun getPrototypeOf(o: dynamic): dynamic
 
     fun keys(o: dynamic): Array<String>

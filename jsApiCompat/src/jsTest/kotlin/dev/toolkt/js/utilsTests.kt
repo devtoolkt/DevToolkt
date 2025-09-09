@@ -17,7 +17,7 @@ class UtilsTests {
 
         assertEquals(
             expected = emptyArray(),
-            actual = Object.keys(obj),
+            actual = JsObjects.keys(obj),
         )
     }
 }
