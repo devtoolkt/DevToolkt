@@ -8,7 +8,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class JsMapUtilsTests {
+@Suppress("ClassName")
+class jsMapUtils_tests {
     private data class ForEachCallbackTuple<K, V>(
         val value: V,
         val key: K,

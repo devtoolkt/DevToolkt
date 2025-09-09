@@ -6,7 +6,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-class JsArrayUtilsTests {
+@Suppress("ClassName")
+class jsArrayUtils_tests {
     private data class ForEachCallbackTuple<E>(
         val element: E,
         val index: Int,
