@@ -7,7 +7,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class MapBackedMultiValuedMapTests {
+@Suppress("ClassName")
+class MutableMultiValuedMap_tests {
     @Test
     fun testNew() {
         val mutableMultiValuedMap = MutableMultiValuedMap.new<Int, String>()

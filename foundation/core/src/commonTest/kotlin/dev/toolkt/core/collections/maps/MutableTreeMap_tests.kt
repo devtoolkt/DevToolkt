@@ -1,13 +1,13 @@
 package dev.toolkt.core.collections.maps
 
 import dev.toolkt.core.collections.getValueVia
-import dev.toolkt.core.collections.lists.verifyContent
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
-class MutableTreeMapTests {
+@Suppress("ClassName")
+class MutableTreeMap_tests {
     @Test
     fun testInitial() {
         val map = mutableTreeMapOf<Int, String>()

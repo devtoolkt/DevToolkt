@@ -11,7 +11,8 @@ import kotlin.test.assertTrue
 /**
  * Tests confirming the behavior of the built-in `MutableMap` implementations
  */
-class MutableMapTests {
+@Suppress("ClassName")
+class MutableMap_tests {
     private class MutableMapEntry<K, V>(
         override val key: K,
         initialValue: V,
