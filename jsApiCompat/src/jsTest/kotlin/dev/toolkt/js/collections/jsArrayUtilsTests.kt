@@ -1,5 +1,6 @@
 package dev.toolkt.js.collections
 
+import dev.toolkt.js.JsObjects
 import kotlin.js.collections.JsArray
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -12,6 +13,8 @@ class JsArrayUtilsTests {
         val array: JsArray<String>,
     )
 
+    private val arrayConstructor = js("Array")
+
     /**
      * Tests the [kotlin.js.collections.JsArray] constructor. Technically this is an external implementation, but let's
      * test it to make sure it meets our expectations.
@@ -19,6 +22,11 @@ class JsArrayUtilsTests {
     @Test
     fun testJsArrayConstructor() {
         val array = JsArray<Int>()
+
+        assertEquals(
+            expected = arrayConstructor.prototype,
+            actual = JsObjects.getPrototypeOf(array),
+        )
 
         assertEquals(
             expected = 0,
