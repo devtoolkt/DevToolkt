@@ -1,11 +1,18 @@
 package dev.toolkt.core.platform
 
-import dev.toolkt.js.collections.JsSetImpl
+import dev.toolkt.js.collections.JsSet
+import dev.toolkt.js.collections.add
+import dev.toolkt.js.collections.clear
+import dev.toolkt.js.collections.delete
+import dev.toolkt.js.collections.forEach
+import dev.toolkt.js.collections.has
+import dev.toolkt.js.collections.size
+import kotlin.js.collections.JsSet
 
 actual class PlatformNativeSet<E : Any>(
-    private val jsSet: JsSetImpl<E>,
+    private val jsSet: JsSet<E>,
 ) {
-    actual constructor() : this(jsSet = JsSetImpl())
+    actual constructor() : this(jsSet = JsSet())
 
     actual val size: Int
         get() = jsSet.size
@@ -36,5 +43,5 @@ actual class PlatformNativeSet<E : Any>(
         jsSet.forEach(callback)
     }
 
-    actual fun copy(): PlatformNativeSet<E> = PlatformNativeSet(jsSet = JsSetImpl(jsSet))
+    actual fun copy(): PlatformNativeSet<E> = PlatformNativeSet(jsSet = JsSet(jsSet))
 }

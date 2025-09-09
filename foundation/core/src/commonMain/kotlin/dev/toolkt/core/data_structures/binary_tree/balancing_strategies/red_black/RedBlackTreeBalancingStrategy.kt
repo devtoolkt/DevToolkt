@@ -8,6 +8,7 @@ import dev.toolkt.core.data_structures.binary_tree.getSibling
 import dev.toolkt.core.data_structures.binary_tree.locate
 import dev.toolkt.core.data_structures.binary_tree.locateRelatively
 import dev.toolkt.core.data_structures.binary_tree.paint
+import dev.toolkt.core.utils.assert
 
 internal class RedBlackTreeBalancingStrategy<PayloadT>() : BinaryTreeBalancingStrategy<PayloadT, RedBlackColor>() {
     override val defaultColor: RedBlackColor
