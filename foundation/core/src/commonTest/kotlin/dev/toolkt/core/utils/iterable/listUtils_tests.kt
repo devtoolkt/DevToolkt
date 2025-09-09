@@ -4,7 +4,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-class ListUtilsTests {
+@Suppress("ClassName")
+class listUtils_tests {
     @Test
     fun testIndexOfOrNull_found() {
         val list = listOf("a", "b", "c")

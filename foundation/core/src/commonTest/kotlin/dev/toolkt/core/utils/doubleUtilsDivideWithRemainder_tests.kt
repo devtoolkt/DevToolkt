@@ -6,14 +6,14 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertIs
 
-class doubleUtilsDivideWithRemainderTests {
+@Suppress("ClassName")
+class doubleUtilsDivideWithRemainder_tests {
     @Test
     fun testDivideByZero() {
         assertIs<IllegalArgumentException>(
             assertFails {
                 1.234.divideWithRemainder(0)
-            }
-        )
+            })
     }
 
     @Test

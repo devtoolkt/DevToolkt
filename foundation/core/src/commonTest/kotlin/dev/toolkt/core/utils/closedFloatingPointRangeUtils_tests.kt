@@ -10,7 +10,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class ClosedFloatingPointRangeUtilsTests {
+@Suppress("ClassName")
+class closedFloatingPointRangeUtils_tests {
     @Test
     fun testNormalize() {
         val range = -2.0..3.14

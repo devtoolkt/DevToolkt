@@ -6,7 +6,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertIs
 
-class LinSpaceTests {
+@Suppress("ClassName")
+class linSpace_tests {
     @Test
     fun testGenerate_oneSample() {
         assertIs<IllegalArgumentException>(

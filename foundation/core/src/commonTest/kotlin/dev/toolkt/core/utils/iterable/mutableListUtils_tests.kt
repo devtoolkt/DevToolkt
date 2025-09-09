@@ -5,7 +5,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertIs
 
-class MutableListUtilsTests {
+@Suppress("ClassName")
+class mutableListUtils_tests {
     @Test
     fun testRemoveRange_empty() {
         val originalList = listOf(0, 1, 2, 3, 4, 5)
