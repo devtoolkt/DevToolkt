@@ -25,7 +25,7 @@ subprojects {
 
                 freeCompilerArgs.addAll(
                     listOf(
-                        // Consistent `copy` visiblity
+                        // Consistent `copy` visibility
                         // https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-consistent-copy-visibility/
                         "-Xconsistent-data-class-copy-visibility",
 
