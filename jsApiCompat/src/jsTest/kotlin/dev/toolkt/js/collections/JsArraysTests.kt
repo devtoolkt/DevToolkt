@@ -1,12 +1,20 @@
 package dev.toolkt.js.collections
 
+import dev.toolkt.js.JsObjects
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class JsArraysTests {
+    private val arrayConstructor = js("Array")
+
     @Test
     fun testOf() {
         val array = JsArrays.of(1, 2, 3)
+
+        assertEquals(
+            expected = arrayConstructor.prototype,
+            actual = JsObjects.getPrototypeOf(array),
+        )
 
         assertEquals(
             expected = 3,

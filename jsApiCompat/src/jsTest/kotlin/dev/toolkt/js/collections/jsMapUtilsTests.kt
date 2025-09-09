@@ -1,18 +1,24 @@
 package dev.toolkt.js.collections
 
 import dev.toolkt.js.JsObjects
+import kotlin.js.collections.JsArray
 import kotlin.js.collections.JsMap
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class JsMapUtilsTests {
+    private data class ForEachCallbackTuple<K, V>(
+        val value: V,
+        val key: K,
+        val map: JsMap<K, V>,
+    )
+
     private val mapConstructor = js("Map")
 
     @Test
-    fun testJsMapConstructorEmpty() {
+    fun testConstructorEmpty() {
         val map: JsMap<Int, String> = JsMap()
 
         assertEquals(
@@ -31,7 +37,7 @@ class JsMapUtilsTests {
 
         val visitedEntries = mutableListOf<Pair<Int, String>>()
 
-        map.forEach { k, v ->
+        map.forEach { v, k, _ ->
             visitedEntries.add(k to v)
         }
 
@@ -42,8 +48,7 @@ class JsMapUtilsTests {
     }
 
     @Test
-    @Ignore // TODO: Add proper support for JsArrays
-    fun testJsMapConstructorCopying() {
+    fun testConstructorCopying() {
         val originalMap: JsMap<Int, String> = JsMap<Int, String>().apply {
             set(1, "one")
             set(2, "two")
@@ -80,8 +85,8 @@ class JsMapUtilsTests {
 
         val visitedEntries = mutableListOf<Pair<Int, String>>()
 
-        map.forEach { k, v ->
-            visitedEntries.add(k to v)
+        map.forEach { value, key, _ ->
+            visitedEntries.add(key to value)
         }
 
         assertEquals(
@@ -101,8 +106,49 @@ class JsMapUtilsTests {
     }
 
     @Test
-    @Ignore // TODO: Add proper support for JsArrays
-    fun testJsMapSet() {
+    fun testForEach() {
+        val map = JsMap<Int, String>().apply {
+            set(1, "one")
+            set(2, "two")
+            set(3, "three")
+        }
+
+        val visitedEntries = mutableListOf<ForEachCallbackTuple<Int, String>>()
+
+        map.forEach { value, key, map ->
+            visitedEntries.add(
+                ForEachCallbackTuple(
+                    value = value,
+                    key = key,
+                    map = map,
+                )
+            )
+        }
+
+        assertEquals(
+            expected = listOf(
+                ForEachCallbackTuple(
+                    value = "one",
+                    key = 1,
+                    map = map,
+                ),
+                ForEachCallbackTuple(
+                    value = "two",
+                    key = 2,
+                    map = map,
+                ),
+                ForEachCallbackTuple(
+                    value = "three",
+                    key = 3,
+                    map = map,
+                ),
+            ),
+            actual = visitedEntries,
+        )
+    }
+
+    @Test
+    fun testSet() {
         val map: JsMap<Int, String> = JsMap()
 
         map.set(1, "one")
@@ -152,8 +198,8 @@ class JsMapUtilsTests {
 
         val visitedEntries = mutableListOf<Pair<Int, String>>()
 
-        map.forEach { k, v ->
-            visitedEntries.add(k to v)
+        map.forEach { value, key, _ ->
+            visitedEntries.add(key to value)
         }
 
         assertEquals(
@@ -163,13 +209,12 @@ class JsMapUtilsTests {
     }
 
     @Test
-    @Ignore // TODO: Add proper support for JsArrays
-    fun testJsMapDelete() {
-        val map: JsMap<Int, String> = JsMap()
-
-        map.set(1, "one")
-        map.set(2, "two")
-        map.set(3, "three")
+    fun testDelete() {
+        val map = JsMap<Int, String>().apply {
+            set(1, "one")
+            set(2, "two")
+            set(3, "three")
+        }
 
         assertEquals(
             expected = 3,
@@ -208,8 +253,8 @@ class JsMapUtilsTests {
 
         val visitedEntries = mutableListOf<Pair<Int, String>>()
 
-        map.forEach { k, v ->
-            visitedEntries.add(k to v)
+        map.forEach { value, key, _ ->
+            visitedEntries.add(key to value)
         }
 
         assertEquals(
@@ -219,8 +264,7 @@ class JsMapUtilsTests {
     }
 
     @Test
-    @Ignore // TODO: Add proper support for JsArrays
-    fun testJsMapClear() {
+    fun testClear() {
         val map: JsMap<Int, String> = JsMap()
 
         map.set(1, "one")
@@ -253,7 +297,7 @@ class JsMapUtilsTests {
 
         val visitedEntries = mutableListOf<Pair<Int, String>>()
 
-        map.forEach { key, value ->
+        map.forEach { value, key, _ ->
             visitedEntries.add(key to value)
         }
 
