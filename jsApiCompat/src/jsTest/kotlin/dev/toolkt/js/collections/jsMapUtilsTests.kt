@@ -42,7 +42,7 @@ class JsMapUtilsTests {
     }
 
     @Test
-    @Ignore // TODO: Add proper support for JsArray
+    @Ignore // TODO: Add proper support for JsArrays
     fun testJsMapConstructorCopying() {
         val originalMap: JsMap<Int, String> = JsMap<Int, String>().apply {
             set(1, "one")
@@ -101,7 +101,7 @@ class JsMapUtilsTests {
     }
 
     @Test
-    @Ignore // TODO: Add proper support for JsArray
+    @Ignore // TODO: Add proper support for JsArrays
     fun testJsMapSet() {
         val map: JsMap<Int, String> = JsMap()
 
@@ -163,7 +163,7 @@ class JsMapUtilsTests {
     }
 
     @Test
-    @Ignore // TODO: Add proper support for JsArray
+    @Ignore // TODO: Add proper support for JsArrays
     fun testJsMapDelete() {
         val map: JsMap<Int, String> = JsMap()
 
@@ -219,7 +219,7 @@ class JsMapUtilsTests {
     }
 
     @Test
-    @Ignore // TODO: Add proper support for JsArray
+    @Ignore // TODO: Add proper support for JsArrays
     fun testJsMapClear() {
         val map: JsMap<Int, String> = JsMap()
 

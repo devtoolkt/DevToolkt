@@ -4,21 +4,6 @@ import kotlin.js.collections.JsArray
 import kotlin.js.collections.JsReadonlyArray
 
 /**
- * Creates [Array] objects.
- *
- * @param elements A JavaScript array is initialized with the given elements, except in the case where a single argument
- * is passed to the Array constructor and that argument is a number (see the arrayLength parameter below). Note that
- * this special case only applies to JavaScript arrays created with the Array constructor, not array literals created
- * with the square bracket syntax.
- */
-@Deprecated("This constructor is cursed")
-fun <E> JsArray(
-    vararg elements: E,
-): JsArray<E> = JsArrayImpl(
-    elements = elements,
-)
-
-/**
  * Gets the element at the specified index in the array.
  *
  * @return The element at the specified index, or null if the index is out of bounds.
@@ -79,17 +64,8 @@ fun <E> JsArray<E>.pop(): E? = (this as JsArrayImpl<E>).pop()
 @Suppress("unused")
 @JsName("Array")
 private external class JsArrayImpl<E> : JsArray<E> {
-    /**
-     * This constructor is cursed. See the sample.
-     *
-     * @sample jsArrayImplConstructorSample
-     *
-     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Array#parameters
-     */
-    @Deprecated("This constructor is cursed and should not be used")
-    constructor(
-        vararg elements: E,
-    )
+    // The constructor accepting parameters is cursed and should not be exposed.
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Array#parameters
 
     val length: Int
 
@@ -100,22 +76,4 @@ private external class JsArrayImpl<E> : JsArray<E> {
     fun forEach(
         callback: (E, Int, JsArrayImpl<E>) -> Unit,
     )
-}
-
-@Suppress("unused")
-private fun jsArrayImplConstructorSample() {
-    JsArrayImpl("foo", "bar")
-    // Array [ "foo", "bar" ]
-
-    JsArrayImpl("foo")
-    // Array [ "foo" ]
-
-    JsArrayImpl(2, 3)
-    // Array [ 2, 3 ]
-
-    JsArrayImpl(2)
-    // Array [ <2 empty slots> ]
-
-    JsArrayImpl(-1)
-    // RangeError: invalid array length
 }

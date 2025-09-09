@@ -13,10 +13,11 @@ class JsArrayUtilsTests {
     )
 
     /**
-     * Tests the [kotlin.js.collections.JsArray] constructor
+     * Tests the [kotlin.js.collections.JsArray] constructor. Technically this is an external implementation, but let's
+     * test it to make sure it meets our expectations.
      */
     @Test
-    fun testJsArrayConstructorEmpty() {
+    fun testJsArrayConstructor() {
         val array = JsArray<Int>()
 
         assertEquals(
@@ -30,36 +31,8 @@ class JsArrayUtilsTests {
         )
     }
 
-    /**
-     * Tests the [dev.toolkt.js.collections.JsArray] constructor
-     */
     @Test
-    fun testJsArrayConstructionNonEmpty() {
-        val array = JsArray(1, 2, 3)
-
-        assertEquals(
-            expected = 3,
-            actual = array.length,
-        )
-
-        assertEquals(
-            expected = 1,
-            actual = array[0],
-        )
-
-        assertEquals(
-            expected = 2,
-            actual = array[1],
-        )
-
-        assertEquals(
-            expected = 3,
-            actual = array[2],
-        )
-    }
-
-    @Test
-    fun testPushAndLength() {
+    fun testPush() {
         val array = JsArray<Int>()
 
         assertEquals(
@@ -121,7 +94,7 @@ class JsArrayUtilsTests {
 
     @Test
     fun testForEach() {
-        val array = JsArray("a", "b", "c")
+        val array = JsArrays.of("a", "b", "c")
 
         val result = mutableListOf<ForEachCallbackTuple<String>>()
 
