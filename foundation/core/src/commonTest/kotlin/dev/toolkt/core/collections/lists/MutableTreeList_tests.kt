@@ -9,7 +9,8 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class MutableTreeListTests {
+@Suppress("ClassName")
+class MutableTreeList_tests {
     private enum class Fruit {
         Apple, Raspberry, Banana, Orange, Kiwi, Mango, Pineapple, Strawberry, Watermelon, Grape,
     }

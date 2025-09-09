@@ -7,7 +7,8 @@ import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
-class MutableUniqueListTests {
+@Suppress("ClassName")
+class MutableUniqueList_tests {
     private enum class Fruit {
         Apple, Raspberry, Banana, Orange, Kiwi, Mango, Pineapple, Strawberry, Watermelon, Grape,
     }
