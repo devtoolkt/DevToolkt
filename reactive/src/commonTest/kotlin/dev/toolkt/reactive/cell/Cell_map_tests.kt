@@ -15,10 +15,6 @@ import kotlin.test.assertEquals
 
 @Suppress("ClassName")
 class Cell_map_tests {
-    /**
-     * Set up a simple map cell where an input cell of integers is mapped to a cell of strings.
-     * Stimulating the returned [ReactiveTest] will update the input cell's value.
-     */
     private fun setup(
         initialSourceValue: Int,
     ): Pair<Cell<String>, ReactiveTest<Int>> = ReactiveTest.setup {
