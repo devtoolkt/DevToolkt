@@ -8,17 +8,17 @@ import kotlin.test.assertEquals
 @Suppress("ClassName")
 class EventStream_merge2_tests {
     private data class StimulationEvent(
-        val event1: Int? = null,
-        val event2: Int? = null,
+        val sourceEvent1: Int? = null,
+        val sourceEvent2: Int? = null,
     )
 
     private fun setup(): Pair<EventStream<Int>, ReactiveTest<StimulationEvent>> = ReactiveTest.setup {
-        val inputEventStream1 = extractEventStream(StimulationEvent::event1)
-        val inputEventStream2 = extractEventStream(StimulationEvent::event2)
+        val sourceEventStream1 = extractEventStream(StimulationEvent::sourceEvent1)
+        val sourceEventStream2 = extractEventStream(StimulationEvent::sourceEvent2)
 
         EventStream.merge2(
-            eventStream1 = inputEventStream1,
-            eventStream2 = inputEventStream2,
+            eventStream1 = sourceEventStream1,
+            eventStream2 = sourceEventStream2,
         )
     }
 
@@ -34,7 +34,7 @@ class EventStream_merge2_tests {
 
         reactiveTest.stimulate(
             StimulationEvent(
-                event1 = 10,
+                sourceEvent1 = 10,
             ),
         )
 
@@ -45,7 +45,7 @@ class EventStream_merge2_tests {
 
         reactiveTest.stimulate(
             StimulationEvent(
-                event1 = 11,
+                sourceEvent1 = 11,
             ),
         )
 
@@ -67,7 +67,7 @@ class EventStream_merge2_tests {
 
         reactiveTest.stimulate(
             StimulationEvent(
-                event2 = 20,
+                sourceEvent2 = 20,
             ),
         )
 
@@ -78,7 +78,7 @@ class EventStream_merge2_tests {
 
         reactiveTest.stimulate(
             StimulationEvent(
-                event2 = 21,
+                sourceEvent2 = 21,
             ),
         )
 
@@ -101,8 +101,8 @@ class EventStream_merge2_tests {
         // Emit events from both streams simultaneously
         reactiveTest.stimulate(
             StimulationEvent(
-                event1 = 10,
-                event2 = 20,
+                sourceEvent1 = 10,
+                sourceEvent2 = 20,
             ),
         )
 
@@ -115,8 +115,8 @@ class EventStream_merge2_tests {
         // Emit events from both streams simultaneously (again)
         reactiveTest.stimulate(
             StimulationEvent(
-                event1 = 11,
-                event2 = 21,
+                sourceEvent1 = 11,
+                sourceEvent2 = 21,
             ),
         )
 
@@ -139,14 +139,14 @@ class EventStream_merge2_tests {
 
         reactiveTest.stimulate(
             StimulationEvent(
-                event2 = 21,
+                sourceEvent2 = 21,
             ),
         )
 
         reactiveTest.stimulate(
             StimulationEvent(
-                event1 = 11,
-                event2 = 21,
+                sourceEvent1 = 11,
+                sourceEvent2 = 21,
             ),
         )
 
@@ -156,8 +156,8 @@ class EventStream_merge2_tests {
 
         reactiveTest.stimulate(
             StimulationEvent(
-                event1 = 21,
-                event2 = 31,
+                sourceEvent1 = 21,
+                sourceEvent2 = 31,
             ),
         )
 

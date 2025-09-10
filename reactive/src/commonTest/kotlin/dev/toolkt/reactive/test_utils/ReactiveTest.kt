@@ -12,6 +12,10 @@ class ReactiveTest<StimulationT : Any> {
             TODO()
         }
 
+        fun formEventStream(): EventStream<StimulationEventT> {
+            TODO()
+        }
+
         fun formCell(
             initialValue: StimulationEventT,
         ): Cell<StimulationEventT> {
@@ -30,18 +34,6 @@ class ReactiveTest<StimulationT : Any> {
         fun <StimulationEventT : Any, SystemT : Any> setup(
             block: context(MomentContext) Input<StimulationEventT>.() -> SystemT,
         ): Pair<SystemT, ReactiveTest<StimulationEventT>> {
-            TODO()
-        }
-
-        fun <EventT : Any, SystemT : Any> setupWithSingleInputEventStream(
-            block: context(MomentContext) (EventStream<EventT>) -> SystemT,
-        ): Pair<SystemT, ReactiveTest<EventT>> {
-            TODO()
-        }
-
-        fun <ValueT : Any, SystemT : Any> setupWithSingleInputCell(
-            block: context(MomentContext) (Cell<ValueT>) -> SystemT,
-        ): Pair<SystemT, ReactiveTest<ValueT>> {
             TODO()
         }
     }
