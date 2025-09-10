@@ -19,7 +19,7 @@ class EventStream_take_tests {
     }
 
     @Test
-    fun testTake_negative() {
+    fun test_negative() {
         assertIs<IllegalArgumentException>(
             assertFails {
                 MomentContext.executeExternally {
@@ -30,7 +30,7 @@ class EventStream_take_tests {
     }
 
     @Test
-    fun testTake_0() {
+    fun test_count0() {
         val (takeEventStream, reactiveTest) = setup(
             count = 0,
         )
@@ -55,7 +55,7 @@ class EventStream_take_tests {
     }
 
     @Test
-    fun testTake_1_caught() {
+    fun test_count1_caught() {
         val (takeEventStream, reactiveTest) = setup(
             count = 1,
         )
@@ -86,7 +86,7 @@ class EventStream_take_tests {
     }
 
     @Test
-    fun testTake_1_missed() {
+    fun test_count1_missed() {
         val (takeEventStream, reactiveTest) = setup(
             count = 1,
         )
@@ -111,7 +111,7 @@ class EventStream_take_tests {
     }
 
     @Test
-    fun testTake_few_caughtAll() {
+    fun test_countFew_caughtAll() {
         val (takeEventStream, reactiveTest) = setup(
             count = 3,
         )
@@ -156,7 +156,7 @@ class EventStream_take_tests {
     }
 
     @Test
-    fun testTake_few_caughtSome() {
+    fun test_countFew_caughtSome() {
         val (takeEventStream, reactiveTest) = setup(
             count = 3,
         )
@@ -199,7 +199,7 @@ class EventStream_take_tests {
     }
 
     @Test
-    fun testTake_few_missedAll() {
+    fun test_countFew_missedAll() {
         val (takeEventStream, reactiveTest) = setup(
             count = 2,
         )
@@ -228,7 +228,7 @@ class EventStream_take_tests {
     }
 
     @Test
-    fun testTake_few_cancelled() {
+    fun test_countFew_cancelled() {
         val (takeEventStream, reactiveTest) = setup(
             count = 4,
         )
@@ -268,7 +268,7 @@ class EventStream_take_tests {
     }
 
     @Test
-    fun testTake_few_resubscribed() {
+    fun test_countFew_resubscribed() {
         val (takeEventStream, reactiveTest) = setup(
             count = 5,
         )
