@@ -227,6 +227,7 @@ class Cell_map3_tests {
         newSourceValue1: Int? = null,
         newSourceValue2: Char? = null,
         newSourceValue3: Boolean? = null,
+        expectedValue: String,
     ) {
         val (map3Cell, reactiveSystem) = setup(
             initialSourceValue1 = initialSourceValue1,
@@ -250,12 +251,8 @@ class Cell_map3_tests {
             ),
         )
 
-        val effectiveSourceValue1: Int = newSourceValue1 ?: initialSourceValue1
-        val effectiveSourceValue2: Char = newSourceValue2 ?: initialSourceValue2
-        val effectiveSourceValue3: Boolean = newSourceValue3 ?: initialSourceValue3
-
         assertEquals(
-            expected = listOf("$effectiveSourceValue1:$effectiveSourceValue2:$effectiveSourceValue3"),
+            expected = listOf(expectedValue),
             actual = collectedEvents,
         )
     }
@@ -268,6 +265,7 @@ class Cell_map3_tests {
             initialSourceValue2 = 'A',
             initialSourceValue3 = false,
             newSourceValue1 = 1,
+            expectedValue = "1:A:false",
         )
     }
 
@@ -279,6 +277,7 @@ class Cell_map3_tests {
             initialSourceValue2 = 'A',
             initialSourceValue3 = false,
             newSourceValue1 = 1,
+            expectedValue = "1:A:false",
         )
     }
 
@@ -290,6 +289,7 @@ class Cell_map3_tests {
             initialSourceValue2 = 'X',
             initialSourceValue3 = true,
             newSourceValue2 = 'Y',
+            expectedValue = "10:Y:true",
         )
     }
 
@@ -301,6 +301,7 @@ class Cell_map3_tests {
             initialSourceValue2 = 'X',
             initialSourceValue3 = true,
             newSourceValue2 = 'Y',
+            expectedValue = "10:Y:true",
         )
     }
 
@@ -312,6 +313,7 @@ class Cell_map3_tests {
             initialSourceValue2 = 'Q',
             initialSourceValue3 = false,
             newSourceValue3 = true,
+            expectedValue = "5:Q:true",
         )
     }
 
@@ -323,6 +325,7 @@ class Cell_map3_tests {
             initialSourceValue2 = 'Q',
             initialSourceValue3 = false,
             newSourceValue3 = true,
+            expectedValue = "5:Q:true",
         )
     }
 
