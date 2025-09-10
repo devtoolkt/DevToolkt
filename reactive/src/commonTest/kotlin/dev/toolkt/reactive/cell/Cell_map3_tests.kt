@@ -24,25 +24,25 @@ class Cell_map3_tests {
         initialSourceValue2: Char,
         initialSourceValue3: Boolean,
     ): Pair<Cell<String>, ReactiveTest<Stimulation>> = ReactiveTest.setup {
-        val inputCell1 = extractCell(
+        val sourceCell1 = extractCell(
             initialValue = initialSourceValue1,
             selector = Stimulation::newSourceValue1,
         )
 
-        val inputCell2 = extractCell(
+        val sourceCell2 = extractCell(
             initialValue = initialSourceValue2,
             selector = Stimulation::newSourceValue2,
         )
 
-        val inputCell3 = extractCell(
+        val sourceCell3 = extractCell(
             initialValue = initialSourceValue3,
             selector = Stimulation::newSourceValue3,
         )
 
         Cell.map3(
-            cell1 = inputCell1,
-            cell2 = inputCell2,
-            cell3 = inputCell3,
+            cell1 = sourceCell1,
+            cell2 = sourceCell2,
+            cell3 = sourceCell3,
         ) { value1, value2, value3 ->
             "$value1:$value2:$value3"
         }
@@ -258,7 +258,7 @@ class Cell_map3_tests {
     }
 
     @Test
-    fun test_updatePropagation1_newValues() {
+    fun test_updatePropagation_source1Update_newValues() {
         test_updatePropagation(
             valueEventStreamExtractor = NewValuesExtractor,
             initialSourceValue1 = 0,
@@ -270,7 +270,7 @@ class Cell_map3_tests {
     }
 
     @Test
-    fun test_updatePropagation1_updatedValues() {
+    fun test_updatePropagation_source1Update_updatedValues() {
         test_updatePropagation(
             valueEventStreamExtractor = UpdatedValuesExtractor,
             initialSourceValue1 = 0,
@@ -282,7 +282,7 @@ class Cell_map3_tests {
     }
 
     @Test
-    fun test_updatePropagation2_newValues() {
+    fun test_updatePropagation_source2Update_newValues() {
         test_updatePropagation(
             valueEventStreamExtractor = NewValuesExtractor,
             initialSourceValue1 = 10,
@@ -294,7 +294,7 @@ class Cell_map3_tests {
     }
 
     @Test
-    fun test_updatePropagation2_updatedValues() {
+    fun test_updatePropagation_source2Update_updatedValues() {
         test_updatePropagation(
             valueEventStreamExtractor = UpdatedValuesExtractor,
             initialSourceValue1 = 10,
@@ -306,7 +306,7 @@ class Cell_map3_tests {
     }
 
     @Test
-    fun test_updatePropagation3_newValues() {
+    fun test_updatePropagation_source3Update_newValues() {
         test_updatePropagation(
             valueEventStreamExtractor = NewValuesExtractor,
             initialSourceValue1 = 5,
@@ -318,7 +318,7 @@ class Cell_map3_tests {
     }
 
     @Test
-    fun test_updatePropagation3_updatedValues() {
+    fun test_updatePropagation_source3Update_updatedValues() {
         test_updatePropagation(
             valueEventStreamExtractor = UpdatedValuesExtractor,
             initialSourceValue1 = 5,
