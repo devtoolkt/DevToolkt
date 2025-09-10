@@ -12,8 +12,10 @@ import kotlin.test.assertIs
 class EventStream_take_tests {
     private fun setup(
         count: Int,
-    ): Pair<EventStream<Int>, ReactiveTest<Int>> = ReactiveTest.setupWithSingleInputEventStream { inputEventStream ->
-        inputEventStream.take(count = count)
+    ): Pair<EventStream<Int>, ReactiveTest<Int>> = ReactiveTest.setup {
+        val sourceEventStream = formEventStream()
+
+        sourceEventStream.take(count = count)
     }
 
     @Test

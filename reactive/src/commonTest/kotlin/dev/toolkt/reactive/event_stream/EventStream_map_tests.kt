@@ -8,8 +8,10 @@ import kotlin.test.assertEquals
 @Suppress("ClassName")
 class EventStream_map_tests {
     private fun setup(): Pair<EventStream<String>, ReactiveTest<Int>> =
-        ReactiveTest.setupWithSingleInputEventStream { inputEventStream ->
-            val mapStream = inputEventStream.map {
+        ReactiveTest.setup {
+            val sourceEventStream = formEventStream()
+
+            val mapStream = sourceEventStream.map {
                 it.toString()
             }
 
