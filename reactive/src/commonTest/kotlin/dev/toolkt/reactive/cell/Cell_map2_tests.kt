@@ -18,10 +18,6 @@ class Cell_map2_tests {
         val newSourceValue2: Char? = null,
     )
 
-    /**
-     * Set up a simple mapped cell where an input cell of integers and an input cell
-     * of characters  mapped to a cell of strings.
-     */
     private fun setup(
         initialSourceValue1: Int,
         initialSourceValue2: Char,
