@@ -21,6 +21,10 @@ sealed interface Cell<out ValueT> {
         fun <ValueT> switch(
             outerCell: Cell<Cell<ValueT>>,
         ): Cell<ValueT> = TODO()
+
+        fun <ValueT> divert(
+            outerCell: Cell<EventStream<ValueT>>,
+        ): EventStream<ValueT> = TODO()
     }
 }
 
