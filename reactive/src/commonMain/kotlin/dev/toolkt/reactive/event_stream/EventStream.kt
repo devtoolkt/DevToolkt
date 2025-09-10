@@ -19,13 +19,6 @@ sealed interface EventStream<out EventT> {
             eventStream2: EventStream<EventT>,
             eventStream3: EventStream<EventT>,
         ): EventStream<EventT> = TODO()
-
-        context(pureContext: PureContext) fun <EventT> merge4(
-            eventStream1: EventStream<EventT>,
-            eventStream2: EventStream<EventT>,
-            eventStream3: EventStream<EventT>,
-            eventStream4: EventStream<EventT>,
-        ): EventStream<EventT> = TODO()
     }
 }
 
