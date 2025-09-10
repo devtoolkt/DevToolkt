@@ -175,6 +175,7 @@ class Cell_map2_tests {
         initialSourceValue2: Char,
         newSourceValue1: Int? = null,
         newSourceValue2: Char? = null,
+        expectedValue: String,
     ) {
         val (map2Cell, reactiveSystem) = setup(
             initialSourceValue1 = initialSourceValue1,
@@ -196,11 +197,8 @@ class Cell_map2_tests {
             ),
         )
 
-        val effectiveSourceValue1: Int = newSourceValue1 ?: initialSourceValue1
-        val effectiveSourceValue2: Char = newSourceValue2 ?: initialSourceValue2
-
         assertEquals(
-            expected = listOf("$effectiveSourceValue1:$effectiveSourceValue2"),
+            expected = listOf(expectedValue),
             actual = collectedEvents,
         )
     }
@@ -212,6 +210,7 @@ class Cell_map2_tests {
             initialSourceValue1 = 0,
             initialSourceValue2 = 'A',
             newSourceValue1 = 1,
+            expectedValue = "1:A",
         )
     }
 
@@ -222,6 +221,7 @@ class Cell_map2_tests {
             initialSourceValue1 = 0,
             initialSourceValue2 = 'A',
             newSourceValue1 = 1,
+            expectedValue = "1:A",
         )
     }
 
@@ -232,6 +232,7 @@ class Cell_map2_tests {
             initialSourceValue1 = 10,
             initialSourceValue2 = 'X',
             newSourceValue2 = 'Y',
+            expectedValue = "10:Y",
         )
     }
 
@@ -242,6 +243,7 @@ class Cell_map2_tests {
             initialSourceValue1 = 10,
             initialSourceValue2 = 'X',
             newSourceValue2 = 'Y',
+            expectedValue = "10:Y",
         )
     }
 
