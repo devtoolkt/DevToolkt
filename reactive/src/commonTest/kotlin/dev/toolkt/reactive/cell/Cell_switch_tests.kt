@@ -14,12 +14,12 @@ import kotlin.test.assertEquals
 
 @Suppress("ClassName")
 class Cell_switch_tests {
-    private enum class PathId {
-        Path1, Path2, Path3,
+    private enum class SwitchCaseId {
+        Case1, Case2, Case3,
     }
 
     private data class Stimulation(
-        val newPathId: PathId? = null,
+        val newSwitchCaseId: SwitchCaseId? = null,
         val newInnerValue1: Int? = null,
         val newInnerValue2: Int? = null,
         val newInnerValue3: Int? = null,
@@ -29,7 +29,7 @@ class Cell_switch_tests {
         initialInnerValue1: Int,
         initialInnerValue2: Int,
         initialInnerValue3: Int,
-        initialPathId: PathId,
+        initialSwitchCaseId: SwitchCaseId,
     ): Pair<Cell<Int>, ReactiveTest<Stimulation>> = ReactiveTest.setup {
         val innerCell1 = extractCell(
             initialValue = initialInnerValue1,
@@ -46,16 +46,16 @@ class Cell_switch_tests {
             selector = Stimulation::newInnerValue1,
         )
 
-        val pathId = extractCell(
-            initialValue = initialPathId,
-            selector = Stimulation::newPathId,
+        val switchCaseId = extractCell(
+            initialValue = initialSwitchCaseId,
+            selector = Stimulation::newSwitchCaseId,
         )
 
-        val outerCell = pathId.map { pathIdNow ->
-            when (pathIdNow) {
-                PathId.Path1 -> innerCell1
-                PathId.Path2 -> innerCell2
-                PathId.Path3 -> innerCell3
+        val outerCell = switchCaseId.map { caseIdNow ->
+            when (caseIdNow) {
+                SwitchCaseId.Case1 -> innerCell1
+                SwitchCaseId.Case2 -> innerCell2
+                SwitchCaseId.Case3 -> innerCell3
             }
         }
 
@@ -67,7 +67,7 @@ class Cell_switch_tests {
     @Test
     fun test_sample_initial_deEnergized() {
         val (switchCell, _) = setup(
-            initialPathId = PathId.Path1,
+            initialSwitchCaseId = SwitchCaseId.Case1,
             initialInnerValue1 = 10,
             initialInnerValue2 = 20,
             initialInnerValue3 = 30,
@@ -82,7 +82,7 @@ class Cell_switch_tests {
     @Test
     fun test_sample_initial_energized() {
         val (switchCell, _) = setup(
-            initialPathId = PathId.Path2,
+            initialSwitchCaseId = SwitchCaseId.Case2,
             initialInnerValue1 = 10,
             initialInnerValue2 = 20,
             initialInnerValue3 = 30,
@@ -100,7 +100,7 @@ class Cell_switch_tests {
         shouldEnergize: Boolean,
     ) {
         val (switchCell, reactiveSystem) = setup(
-            initialPathId = PathId.Path1,
+            initialSwitchCaseId = SwitchCaseId.Case1,
             initialInnerValue1 = 10,
             initialInnerValue2 = 20,
             initialInnerValue3 = 30,
@@ -112,7 +112,7 @@ class Cell_switch_tests {
 
         reactiveSystem.stimulate(
             Stimulation(
-                newPathId = PathId.Path3,
+                newSwitchCaseId = SwitchCaseId.Case3,
             ),
         )
 
@@ -140,7 +140,7 @@ class Cell_switch_tests {
         shouldEnergize: Boolean,
     ) {
         val (switchCell, reactiveSystem) = setup(
-            initialPathId = PathId.Path1,
+            initialSwitchCaseId = SwitchCaseId.Case1,
             initialInnerValue1 = 10,
             initialInnerValue2 = 20,
             initialInnerValue3 = 30,
@@ -180,7 +180,7 @@ class Cell_switch_tests {
         shouldEnergize: Boolean,
     ) {
         val (switchCell, reactiveSystem) = setup(
-            initialPathId = PathId.Path2,
+            initialSwitchCaseId = SwitchCaseId.Case2,
             initialInnerValue1 = 10,
             initialInnerValue2 = 20,
             initialInnerValue3 = 30,
@@ -192,7 +192,7 @@ class Cell_switch_tests {
 
         reactiveSystem.stimulate(
             Stimulation(
-                newPathId = PathId.Path1,
+                newSwitchCaseId = SwitchCaseId.Case1,
                 newInnerValue1 = 21,
             ),
         )
@@ -220,7 +220,7 @@ class Cell_switch_tests {
     @Test
     fun test_sample_subsequent_afterDeEnergization() {
         val (switchCell, reactiveSystem) = setup(
-            initialPathId = PathId.Path3,
+            initialSwitchCaseId = SwitchCaseId.Case3,
             initialInnerValue1 = 10,
             initialInnerValue2 = 20,
             initialInnerValue3 = 30,
@@ -230,7 +230,7 @@ class Cell_switch_tests {
 
         reactiveSystem.stimulate(
             Stimulation(
-                newPathId = PathId.Path1,
+                newSwitchCaseId = SwitchCaseId.Case1,
                 newInnerValue1 = 11,
                 newInnerValue2 = 21,
                 newInnerValue3 = 31,
@@ -247,7 +247,7 @@ class Cell_switch_tests {
 
     private fun test_updatePropagation(
         valueEventStreamExtractor: ValueEventStreamExtractor,
-        initialPathId: PathId,
+        initialSwitchCaseId: SwitchCaseId,
         initialInnerValue1: Int,
         initialInnerValue2: Int,
         initialInnerValue3: Int,
@@ -255,7 +255,7 @@ class Cell_switch_tests {
         expectedValue: Int,
     ) {
         val (switchCell, reactiveSystem) = setup(
-            initialPathId = initialPathId,
+            initialSwitchCaseId = initialSwitchCaseId,
             initialInnerValue1 = initialInnerValue1,
             initialInnerValue2 = initialInnerValue2,
             initialInnerValue3 = initialInnerValue3,
@@ -282,12 +282,12 @@ class Cell_switch_tests {
     ) {
         test_updatePropagation(
             valueEventStreamExtractor = valueEventStreamExtractor,
-            initialPathId = PathId.Path1,
+            initialSwitchCaseId = SwitchCaseId.Case1,
             initialInnerValue1 = 10,
             initialInnerValue2 = 20,
             initialInnerValue3 = 30,
             stimulation = Stimulation(
-                newPathId = PathId.Path3,
+                newSwitchCaseId = SwitchCaseId.Case3,
             ),
             expectedValue = 30,
         )
@@ -312,7 +312,7 @@ class Cell_switch_tests {
     ) {
         test_updatePropagation(
             valueEventStreamExtractor = valueEventStreamExtractor,
-            initialPathId = PathId.Path2,
+            initialSwitchCaseId = SwitchCaseId.Case2,
             initialInnerValue1 = 11,
             initialInnerValue2 = 21,
             initialInnerValue3 = 31,
@@ -342,12 +342,12 @@ class Cell_switch_tests {
     ) {
         test_updatePropagation(
             valueEventStreamExtractor = valueEventStreamExtractor,
-            initialPathId = PathId.Path3,
+            initialSwitchCaseId = SwitchCaseId.Case3,
             initialInnerValue1 = 10,
             initialInnerValue2 = 20,
             initialInnerValue3 = 30,
             stimulation = Stimulation(
-                newPathId = PathId.Path1,
+                newSwitchCaseId = SwitchCaseId.Case1,
                 newInnerValue1 = 11,
                 newInnerValue3 = 31,
             ),
@@ -373,7 +373,7 @@ class Cell_switch_tests {
         valueEventStreamExtractor: ValueEventStreamExtractor,
     ) {
         val (switchCell, reactiveSystem) = setup(
-            initialPathId = PathId.Path1,
+            initialSwitchCaseId = SwitchCaseId.Case1,
             initialInnerValue1 = 10,
             initialInnerValue2 = 20,
             initialInnerValue3 = 30,
@@ -389,7 +389,7 @@ class Cell_switch_tests {
 
         reactiveSystem.stimulate(
             Stimulation(
-                newPathId = PathId.Path2,
+                newSwitchCaseId = SwitchCaseId.Case2,
                 newInnerValue1 = 11,
                 newInnerValue2 = 21,
                 newInnerValue3 = 31,
@@ -402,7 +402,7 @@ class Cell_switch_tests {
 
         reactiveSystem.stimulate(
             Stimulation(
-                newPathId = PathId.Path3,
+                newSwitchCaseId = SwitchCaseId.Case3,
                 newInnerValue1 = 12,
                 newInnerValue2 = 22,
                 newInnerValue3 = 32,
