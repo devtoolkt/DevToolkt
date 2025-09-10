@@ -40,6 +40,10 @@ context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.take(
     else -> TODO()
 }
 
+context(momentContext: MomentContext) fun <ValueT> EventStream<ValueT>.hold(
+    initialValue: ValueT,
+): Cell<ValueT> = TODO()
+
 /**
  * Subscribe to this event stream.
  *
