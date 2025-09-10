@@ -23,7 +23,7 @@ class EventStream_merge2_tests {
     }
 
     @Test
-    fun testMerge2_eventPropagation_source1Occurrence() {
+    fun test_eventPropagation_source1Occurrence() {
         val (merge2EventStream, reactiveTest) = setup()
 
         val collectedEvents = mutableListOf<Int>()
@@ -56,7 +56,7 @@ class EventStream_merge2_tests {
     }
 
     @Test
-    fun testMerge2_eventPropagation_source2Occurrence() {
+    fun test_eventPropagation_source2Occurrence() {
         val (merge2EventStream, reactiveTest) = setup()
 
         val collectedEvents = mutableListOf<Int>()
@@ -89,7 +89,7 @@ class EventStream_merge2_tests {
     }
 
     @Test
-    fun testMerge2_eventPropagation_simultaneousOccurrence() {
+    fun test_eventPropagation_simultaneousOccurrence() {
         val (merge2EventStream, reactiveTest) = setup()
 
         val collectedEvents = mutableListOf<Int>()
@@ -128,7 +128,7 @@ class EventStream_merge2_tests {
     }
 
     @Test
-    fun testMerge2_eventPropagation_cancelled() {
+    fun test_eventPropagation_cancelled() {
         val (mapEventStream, reactiveTest) = setup()
 
         val collectedEvents = mutableListOf<Int>()

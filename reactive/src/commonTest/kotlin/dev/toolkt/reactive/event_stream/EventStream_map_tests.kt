@@ -19,7 +19,7 @@ class EventStream_map_tests {
         }
 
     @Test
-    fun testMap_eventPropagation() {
+    fun test_eventPropagation() {
         val (mapEventStream, reactiveTest) = setup()
 
         val collectedEvents = mutableListOf<String>()
@@ -44,7 +44,7 @@ class EventStream_map_tests {
     }
 
     @Test
-    fun testMap_eventPropagation_cancelled() {
+    fun test_eventPropagation_cancelled() {
         val (mapEventStream, reactiveTest) = setup()
 
         val collectedEvents = mutableListOf<String>()
