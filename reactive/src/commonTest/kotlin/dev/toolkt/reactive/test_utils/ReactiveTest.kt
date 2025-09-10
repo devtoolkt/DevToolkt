@@ -1,13 +1,27 @@
 package dev.toolkt.reactive.test_utils
 
 import dev.toolkt.reactive.MomentContext
+import dev.toolkt.reactive.event_stream.Cell
 import dev.toolkt.reactive.event_stream.EventStream
 
-class ReactiveTest<StimulationEventT : Any> {
+class ReactiveTest<StimulationT : Any> {
     class Input<StimulationEventT : Any> {
         fun <EventT : Any> extractEventStream(
             selector: (StimulationEventT) -> EventT?,
         ): EventStream<EventT> {
+            TODO()
+        }
+
+        fun formCell(
+            initialValue: StimulationEventT,
+        ): Cell<StimulationEventT> {
+            TODO()
+        }
+
+        fun <ValueT : Any> extractCell(
+            initialValue: ValueT,
+            selector: (StimulationEventT) -> ValueT?,
+        ): Cell<ValueT> {
             TODO()
         }
     }
@@ -24,10 +38,16 @@ class ReactiveTest<StimulationEventT : Any> {
         ): Pair<SystemT, ReactiveTest<EventT>> {
             TODO()
         }
+
+        fun <ValueT : Any, SystemT : Any> setupWithSingleInputCell(
+            block: context(MomentContext) (Cell<ValueT>) -> SystemT,
+        ): Pair<SystemT, ReactiveTest<ValueT>> {
+            TODO()
+        }
     }
 
     fun stimulate(
-        event: StimulationEventT,
+        event: StimulationT,
     ) {
         TODO()
     }
