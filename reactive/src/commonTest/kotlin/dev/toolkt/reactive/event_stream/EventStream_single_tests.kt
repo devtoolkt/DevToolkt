@@ -13,7 +13,7 @@ class EventStream_single_tests {
         }
 
     @Test
-    fun testSingle_propagation_caught() {
+    fun testSingle_eventPropagation_caught() {
         val (singleEventStream, reactiveTest) = setup()
 
         val collectedEvents = mutableListOf<Int>()
@@ -42,7 +42,7 @@ class EventStream_single_tests {
     }
 
     @Test
-    fun testSingle_propagation_missed() {
+    fun testSingle_eventPropagation_missed() {
         val (singleEventStream, reactiveTest) = setup()
 
         val collectedEvents = mutableListOf<Int>()
@@ -66,7 +66,7 @@ class EventStream_single_tests {
     }
 
     @Test
-    fun testSingle_propagation_cancelled() {
+    fun testSingle_eventPropagation_cancelled() {
         val (singleEventStream, reactiveTest) = setup()
 
         val collectedEvents = mutableListOf<Int>()
@@ -92,7 +92,7 @@ class EventStream_single_tests {
     }
 
     @Test
-    fun testSingle_propagation_resubscribed() {
+    fun testSingle_eventPropagation_resubscribed() {
         val (singleEventStream, reactiveTest) = setup()
 
         val collectedEvents = mutableListOf<Int>()

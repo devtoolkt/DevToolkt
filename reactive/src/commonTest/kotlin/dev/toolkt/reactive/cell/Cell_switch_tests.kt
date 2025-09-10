@@ -176,7 +176,6 @@ class Cell_switch_tests {
         )
     }
 
-
     private fun test_sample_subsequent_afterSimultaneousUpdate(
         shouldEnergize: Boolean,
     ) {
