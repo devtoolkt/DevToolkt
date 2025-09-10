@@ -1,7 +1,6 @@
 package dev.toolkt.reactive.event_stream
 
 import dev.toolkt.reactive.MomentContext
-import dev.toolkt.reactive_v3.cell.vertices.CellVertex
 
 sealed interface Cell<out ValueT> {
     companion object {
