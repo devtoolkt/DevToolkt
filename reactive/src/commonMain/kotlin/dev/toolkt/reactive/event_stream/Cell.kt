@@ -18,14 +18,6 @@ sealed interface Cell<out ValueT> {
             transform: (ValueT1, ValueT2, ValueT3) -> ResultT,
         ): Cell<ResultT> = TODO()
 
-        fun <ValueT1, ValueT2, ValueT3, ValueT4, ResultT> map4(
-            cell1: Cell<ValueT1>,
-            cell2: Cell<ValueT2>,
-            cell3: Cell<ValueT3>,
-            cell4: Cell<ValueT4>,
-            transform: (ValueT1, ValueT2, ValueT3, ValueT4) -> ResultT,
-        ): Cell<ResultT> = TODO()
-
         fun <ValueT> switch(
             outerCell: Cell<Cell<ValueT>>,
         ): Cell<ValueT> = TODO()
