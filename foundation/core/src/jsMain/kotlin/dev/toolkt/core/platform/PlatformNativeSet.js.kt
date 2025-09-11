@@ -27,7 +27,7 @@ actual class PlatformNativeSet<E : Any>(
         }
     }
 
-    actual fun ensureContains(value: E) {
+    actual fun addIfAbsent(value: E) {
         jsSet.add(value)
     }
 
@@ -43,5 +43,7 @@ actual class PlatformNativeSet<E : Any>(
         jsSet.forEach(callback)
     }
 
-    actual fun copy(): PlatformNativeSet<E> = PlatformNativeSet(jsSet = JsSet(jsSet))
+    actual fun copy(): PlatformNativeSet<E> = PlatformNativeSet(
+        jsSet = JsSet(jsSet),
+    )
 }

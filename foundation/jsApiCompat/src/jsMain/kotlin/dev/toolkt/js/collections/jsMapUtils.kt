@@ -16,6 +16,20 @@ fun <K, V> JsReadonlyMap<K, V>.has(
     key: K,
 ): Boolean = (this as JsMapImpl).has(key)
 
+fun <K, V> JsReadonlyMap<K, V>.hasValue(
+    value: V,
+): Boolean {
+    var wasValueFound = false
+
+    forEach { v, _, _ ->
+        if (value == v) {
+            wasValueFound = true
+        }
+    }
+
+    return wasValueFound
+}
+
 fun <K, V> JsReadonlyMap<K, V>.get(
     key: K,
 ): V? = (this as JsMapImpl).get(key)
