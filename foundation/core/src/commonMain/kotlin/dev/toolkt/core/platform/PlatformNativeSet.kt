@@ -14,17 +14,20 @@ expect class PlatformNativeSet<E : Any>() {
     /**
      * Adds the specified value to this set (if it is not already present).
      *
-     * @return `true` if the value was added, `false` if it was already present.
+     * @param value the value to add
+     *
+     * @return `true` if the value was added, `false` if it was already present. If this information is not needed,
+     * consider using [addIfAbsent] for potentially better performance.
      */
     fun add(value: E): Boolean
 
     /**
-     * Ensures that the specified value is present in this set. If the value is
-     * not present, it will be added.
+     * Adds the specified value to this set (if it is not already present). Unlike [add], there's no way to know if the
+     * value was actually added. This method might have slightly better performance than [add].
      *
-     * @param value the value to ensure is present in the set.
+     * @param value the value to add
      */
-    fun ensureContains(value: E)
+    fun addIfAbsent(value: E)
 
     /**
      * Removes the specified value from this set (if it is present).

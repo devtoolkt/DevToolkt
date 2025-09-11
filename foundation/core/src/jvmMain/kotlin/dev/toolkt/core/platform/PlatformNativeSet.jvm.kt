@@ -1,16 +1,18 @@
 package dev.toolkt.core.platform
 
 actual class PlatformNativeSet<E : Any>(
-    private val mutableSet: MutableSet<E> = mutableSetOf<E>(),
+    private val mutableSet: MutableSet<E>,
 ) {
-    actual constructor() : this(mutableSet = mutableSetOf<E>())
+    actual constructor() : this(
+        mutableSet = mutableSetOf<E>(),
+    )
 
     actual val size: Int
         get() = mutableSet.size
 
     actual fun add(value: E): Boolean = mutableSet.add(value)
 
-    actual fun ensureContains(value: E) {
+    actual fun addIfAbsent(value: E) {
         mutableSet.add(value)
     }
 
