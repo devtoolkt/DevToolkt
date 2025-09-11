@@ -78,5 +78,3 @@ fun <E : Any> PlatformNativeSet<E>.addAll(
         add(element)
     }
 }
-
-fun <E : Any> platformNativeSetOf(): PlatformNativeSet<E> = PlatformNativeSet()
