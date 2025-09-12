@@ -3,17 +3,17 @@ package dev.toolkt.reactive
 class Transaction private constructor() {
     abstract class PreparationContext {
         abstract fun enqueueForProcessing(
-            vertex: Vertex,
+            vertex: DependentVertex,
         )
 
         abstract fun enqueueForPostProcessing(
-            vertex: Vertex,
+            vertex: DependentVertex,
         )
     }
 
     abstract class ProcessingContext {
         abstract fun enqueueForPostProcessing(
-            processedVertex: Vertex,
+            processedVertex: DependentVertex,
         )
     }
 
@@ -23,22 +23,22 @@ class Transaction private constructor() {
 
     data object MutationContext
 
-    data object ResettingContext
+    data object StabilizationContext
 
     companion object {
         fun execute(
-            sourceVertex: Vertex,
+            sourceVertex: SourceVertex,
         ) {
             Transaction().apply {
                 val processingContext = object : ProcessingContext() {
                     override fun enqueueForPostProcessing(
-                        processedVertex: Vertex,
+                        processedVertex: DependentVertex,
                     ) {
                         this@apply.enqueueForPostProcessing(processedVertex = processedVertex)
                     }
                 }
 
-                sourceVertex.ensureProcessed(
+                sourceVertex.process(
                     processingContext = processingContext,
                 )
 
@@ -47,10 +47,10 @@ class Transaction private constructor() {
         }
     }
 
-    private val processedVertices = mutableListOf<Vertex>()
+    private val processedVertices = mutableListOf<DependentVertex>()
 
     private fun enqueueForPostProcessing(
-        processedVertex: Vertex,
+        processedVertex: DependentVertex,
     ) {
         processedVertices.add(processedVertex)
     }
@@ -72,7 +72,7 @@ class Transaction private constructor() {
             )
 
             processedVertex.stabilize(
-                resettingContext = ResettingContext,
+                stabilizationContext = StabilizationContext,
             )
         }
     }
