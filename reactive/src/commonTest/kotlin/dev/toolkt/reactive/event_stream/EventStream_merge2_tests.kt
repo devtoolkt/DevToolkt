@@ -15,6 +15,7 @@ class EventStream_merge2_tests {
     )
 
     private fun setup(): Pair<EventStream<Int>, ReactiveTest<StimulationEvent>> = ReactiveTest.setup {
+        // TODO: Add a test for a case where both sources are the same EventStream object
         val sourceEventStream1 = extractEventStream(StimulationEvent::sourceEvent1)
         val sourceEventStream2 = extractEventStream(StimulationEvent::sourceEvent2)
 

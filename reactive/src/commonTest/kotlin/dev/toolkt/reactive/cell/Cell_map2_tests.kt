@@ -29,6 +29,7 @@ class Cell_map2_tests {
             selector = Stimulation::newSourceValue1,
         )
 
+        // TODO: Add a test for a case where both sources are the same Cell object
         val sourceCell2 = extractCell(
             initialValue = initialSourceValue2,
             selector = Stimulation::newSourceValue2,
