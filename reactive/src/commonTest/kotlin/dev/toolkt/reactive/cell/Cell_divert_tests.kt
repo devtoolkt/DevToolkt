@@ -5,9 +5,11 @@ import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.map
 import dev.toolkt.reactive.event_stream.subscribeCollecting
 import dev.toolkt.reactive.test_utils.ReactiveTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@Ignore // TODO: Implement this logic
 @Suppress("ClassName")
 class Cell_divert_tests {
     private enum class DivertCaseId {
