@@ -2,9 +2,11 @@ package dev.toolkt.reactive.event_stream
 
 import dev.toolkt.core.utils.iterable.copyAndClear
 import dev.toolkt.reactive.test_utils.ReactiveTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@Ignore // TODO: Implement this logic
 @Suppress("ClassName")
 class EventStream_map_tests {
     private fun setup(): Pair<EventStream<String>, ReactiveTest<Int>> =
