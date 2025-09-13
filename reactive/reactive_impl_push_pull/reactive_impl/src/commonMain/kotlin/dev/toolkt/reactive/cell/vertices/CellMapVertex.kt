@@ -3,24 +3,19 @@ package dev.toolkt.reactive.cell.vertices
 import dev.toolkt.reactive.Transaction
 
 class CellMapVertex<SourceValueT, TransformedValueT>(
-    private val sourceCellVertex: BaseCellVertex<SourceValueT>,
+    private val sourceCellVertex: PropagativeCellVertex<SourceValueT>,
     private val transform: (SourceValueT) -> TransformedValueT,
 ) : StatelessCellVertex<TransformedValueT>() {
-    override fun process(
+    override fun computeUpdate(
         processingContext: Transaction.ProcessingContext,
-    ) {
-        val sourceUpdate = sourceCellVertex.fetchVolatileUpdate(
+    ): CellVertex.Update<TransformedValueT>? {
+        val sourceUpdate = sourceCellVertex.pullUpdate(
             processingContext = processingContext,
         )
 
-        val computedUpdate = sourceUpdate?.map(transform)
-
-        if (computedUpdate != null) {
-            cacheVolatileUpdate(
-                processingContext = processingContext,
-                update = computedUpdate,
-            )
-        }
+        return sourceUpdate?.map(
+            transform = transform,
+        )
     }
 
     override fun activate(
@@ -40,5 +35,4 @@ class CellMapVertex<SourceValueT, TransformedValueT>(
             vertex = this,
         )
     }
-
 }

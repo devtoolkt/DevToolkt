@@ -1,30 +1,12 @@
 package dev.toolkt.reactive.cell.vertices
 
-import dev.toolkt.reactive.DependentVertex
+import dev.toolkt.reactive.PropagativeVertex
 import dev.toolkt.reactive.Transaction
-import kotlin.jvm.JvmInline
+import dev.toolkt.reactive.cell.vertices.CellVertex.Update
 
-abstract class BaseCellVertex<ValueT>() : DependentVertex(), CellVertex<ValueT> {
-    @JvmInline
-    value class Update<ValueT>(
-        val newValue: ValueT,
-    ) {
-        fun <TransformedValueT> map(
-            transform: (ValueT) -> TransformedValueT,
-        ): Update<TransformedValueT> = Update(
-            newValue = transform(newValue),
-        )
-    }
-
-    final override fun invokeEffects(
-        mutationContext: Transaction.MutationContext,
-    ) {
-        // Cell vertices do not have external side effects
-    }
-
-    final override fun stabilize(
+abstract class PropagativeCellVertex<ValueT>() : PropagativeVertex(), CellVertex<ValueT> {
+    final override fun stabilizeState(
         stabilizationContext: Transaction.StabilizationContext,
-        tag: SpecializedVertexTag,
     ) {
         storedVolatileUpdate?.let { update ->
             persistNewValue(
@@ -52,4 +34,10 @@ abstract class BaseCellVertex<ValueT>() : DependentVertex(), CellVertex<ValueT> 
     abstract fun clear(
         stabilizationContext: Transaction.StabilizationContext,
     )
+
+    /**
+     * Returns a currently stored volatile update of this cell. This doesn't trigger processing, so it should be used
+     * with care.
+     */
+    protected abstract val storedVolatileUpdate: Update<ValueT>?
 }

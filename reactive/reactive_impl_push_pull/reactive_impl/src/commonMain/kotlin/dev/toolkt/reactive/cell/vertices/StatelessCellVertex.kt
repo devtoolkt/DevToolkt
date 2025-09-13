@@ -1,14 +1,15 @@
 package dev.toolkt.reactive.cell.vertices
 
 import dev.toolkt.reactive.Transaction
+import dev.toolkt.reactive.cell.vertices.CellVertex.Update
 
-abstract class StatelessCellVertex<ValueT> : BaseCellVertex<ValueT>() {
+abstract class StatelessCellVertex<ValueT> : PropagativeCellVertex<ValueT>() {
     private var cachedVolatileUpdate: Update<ValueT>? = null
 
-    final override fun fetchVolatileUpdate(
+    final override fun pullUpdate(
         processingContext: Transaction.ProcessingContext,
     ): Update<ValueT>? {
-        ensureProcessed(
+        process(
             processingContext = processingContext,
         )
 
@@ -17,6 +18,16 @@ abstract class StatelessCellVertex<ValueT> : BaseCellVertex<ValueT>() {
 
     final override val storedVolatileUpdate: Update<ValueT>?
         get() = cachedVolatileUpdate
+
+    final override fun prepare(
+        processingContext: Transaction.ProcessingContext,
+    ): Boolean {
+        val computedUpdate = computeUpdate(processingContext)
+
+        cachedVolatileUpdate = computedUpdate
+
+        return computedUpdate != null
+    }
 
     final override fun persistNewValue(
         stabilizationContext: Transaction.StabilizationContext,
@@ -31,14 +42,7 @@ abstract class StatelessCellVertex<ValueT> : BaseCellVertex<ValueT>() {
         cachedVolatileUpdate = null
     }
 
-    protected fun cacheVolatileUpdate(
-        @Suppress("unused") processingContext: Transaction.ProcessingContext,
-        update: Update<ValueT>,
-    ) {
-        if (cachedVolatileUpdate != null) {
-            throw IllegalStateException("There is already a pending update $cachedVolatileUpdate")
-        }
-
-        cachedVolatileUpdate = update
-    }
+    protected abstract fun computeUpdate(
+        processingContext: Transaction.ProcessingContext,
+    ): Update<ValueT>?
 }
