@@ -1,19 +1,25 @@
 package dev.toolkt.reactive
 
+import dev.toolkt.core.utils.iterable.append
+
 class Transaction private constructor() {
     abstract class PreparationContext {
         abstract fun enqueueForProcessing(
-            vertex: DependentVertex,
+            vertex: DynamicVertex,
         )
 
         abstract fun enqueueForPostProcessing(
-            vertex: DependentVertex,
+            vertex: DynamicVertex,
         )
     }
 
     abstract class ProcessingContext {
+        abstract fun enqueueForProcessing(
+            dependentVertex: DynamicVertex,
+        )
+
         abstract fun enqueueForPostProcessing(
-            processedVertex: DependentVertex,
+            processedVertex: DynamicVertex,
         )
     }
 
@@ -27,30 +33,44 @@ class Transaction private constructor() {
 
     companion object {
         fun execute(
-            sourceVertex: SourceVertex,
+            sourceVertex: DynamicVertex,
         ) {
             Transaction().apply {
+                val verticesEnqueuedForProcessing = ArrayDeque(
+                    elements = listOf(sourceVertex),
+                )
+
                 val processingContext = object : ProcessingContext() {
+                    override fun enqueueForProcessing(
+                        dependentVertex: DynamicVertex,
+                    ) {
+                        verticesEnqueuedForProcessing.addLast(dependentVertex)
+                    }
+
                     override fun enqueueForPostProcessing(
-                        processedVertex: DependentVertex,
+                        processedVertex: DynamicVertex,
                     ) {
                         this@apply.enqueueForPostProcessing(processedVertex = processedVertex)
                     }
                 }
 
-                sourceVertex.process(
-                    processingContext = processingContext,
-                )
+                while (verticesEnqueuedForProcessing.isNotEmpty()) {
+                    val vertexToProcess = verticesEnqueuedForProcessing.removeFirst()
+
+                    vertexToProcess.process(
+                        processingContext = processingContext,
+                    )
+                }
 
                 postProcess()
             }
         }
     }
 
-    private val processedVertices = mutableListOf<DependentVertex>()
+    private val processedVertices = mutableListOf<DynamicVertex>()
 
     private fun enqueueForPostProcessing(
-        processedVertex: DependentVertex,
+        processedVertex: DynamicVertex,
     ) {
         processedVertices.add(processedVertex)
     }

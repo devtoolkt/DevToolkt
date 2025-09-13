@@ -3,31 +3,43 @@ package dev.toolkt.reactive
 import dev.toolkt.core.platform.PlatformNativeMap
 import dev.toolkt.core.platform.PlatformNativeSet
 
-abstract class DependencyVertex : Vertex {
-    private enum class Request {
+abstract class PropagativeVertex : OperativeVertex() {
+    private enum class RegistrationRequest {
         /**
-         * Register the dependent vertex
+         * RegistrationRequest to register the dependent vertex
          */
         Register,
 
         /**
-         * Unregister the dependent vertex
+         * RegistrationRequest to unregister the dependent vertex
          */
         Unregister,
     }
 
-    protected data object SpecificVertexTag
+    private val stableDependents = PlatformNativeSet<DynamicVertex>()
 
-    private val stableDependents = PlatformNativeSet<DependentVertex>()
+    private val volatileRegistrationRequests = PlatformNativeMap<DynamicVertex, RegistrationRequest>()
 
-    private val volatileRequests = PlatformNativeMap<DependentVertex, Request>()
-
-    protected fun processDependents(
+    override fun operate(
         processingContext: Transaction.ProcessingContext,
     ) {
-        stableDependents.forEach { vertex ->
-            vertex.ensureProcessed(
+        val shouldPropagate = prepare(
+            processingContext = processingContext,
+        )
+
+        if (shouldPropagate) {
+            propagate(
                 processingContext = processingContext,
+            )
+        }
+    }
+
+    private fun propagate(
+        processingContext: Transaction.ProcessingContext,
+    ) {
+        stableDependents.forEach { dependentVertex ->
+            processingContext.enqueueForProcessing(
+                dependentVertex = dependentVertex,
             )
         }
     }
@@ -43,19 +55,19 @@ abstract class DependencyVertex : Vertex {
      */
     final override fun registerDependent(
         @Suppress("unused") processingContext: Transaction.ProcessingContext,
-        vertex: DependentVertex,
+        vertex: DynamicVertex,
     ) {
         if (stableDependents.contains(vertex)) {
-            throw IllegalArgumentException("DependentVertex $vertex is already a stable dependent of $this")
+            throw IllegalArgumentException("Vertex $vertex is already a stable dependent of $this")
         }
 
-        val previousRequest = volatileRequests.put(
+        val previousRegistrationRequest = volatileRegistrationRequests.put(
             key = vertex,
-            value = Request.Register,
+            value = RegistrationRequest.Register,
         )
 
-        if (previousRequest != null) {
-            throw IllegalStateException("There is already a pending command ($previousRequest) for vertex $vertex")
+        if (previousRegistrationRequest != null) {
+            throw IllegalStateException("There is already a pending command ($previousRegistrationRequest) for vertex $vertex")
         }
     }
 
@@ -70,30 +82,30 @@ abstract class DependencyVertex : Vertex {
      */
     final override fun unregisterDependent(
         @Suppress("unused") processingContext: Transaction.ProcessingContext,
-        vertex: DependentVertex,
+        vertex: DynamicVertex,
     ) {
         if (!stableDependents.contains(vertex)) {
-            throw IllegalArgumentException("DependentVertex $vertex is not a stable dependent of $this")
+            throw IllegalArgumentException("Vertex $vertex is not a stable dependent of $this")
         }
 
-        val previousRequest = volatileRequests.put(
+        val previousRegistrationRequest = volatileRegistrationRequests.put(
             key = vertex,
-            value = Request.Unregister,
+            value = RegistrationRequest.Unregister,
         )
 
-        if (previousRequest != null) {
-            throw IllegalStateException("There is already a pending command ($previousRequest) for vertex $vertex")
+        if (previousRegistrationRequest != null) {
+            throw IllegalStateException("There is already a pending command ($previousRegistrationRequest) for vertex $vertex")
         }
     }
 
     /**
      * Adds all the registered vertices as stable dependents.
      */
-    internal fun expand(
+    override fun expand(
         expansionContext: Transaction.ExpansionContext,
     ) {
-        volatileRequests.forEach { vertex, command ->
-            if (command == Request.Register) {
+        volatileRegistrationRequests.forEach { vertex, request ->
+            if (request == RegistrationRequest.Register) {
                 addDependent(
                     expansionContext = expansionContext,
                     vertex = vertex,
@@ -105,11 +117,11 @@ abstract class DependencyVertex : Vertex {
     /**
      * Removes all the unregistered vertices from the stable dependents.
      */
-    internal fun shrink(
+    override fun shrink(
         shrinkageContext: Transaction.ShrinkageContext,
     ) {
-        volatileRequests.forEach { vertex, command ->
-            if (command == Request.Unregister) {
+        volatileRegistrationRequests.forEach { vertex, request ->
+            if (request == RegistrationRequest.Unregister) {
                 removeDependent(
                     shrinkageContext = shrinkageContext,
                     vertex = vertex,
@@ -123,12 +135,12 @@ abstract class DependencyVertex : Vertex {
      */
     final override fun addDependent(
         expansionContext: Transaction.ExpansionContext,
-        vertex: DependentVertex,
+        vertex: DynamicVertex,
     ) {
         val wasAdded = stableDependents.add(vertex)
 
         if (!wasAdded) {
-            throw IllegalStateException("DependentVertex $vertex is already a dependent of $this")
+            throw IllegalStateException("Vertex $vertex is already a dependent of $this")
         }
 
         if (stableDependents.size == 1) {
@@ -143,12 +155,12 @@ abstract class DependencyVertex : Vertex {
      */
     final override fun removeDependent(
         shrinkageContext: Transaction.ShrinkageContext,
-        vertex: DependentVertex,
+        vertex: DynamicVertex,
     ) {
         val wasRemoved = stableDependents.remove(vertex)
 
         if (!wasRemoved) {
-            throw IllegalStateException("DependentVertex $vertex is not a dependent of $this")
+            throw IllegalStateException("Vertex $vertex is not a dependent of $this")
         }
 
         if (stableDependents.size == 0) {
@@ -158,20 +170,34 @@ abstract class DependencyVertex : Vertex {
         }
     }
 
+    final override fun invokeEffects(
+        mutationContext: Transaction.MutationContext,
+    ) {
+        // Dynamic dependency vertices don't have side effects
+    }
+
     /**
      * - Update the stable state by merging in the volatile state
      * - Clear the volatile state or replace it with the follow-up volatile state
      */
-    fun stabilize(
+    final override fun stabilize(
         stabilizationContext: Transaction.StabilizationContext,
     ) {
-        volatileRequests.clear()
+        volatileRegistrationRequests.clear()
 
-        stabilize(
+        stabilizeState(
             stabilizationContext = stabilizationContext,
-            tag = SpecificVertexTag,
         )
     }
+
+    /**
+     * Prepare and cache the volatile state (if necessary)
+     *
+     * @return true if any meaningful volatile state was produced, false otherwise
+     */
+    protected abstract fun prepare(
+        processingContext: Transaction.ProcessingContext,
+    ): Boolean
 
     /**
      * Add this vertex as a dependent to the upstream vertices
@@ -191,8 +217,7 @@ abstract class DependencyVertex : Vertex {
      * - Update the stable vertex-specific state by merging in the volatile state
      * - Clear the vertex-specific volatile state
      */
-    protected abstract fun stabilize(
+    protected abstract fun stabilizeState(
         stabilizationContext: Transaction.StabilizationContext,
-        tag: SpecificVertexTag,
     )
 }

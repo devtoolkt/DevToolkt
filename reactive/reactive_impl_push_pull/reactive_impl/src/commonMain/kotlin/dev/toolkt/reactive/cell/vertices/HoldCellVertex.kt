@@ -3,62 +3,47 @@ package dev.toolkt.reactive.cell.vertices
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.vertices.CellVertex.Update
 
-class MutableCellVertex<ValueT>(
+class HoldCellVertex<ValueT>(
     initialValue: ValueT,
 ) : StatefulCellVertex<ValueT>() {
-    private var mutableStableValue: ValueT = initialValue
-
-    private var preparedVolatileUpdate: Update<ValueT>? = null
+    private var heldStableValue: ValueT = initialValue
 
     override fun pullUpdate(
         processingContext: Transaction.ProcessingContext,
-    ): Update<ValueT>? = preparedVolatileUpdate
+    ): Update<ValueT>? = TODO()
 
     override val storedVolatileUpdate: Update<ValueT>?
-        get() = preparedVolatileUpdate
+        get() = TODO()
 
     override fun prepare(
         processingContext: Transaction.ProcessingContext,
     ): Boolean {
-        // Mutable cell vertices are pre-prepared
 
-        return preparedVolatileUpdate != null
-    }
-
-    fun prepareNewValue(
-        newValue: ValueT,
-    ) {
-        if (preparedVolatileUpdate != null) {
-            throw IllegalStateException("There is already a pending prepared update $preparedVolatileUpdate")
-        }
-
-        preparedVolatileUpdate = Update(
-            newValue = newValue,
-        )
+        TODO()
     }
 
     override fun persistNewValue(
         stabilizationContext: Transaction.StabilizationContext,
         newValue: ValueT,
     ) {
-        mutableStableValue = newValue
+        heldStableValue = newValue
     }
 
     override fun activate(
         expansionContext: Transaction.ExpansionContext,
     ) {
-        // The mutable cell vertex doesn't have dependencies
+        TODO()
     }
 
     override fun deactivate(
         shrinkageContext: Transaction.ShrinkageContext,
     ) {
-        // The mutable cell vertex doesn't have dependencies
+        TODO()
     }
 
+    // Thought: Move `clear` to PropagativeCellVertex ?
     override fun clear(
         stabilizationContext: Transaction.StabilizationContext,
     ) {
-        preparedVolatileUpdate = null
     }
 }
