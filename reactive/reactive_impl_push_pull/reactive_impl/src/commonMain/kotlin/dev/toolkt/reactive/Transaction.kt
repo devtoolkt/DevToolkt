@@ -1,7 +1,5 @@
 package dev.toolkt.reactive
 
-import dev.toolkt.core.utils.iterable.append
-
 class Transaction private constructor() {
     abstract class PreparationContext {
         abstract fun enqueueForProcessing(
@@ -19,7 +17,7 @@ class Transaction private constructor() {
         )
 
         abstract fun enqueueForPostProcessing(
-            processedVertex: DynamicVertex,
+            vertex: DynamicVertex,
         )
     }
 
@@ -32,38 +30,38 @@ class Transaction private constructor() {
     data object StabilizationContext
 
     companion object {
-        fun execute(
-            sourceVertex: DynamicVertex,
-        ) {
-            Transaction().apply {
-                val verticesEnqueuedForProcessing = ArrayDeque(
-                    elements = listOf(sourceVertex),
-                )
+        fun <ResultT> execute(
+            block: (ProcessingContext) -> ResultT,
+        ): ResultT = with(Transaction()) {
+            val verticesEnqueuedForProcessing = ArrayDeque<DynamicVertex>()
 
-                val processingContext = object : ProcessingContext() {
-                    override fun enqueueForProcessing(
-                        dependentVertex: DynamicVertex,
-                    ) {
-                        verticesEnqueuedForProcessing.addLast(dependentVertex)
-                    }
-
-                    override fun enqueueForPostProcessing(
-                        processedVertex: DynamicVertex,
-                    ) {
-                        this@apply.enqueueForPostProcessing(processedVertex = processedVertex)
-                    }
+            val processingContext = object : ProcessingContext() {
+                override fun enqueueForProcessing(
+                    dependentVertex: DynamicVertex,
+                ) {
+                    verticesEnqueuedForProcessing.addLast(dependentVertex)
                 }
 
-                while (verticesEnqueuedForProcessing.isNotEmpty()) {
-                    val vertexToProcess = verticesEnqueuedForProcessing.removeFirst()
-
-                    vertexToProcess.process(
-                        processingContext = processingContext,
-                    )
+                override fun enqueueForPostProcessing(
+                    vertex: DynamicVertex,
+                ) {
+                    this@with.enqueueForPostProcessing(processedVertex = vertex)
                 }
-
-                postProcess()
             }
+
+            val result = block(processingContext)
+
+            while (verticesEnqueuedForProcessing.isNotEmpty()) {
+                val vertexToProcess = verticesEnqueuedForProcessing.removeFirst()
+
+                vertexToProcess.processDynamic(
+                    processingContext = processingContext,
+                )
+            }
+
+            postProcess()
+
+            return@with result
         }
     }
 
@@ -91,7 +89,7 @@ class Transaction private constructor() {
                 shrinkageContext = ShrinkageContext,
             )
 
-            processedVertex.stabilize(
+            processedVertex.stabilizeDynamic(
                 stabilizationContext = StabilizationContext,
             )
         }

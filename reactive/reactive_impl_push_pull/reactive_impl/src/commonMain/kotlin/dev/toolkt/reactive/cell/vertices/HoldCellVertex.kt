@@ -2,48 +2,62 @@ package dev.toolkt.reactive.cell.vertices
 
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.vertices.CellVertex.Update
+import dev.toolkt.reactive.globalFinalizationRegistry
 
-class HoldCellVertex<ValueT>(
+class HoldCellVertex<ValueT> private constructor(
+    private val sourceEventStreamVertex: DynamicEventStreamVertex<ValueT>,
     initialValue: ValueT,
 ) : StatefulCellVertex<ValueT>() {
+    companion object {
+        fun <ValueT> construct(
+            processingContext: Transaction.ProcessingContext,
+            sourceEventStreamVertex: DynamicEventStreamVertex<ValueT>,
+            initialValue: ValueT,
+        ): HoldCellVertex<ValueT> = HoldCellVertex(
+            sourceEventStreamVertex = sourceEventStreamVertex,
+            initialValue = initialValue,
+        ).apply {
+            sourceEventStreamVertex.registerDependent(
+                processingContext = processingContext,
+                vertex = this,
+            )
+
+            processDynamic(
+                processingContext = processingContext,
+            )
+
+            // TODO: Figure out weak dependents!
+            globalFinalizationRegistry.register(
+                target = this,
+            ) {
+            }
+        }
+    }
+
     private var heldStableValue: ValueT = initialValue
-
-    override fun pullUpdate(
-        processingContext: Transaction.ProcessingContext,
-    ): Update<ValueT>? = TODO()
-
-    override val storedVolatileUpdate: Update<ValueT>?
-        get() = TODO()
 
     override fun prepare(
         processingContext: Transaction.ProcessingContext,
-    ): Boolean {
+    ): Update<ValueT>? {
+        val sourceOccurrence = sourceEventStreamVertex.pullOccurrence(
+            processingContext = processingContext,
+        ) ?: return null
 
-        TODO()
+        return Update(
+            newValue = sourceOccurrence.event,
+        )
     }
 
-    override fun persistNewValue(
+    override fun stabilizeState(
         stabilizationContext: Transaction.StabilizationContext,
-        newValue: ValueT,
+        message: Update<ValueT>?,
     ) {
-        heldStableValue = newValue
+        message?.let { update ->
+            heldStableValue = update.newValue
+        }
     }
 
-    override fun activate(
-        expansionContext: Transaction.ExpansionContext,
-    ) {
-        TODO()
-    }
-
-    override fun deactivate(
-        shrinkageContext: Transaction.ShrinkageContext,
-    ) {
-        TODO()
-    }
-
-    // Thought: Move `clear` to PropagativeCellVertex ?
-    override fun clear(
-        stabilizationContext: Transaction.StabilizationContext,
-    ) {
-    }
+    override fun pullStableValue(
+        processingContext: Transaction.ProcessingContext,
+    ): ValueT = heldStableValue
 }

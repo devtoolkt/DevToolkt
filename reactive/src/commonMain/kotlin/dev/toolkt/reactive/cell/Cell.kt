@@ -1,6 +1,10 @@
-package dev.toolkt.reactive.event_stream
+package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
+import dev.toolkt.reactive.cell.vertices.CellMapVertex
+import dev.toolkt.reactive.event_stream.EventStream
+import dev.toolkt.reactive.event_stream.OperatedEventStream
+import dev.toolkt.reactive.event_stream.vertices.UpdatedValuesEventStreamVertex
 
 sealed interface Cell<out ValueT> {
     companion object {
@@ -31,14 +35,32 @@ sealed interface Cell<out ValueT> {
     }
 }
 
-context(momentContext: MomentContext) fun <ValueT> Cell<ValueT>.sample(): ValueT = TODO()
+context(momentContext: MomentContext) fun <ValueT> Cell<ValueT>.sample(): ValueT = when (this) {
+    is BaseOperatedCell -> vertex.pullStableValue(
+        processingContext = momentContext.processingContext,
+    )
+}
 
 fun <ValueT, TransformedValueT> Cell<ValueT>.map(
     transform: (ValueT) -> TransformedValueT,
-): Cell<TransformedValueT> = TODO()
+): Cell<TransformedValueT> = when (this) {
+    is BaseOperatedCell -> OperatedCell(
+        CellMapVertex(
+            sourceCellVertex = this.vertex,
+            transform,
+        ),
+    )
+}
 
+// TODO: Optimize this
 val <ValueT> Cell<ValueT>.newValues: EventStream<ValueT>
-    get() = TODO()
+    get() = updatedValues
 
 val <ValueT> Cell<ValueT>.updatedValues: EventStream<ValueT>
-    get() = TODO()
+    get() = when (this) {
+        is BaseOperatedCell -> OperatedEventStream(
+            vertex = UpdatedValuesEventStreamVertex(
+                sourceCellVertex = this.vertex,
+            )
+        )
+    }

@@ -3,7 +3,7 @@ package dev.toolkt.reactive
 import dev.toolkt.core.platform.PlatformNativeMap
 import dev.toolkt.core.platform.PlatformNativeSet
 
-abstract class PropagativeVertex : OperativeVertex() {
+abstract class PropagativeVertex<MessageT : Any> : OperativeVertex() {
     private enum class RegistrationRequest {
         /**
          * RegistrationRequest to register the dependent vertex
@@ -20,18 +20,32 @@ abstract class PropagativeVertex : OperativeVertex() {
 
     private val volatileRegistrationRequests = PlatformNativeMap<DynamicVertex, RegistrationRequest>()
 
-    override fun operate(
+    private var cachedMessage: MessageT? = null
+
+    override fun processOperative(
         processingContext: Transaction.ProcessingContext,
     ) {
-        val shouldPropagate = prepare(
+        val message = prepare(
             processingContext = processingContext,
         )
 
-        if (shouldPropagate) {
+        if (message != null) {
+            cachedMessage = message
+
             propagate(
                 processingContext = processingContext,
             )
         }
+    }
+
+    fun pullMessage(
+        processingContext: Transaction.ProcessingContext,
+    ): MessageT? {
+        processDynamic(
+            processingContext = processingContext,
+        )
+
+        return cachedMessage
     }
 
     private fun propagate(
@@ -180,14 +194,17 @@ abstract class PropagativeVertex : OperativeVertex() {
      * - Update the stable state by merging in the volatile state
      * - Clear the volatile state or replace it with the follow-up volatile state
      */
-    final override fun stabilize(
+    final override fun stabilizeOperative(
         stabilizationContext: Transaction.StabilizationContext,
     ) {
-        volatileRegistrationRequests.clear()
-
         stabilizeState(
             stabilizationContext = stabilizationContext,
+            message = cachedMessage,
         )
+
+        volatileRegistrationRequests.clear()
+
+        cachedMessage = null
     }
 
     /**
@@ -197,7 +214,7 @@ abstract class PropagativeVertex : OperativeVertex() {
      */
     protected abstract fun prepare(
         processingContext: Transaction.ProcessingContext,
-    ): Boolean
+    ): MessageT?
 
     /**
      * Add this vertex as a dependent to the upstream vertices
@@ -219,5 +236,6 @@ abstract class PropagativeVertex : OperativeVertex() {
      */
     protected abstract fun stabilizeState(
         stabilizationContext: Transaction.StabilizationContext,
+        message: MessageT?,
     )
 }

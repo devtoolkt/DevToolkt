@@ -2,9 +2,6 @@ package dev.toolkt.reactive.cell
 
 import dev.toolkt.core.utils.iterable.copyAndClear
 import dev.toolkt.reactive.cell.test_utils.sampleExternally
-import dev.toolkt.reactive.event_stream.Cell
-import dev.toolkt.reactive.event_stream.map
-import dev.toolkt.reactive.event_stream.newValues
 import dev.toolkt.reactive.event_stream.subscribeCollecting
 import dev.toolkt.reactive.test_utils.ReactiveTest
 import kotlin.test.Ignore

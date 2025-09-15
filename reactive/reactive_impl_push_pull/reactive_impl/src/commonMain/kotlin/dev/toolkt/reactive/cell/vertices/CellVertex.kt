@@ -16,10 +16,7 @@ interface CellVertex<ValueT> : Vertex {
         )
     }
 
-    /**
-     * Returns a volatile update of this cell, triggering processing if necessary.
-     */
-    fun pullUpdate(
+    fun pullStableValue(
         processingContext: Transaction.ProcessingContext,
-    ): Update<ValueT>?
+    ): ValueT
 }

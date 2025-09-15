@@ -8,6 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertIs
+import kotlin.test.assertNotNull
 
 @Ignore // TODO: Implement this logic
 @Suppress("ClassName")
@@ -24,7 +25,7 @@ class EventStream_take_tests {
     fun test_negative() {
         assertIs<IllegalArgumentException>(
             assertFails {
-                MomentContext.executeExternally {
+                MomentContext.execute {
                     NeverEventStream.take(count = -1)
                 }
             },
@@ -237,8 +238,10 @@ class EventStream_take_tests {
 
         val collectedEvents = mutableListOf<Int>()
 
-        val subscription = takeEventStream.subscribeCollecting(
-            targetList = collectedEvents,
+        val subscription = assertNotNull(
+            takeEventStream.subscribeCollecting(
+                targetList = collectedEvents,
+            ),
         )
 
         // Emit some events from the source stream
@@ -277,8 +280,10 @@ class EventStream_take_tests {
 
         val collectedEvents = mutableListOf<Int>()
 
-        val subscription = takeEventStream.subscribeCollecting(
-            targetList = collectedEvents,
+        val subscription = assertNotNull(
+            takeEventStream.subscribeCollecting(
+                targetList = collectedEvents,
+            ),
         )
 
         // Emit some events from the source stream

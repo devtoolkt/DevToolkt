@@ -1,6 +1,7 @@
 package dev.toolkt.reactive.event_stream
 
 import dev.toolkt.core.utils.iterable.copyAndClear
+import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.test_utils.NewValuesExtractor
 import dev.toolkt.reactive.cell.test_utils.UpdatedValuesExtractor
 import dev.toolkt.reactive.cell.test_utils.ValueEventStreamExtractor
@@ -10,8 +11,8 @@ import dev.toolkt.reactive.test_utils.ReactiveTest
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
-@Ignore // TODO: Implement this logic
 @Suppress("ClassName")
 class EventStream_hold_tests {
     private fun setup(
@@ -153,8 +154,10 @@ class EventStream_hold_tests {
 
         val valueEventStream = valueEventStreamExtractor.extractValueEventStream(holdCell)
 
-        val subscription = valueEventStream.subscribeCollecting(
-            targetList = collectedEvents,
+        val subscription = assertNotNull(
+            valueEventStream.subscribeCollecting(
+                targetList = collectedEvents,
+            ),
         )
 
         reactiveSystem.stimulate(11)

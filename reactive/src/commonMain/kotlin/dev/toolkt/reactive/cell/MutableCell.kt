@@ -1,12 +1,12 @@
-package dev.toolkt.reactive.event_stream
+package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.vertices.MutableCellVertex
 
 class MutableCell<ValueT>(
     initialValue: ValueT,
-) : Cell<ValueT> {
-    private val vertex = MutableCellVertex(
+) : BaseOperatedCell<ValueT> {
+    override val vertex = MutableCellVertex(
         initialValue = initialValue,
     )
 
@@ -17,9 +17,12 @@ class MutableCell<ValueT>(
             newValue = newValue,
         )
 
-        Transaction.execute(
-            sourceVertex = vertex,
-        )
+        Transaction.execute { processingContext ->
+            vertex.processDynamic(
+                processingContext = processingContext,
+            )
+        }
 
+        vertex.clearNewValue()
     }
 }
