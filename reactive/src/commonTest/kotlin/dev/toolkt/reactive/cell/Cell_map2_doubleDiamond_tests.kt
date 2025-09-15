@@ -208,4 +208,54 @@ class Cell_map2_doubleDiamond_tests {
             actual = collectedEventsRight.copyAndClear(),
         )
     }
+
+    @Test
+    fun test_simultaneousSourceUpdate() {
+        val (system, reactiveTest) = setup(
+            initialSourceValueLeft = 0,
+            initialSourceValueRight = 'A',
+        )
+
+        val funnelCellLeft = system.funnelCellLeft
+        val funnelCellRight = system.funnelCellRight
+
+        val collectedEventsLeft = mutableListOf<String>()
+
+        funnelCellLeft.newValues.subscribeCollecting(
+            targetList = collectedEventsLeft,
+        )
+
+        val collectedEventsRight = mutableListOf<String>()
+
+        funnelCellRight.newValues.subscribeCollecting(
+            targetList = collectedEventsRight,
+        )
+
+        reactiveTest.stimulate(
+            Stimulation(
+                newSourceValueLeft = 3,
+                newSourceValueRight = 'M',
+            ),
+        )
+
+        assertEquals(
+            expected = "4:3>m",
+            actual = funnelCellLeft.sampleExternally(),
+        )
+
+        assertEquals(
+            expected = listOf("4:3>m"),
+            actual = collectedEventsLeft.copyAndClear(),
+        )
+
+        assertEquals(
+            expected = "3:m<mM",
+            actual = funnelCellRight.sampleExternally(),
+        )
+
+        assertEquals(
+            expected = listOf("3:m<mM"),
+            actual = collectedEventsRight.copyAndClear(),
+        )
+    }
 }
