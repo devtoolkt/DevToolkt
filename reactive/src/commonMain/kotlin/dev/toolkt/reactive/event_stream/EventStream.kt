@@ -7,6 +7,7 @@ import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.DerivedCell
 import dev.toolkt.reactive.cell.vertices.HoldCellVertex
+import dev.toolkt.reactive.event_stream.vertices.EventStreamFilterVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamMapNotNullVertex
 
 sealed interface EventStream<out EventT> {
@@ -106,7 +107,16 @@ context(momentContext: MomentContext) fun <EventT, TransformedEventT> EventStrea
 
 fun <EventT> EventStream<EventT>.filter(
     predicate: (EventT) -> Boolean,
-): EventStream<EventT> = TODO()
+): EventStream<EventT> = when (this) {
+    NeverEventStream -> NeverEventStream
+
+    is OperatedEventStream -> DerivedEventStream(
+        vertex = EventStreamFilterVertex(
+            sourceEventStreamVertex = this.vertex,
+            predicate = predicate,
+        )
+    )
+}
 
 context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.single(): EventStream<EventT> = TODO()
 

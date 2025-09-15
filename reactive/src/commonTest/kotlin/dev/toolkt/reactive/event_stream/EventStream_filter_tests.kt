@@ -1,12 +1,12 @@
 package dev.toolkt.reactive.event_stream
 
+import dev.toolkt.core.utils.iterable.copyAndClear
 import dev.toolkt.reactive.test_utils.ReactiveTest
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-@Ignore // TODO: Implement this logic
 @Suppress("ClassName")
 class EventStream_filter_tests {
     private fun setup(): Pair<EventStream<Int>, ReactiveTest<Int>> = ReactiveTest.setup {
@@ -33,7 +33,7 @@ class EventStream_filter_tests {
 
         assertEquals(
             expected = listOf(2),
-            actual = collectedEvents,
+            actual = collectedEvents.copyAndClear(),
         )
 
         reactiveTest.stimulate(6)
