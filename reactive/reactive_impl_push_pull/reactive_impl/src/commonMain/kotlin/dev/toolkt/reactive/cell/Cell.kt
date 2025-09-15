@@ -3,6 +3,7 @@ package dev.toolkt.reactive.cell
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.vertices.CellMap2Vertex
 import dev.toolkt.reactive.cell.vertices.CellMapVertex
+import dev.toolkt.reactive.cell.vertices.CellSwitchVertex
 import dev.toolkt.reactive.event_stream.DerivedEventStream
 import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.vertices.UpdatedValuesEventStreamVertex
@@ -46,7 +47,15 @@ sealed interface Cell<out ValueT> {
 
         fun <ValueT> switch(
             outerCell: Cell<Cell<ValueT>>,
-        ): Cell<ValueT> = TODO()
+        ): Cell<ValueT> = when (outerCell) {
+            is ConstCell -> outerCell.value
+
+            is OperatedCell -> DerivedCell(
+                CellSwitchVertex(
+                    outerCellVertex = outerCell.vertex,
+                ),
+            )
+        }
 
         fun <ValueT> divert(
             outerCell: Cell<EventStream<ValueT>>,

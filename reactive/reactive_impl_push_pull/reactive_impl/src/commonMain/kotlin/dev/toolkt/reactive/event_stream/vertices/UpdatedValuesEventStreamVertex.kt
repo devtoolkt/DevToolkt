@@ -7,7 +7,7 @@ import dev.toolkt.reactive.cell.vertices.DynamicCellVertex
 class UpdatedValuesEventStreamVertex<ValueT>(
     private val sourceCellVertex: DependencyCellVertex<ValueT>,
 ) : StatelessEventStreamVertex<ValueT>() {
-    override fun prepareMessage(
+    override fun prepare(
         preProcessingContext: Transaction.PreProcessingContext,
     ): EventStreamVertex.Occurrence<ValueT>? {
         val sourceUpdate = sourceCellVertex.pullUpdate(

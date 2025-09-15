@@ -34,7 +34,7 @@ class EventStreamSingleVertex<EventT> private constructor(
 
     private var wasPropagated = false
 
-    override fun prepareMessage(
+    override fun prepare(
         preProcessingContext: Transaction.PreProcessingContext,
     ): EventStreamVertex.Occurrence<EventT>? {
         if (wasPropagated) {

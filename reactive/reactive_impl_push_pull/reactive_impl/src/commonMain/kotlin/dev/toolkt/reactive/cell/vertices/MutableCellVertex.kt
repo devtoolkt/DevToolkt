@@ -10,7 +10,7 @@ class MutableCellVertex<ValueT>(
 
     private var preparedVolatileUpdate: Update<ValueT>? = null
 
-    override fun prepareMessage(
+    override fun prepare(
         preProcessingContext: Transaction.PreProcessingContext,
     ): Update<ValueT>? = preparedVolatileUpdate
 

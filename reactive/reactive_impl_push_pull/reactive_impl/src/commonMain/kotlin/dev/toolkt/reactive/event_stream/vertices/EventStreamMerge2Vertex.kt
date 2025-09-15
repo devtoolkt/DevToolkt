@@ -7,7 +7,7 @@ class EventStreamMerge2Vertex<EventT>(
     private val sourceEventStream1Vertex: DependencyEventStreamVertex<EventT>,
     private val sourceEventStream2Vertex: DependencyEventStreamVertex<EventT>,
 ) : StatelessEventStreamVertex<EventT>() {
-    override fun prepareMessage(
+    override fun prepare(
         preProcessingContext: Transaction.PreProcessingContext,
     ): EventStreamVertex.Occurrence<EventT>? {
         val sourceOccurrence1 = sourceEventStream1Vertex.pullOccurrence(

@@ -12,7 +12,7 @@ abstract class OperativeVertex : DynamicVertex {
 
         volatileIsVisited = true
 
-        prepare(
+        visit(
             preProcessingContext = preProcessingContext,
         )
 
@@ -47,7 +47,7 @@ abstract class OperativeVertex : DynamicVertex {
      * - Prepare and cache the volatile state (if necessary)
      * - Ensure that all dependent vertices are enqueued for processing (if any meaningful volatile state was produced)
      */
-    protected abstract fun prepare(
+    protected abstract fun visit(
         preProcessingContext: Transaction.PreProcessingContext,
     )
 

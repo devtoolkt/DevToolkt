@@ -22,10 +22,10 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
 
     private var cachedMessage: MessageT? = null
 
-    override fun prepare(
+    override fun visit(
         preProcessingContext: Transaction.PreProcessingContext,
     ) {
-        val message = prepareMessage(
+        val message = prepare(
             preProcessingContext = preProcessingContext,
         )
 
@@ -216,7 +216,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
      *
      * @return true if any meaningful volatile state was produced, false otherwise
      */
-    protected abstract fun prepareMessage(
+    protected abstract fun prepare(
         preProcessingContext: Transaction.PreProcessingContext,
     ): MessageT?
 

@@ -37,7 +37,7 @@ class EventStreamTakeVertex<EventT> private constructor(
 
     private var remainingCount = totalCount
 
-    override fun prepareMessage(
+    override fun prepare(
         preProcessingContext: Transaction.PreProcessingContext,
     ): EventStreamVertex.Occurrence<EventT>? {
         if (remainingCount <= 0) {
