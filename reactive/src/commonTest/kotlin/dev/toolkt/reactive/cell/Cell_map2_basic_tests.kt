@@ -21,7 +21,6 @@ import kotlin.test.assertNotNull
  *      M
  * ```
  */
-@Ignore // TODO: Implement this logic
 @Suppress("ClassName")
 class Cell_map2_basic_tests {
     private data class Stimulation(
