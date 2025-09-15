@@ -24,6 +24,10 @@ abstract class OperativeVertex : DynamicVertex {
     final override fun interProcess(
         interProcessingContext: Transaction.InterProcessingContext,
     ) {
+        if (!volatileIsVisited) {
+            throw IllegalStateException("Vertex must be pre-processed before inter-processing")
+        }
+
         affect(
             interProcessingContext = interProcessingContext,
         )
