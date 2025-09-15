@@ -12,11 +12,9 @@ class SubscriptionVertex<EventT>(
     override fun prepare(
         preProcessingContext: Transaction.PreProcessingContext,
     ) {
-        val occurrence = sourceEventStreamVertex.pullOccurrence(
+        receivedEventOccurrence = sourceEventStreamVertex.pullOccurrence(
             preProcessingContext = preProcessingContext,
         ) ?: return
-
-        receivedEventOccurrence = occurrence
     }
 
     override fun affect(
@@ -28,7 +26,7 @@ class SubscriptionVertex<EventT>(
     }
 
     override fun settle(
-        stabilizationContext: Transaction.StabilizationContext,
+        postProcessingContext: Transaction.PostProcessingContext,
     ) {
         receivedEventOccurrence = null
     }

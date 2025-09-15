@@ -31,11 +31,7 @@ class Transaction private constructor() {
         data object External : ShrinkageContext()
     }
 
-    data object MutationContext
-
-    abstract class StabilizationContext : ShrinkageContext()
-
-    abstract class PostProcessingContext : StabilizationContext()
+    abstract class PostProcessingContext : ShrinkageContext()
 
     companion object {
         fun <ResultT> execute(

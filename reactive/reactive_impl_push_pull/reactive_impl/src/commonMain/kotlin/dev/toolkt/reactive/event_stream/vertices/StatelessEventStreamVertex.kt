@@ -4,7 +4,7 @@ import dev.toolkt.reactive.Transaction
 
 abstract class StatelessEventStreamVertex<ValueT> : PropagativeEventStreamVertex<ValueT>() {
     final override fun stabilize(
-        stabilizationContext: Transaction.StabilizationContext,
+        postProcessingContext: Transaction.PostProcessingContext,
         message: EventStreamVertex.Occurrence<ValueT>?,
     ) {
     }

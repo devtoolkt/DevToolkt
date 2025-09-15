@@ -49,7 +49,7 @@ class HoldCellVertex<ValueT> private constructor(
     }
 
     override fun stabilize(
-        stabilizationContext: Transaction.StabilizationContext,
+        postProcessingContext: Transaction.PostProcessingContext,
         message: Update<ValueT>?,
     ) {
         message?.let { update ->

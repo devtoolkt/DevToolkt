@@ -31,7 +31,7 @@ class MutableCellVertex<ValueT>(
     }
 
     override fun stabilize(
-        stabilizationContext: Transaction.StabilizationContext,
+        postProcessingContext: Transaction.PostProcessingContext,
         message: Update<ValueT>?,
     ) {
         message?.let { update ->

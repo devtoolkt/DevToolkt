@@ -39,7 +39,7 @@ abstract class OperativeVertex : DynamicVertex {
         volatileIsVisited = false
 
         settle(
-            stabilizationContext = postProcessingContext,
+            postProcessingContext = postProcessingContext,
         )
     }
 
@@ -56,6 +56,6 @@ abstract class OperativeVertex : DynamicVertex {
     )
 
     protected abstract fun settle(
-        stabilizationContext: Transaction.StabilizationContext,
+        postProcessingContext: Transaction.PostProcessingContext,
     )
 }
