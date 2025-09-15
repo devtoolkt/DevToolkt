@@ -2,9 +2,9 @@ package dev.toolkt.reactive.cell.vertices
 
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.Occurrence
-import dev.toolkt.reactive.event_stream.vertices.StatelessEventStreamVertex
+import dev.toolkt.reactive.event_stream.vertices.PropagativeEventStreamVertex
 
-class EmitterEventStreamVertex<EventT>() : StatelessEventStreamVertex<EventT>() {
+class EmitterEventStreamVertex<EventT>() : PropagativeEventStreamVertex<EventT>() {
     private var preparedVolatileOccurrence: Occurrence<EventT>? = null
 
     override fun prepare(
@@ -23,19 +23,20 @@ class EmitterEventStreamVertex<EventT>() : StatelessEventStreamVertex<EventT>() 
         )
     }
 
-    fun clearEvent() {
-        preparedVolatileOccurrence = null
-    }
-
     override fun onFirstDependentAdded(
         expansionContext: Transaction.ExpansionContext,
     ) {
-        // The emitter vertex doesn't have dependencies
     }
 
     override fun onLastDependentRemoved(
         shrinkageContext: Transaction.ShrinkageContext,
     ) {
-        // The emitter vertex doesn't have dependencies
+    }
+
+    override fun stabilize(
+        postProcessingContext: Transaction.PostProcessingContext,
+        message: Occurrence<EventT>?,
+    ) {
+        preparedVolatileOccurrence = null
     }
 }

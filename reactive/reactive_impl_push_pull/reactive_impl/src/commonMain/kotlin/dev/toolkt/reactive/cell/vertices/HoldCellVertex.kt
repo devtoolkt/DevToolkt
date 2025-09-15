@@ -22,7 +22,7 @@ class HoldCellVertex<ValueT> private constructor(
                 vertex = this,
             )
 
-            preProcess(
+            ensureVisited(
                 preProcessingContext = preProcessingContext,
             )
 

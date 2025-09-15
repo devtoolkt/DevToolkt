@@ -20,7 +20,7 @@ class EventStreamMapNotNullVertex<SourceEventT, TransformedEventT : Any>(
         )
     }
 
-    override fun onFirstDependentAdded(
+    override fun resume(
         expansionContext: Transaction.ExpansionContext,
     ) {
         sourceEventStreamVertex.addDependent(
@@ -29,7 +29,7 @@ class EventStreamMapNotNullVertex<SourceEventT, TransformedEventT : Any>(
         )
     }
 
-    override fun onLastDependentRemoved(
+    override fun pause(
         shrinkageContext: Transaction.ShrinkageContext,
     ) {
         sourceEventStreamVertex.removeDependent(

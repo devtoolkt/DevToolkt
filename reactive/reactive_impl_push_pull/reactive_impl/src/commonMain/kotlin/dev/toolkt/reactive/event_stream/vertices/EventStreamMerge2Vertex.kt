@@ -29,7 +29,7 @@ class EventStreamMerge2Vertex<EventT>(
         return null
     }
 
-    override fun onFirstDependentAdded(
+    override fun resume(
         expansionContext: Transaction.ExpansionContext,
     ) {
         sourceEventStream1Vertex.addDependent(
@@ -43,7 +43,7 @@ class EventStreamMerge2Vertex<EventT>(
         )
     }
 
-    override fun onLastDependentRemoved(
+    override fun pause(
         shrinkageContext: Transaction.ShrinkageContext,
     ) {
         sourceEventStream1Vertex.removeDependent(

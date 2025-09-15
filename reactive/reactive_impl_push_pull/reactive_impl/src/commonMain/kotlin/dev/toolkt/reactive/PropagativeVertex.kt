@@ -41,7 +41,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
     fun pullMessage(
         preProcessingContext: Transaction.PreProcessingContext,
     ): MessageT? {
-        preProcess(
+        ensureVisited(
             preProcessingContext = preProcessingContext,
         )
 
