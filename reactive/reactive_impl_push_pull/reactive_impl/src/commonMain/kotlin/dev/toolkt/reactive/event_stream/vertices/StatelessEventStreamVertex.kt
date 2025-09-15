@@ -9,3 +9,5 @@ abstract class StatelessEventStreamVertex<ValueT> : PropagativeEventStreamVertex
     ) {
     }
 }
+
+

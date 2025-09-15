@@ -11,6 +11,7 @@ import dev.toolkt.reactive.event_stream.vertices.EventStreamFilterVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamMapNotNullVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamMapVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamMerge2Vertex
+import dev.toolkt.reactive.event_stream.vertices.EventStreamSingleVertex
 
 sealed interface EventStream<out EventT> {
     /**
@@ -104,7 +105,9 @@ context(pureContext: PureContext) fun <EventT, TransformedEventT> EventStream<Ev
     is OperatedEventStream -> DerivedEventStream(
         vertex = EventStreamMapVertex(
             sourceEventStreamVertex = this.vertex,
-            transform = transform,
+            transform = { _, event ->
+                transform(event)
+            },
         )
     )
 }
@@ -122,9 +125,24 @@ context(pureContext: PureContext) fun <EventT, TransformedEventT : Any> EventStr
     )
 }
 
-context(momentContext: MomentContext) fun <EventT, TransformedEventT> EventStream<EventT>.mapAt(
+context(pureContext: PureContext) fun <EventT, TransformedEventT> EventStream<EventT>.mapAt(
     transform: context(MomentContext) (EventT) -> TransformedEventT,
-): EventStream<TransformedEventT> = TODO()
+): EventStream<TransformedEventT> = when (this) {
+    NeverEventStream -> NeverEventStream
+
+    is OperatedEventStream -> DerivedEventStream(
+        vertex = EventStreamMapVertex(
+            sourceEventStreamVertex = this.vertex,
+            transform = { preProcessingContext, event ->
+                MomentContext(
+                    preProcessingContext = preProcessingContext,
+                ).run {
+                    transform(event)
+                }
+            },
+        )
+    )
+}
 
 fun <EventT> EventStream<EventT>.filter(
     predicate: (EventT) -> Boolean,
@@ -139,7 +157,16 @@ fun <EventT> EventStream<EventT>.filter(
     )
 }
 
-context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.single(): EventStream<EventT> = TODO()
+context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.single(): EventStream<EventT> = when (this) {
+    NeverEventStream -> NeverEventStream
+
+    is OperatedEventStream -> DerivedEventStream(
+        vertex = EventStreamSingleVertex.construct(
+            preProcessingContext = momentContext.preProcessingContext,
+            sourceEventStreamVertex = this.vertex,
+        ),
+    )
+}
 
 context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.take(
     count: Int,
