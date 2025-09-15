@@ -11,18 +11,4 @@ interface DynamicCellVertex<ValueT> : CellVertex<ValueT>, DynamicVertex {
     fun pullUpdate(
         preProcessingContext: Transaction.PreProcessingContext,
     ): Update<ValueT>?
-
-}
-
-fun <ValueT> DynamicCellVertex<ValueT>.pullNewValue(
-    preProcessingContext: Transaction.PreProcessingContext,
-): ValueT {
-    val update = pullUpdate(
-        preProcessingContext = preProcessingContext,
-    )
-
-    return when (update) {
-        null -> pullStableValue(preProcessingContext)
-        else -> update.newValue
-    }
 }

@@ -7,7 +7,15 @@ abstract class StatelessCellVertex<ValueT> : PropagativeCellVertex<ValueT>() {
         val stableValue: ValueT,
     )
 
+    // TODO: Is the cached stable value cleared if the cell wasn't actually pre-processed?
+    // Is this tested?
     private var cachedStableValue: StableValueCache<ValueT>? = null
+
+    final override fun prepare(
+        preProcessingContext: Transaction.PreProcessingContext,
+    ): CellVertex.Update<ValueT>? = prepareStateless(
+        preProcessingContext = preProcessingContext,
+    )
 
     final override fun pullStableValue(
         preProcessingContext: Transaction.PreProcessingContext,
@@ -37,4 +45,8 @@ abstract class StatelessCellVertex<ValueT> : PropagativeCellVertex<ValueT>() {
     abstract fun computeStableValue(
         preProcessingContext: Transaction.PreProcessingContext,
     ): ValueT
+
+    abstract fun prepareStateless(
+        preProcessingContext: Transaction.PreProcessingContext,
+    ): CellVertex.Update<ValueT>?
 }
