@@ -12,6 +12,7 @@ import dev.toolkt.reactive.event_stream.vertices.EventStreamMapNotNullVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamMapVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamMerge2Vertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamSingleVertex
+import dev.toolkt.reactive.event_stream.vertices.EventStreamTakeVertex
 
 sealed interface EventStream<out EventT> {
     /**
@@ -177,7 +178,17 @@ context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.take(
 
     count == 1 -> single()
 
-    else -> TODO()
+    else -> when (this) {
+        NeverEventStream -> NeverEventStream
+
+        is OperatedEventStream -> DerivedEventStream(
+            vertex = EventStreamTakeVertex.construct(
+                preProcessingContext = momentContext.preProcessingContext,
+                sourceEventStreamVertex = this.vertex,
+                totalCount = count,
+            ),
+        )
+    }
 }
 
 context(momentContext: MomentContext) fun <ValueT> EventStream<ValueT>.hold(
