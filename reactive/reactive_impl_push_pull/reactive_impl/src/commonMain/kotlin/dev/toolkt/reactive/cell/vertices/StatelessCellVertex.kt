@@ -10,11 +10,11 @@ abstract class StatelessCellVertex<ValueT> : PropagativeCellVertex<ValueT>() {
     private var cachedStableValue: StableValueCache<ValueT>? = null
 
     final override fun pullStableValue(
-        processingContext: Transaction.ProcessingContext,
+        preProcessingContext: Transaction.PreProcessingContext,
     ): ValueT = when (val foundCachedStableValue = this.cachedStableValue) {
         null -> {
             val computedCachedStableValue = computeStableValue(
-                processingContext,
+                preProcessingContext,
             )
 
             this.cachedStableValue = StableValueCache(
@@ -35,6 +35,6 @@ abstract class StatelessCellVertex<ValueT> : PropagativeCellVertex<ValueT>() {
     }
 
     abstract fun computeStableValue(
-        processingContext: Transaction.ProcessingContext,
+        preProcessingContext: Transaction.PreProcessingContext,
     ): ValueT
 }

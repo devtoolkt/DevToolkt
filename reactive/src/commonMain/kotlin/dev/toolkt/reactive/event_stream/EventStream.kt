@@ -129,7 +129,7 @@ context(momentContext: MomentContext) fun <ValueT> EventStream<ValueT>.hold(
 
     is BaseOperatedEventStream -> OperatedCell(
         HoldCellVertex.construct(
-            processingContext = momentContext.processingContext,
+            preProcessingContext = momentContext.preProcessingContext,
             sourceEventStreamVertex = this.vertex,
             initialValue = initialValue,
         ),
@@ -153,14 +153,14 @@ fun <EventT> EventStream<EventT>.subscribe(
         )
 
         this.vertex.addDependent(
-            expansionContext = Transaction.ExpansionContext,
+            expansionContext = Transaction.ExpansionContext.External,
             vertex = subscriptionVertex,
         )
 
         object : EventStream.Subscription {
             override fun cancel() {
                 this@subscribe.vertex.removeDependent(
-                    shrinkageContext = Transaction.ShrinkageContext,
+                    shrinkageContext = Transaction.ShrinkageContext.External,
                     vertex = subscriptionVertex,
                 )
             }

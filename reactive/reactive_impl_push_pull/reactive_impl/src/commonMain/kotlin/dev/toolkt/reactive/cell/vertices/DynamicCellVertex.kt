@@ -9,6 +9,7 @@ interface DynamicCellVertex<ValueT> : CellVertex<ValueT>, DynamicVertex {
      * Returns a volatile update of this cell, triggering processing if necessary.
      */
     fun pullUpdate(
-        processingContext: Transaction.ProcessingContext,
+        preProcessingContext: Transaction.PreProcessingContext,
     ): Update<ValueT>?
 }
+
