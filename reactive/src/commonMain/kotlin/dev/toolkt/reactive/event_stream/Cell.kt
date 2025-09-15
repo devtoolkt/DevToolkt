@@ -17,6 +17,10 @@ sealed interface Cell<out ValueT> {
             transform: (ValueT1, ValueT2, ValueT3) -> ResultT,
         ): Cell<ResultT> = TODO()
 
+        fun <ValueT> of(
+            value: ValueT,
+        ): Cell<ValueT> = TODO()
+
         fun <ValueT> switch(
             outerCell: Cell<Cell<ValueT>>,
         ): Cell<ValueT> = TODO()
