@@ -11,10 +11,18 @@ import dev.toolkt.reactive.test_utils.ReactiveTest
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
-
+/**
+ * ```
+ *  S_1    S_2
+ *   \     /
+ *    \   /
+ *     ▼ ▼
+ *      M
+ * ```
+ */
 @Ignore // TODO: Implement this logic
 @Suppress("ClassName")
-class Cell_map2_tests {
+class Cell_map2_basic_tests {
     private data class Stimulation(
         val newSourceValue1: Int? = null,
         val newSourceValue2: Char? = null,
@@ -24,17 +32,20 @@ class Cell_map2_tests {
         initialSourceValue1: Int,
         initialSourceValue2: Char,
     ): Pair<Cell<String>, ReactiveTest<Stimulation>> = ReactiveTest.setup {
+        // (S1)
         val sourceCell1 = extractCell(
             initialValue = initialSourceValue1,
             selector = Stimulation::newSourceValue1,
         )
 
         // TODO: Add a test for a case where both sources are the same Cell object
+        // (S2)
         val sourceCell2 = extractCell(
             initialValue = initialSourceValue2,
             selector = Stimulation::newSourceValue2,
         )
 
+        // (M)
         Cell.map2(
             cell1 = sourceCell1,
             cell2 = sourceCell2,

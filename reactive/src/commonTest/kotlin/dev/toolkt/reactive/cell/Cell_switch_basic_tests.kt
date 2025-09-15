@@ -13,9 +13,21 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+/**
+ * ```
+ * I_1  I_2  I_3
+ *  \    •    •
+ *   \   •   •
+ *    \  •  •
+ *     \ • •
+ *      \••
+ *       ▼
+ * O╶╶╶▶ S
+ * ```
+ */
 @Ignore // TODO: Implement this logic
 @Suppress("ClassName")
-class Cell_switch_tests {
+class Cell_switch_basic_tests {
     private enum class SwitchCaseId {
         Case1, Case2, Case3,
     }
@@ -33,16 +45,19 @@ class Cell_switch_tests {
         initialInnerValue3: Int,
         initialSwitchCaseId: SwitchCaseId,
     ): Pair<Cell<Int>, ReactiveTest<Stimulation>> = ReactiveTest.setup {
+        // (I_1)
         val innerCell1 = extractCell(
             initialValue = initialInnerValue1,
             selector = Stimulation::newInnerValue1,
         )
 
+        // (I_2)
         val innerCell2 = extractCell(
             initialValue = initialInnerValue2,
             selector = Stimulation::newInnerValue1,
         )
 
+        // (I_3)
         val innerCell3 = extractCell(
             initialValue = initialInnerValue3,
             selector = Stimulation::newInnerValue1,
@@ -53,6 +68,7 @@ class Cell_switch_tests {
             selector = Stimulation::newSwitchCaseId,
         )
 
+        // (O)
         val outerCell = switchCaseId.map { caseIdNow ->
             when (caseIdNow) {
                 SwitchCaseId.Case1 -> innerCell1
@@ -61,6 +77,7 @@ class Cell_switch_tests {
             }
         }
 
+        // (S)
         Cell.switch(
             outerCell = outerCell,
         )

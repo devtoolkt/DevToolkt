@@ -9,9 +9,21 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+/**
+ * ```
+ * I_1  I_2  I_3
+ *  \    •    •
+ *   \   •   •
+ *    \  •  •
+ *     \ • •
+ *      \••
+ *       ▼
+ * O╶╶╶▶ D
+ * ```
+ */
 @Ignore // TODO: Implement this logic
 @Suppress("ClassName")
-class Cell_divert_tests {
+class Cell_divert_basic_tests {
     private enum class DivertCaseId {
         Case1, Case2, Case3,
     }
@@ -26,14 +38,17 @@ class Cell_divert_tests {
     private fun setup(
         initialDivertCaseId: DivertCaseId,
     ): Pair<EventStream<Int>, ReactiveTest<Stimulation>> = ReactiveTest.setup {
+        // (I_1)
         val innerEventStream1 = extractEventStream(
             selector = Stimulation::innerEvent1,
         )
 
+        // (I_2)
         val innerEventStream2 = extractEventStream(
             selector = Stimulation::innerEvent1,
         )
 
+        // (I_3)
         val innerEventStream3 = extractEventStream(
             selector = Stimulation::innerEvent1,
         )
@@ -43,6 +58,7 @@ class Cell_divert_tests {
             selector = Stimulation::newDivertCaseId,
         )
 
+        // (O)
         val outerCell = divertCaseId.map { caseIdNow ->
             when (caseIdNow) {
                 DivertCaseId.Case1 -> innerEventStream1
@@ -51,6 +67,7 @@ class Cell_divert_tests {
             }
         }
 
+        // (D)
         Cell.divert(
             outerCell = outerCell,
         )
