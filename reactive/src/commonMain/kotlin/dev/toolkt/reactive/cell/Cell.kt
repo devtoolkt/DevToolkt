@@ -3,7 +3,7 @@ package dev.toolkt.reactive.cell
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.vertices.CellMapVertex
 import dev.toolkt.reactive.event_stream.EventStream
-import dev.toolkt.reactive.event_stream.OperatedEventStream
+import dev.toolkt.reactive.event_stream.DerivedEventStream
 import dev.toolkt.reactive.event_stream.vertices.UpdatedValuesEventStreamVertex
 
 sealed interface Cell<out ValueT> {
@@ -36,7 +36,7 @@ sealed interface Cell<out ValueT> {
 }
 
 context(momentContext: MomentContext) fun <ValueT> Cell<ValueT>.sample(): ValueT = when (this) {
-    is BaseOperatedCell -> vertex.pullStableValue(
+    is OperatedCell -> vertex.pullStableValue(
         preProcessingContext = momentContext.preProcessingContext,
     )
 }
@@ -44,7 +44,7 @@ context(momentContext: MomentContext) fun <ValueT> Cell<ValueT>.sample(): ValueT
 fun <ValueT, TransformedValueT> Cell<ValueT>.map(
     transform: (ValueT) -> TransformedValueT,
 ): Cell<TransformedValueT> = when (this) {
-    is BaseOperatedCell -> OperatedCell(
+    is OperatedCell -> DerivedCell(
         CellMapVertex(
             sourceCellVertex = this.vertex,
             transform = transform,
@@ -58,7 +58,7 @@ val <ValueT> Cell<ValueT>.newValues: EventStream<ValueT>
 
 val <ValueT> Cell<ValueT>.updatedValues: EventStream<ValueT>
     get() = when (this) {
-        is BaseOperatedCell -> OperatedEventStream(
+        is OperatedCell -> DerivedEventStream(
             vertex = UpdatedValuesEventStreamVertex(
                 sourceCellVertex = this.vertex,
             )

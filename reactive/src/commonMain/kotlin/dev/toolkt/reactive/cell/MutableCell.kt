@@ -5,7 +5,7 @@ import dev.toolkt.reactive.cell.vertices.MutableCellVertex
 
 class MutableCell<ValueT>(
     initialValue: ValueT,
-) : BaseOperatedCell<ValueT> {
+) : OperatedCell<ValueT> {
     override val vertex = MutableCellVertex(
         initialValue = initialValue,
     )
