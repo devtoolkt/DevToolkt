@@ -190,17 +190,17 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
      * - Clear the volatile state or replace it with the follow-up volatile state
      */
     final override fun settle(
-        stabilizationContext: Transaction.StabilizationContext,
+        postProcessingContext: Transaction.PostProcessingContext,
     ) {
         stabilize(
-            stabilizationContext = stabilizationContext,
+            postProcessingContext = postProcessingContext,
             message = cachedMessage,
         )
 
         volatileRegistrationRequests.forEach { vertex, request ->
             if (request == RegistrationRequest.Unregister) {
                 removeDependent(
-                    shrinkageContext = stabilizationContext,
+                    shrinkageContext = postProcessingContext,
                     vertex = vertex,
                 )
             }
@@ -239,7 +239,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
      * - Clear the vertex-specific volatile state
      */
     protected abstract fun stabilize(
-        stabilizationContext: Transaction.StabilizationContext,
+        postProcessingContext: Transaction.PostProcessingContext,
         message: MessageT?,
     )
 }
