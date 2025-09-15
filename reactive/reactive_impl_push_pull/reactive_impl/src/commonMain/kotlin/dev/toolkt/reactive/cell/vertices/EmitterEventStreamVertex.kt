@@ -27,13 +27,13 @@ class EmitterEventStreamVertex<EventT>() : StatelessEventStreamVertex<EventT>() 
         preparedVolatileOccurrence = null
     }
 
-    override fun activate(
+    override fun onFirstDependentAdded(
         expansionContext: Transaction.ExpansionContext,
     ) {
         // The emitter vertex doesn't have dependencies
     }
 
-    override fun deactivate(
+    override fun onLastDependentRemoved(
         shrinkageContext: Transaction.ShrinkageContext,
     ) {
         // The emitter vertex doesn't have dependencies

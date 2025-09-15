@@ -35,7 +35,7 @@ abstract class StatelessCellVertex<ValueT> : PropagativeCellVertex<ValueT>() {
         else -> foundCachedStableValue.stableValue
     }
 
-    final override fun activate(
+    final override fun onFirstDependentAdded(
         expansionContext: Transaction.ExpansionContext,
     ) {
         activateStateless(
@@ -43,7 +43,7 @@ abstract class StatelessCellVertex<ValueT> : PropagativeCellVertex<ValueT>() {
         )
     }
 
-    final override fun deactivate(
+    final override fun onLastDependentRemoved(
         shrinkageContext: Transaction.ShrinkageContext,
     ) {
         deactivateStateless(
