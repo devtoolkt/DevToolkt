@@ -48,7 +48,7 @@ class HoldCellVertex<ValueT> private constructor(
         )
     }
 
-    override fun stabilizeState(
+    override fun stabilize(
         stabilizationContext: Transaction.StabilizationContext,
         message: Update<ValueT>?,
     ) {

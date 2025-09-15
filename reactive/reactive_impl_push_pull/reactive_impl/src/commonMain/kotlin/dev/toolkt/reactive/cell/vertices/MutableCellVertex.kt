@@ -30,7 +30,7 @@ class MutableCellVertex<ValueT>(
         preparedVolatileUpdate = null
     }
 
-    override fun stabilizeState(
+    override fun stabilize(
         stabilizationContext: Transaction.StabilizationContext,
         message: Update<ValueT>?,
     ) {

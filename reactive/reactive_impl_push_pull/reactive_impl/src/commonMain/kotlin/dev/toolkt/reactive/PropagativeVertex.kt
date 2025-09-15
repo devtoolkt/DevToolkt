@@ -192,7 +192,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
     final override fun settle(
         stabilizationContext: Transaction.StabilizationContext,
     ) {
-        stabilizeState(
+        stabilize(
             stabilizationContext = stabilizationContext,
             message = cachedMessage,
         )
@@ -238,7 +238,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
      * - Update the stable vertex-specific state by merging in the volatile state
      * - Clear the vertex-specific volatile state
      */
-    protected abstract fun stabilizeState(
+    protected abstract fun stabilize(
         stabilizationContext: Transaction.StabilizationContext,
         message: MessageT?,
     )
