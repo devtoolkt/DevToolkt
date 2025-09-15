@@ -3,7 +3,6 @@ package dev.toolkt.reactive.event_stream
 import dev.toolkt.core.utils.iterable.copyAndClear
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.test_utils.ReactiveTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
