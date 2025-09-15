@@ -21,8 +21,6 @@ class EmitterEventStream<EventT> : OperatedEventStream<EventT> {
                 preProcessingContext = preProcessingContext,
             )
         }
-
-        vertex.clearEvent()
     }
 
     override val vertex = EmitterEventStreamVertex<EventT>()

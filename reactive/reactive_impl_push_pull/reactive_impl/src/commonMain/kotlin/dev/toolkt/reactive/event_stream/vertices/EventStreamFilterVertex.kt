@@ -20,7 +20,7 @@ class EventStreamFilterVertex<SourceEventT>(
         }
     }
 
-    override fun onFirstDependentAdded(
+    override fun resume(
         expansionContext: Transaction.ExpansionContext,
     ) {
         sourceEventStreamVertex.addDependent(
@@ -29,7 +29,7 @@ class EventStreamFilterVertex<SourceEventT>(
         )
     }
 
-    override fun onLastDependentRemoved(
+    override fun pause(
         shrinkageContext: Transaction.ShrinkageContext,
     ) {
         sourceEventStreamVertex.removeDependent(

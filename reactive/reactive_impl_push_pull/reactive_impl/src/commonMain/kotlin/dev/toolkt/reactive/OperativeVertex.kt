@@ -6,18 +6,8 @@ abstract class OperativeVertex : DynamicVertex {
     final override fun preProcess(
         preProcessingContext: Transaction.PreProcessingContext,
     ) {
-        if (volatileIsVisited) {
-            return
-        }
-
-        volatileIsVisited = true
-
-        visit(
+        ensureVisited(
             preProcessingContext = preProcessingContext,
-        )
-
-        preProcessingContext.enqueueForPostProcessing(
-            vertex = this,
         )
     }
 
@@ -40,6 +30,24 @@ abstract class OperativeVertex : DynamicVertex {
 
         settle(
             postProcessingContext = postProcessingContext,
+        )
+    }
+
+    protected fun ensureVisited(
+        preProcessingContext: Transaction.PreProcessingContext,
+    ) {
+        if (volatileIsVisited) {
+            return
+        }
+
+        volatileIsVisited = true
+
+        visit(
+            preProcessingContext = preProcessingContext,
+        )
+
+        preProcessingContext.enqueueForPostProcessing(
+            vertex = this,
         )
     }
 

@@ -23,7 +23,7 @@ class EventStreamTakeVertex<EventT> private constructor(
                 vertex = this,
             )
 
-            preProcess(
+            ensureVisited(
                 preProcessingContext = preProcessingContext,
             )
 

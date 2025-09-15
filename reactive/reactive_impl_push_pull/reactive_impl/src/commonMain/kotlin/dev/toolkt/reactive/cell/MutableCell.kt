@@ -10,19 +10,19 @@ class MutableCell<ValueT>(
         initialValue = initialValue,
     )
 
-    fun setExternally(
+    /**
+     * Sets a new value to this cell.
+     *
+     * This method must be called from outside the reactive system.
+     */
+    fun set(
         newValue: ValueT,
     ) {
-        vertex.prepareNewValue(
-            newValue = newValue,
-        )
-
         Transaction.execute { preProcessingContext ->
             vertex.preProcess(
                 preProcessingContext = preProcessingContext,
+                newValue = newValue,
             )
         }
-
-        vertex.clearNewValue()
     }
 }

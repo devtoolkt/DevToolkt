@@ -19,7 +19,7 @@ class UpdatedValuesEventStreamVertex<ValueT>(
         )
     }
 
-    override fun onFirstDependentAdded(
+    override fun resume(
         expansionContext: Transaction.ExpansionContext,
     ) {
         sourceCellVertex.addDependent(
@@ -28,7 +28,7 @@ class UpdatedValuesEventStreamVertex<ValueT>(
         )
     }
 
-    override fun onLastDependentRemoved(
+    override fun pause(
         shrinkageContext: Transaction.ShrinkageContext,
     ) {
         sourceCellVertex.removeDependent(

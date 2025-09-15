@@ -10,25 +10,26 @@ class MutableCellVertex<ValueT>(
 
     private var preparedVolatileUpdate: Update<ValueT>? = null
 
+    fun preProcess(
+        preProcessingContext: Transaction.PreProcessingContext,
+        newValue: ValueT,
+    ) {
+        preparedVolatileUpdate = Update(
+            newValue = newValue,
+        )
+
+        ensureVisited(
+            preProcessingContext = preProcessingContext,
+        )
+    }
+
     override fun prepare(
         preProcessingContext: Transaction.PreProcessingContext,
     ): Update<ValueT>? = preparedVolatileUpdate
 
-    fun prepareNewValue(
-        newValue: ValueT,
-    ) {
-        if (preparedVolatileUpdate != null) {
-            throw IllegalStateException("There is already a pending prepared update $preparedVolatileUpdate")
-        }
-
-        preparedVolatileUpdate = Update(
-            newValue = newValue,
-        )
-    }
-
-    fun clearNewValue() {
-        preparedVolatileUpdate = null
-    }
+    override fun pullStableValue(
+        preProcessingContext: Transaction.PreProcessingContext,
+    ): ValueT = mutableStableValue
 
     override fun stabilize(
         postProcessingContext: Transaction.PostProcessingContext,
@@ -37,9 +38,7 @@ class MutableCellVertex<ValueT>(
         message?.let { update ->
             mutableStableValue = update.newValue
         }
-    }
 
-    override fun pullStableValue(
-        preProcessingContext: Transaction.PreProcessingContext,
-    ): ValueT = mutableStableValue
+        preparedVolatileUpdate = null
+    }
 }
