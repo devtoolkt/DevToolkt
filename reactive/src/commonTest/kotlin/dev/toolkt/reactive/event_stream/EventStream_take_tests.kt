@@ -323,7 +323,7 @@ class EventStream_take_tests {
         // Verify that no more events were received
         assertEquals(
             expected = listOf(50),
-            actual = collectedEvents,
+            actual = collectedEvents.copyAndClear(),
         )
 
         // Emit an extraneous event from the source stream
