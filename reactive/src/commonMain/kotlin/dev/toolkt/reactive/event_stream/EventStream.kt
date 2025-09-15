@@ -10,6 +10,7 @@ import dev.toolkt.reactive.cell.vertices.HoldCellVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamFilterVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamMapNotNullVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamMapVertex
+import dev.toolkt.reactive.event_stream.vertices.EventStreamMerge2Vertex
 
 sealed interface EventStream<out EventT> {
     /**
@@ -75,7 +76,17 @@ sealed interface EventStream<out EventT> {
         context(pureContext: PureContext) fun <EventT> merge2(
             eventStream1: EventStream<EventT>,
             eventStream2: EventStream<EventT>,
-        ): EventStream<EventT> = TODO()
+        ): EventStream<EventT> {
+            val operatedEventStream1 = eventStream1 as? OperatedEventStream ?: return eventStream2
+            val operatedEventStream2 = eventStream2 as? OperatedEventStream ?: return NeverEventStream
+
+            return DerivedEventStream(
+                vertex = EventStreamMerge2Vertex(
+                    sourceEventStream1Vertex = operatedEventStream1.vertex,
+                    sourceEventStream2Vertex = operatedEventStream2.vertex,
+                ),
+            )
+        }
 
         context(pureContext: PureContext) fun <EventT> merge3(
             eventStream1: EventStream<EventT>,

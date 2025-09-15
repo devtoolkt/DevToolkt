@@ -7,7 +7,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-@Ignore // TODO: Implement this logic
 @Suppress("ClassName")
 class EventStream_merge2_tests {
     private data class StimulationEvent(
