@@ -18,7 +18,7 @@ class CellMapVertex<SourceValueT, TransformedValueT>(
         )
     }
 
-    override fun activateStateless(
+    override fun activate(
         expansionContext: Transaction.ExpansionContext,
     ) {
         sourceCellVertex.addDependent(
@@ -27,7 +27,7 @@ class CellMapVertex<SourceValueT, TransformedValueT>(
         )
     }
 
-    override fun deactivateStateless(
+    override fun deactivate(
         shrinkageContext: Transaction.ShrinkageContext,
     ) {
         sourceCellVertex.removeDependent(
