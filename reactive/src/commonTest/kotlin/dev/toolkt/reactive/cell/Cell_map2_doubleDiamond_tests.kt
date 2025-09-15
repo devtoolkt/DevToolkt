@@ -4,7 +4,6 @@ import dev.toolkt.core.utils.iterable.copyAndClear
 import dev.toolkt.reactive.cell.test_utils.sampleExternally
 import dev.toolkt.reactive.event_stream.subscribeCollecting
 import dev.toolkt.reactive.test_utils.ReactiveTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
