@@ -63,15 +63,19 @@ class Transaction private constructor() {
                 )
             }
 
+            val interProcessingContext = object : InterProcessingContext() {}
+
             processedVertices.forEach { processedVertex ->
                 processedVertex.interProcess(
-                    object : InterProcessingContext() {},
+                    interProcessingContext = interProcessingContext,
                 )
             }
 
+            val postProcessingContext = object : PostProcessingContext() {}
+
             processedVertices.forEach { processedVertex ->
                 processedVertex.postProcess(
-                    object : PostProcessingContext() {},
+                    postProcessingContext = postProcessingContext,
                 )
             }
 
