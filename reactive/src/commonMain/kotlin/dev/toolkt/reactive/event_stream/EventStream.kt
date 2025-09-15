@@ -5,7 +5,7 @@ import dev.toolkt.reactive.PureContext
 import dev.toolkt.reactive.SubscriptionVertex
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.Cell
-import dev.toolkt.reactive.cell.OperatedCell
+import dev.toolkt.reactive.cell.DerivedCell
 import dev.toolkt.reactive.cell.vertices.HoldCellVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamMapNotNullVertex
 
@@ -92,7 +92,7 @@ context(pureContext: PureContext) fun <EventT, TransformedEventT : Any> EventStr
 ): EventStream<TransformedEventT> = when (this) {
     NeverEventStream -> NeverEventStream
 
-    is BaseOperatedEventStream -> OperatedEventStream(
+    is OperatedEventStream -> DerivedEventStream(
         vertex = EventStreamMapNotNullVertex(
             sourceEventStreamVertex = this.vertex,
             transform = transform,
@@ -127,7 +127,7 @@ context(momentContext: MomentContext) fun <ValueT> EventStream<ValueT>.hold(
 ): Cell<ValueT> = when (this) {
     NeverEventStream -> Cell.of(value = initialValue)
 
-    is BaseOperatedEventStream -> OperatedCell(
+    is OperatedEventStream -> DerivedCell(
         HoldCellVertex.construct(
             preProcessingContext = momentContext.preProcessingContext,
             sourceEventStreamVertex = this.vertex,
@@ -146,7 +146,7 @@ fun <EventT> EventStream<EventT>.subscribe(
 ): EventStream.Subscription? = when (this) {
     NeverEventStream -> null
 
-    is BaseOperatedEventStream -> {
+    is OperatedEventStream -> {
         val subscriptionVertex = SubscriptionVertex(
             sourceEventStreamVertex = this.vertex,
             handle = handle,

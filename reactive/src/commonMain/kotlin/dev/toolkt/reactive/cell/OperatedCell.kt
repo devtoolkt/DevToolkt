@@ -2,6 +2,6 @@ package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.cell.vertices.DependencyCellVertex
 
-data class OperatedCell<ValueT>(
-    override val vertex: DependencyCellVertex<ValueT>,
-): BaseOperatedCell<ValueT>
+sealed interface OperatedCell<ValueT> : Cell<ValueT> {
+    val vertex: DependencyCellVertex<ValueT>
+}
