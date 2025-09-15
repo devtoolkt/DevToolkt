@@ -326,6 +326,7 @@ class Cell_switch_basic_tests {
         )
     }
 
+    // TODO: Test propagation of the _non-initial_ inner cell
     private fun test_updatePropagation_innerUpdate(
         valueEventStreamExtractor: ValueEventStreamExtractor,
     ) {

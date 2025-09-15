@@ -26,6 +26,10 @@ context(pureContext: PureContext) fun <EventT, TransformedEventT> EventStream<Ev
     transform: (EventT) -> TransformedEventT,
 ): EventStream<TransformedEventT> = TODO()
 
+context(momentContext: MomentContext) fun <EventT, TransformedEventT> EventStream<EventT>.mapAt(
+    transform: context(MomentContext) (EventT) -> TransformedEventT,
+): EventStream<TransformedEventT> = TODO()
+
 fun <EventT> EventStream<EventT>.filter(
     predicate: (EventT) -> Boolean,
 ): EventStream<EventT> = TODO()
