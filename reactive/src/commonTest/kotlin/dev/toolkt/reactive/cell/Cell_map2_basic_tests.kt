@@ -106,7 +106,6 @@ class Cell_map2_basic_tests {
         )
     }
 
-
     @Test
     fun test_sample_subsequent1_deEnergized() {
         test_sample_subsequent1(
