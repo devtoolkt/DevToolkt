@@ -8,13 +8,12 @@ import dev.toolkt.reactive.cell.test_utils.ValueEventStreamExtractor
 import dev.toolkt.reactive.cell.test_utils.energize
 import dev.toolkt.reactive.cell.test_utils.sampleExternally
 import dev.toolkt.reactive.test_utils.ReactiveTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 @Suppress("ClassName")
-class EventStream_hold_tests {
+class EventStream_hold_basic_tests {
     private fun setup(
         initialValue: Int,
     ): Pair<Cell<Int>, ReactiveTest<Int>> = ReactiveTest.setup {
