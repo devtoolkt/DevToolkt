@@ -146,7 +146,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
         }
 
         if (stableDependents.size == 1) {
-            activate(
+            onFirstDependentAdded(
                 expansionContext = expansionContext,
             )
         }
@@ -166,7 +166,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
         }
 
         if (stableDependents.size == 0) {
-            deactivate(
+            onLastDependentRemoved(
                 shrinkageContext = shrinkageContext,
             )
         }
@@ -223,14 +223,14 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
     /**
      * Add this vertex as a dependent to the upstream vertices
      */
-    protected abstract fun activate(
+    protected abstract fun onFirstDependentAdded(
         expansionContext: Transaction.ExpansionContext,
     )
 
     /**
      * Remove this vertex as a dependent from the upstream vertices
      */
-    protected abstract fun deactivate(
+    protected abstract fun onLastDependentRemoved(
         shrinkageContext: Transaction.ShrinkageContext,
     )
 
