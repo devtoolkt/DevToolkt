@@ -8,7 +8,7 @@ import dev.toolkt.reactive.cell.OperatedCell
 class CellSwitchVertex<SourceValueT>(
     private val outerCellVertex: DependencyCellVertex<Cell<SourceValueT>>,
 ) : StatelessCellVertex<SourceValueT>() {
-    override fun prepare(
+    override fun prepareStateless(
         preProcessingContext: Transaction.PreProcessingContext,
     ): CellVertex.Update<SourceValueT>? {
         val outerUpdate = outerCellVertex.pullUpdate(
