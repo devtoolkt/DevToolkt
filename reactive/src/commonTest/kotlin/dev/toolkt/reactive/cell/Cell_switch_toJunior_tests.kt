@@ -123,7 +123,7 @@ class Cell_switch_toJunior_tests {
 
         assertEquals(
             expected = listOf(20),
-            actual = collectedEvents.copyAndClear(),
+            actual = collectedEvents,
         )
     }
 
@@ -153,7 +153,7 @@ class Cell_switch_toJunior_tests {
 
         assertEquals(
             expected = listOf(11),
-            actual = collectedEvents.copyAndClear(),
+            actual = collectedEvents,
         )
     }
 }

@@ -270,7 +270,8 @@ class Cell_switch_basic_tests {
         initialInnerValue1: Int,
         initialInnerValue2: Int,
         initialInnerValue3: Int,
-        stimulation: Stimulation,
+        preparingStimulation: Stimulation? = null,
+        properStimulation: Stimulation,
         expectedValue: Int,
     ) {
         val (switchCell, reactiveSystem) = setup(
@@ -288,7 +289,13 @@ class Cell_switch_basic_tests {
             targetList = collectedEvents,
         )
 
-        reactiveSystem.stimulate(stimulation)
+        if (preparingStimulation != null) {
+            reactiveSystem.stimulate(preparingStimulation)
+
+            collectedEvents.clear()
+        }
+
+        reactiveSystem.stimulate(properStimulation)
 
         assertEquals(
             expected = listOf(expectedValue),
@@ -305,7 +312,7 @@ class Cell_switch_basic_tests {
             initialInnerValue1 = 10,
             initialInnerValue2 = 20,
             initialInnerValue3 = 30,
-            stimulation = Stimulation(
+            properStimulation = Stimulation(
                 newSwitchCaseId = SwitchCaseId.Case3,
             ),
             expectedValue = 30,
@@ -326,8 +333,7 @@ class Cell_switch_basic_tests {
         )
     }
 
-    // TODO: Test propagation of the _non-initial_ inner cell
-    private fun test_updatePropagation_innerUpdate(
+    private fun test_updatePropagation_initialInnerUpdate(
         valueEventStreamExtractor: ValueEventStreamExtractor,
     ) {
         test_updatePropagation(
@@ -336,7 +342,7 @@ class Cell_switch_basic_tests {
             initialInnerValue1 = 11,
             initialInnerValue2 = 21,
             initialInnerValue3 = 31,
-            stimulation = Stimulation(
+            properStimulation = Stimulation(
                 newInnerValue2 = 22,
             ),
             expectedValue = 22,
@@ -344,15 +350,48 @@ class Cell_switch_basic_tests {
     }
 
     @Test
-    fun test_updatePropagation_innerUpdate_newValues() {
-        test_updatePropagation_innerUpdate(
+    fun test_updatePropagation_initialInnerUpdate_newValues() {
+        test_updatePropagation_initialInnerUpdate(
             valueEventStreamExtractor = NewValuesExtractor,
         )
     }
 
     @Test
-    fun test_updatePropagation_innerUpdate_updatedValues() {
-        test_updatePropagation_innerUpdate(
+    fun test_updatePropagation_initialInnerUpdate_updatedValues() {
+        test_updatePropagation_initialInnerUpdate(
+            valueEventStreamExtractor = UpdatedValuesExtractor,
+        )
+    }
+
+    private fun test_updatePropagation_nonInitialInnerUpdate(
+        valueEventStreamExtractor: ValueEventStreamExtractor,
+    ) {
+        test_updatePropagation(
+            valueEventStreamExtractor = valueEventStreamExtractor,
+            initialSwitchCaseId = SwitchCaseId.Case1,
+            initialInnerValue1 = 11,
+            initialInnerValue2 = 21,
+            initialInnerValue3 = 31,
+            preparingStimulation = Stimulation(
+                newSwitchCaseId = SwitchCaseId.Case2,
+            ),
+            properStimulation = Stimulation(
+                newInnerValue2 = 22,
+            ),
+            expectedValue = 22,
+        )
+    }
+
+    @Test
+    fun test_updatePropagation_nonInitialInnerUpdate_newValues() {
+        test_updatePropagation_nonInitialInnerUpdate(
+            valueEventStreamExtractor = NewValuesExtractor,
+        )
+    }
+
+    @Test
+    fun test_updatePropagation_nonInitialInnerUpdate_updatedValues() {
+        test_updatePropagation_nonInitialInnerUpdate(
             valueEventStreamExtractor = UpdatedValuesExtractor,
         )
     }
@@ -366,7 +405,7 @@ class Cell_switch_basic_tests {
             initialInnerValue1 = 10,
             initialInnerValue2 = 20,
             initialInnerValue3 = 30,
-            stimulation = Stimulation(
+            properStimulation = Stimulation(
                 newSwitchCaseId = SwitchCaseId.Case1,
                 newInnerValue1 = 11,
                 newInnerValue3 = 31,
