@@ -1,9 +1,9 @@
 package dev.toolkt.reactive.cell.test_utils
 
-import dev.toolkt.reactive.event_stream.Cell
+import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.event_stream.EventStream
-import dev.toolkt.reactive.event_stream.newValues
-import dev.toolkt.reactive.event_stream.updatedValues
+import dev.toolkt.reactive.cell.newValues
+import dev.toolkt.reactive.cell.updatedValues
 
 interface ValueEventStreamExtractor {
     fun <ValueT> extractValueEventStream(

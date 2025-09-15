@@ -10,20 +10,9 @@ class MutableCellVertex<ValueT>(
 
     private var preparedVolatileUpdate: Update<ValueT>? = null
 
-    override fun pullUpdate(
-        processingContext: Transaction.ProcessingContext,
-    ): Update<ValueT>? = preparedVolatileUpdate
-
-    override val storedVolatileUpdate: Update<ValueT>?
-        get() = preparedVolatileUpdate
-
     override fun prepare(
         processingContext: Transaction.ProcessingContext,
-    ): Boolean {
-        // Mutable cell vertices are pre-prepared
-
-        return preparedVolatileUpdate != null
-    }
+    ): Update<ValueT>? = preparedVolatileUpdate
 
     fun prepareNewValue(
         newValue: ValueT,
@@ -37,28 +26,20 @@ class MutableCellVertex<ValueT>(
         )
     }
 
-    override fun persistNewValue(
-        stabilizationContext: Transaction.StabilizationContext,
-        newValue: ValueT,
-    ) {
-        mutableStableValue = newValue
-    }
-
-    override fun activate(
-        expansionContext: Transaction.ExpansionContext,
-    ) {
-        // The mutable cell vertex doesn't have dependencies
-    }
-
-    override fun deactivate(
-        shrinkageContext: Transaction.ShrinkageContext,
-    ) {
-        // The mutable cell vertex doesn't have dependencies
-    }
-
-    override fun clear(
-        stabilizationContext: Transaction.StabilizationContext,
-    ) {
+    fun clearNewValue() {
         preparedVolatileUpdate = null
     }
+
+    override fun stabilizeState(
+        stabilizationContext: Transaction.StabilizationContext,
+        message: Update<ValueT>?,
+    ) {
+        message?.let { update ->
+            mutableStableValue = update.newValue
+        }
+    }
+
+    override fun pullStableValue(
+        processingContext: Transaction.ProcessingContext,
+    ): ValueT = mutableStableValue
 }

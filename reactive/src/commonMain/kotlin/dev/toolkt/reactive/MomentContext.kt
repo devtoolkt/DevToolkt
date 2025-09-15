@@ -1,11 +1,22 @@
 package dev.toolkt.reactive
 
-class MomentContext internal constructor() : PureContext() {
+class MomentContext private constructor(
+    val processingContext: Transaction.ProcessingContext,
+) : PureContext() {
     companion object {
-        fun <ResultT> executeExternally(
+        /**
+         * Execute a [block] within a [MomentContext].
+         *
+         * This method must be called from outside the reactive system.
+         *
+         * @return The result of the block.
+         */
+        fun <ResultT> execute(
             block: context(MomentContext) () -> ResultT,
-        ): ResultT {
-            TODO()
+        ): ResultT = Transaction.execute { processingContext ->
+            with(MomentContext(processingContext)) {
+                block()
+            }
         }
     }
 }

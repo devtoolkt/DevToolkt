@@ -5,13 +5,12 @@ import dev.toolkt.reactive.cell.test_utils.UpdatedValuesExtractor
 import dev.toolkt.reactive.cell.test_utils.ValueEventStreamExtractor
 import dev.toolkt.reactive.cell.test_utils.energize
 import dev.toolkt.reactive.cell.test_utils.sampleExternally
-import dev.toolkt.reactive.event_stream.Cell
-import dev.toolkt.reactive.event_stream.map
 import dev.toolkt.reactive.event_stream.subscribeCollecting
 import dev.toolkt.reactive.test_utils.ReactiveTest
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 /**
  * ```
@@ -442,8 +441,10 @@ class Cell_switch_basic_tests {
 
         val valueEventStream = valueEventStreamExtractor.extractValueEventStream(switchCell)
 
-        val subscription = valueEventStream.subscribeCollecting(
-            targetList = collectedEvents,
+        val subscription = assertNotNull(
+            valueEventStream.subscribeCollecting(
+                targetList = collectedEvents,
+            ),
         )
 
         reactiveSystem.stimulate(

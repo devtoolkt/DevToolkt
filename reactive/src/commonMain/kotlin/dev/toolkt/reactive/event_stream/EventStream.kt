@@ -2,13 +2,74 @@ package dev.toolkt.reactive.event_stream
 
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.PureContext
+import dev.toolkt.reactive.SubscriptionVertex
+import dev.toolkt.reactive.Transaction
+import dev.toolkt.reactive.cell.Cell
+import dev.toolkt.reactive.cell.OperatedCell
+import dev.toolkt.reactive.cell.vertices.HoldCellVertex
+import dev.toolkt.reactive.event_stream.vertices.EventStreamMapNotNullVertex
 
 sealed interface EventStream<out EventT> {
+    /**
+     * A mechanism for propagating an event into the reactive system.
+     */
+    interface EventPropagator<EventT> {
+        /**
+         * Propagate an event within the reactive system.
+         *
+         * This method must be called from outside the reactive system.
+         */
+        fun propagate(
+            event: EventT,
+        )
+    }
+
+    /**
+     * A controller for registering and unregistering an external listener to an external source. The technical details
+     * of what a "listener" exactly is are up to the external system.
+     */
+    interface ExternalListenerController {
+        /**
+         * Register the external listener. The listener registration shouldn't cause the external system to change its
+         * behavior in an observable way.
+         *
+         * This method will be called from within the reactive system.
+         */
+        fun register()
+
+        /**
+         * Unregister the external listener. The listener unregistration shouldn't cause the external system to change
+         * its behavior in an observable way.
+         *
+         * This method will be called from within the reactive system.
+         */
+        fun unregister()
+    }
+
+    /**
+     * A subscription to an event stream.
+     */
     interface Subscription {
+        /**
+         * Cancel the subscription.
+         *
+         * This method must be called from outside the reactive system.
+         */
         fun cancel()
     }
 
     companion object {
+        /**
+         * Creates an event stream driven by an external event source.
+         *
+         * @param setup - A function that, given an [EventPropagator] bound to this stream, returns an
+         * [ExternalListenerController] bound to the external event source. Should not directly mutate the external
+         * system in an observable way.
+         */
+        fun <EventT> external(
+            setup: (EventPropagator<EventT>) -> ExternalListenerController,
+        ): EventStream<EventT> = TODO()
+
         context(pureContext: PureContext) fun <EventT> merge2(
             eventStream1: EventStream<EventT>,
             eventStream2: EventStream<EventT>,
@@ -25,6 +86,19 @@ sealed interface EventStream<out EventT> {
 context(pureContext: PureContext) fun <EventT, TransformedEventT> EventStream<EventT>.map(
     transform: (EventT) -> TransformedEventT,
 ): EventStream<TransformedEventT> = TODO()
+
+context(pureContext: PureContext) fun <EventT, TransformedEventT : Any> EventStream<EventT>.mapNotNull(
+    transform: (EventT) -> TransformedEventT?,
+): EventStream<TransformedEventT> = when (this) {
+    NeverEventStream -> NeverEventStream
+
+    is BaseOperatedEventStream -> OperatedEventStream(
+        vertex = EventStreamMapNotNullVertex(
+            sourceEventStreamVertex = this.vertex,
+            transform = transform,
+        )
+    )
+}
 
 context(momentContext: MomentContext) fun <EventT, TransformedEventT> EventStream<EventT>.mapAt(
     transform: context(MomentContext) (EventT) -> TransformedEventT,
@@ -50,15 +124,46 @@ context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.take(
 
 context(momentContext: MomentContext) fun <ValueT> EventStream<ValueT>.hold(
     initialValue: ValueT,
-): Cell<ValueT> = TODO()
+): Cell<ValueT> = when (this) {
+    NeverEventStream -> Cell.of(value = initialValue)
+
+    is BaseOperatedEventStream -> OperatedCell(
+        HoldCellVertex.construct(
+            processingContext = momentContext.processingContext,
+            sourceEventStreamVertex = this.vertex,
+            initialValue = initialValue,
+        ),
+    )
+}
 
 /**
  * Subscribe to this event stream.
  *
- * This method should be only called from outside the reactive system.
+ * This method must be called from outside the reactive system.
  */
 fun <EventT> EventStream<EventT>.subscribe(
     handle: (EventT) -> Unit,
-): EventStream.Subscription {
-    TODO()
+): EventStream.Subscription? = when (this) {
+    NeverEventStream -> null
+
+    is BaseOperatedEventStream -> {
+        val subscriptionVertex = SubscriptionVertex(
+            sourceEventStreamVertex = this.vertex,
+            handle = handle,
+        )
+
+        this.vertex.addDependent(
+            expansionContext = Transaction.ExpansionContext,
+            vertex = subscriptionVertex,
+        )
+
+        object : EventStream.Subscription {
+            override fun cancel() {
+                this@subscribe.vertex.removeDependent(
+                    shrinkageContext = Transaction.ShrinkageContext,
+                    vertex = subscriptionVertex,
+                )
+            }
+        }
+    }
 }

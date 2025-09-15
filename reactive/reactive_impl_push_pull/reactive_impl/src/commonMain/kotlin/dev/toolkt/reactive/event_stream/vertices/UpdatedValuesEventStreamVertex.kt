@@ -1,21 +1,20 @@
-package dev.toolkt.reactive.cell.vertices
+package dev.toolkt.reactive.event_stream.vertices
 
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.event_stream.vertices.EventStreamMapVertex
+import dev.toolkt.reactive.cell.vertices.DynamicCellVertex
 
-class CellMapVertex<SourceValueT, TransformedValueT>(
-    private val sourceCellVertex: DynamicCellVertex<SourceValueT>,
-    private val transform: (SourceValueT) -> TransformedValueT,
-) : StatelessCellVertex<TransformedValueT>() {
+class UpdatedValuesEventStreamVertex<ValueT>(
+    private val sourceCellVertex: DynamicCellVertex<ValueT>,
+) : StatelessEventStreamVertex<ValueT>() {
     override fun prepare(
         processingContext: Transaction.ProcessingContext,
-    ): CellVertex.Update<TransformedValueT>? {
+    ): EventStreamVertex.Occurrence<ValueT>? {
         val sourceUpdate = sourceCellVertex.pullUpdate(
             processingContext = processingContext,
-        )
+        ) ?: return null
 
-        return sourceUpdate?.map(
-            transform = transform,
+        return EventStreamVertex.Occurrence(
+            event = sourceUpdate.newValue,
         )
     }
 
@@ -36,10 +35,4 @@ class CellMapVertex<SourceValueT, TransformedValueT>(
             vertex = this,
         )
     }
-
-    override fun computeStableValue(
-        processingContext: Transaction.ProcessingContext,
-    ): TransformedValueT = transform(
-        sourceCellVertex.pullStableValue(processingContext = processingContext),
-    )
 }

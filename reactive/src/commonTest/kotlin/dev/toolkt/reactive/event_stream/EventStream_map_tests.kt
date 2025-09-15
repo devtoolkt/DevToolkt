@@ -5,6 +5,7 @@ import dev.toolkt.reactive.test_utils.ReactiveTest
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 @Ignore // TODO: Implement this logic
 @Suppress("ClassName")
@@ -51,8 +52,10 @@ class EventStream_map_tests {
 
         val collectedEvents = mutableListOf<String>()
 
-        val subscription = mapEventStream.subscribeCollecting(
-            targetList = collectedEvents,
+        val subscription = assertNotNull(
+            mapEventStream.subscribeCollecting(
+                targetList = collectedEvents,
+            ),
         )
 
         reactiveTest.stimulate(10)

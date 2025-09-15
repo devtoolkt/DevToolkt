@@ -1,13 +1,12 @@
 package dev.toolkt.reactive.cell
 
-import dev.toolkt.reactive.event_stream.Cell
 import dev.toolkt.reactive.event_stream.EventStream
-import dev.toolkt.reactive.event_stream.map
 import dev.toolkt.reactive.event_stream.subscribeCollecting
 import dev.toolkt.reactive.test_utils.ReactiveTest
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 /**
  * ```
@@ -139,8 +138,10 @@ class Cell_divert_basic_tests {
 
         val collectedEvents = mutableListOf<Int>()
 
-        val subscription = divertEventStream.subscribeCollecting(
-            targetList = collectedEvents,
+        val subscription = assertNotNull(
+            divertEventStream.subscribeCollecting(
+                targetList = collectedEvents,
+            ),
         )
 
         reactiveSystem.stimulate(

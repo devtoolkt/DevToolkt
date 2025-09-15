@@ -1,48 +1,40 @@
 package dev.toolkt.reactive.cell.vertices
 
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.cell.vertices.CellVertex.Update
 
 abstract class StatelessCellVertex<ValueT> : PropagativeCellVertex<ValueT>() {
-    private var cachedVolatileUpdate: Update<ValueT>? = null
+    data class StableValueCache<ValueT>(
+        val stableValue: ValueT,
+    )
 
-    final override fun pullUpdate(
+    private var cachedStableValue: StableValueCache<ValueT>? = null
+
+    final override fun pullStableValue(
         processingContext: Transaction.ProcessingContext,
-    ): Update<ValueT>? {
-        process(
-            processingContext = processingContext,
-        )
+    ): ValueT = when (val foundCachedStableValue = this.cachedStableValue) {
+        null -> {
+            val computedCachedStableValue = computeStableValue(
+                processingContext,
+            )
 
-        return cachedVolatileUpdate
+            this.cachedStableValue = StableValueCache(
+                stableValue = computedCachedStableValue,
+            )
+
+            computedCachedStableValue
+        }
+
+        else -> foundCachedStableValue.stableValue
     }
 
-    final override val storedVolatileUpdate: Update<ValueT>?
-        get() = cachedVolatileUpdate
-
-    final override fun prepare(
-        processingContext: Transaction.ProcessingContext,
-    ): Boolean {
-        val computedUpdate = computeUpdate(processingContext)
-
-        cachedVolatileUpdate = computedUpdate
-
-        return computedUpdate != null
-    }
-
-    final override fun persistNewValue(
+    final override fun stabilizeState(
         stabilizationContext: Transaction.StabilizationContext,
-        newValue: ValueT,
+        message: CellVertex.Update<ValueT>?,
     ) {
-        // Stateless cell vertices do not maintain stable state
+        cachedStableValue = null
     }
 
-    final override fun clear(
-        stabilizationContext: Transaction.StabilizationContext,
-    ) {
-        cachedVolatileUpdate = null
-    }
-
-    protected abstract fun computeUpdate(
+    abstract fun computeStableValue(
         processingContext: Transaction.ProcessingContext,
-    ): Update<ValueT>?
+    ): ValueT
 }
