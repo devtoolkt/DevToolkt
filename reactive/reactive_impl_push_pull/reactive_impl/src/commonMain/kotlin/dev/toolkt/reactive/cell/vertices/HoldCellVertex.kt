@@ -36,7 +36,7 @@ class HoldCellVertex<ValueT> private constructor(
 
     private var heldStableValue: ValueT = initialValue
 
-    override fun prepareMessage(
+    override fun prepare(
         preProcessingContext: Transaction.PreProcessingContext,
     ): Update<ValueT>? {
         val sourceOccurrence = sourceEventStreamVertex.pullOccurrence(

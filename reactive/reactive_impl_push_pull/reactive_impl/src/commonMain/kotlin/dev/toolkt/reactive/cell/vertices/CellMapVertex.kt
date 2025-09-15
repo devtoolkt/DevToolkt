@@ -6,7 +6,7 @@ class CellMapVertex<SourceValueT, TransformedValueT>(
     private val sourceCellVertex: DependencyCellVertex<SourceValueT>,
     private val transform: (SourceValueT) -> TransformedValueT,
 ) : StatelessCellVertex<TransformedValueT>() {
-    override fun prepareMessage(
+    override fun prepare(
         preProcessingContext: Transaction.PreProcessingContext,
     ): CellVertex.Update<TransformedValueT>? {
         val sourceUpdate = sourceCellVertex.pullUpdate(

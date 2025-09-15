@@ -8,7 +8,7 @@ class EventStreamMapNotNullVertex<SourceEventT, TransformedEventT : Any>(
     private val sourceEventStreamVertex: DependencyEventStreamVertex<SourceEventT>,
     private val transform: (SourceEventT) -> TransformedEventT?,
 ) : StatelessEventStreamVertex<TransformedEventT>() {
-    override fun prepareMessage(
+    override fun prepare(
         preProcessingContext: Transaction.PreProcessingContext,
     ): EventStreamVertex.Occurrence<TransformedEventT>? {
         val sourceOccurrence = sourceEventStreamVertex.pullOccurrence(

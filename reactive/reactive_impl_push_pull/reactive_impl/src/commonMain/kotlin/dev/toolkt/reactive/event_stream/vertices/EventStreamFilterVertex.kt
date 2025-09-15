@@ -7,7 +7,7 @@ class EventStreamFilterVertex<SourceEventT>(
     private val sourceEventStreamVertex: DependencyEventStreamVertex<SourceEventT>,
     private val predicate: (SourceEventT) -> Boolean,
 ) : StatelessEventStreamVertex<SourceEventT>() {
-    override fun prepareMessage(
+    override fun prepare(
         preProcessingContext: Transaction.PreProcessingContext,
     ): EventStreamVertex.Occurrence<SourceEventT>? {
         val sourceOccurrence = sourceEventStreamVertex.pullOccurrence(
