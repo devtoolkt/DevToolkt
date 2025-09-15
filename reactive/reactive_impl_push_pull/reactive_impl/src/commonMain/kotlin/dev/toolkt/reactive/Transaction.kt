@@ -11,7 +11,7 @@ class Transaction private constructor() {
         )
     }
 
-    abstract class ProcessingContext {
+    abstract class PreProcessingContext {
         abstract fun enqueueForProcessing(
             dependentVertex: DynamicVertex,
         )
@@ -21,21 +21,29 @@ class Transaction private constructor() {
         )
     }
 
-    data object ExpansionContext
+    abstract class InterProcessingContext : ExpansionContext()
 
-    data object ShrinkageContext
+    abstract class ExpansionContext {
+        data object External : ExpansionContext()
+    }
+
+    abstract class ShrinkageContext {
+        data object External : ShrinkageContext()
+    }
 
     data object MutationContext
 
-    data object StabilizationContext
+    abstract class StabilizationContext : ShrinkageContext()
+
+    abstract class PostProcessingContext : StabilizationContext()
 
     companion object {
         fun <ResultT> execute(
-            block: (ProcessingContext) -> ResultT,
+            block: (PreProcessingContext) -> ResultT,
         ): ResultT = with(Transaction()) {
             val verticesEnqueuedForProcessing = ArrayDeque<DynamicVertex>()
 
-            val processingContext = object : ProcessingContext() {
+            val preProcessingContext = object : PreProcessingContext() {
                 override fun enqueueForProcessing(
                     dependentVertex: DynamicVertex,
                 ) {
@@ -49,17 +57,27 @@ class Transaction private constructor() {
                 }
             }
 
-            val result = block(processingContext)
+            val result = block(preProcessingContext)
 
             while (verticesEnqueuedForProcessing.isNotEmpty()) {
                 val vertexToProcess = verticesEnqueuedForProcessing.removeFirst()
 
-                vertexToProcess.processDynamic(
-                    processingContext = processingContext,
+                vertexToProcess.preProcess(
+                    preProcessingContext = preProcessingContext,
                 )
             }
 
-            postProcess()
+            processedVertices.forEach { processedVertex ->
+                processedVertex.interProcess(
+                    object : InterProcessingContext() {},
+                )
+            }
+
+            processedVertices.forEach { processedVertex ->
+                processedVertex.postProcess(
+                    object : PostProcessingContext() {},
+                )
+            }
 
             return@with result
         }
@@ -71,27 +89,5 @@ class Transaction private constructor() {
         processedVertex: DynamicVertex,
     ) {
         processedVertices.add(processedVertex)
-    }
-
-    private fun postProcess() {
-        processedVertices.forEach { processedVertex ->
-            processedVertex.expand(
-                expansionContext = ExpansionContext,
-            )
-
-            processedVertex.invokeEffects(
-                mutationContext = MutationContext,
-            )
-        }
-
-        processedVertices.forEach { processedVertex ->
-            processedVertex.shrink(
-                shrinkageContext = ShrinkageContext,
-            )
-
-            processedVertex.stabilizeDynamic(
-                stabilizationContext = StabilizationContext,
-            )
-        }
     }
 }

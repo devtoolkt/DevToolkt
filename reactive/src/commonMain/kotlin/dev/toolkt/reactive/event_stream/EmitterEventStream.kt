@@ -16,9 +16,9 @@ class EmitterEventStream<EventT> : BaseOperatedEventStream<EventT> {
             event = event,
         )
 
-        Transaction.execute { processingContext ->
-            vertex.processDynamic(
-                processingContext = processingContext,
+        Transaction.execute { preProcessingContext ->
+            vertex.preProcess(
+                preProcessingContext = preProcessingContext,
             )
         }
 

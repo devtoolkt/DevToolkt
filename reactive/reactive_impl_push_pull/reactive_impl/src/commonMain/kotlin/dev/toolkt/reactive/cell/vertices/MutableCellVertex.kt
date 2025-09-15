@@ -10,8 +10,8 @@ class MutableCellVertex<ValueT>(
 
     private var preparedVolatileUpdate: Update<ValueT>? = null
 
-    override fun prepare(
-        processingContext: Transaction.ProcessingContext,
+    override fun prepareMessage(
+        preProcessingContext: Transaction.PreProcessingContext,
     ): Update<ValueT>? = preparedVolatileUpdate
 
     fun prepareNewValue(
@@ -40,6 +40,6 @@ class MutableCellVertex<ValueT>(
     }
 
     override fun pullStableValue(
-        processingContext: Transaction.ProcessingContext,
+        preProcessingContext: Transaction.PreProcessingContext,
     ): ValueT = mutableStableValue
 }

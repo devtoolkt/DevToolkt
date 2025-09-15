@@ -7,8 +7,8 @@ import dev.toolkt.reactive.event_stream.vertices.StatelessEventStreamVertex
 class EmitterEventStreamVertex<EventT>() : StatelessEventStreamVertex<EventT>() {
     private var preparedVolatileOccurrence: Occurrence<EventT>? = null
 
-    override fun prepare(
-        processingContext: Transaction.ProcessingContext,
+    override fun prepareMessage(
+        preProcessingContext: Transaction.PreProcessingContext,
     ): Occurrence<EventT>? = preparedVolatileOccurrence
 
     fun prepareOccurrence(

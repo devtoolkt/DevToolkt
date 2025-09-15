@@ -4,10 +4,10 @@ import dev.toolkt.reactive.PropagativeVertex
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.vertices.CellVertex.Update
 
-abstract class PropagativeCellVertex<ValueT>() : PropagativeVertex<Update<ValueT>>(), DynamicCellVertex<ValueT> {
+abstract class PropagativeCellVertex<ValueT>() : PropagativeVertex<Update<ValueT>>(), DependencyCellVertex<ValueT> {
     final override fun pullUpdate(
-        processingContext: Transaction.ProcessingContext,
+        preProcessingContext: Transaction.PreProcessingContext,
     ): Update<ValueT>? = pullMessage(
-        processingContext = processingContext,
+        preProcessingContext = preProcessingContext,
     )
 }

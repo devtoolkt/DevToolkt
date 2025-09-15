@@ -9,67 +9,25 @@ class SubscriptionVertex<EventT>(
 ) : OperativeVertex() {
     private var receivedEventOccurrence: EventStreamVertex.Occurrence<EventT>? = null
 
-    override fun processOperative(
-        processingContext: Transaction.ProcessingContext,
+    override fun prepare(
+        preProcessingContext: Transaction.PreProcessingContext,
     ) {
         val occurrence = sourceEventStreamVertex.pullOccurrence(
-            processingContext = processingContext,
+            preProcessingContext = preProcessingContext,
         ) ?: return
 
         receivedEventOccurrence = occurrence
     }
 
-    override fun expand(
-        expansionContext: Transaction.ExpansionContext,
-    ) {
-    }
-
-    override fun shrink(
-        shrinkageContext: Transaction.ShrinkageContext,
-    ) {
-    }
-
-    override fun registerDependent(
-        processingContext: Transaction.ProcessingContext,
-        vertex: DynamicVertex,
-    ) {
-        TODO("Not yet implemented")
-    }
-
-    override fun unregisterDependent(
-        processingContext: Transaction.ProcessingContext,
-        vertex: DynamicVertex,
-    ) {
-        TODO("Not yet implemented")
-    }
-
-    /**
-     * Adds [vertex] to the stable dependents. If this is the first stable dependent, activate this vertex.
-     */
-    override fun addDependent(
-        expansionContext: Transaction.ExpansionContext,
-        vertex: DynamicVertex,
-    ) {
-    }
-
-    /**
-     * Removes [vertex] from the stable dependents. If this was the last stable dependent, deactivate this vertex.
-     */
-    override fun removeDependent(
-        shrinkageContext: Transaction.ShrinkageContext,
-        vertex: DynamicVertex,
-    ) {
-    }
-
-    override fun invokeEffects(
-        mutationContext: Transaction.MutationContext,
+    override fun affect(
+        interProcessingContext: Transaction.InterProcessingContext,
     ) {
         receivedEventOccurrence?.let {
             handle(it.event)
         }
     }
 
-    override fun stabilizeOperative(
+    override fun settle(
         stabilizationContext: Transaction.StabilizationContext,
     ) {
         receivedEventOccurrence = null

@@ -1,17 +1,18 @@
 package dev.toolkt.reactive.event_stream.vertices
 
 import dev.toolkt.reactive.Transaction
+import dev.toolkt.reactive.cell.vertices.DependencyEventStreamVertex
 import dev.toolkt.reactive.cell.vertices.DynamicEventStreamVertex
 
 class EventStreamMapVertex<SourceEventT, TransformedEventT>(
-    private val sourceEventStreamVertex: DynamicEventStreamVertex<SourceEventT>,
+    private val sourceEventStreamVertex: DependencyEventStreamVertex<SourceEventT>,
     private val transform: (SourceEventT) -> TransformedEventT,
 ) : StatelessEventStreamVertex<TransformedEventT>() {
-    override fun prepare(
-        processingContext: Transaction.ProcessingContext,
+    override fun prepareMessage(
+        preProcessingContext: Transaction.PreProcessingContext,
     ): EventStreamVertex.Occurrence<TransformedEventT>? {
         val sourceOccurrence = sourceEventStreamVertex.pullOccurrence(
-            processingContext = processingContext,
+            preProcessingContext = preProcessingContext,
         )
 
         return sourceOccurrence?.map(

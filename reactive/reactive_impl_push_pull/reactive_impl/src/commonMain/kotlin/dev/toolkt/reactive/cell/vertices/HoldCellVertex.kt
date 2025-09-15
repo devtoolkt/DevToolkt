@@ -5,25 +5,25 @@ import dev.toolkt.reactive.cell.vertices.CellVertex.Update
 import dev.toolkt.reactive.globalFinalizationRegistry
 
 class HoldCellVertex<ValueT> private constructor(
-    private val sourceEventStreamVertex: DynamicEventStreamVertex<ValueT>,
+    private val sourceEventStreamVertex: DependencyEventStreamVertex<ValueT>,
     initialValue: ValueT,
 ) : StatefulCellVertex<ValueT>() {
     companion object {
         fun <ValueT> construct(
-            processingContext: Transaction.ProcessingContext,
-            sourceEventStreamVertex: DynamicEventStreamVertex<ValueT>,
+            preProcessingContext: Transaction.PreProcessingContext,
+            sourceEventStreamVertex: DependencyEventStreamVertex<ValueT>,
             initialValue: ValueT,
         ): HoldCellVertex<ValueT> = HoldCellVertex(
             sourceEventStreamVertex = sourceEventStreamVertex,
             initialValue = initialValue,
         ).apply {
             sourceEventStreamVertex.registerDependent(
-                processingContext = processingContext,
+                preProcessingContext = preProcessingContext,
                 vertex = this,
             )
 
-            processDynamic(
-                processingContext = processingContext,
+            preProcess(
+                preProcessingContext = preProcessingContext,
             )
 
             // TODO: Figure out weak dependents!
@@ -36,11 +36,11 @@ class HoldCellVertex<ValueT> private constructor(
 
     private var heldStableValue: ValueT = initialValue
 
-    override fun prepare(
-        processingContext: Transaction.ProcessingContext,
+    override fun prepareMessage(
+        preProcessingContext: Transaction.PreProcessingContext,
     ): Update<ValueT>? {
         val sourceOccurrence = sourceEventStreamVertex.pullOccurrence(
-            processingContext = processingContext,
+            preProcessingContext = preProcessingContext,
         ) ?: return null
 
         return Update(
@@ -58,6 +58,6 @@ class HoldCellVertex<ValueT> private constructor(
     }
 
     override fun pullStableValue(
-        processingContext: Transaction.ProcessingContext,
+        preProcessingContext: Transaction.PreProcessingContext,
     ): ValueT = heldStableValue
 }

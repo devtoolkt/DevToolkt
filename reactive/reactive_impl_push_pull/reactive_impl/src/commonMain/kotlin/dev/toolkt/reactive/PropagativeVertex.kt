@@ -3,7 +3,7 @@ package dev.toolkt.reactive
 import dev.toolkt.core.platform.PlatformNativeMap
 import dev.toolkt.core.platform.PlatformNativeSet
 
-abstract class PropagativeVertex<MessageT : Any> : OperativeVertex() {
+abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), DependencyVertex {
     private enum class RegistrationRequest {
         /**
          * RegistrationRequest to register the dependent vertex
@@ -22,37 +22,37 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex() {
 
     private var cachedMessage: MessageT? = null
 
-    override fun processOperative(
-        processingContext: Transaction.ProcessingContext,
+    override fun prepare(
+        preProcessingContext: Transaction.PreProcessingContext,
     ) {
-        val message = prepare(
-            processingContext = processingContext,
+        val message = prepareMessage(
+            preProcessingContext = preProcessingContext,
         )
 
         if (message != null) {
             cachedMessage = message
 
             propagate(
-                processingContext = processingContext,
+                preProcessingContext = preProcessingContext,
             )
         }
     }
 
     fun pullMessage(
-        processingContext: Transaction.ProcessingContext,
+        preProcessingContext: Transaction.PreProcessingContext,
     ): MessageT? {
-        processDynamic(
-            processingContext = processingContext,
+        preProcess(
+            preProcessingContext = preProcessingContext,
         )
 
         return cachedMessage
     }
 
     private fun propagate(
-        processingContext: Transaction.ProcessingContext,
+        preProcessingContext: Transaction.PreProcessingContext,
     ) {
         stableDependents.forEach { dependentVertex ->
-            processingContext.enqueueForProcessing(
+            preProcessingContext.enqueueForProcessing(
                 dependentVertex = dependentVertex,
             )
         }
@@ -68,7 +68,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex() {
      * is registered as a dependent in a given transaction, it can't be unregistered in the same transaction.
      */
     final override fun registerDependent(
-        @Suppress("unused") processingContext: Transaction.ProcessingContext,
+        @Suppress("unused") preProcessingContext: Transaction.PreProcessingContext,
         vertex: DynamicVertex,
     ) {
         if (stableDependents.contains(vertex)) {
@@ -95,7 +95,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex() {
      * is unregistered as a dependent in a given transaction, it can't be re-registered in the same transaction.
      */
     final override fun unregisterDependent(
-        @Suppress("unused") processingContext: Transaction.ProcessingContext,
+        @Suppress("unused") preProcessingContext: Transaction.PreProcessingContext,
         vertex: DynamicVertex,
     ) {
         if (!stableDependents.contains(vertex)) {
@@ -112,37 +112,25 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex() {
         }
     }
 
-    /**
-     * Adds all the registered vertices as stable dependents.
-     */
-    override fun expand(
-        expansionContext: Transaction.ExpansionContext,
-    ) {
-        volatileRegistrationRequests.forEach { vertex, request ->
-            if (request == RegistrationRequest.Register) {
-                addDependent(
-                    expansionContext = expansionContext,
-                    vertex = vertex,
-                )
-            }
-        }
-    }
 
-    /**
-     * Removes all the unregistered vertices from the stable dependents.
-     */
-    override fun shrink(
-        shrinkageContext: Transaction.ShrinkageContext,
-    ) {
-        volatileRegistrationRequests.forEach { vertex, request ->
-            if (request == RegistrationRequest.Unregister) {
-                removeDependent(
-                    shrinkageContext = shrinkageContext,
-                    vertex = vertex,
-                )
-            }
-        }
-    }
+
+
+
+//    /**
+//     * Removes all the unregistered vertices from the stable dependents.
+//     */
+//    override fun shrink(
+//        shrinkageContext: Transaction.ShrinkageContext,
+//    ) {
+//        volatileRegistrationRequests.forEach { vertex, request ->
+//            if (request == RegistrationRequest.Unregister) {
+//                removeDependent(
+//                    shrinkageContext = shrinkageContext,
+//                    vertex = vertex,
+//                )
+//            }
+//        }
+//    }
 
     /**
      * Adds [vertex] to the stable dependents. If this is the first stable dependent, activate this vertex.
@@ -184,23 +172,39 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex() {
         }
     }
 
-    final override fun invokeEffects(
-        mutationContext: Transaction.MutationContext,
+    final override fun affect(
+        interProcessingContext: Transaction.InterProcessingContext,
     ) {
-        // Dynamic dependency vertices don't have side effects
+        volatileRegistrationRequests.forEach { vertex, request ->
+            if (request == RegistrationRequest.Register) {
+                addDependent(
+                    expansionContext = interProcessingContext,
+                    vertex = vertex,
+                )
+            }
+        }
     }
 
     /**
      * - Update the stable state by merging in the volatile state
      * - Clear the volatile state or replace it with the follow-up volatile state
      */
-    final override fun stabilizeOperative(
+    final override fun settle(
         stabilizationContext: Transaction.StabilizationContext,
     ) {
         stabilizeState(
             stabilizationContext = stabilizationContext,
             message = cachedMessage,
         )
+
+        volatileRegistrationRequests.forEach { vertex, request ->
+            if (request == RegistrationRequest.Unregister) {
+                removeDependent(
+                    shrinkageContext = stabilizationContext,
+                    vertex = vertex,
+                )
+            }
+        }
 
         volatileRegistrationRequests.clear()
 
@@ -212,8 +216,8 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex() {
      *
      * @return true if any meaningful volatile state was produced, false otherwise
      */
-    protected abstract fun prepare(
-        processingContext: Transaction.ProcessingContext,
+    protected abstract fun prepareMessage(
+        preProcessingContext: Transaction.PreProcessingContext,
     ): MessageT?
 
     /**

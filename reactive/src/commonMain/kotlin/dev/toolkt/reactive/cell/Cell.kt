@@ -37,7 +37,7 @@ sealed interface Cell<out ValueT> {
 
 context(momentContext: MomentContext) fun <ValueT> Cell<ValueT>.sample(): ValueT = when (this) {
     is BaseOperatedCell -> vertex.pullStableValue(
-        processingContext = momentContext.processingContext,
+        preProcessingContext = momentContext.preProcessingContext,
     )
 }
 
@@ -47,7 +47,7 @@ fun <ValueT, TransformedValueT> Cell<ValueT>.map(
     is BaseOperatedCell -> OperatedCell(
         CellMapVertex(
             sourceCellVertex = this.vertex,
-            transform,
+            transform = transform,
         ),
     )
 }

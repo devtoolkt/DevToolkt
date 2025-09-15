@@ -10,6 +10,6 @@ interface DynamicEventStreamVertex<EventT> : EventStreamVertex<EventT>, DynamicV
      * Returns the occurrence of this event stream, triggering processing if necessary.
      */
     fun pullOccurrence(
-        processingContext: Transaction.ProcessingContext,
+        preProcessingContext: Transaction.PreProcessingContext,
     ): Occurrence<EventT>?
 }

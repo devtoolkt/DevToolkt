@@ -1,7 +1,7 @@
 package dev.toolkt.reactive.cell
 
-import dev.toolkt.reactive.cell.vertices.DynamicCellVertex
+import dev.toolkt.reactive.cell.vertices.DependencyCellVertex
 
 data class OperatedCell<ValueT>(
-    override val vertex: DynamicCellVertex<ValueT>,
+    override val vertex: DependencyCellVertex<ValueT>,
 ): BaseOperatedCell<ValueT>
