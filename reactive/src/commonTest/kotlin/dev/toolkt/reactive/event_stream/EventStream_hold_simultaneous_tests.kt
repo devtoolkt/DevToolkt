@@ -1,6 +1,7 @@
 package dev.toolkt.reactive.event_stream
 
 import dev.toolkt.reactive.cell.Cell
+import dev.toolkt.reactive.cell.sample
 import dev.toolkt.reactive.cell.test_utils.sampleExternally
 import dev.toolkt.reactive.test_utils.ReactiveTest
 import kotlin.test.Test
@@ -9,15 +10,15 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 @Suppress("ClassName")
-class EventStream_single_simultaneous_tests {
+class EventStream_hold_simultaneous_tests {
     private data class Stimulation(
-        val trigger: Unit? = null,
+        val trigger: Int? = null,
         val sourceEvent: Int? = null,
     )
 
     private data class Snapshot(
-        val singleEventStream: EventStream<Int>,
-        val memoryCell: Cell<Int>,
+        val holdCell: Cell<Int>,
+        val sampledValue: Int,
     )
 
     private fun setup(): Pair<Cell<Snapshot?>, ReactiveTest<Stimulation>> = ReactiveTest.setup {
@@ -29,12 +30,12 @@ class EventStream_single_simultaneous_tests {
             selector = Stimulation::sourceEvent,
         )
 
-        val snapshotCell: Cell<Snapshot?> = triggerEventStream.mapAt {
-            val singleEventStream = sourceEventStream.single()
+        val snapshotCell: Cell<Snapshot?> = triggerEventStream.mapAt { trigger ->
+            val holdCell = sourceEventStream.hold(trigger)
 
             Snapshot(
-                singleEventStream = singleEventStream,
-                memoryCell = singleEventStream.hold(0),
+                holdCell = holdCell,
+                sampledValue = holdCell.sample(),
             )
         }.hold(
             initialValue = null,
@@ -53,8 +54,8 @@ class EventStream_single_simultaneous_tests {
 
         reactiveTest.stimulate(
             Stimulation(
-                trigger = Unit,
-                sourceEvent = 10,
+                trigger = 10,
+                sourceEvent = 11,
             ),
         )
 
@@ -64,24 +65,12 @@ class EventStream_single_simultaneous_tests {
 
         assertEquals(
             expected = 10,
-            actual = snapshot.memoryCell.sampleExternally(),
-        )
-
-        val collectedEvents = mutableListOf<Int>()
-
-        snapshot.singleEventStream.subscribeCollecting(
-            targetList = collectedEvents,
-        )
-
-        reactiveTest.stimulate(
-            Stimulation(
-                sourceEvent = 11,
-            ),
+            actual = snapshot.sampledValue,
         )
 
         assertEquals(
-            expected = emptyList(),
-            actual = collectedEvents,
+            expected = 11,
+            actual = snapshot.holdCell.sampleExternally(),
         )
     }
 }
