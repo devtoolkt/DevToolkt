@@ -7,7 +7,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-@Ignore // TODO: Implement this logic
 @Suppress("ClassName")
 class EventStream_map_tests {
     private fun setup(): Pair<EventStream<String>, ReactiveTest<Int>> =
@@ -41,7 +40,7 @@ class EventStream_map_tests {
         reactiveTest.stimulate(20)
 
         assertEquals(
-            expected = listOf("30"),
+            expected = listOf("20"),
             actual = collectedEvents.copyAndClear(),
         )
     }
