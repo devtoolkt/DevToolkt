@@ -44,3 +44,4 @@ class CellMapVertex<SourceValueT, TransformedValueT>(
         ),
     )
 }
+

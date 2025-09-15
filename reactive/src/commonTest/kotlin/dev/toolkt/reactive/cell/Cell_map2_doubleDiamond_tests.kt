@@ -21,7 +21,6 @@ import kotlin.test.assertEquals
  *     F_l     F_r
  * ```
  */
-@Ignore // TODO: Implement this logic
 @Suppress("ClassName")
 class Cell_map2_doubleDiamond_tests {
     private data class Stimulation(
@@ -98,7 +97,7 @@ class Cell_map2_doubleDiamond_tests {
         )
 
         assertEquals(
-            expected = "9:8>x",
+            expected = "9>8:x",
             actual = system.funnelCellLeft.sampleExternally(),
         )
 
@@ -112,7 +111,7 @@ class Cell_map2_doubleDiamond_tests {
     fun test_sourceLeftUpdate() {
         val (system, reactiveTest) = setup(
             initialSourceValueLeft = 0,
-            initialSourceValueRight = 'A',
+            initialSourceValueRight = 'a',
         )
 
         val collectedEventsLeft = mutableListOf<String>()
@@ -137,12 +136,12 @@ class Cell_map2_doubleDiamond_tests {
         )
 
         assertEquals(
-            expected = "3:2>a",
+            expected = "3>2:a",
             actual = funnelCellLeft.sampleExternally(),
         )
 
         assertEquals(
-            expected = listOf("3:2>a"),
+            expected = listOf("3>2:a"),
             actual = collectedEventsLeft.copyAndClear(),
         )
 
@@ -161,7 +160,7 @@ class Cell_map2_doubleDiamond_tests {
     fun test_sourceRightUpdate() {
         val (system, reactiveTest) = setup(
             initialSourceValueLeft = 0,
-            initialSourceValueRight = 'A',
+            initialSourceValueRight = 'j',
         )
 
         val funnelCellLeft = system.funnelCellLeft
@@ -181,17 +180,17 @@ class Cell_map2_doubleDiamond_tests {
 
         reactiveTest.stimulate(
             Stimulation(
-                newSourceValueRight = 'Z',
+                newSourceValueRight = 'z',
             ),
         )
 
         assertEquals(
-            expected = "1:0>z",
+            expected = "1>0:z",
             actual = funnelCellLeft.sampleExternally(),
         )
 
         assertEquals(
-            expected = listOf("1:0>z"),
+            expected = listOf("1>0:z"),
             actual = collectedEventsLeft.copyAndClear(),
         )
 
@@ -231,17 +230,17 @@ class Cell_map2_doubleDiamond_tests {
         reactiveTest.stimulate(
             Stimulation(
                 newSourceValueLeft = 3,
-                newSourceValueRight = 'M',
+                newSourceValueRight = 'm',
             ),
         )
 
         assertEquals(
-            expected = "4:3>m",
+            expected = "4>3:m",
             actual = funnelCellLeft.sampleExternally(),
         )
 
         assertEquals(
-            expected = listOf("4:3>m"),
+            expected = listOf("4>3:m"),
             actual = collectedEventsLeft.copyAndClear(),
         )
 
