@@ -46,7 +46,7 @@ class CellMap2Vertex<ValueT1, ValueT2, ResultT>(
         )
     }
 
-    override fun activateStateless(
+    override fun activate(
         expansionContext: Transaction.ExpansionContext,
     ) {
         sourceCell1Vertex.addDependent(
@@ -60,7 +60,7 @@ class CellMap2Vertex<ValueT1, ValueT2, ResultT>(
         )
     }
 
-    override fun deactivateStateless(
+    override fun deactivate(
         shrinkageContext: Transaction.ShrinkageContext,
     ) {
         sourceCell1Vertex.removeDependent(

@@ -52,7 +52,7 @@ class CellSwitchVertex<SourceValueT>(
         )
     }
 
-    override fun activateStateless(
+    override fun activate(
         expansionContext: Transaction.ExpansionContext,
     ) {
         outerCellVertex.addDependent(
@@ -61,7 +61,7 @@ class CellSwitchVertex<SourceValueT>(
         )
     }
 
-    override fun deactivateStateless(
+    override fun deactivate(
         shrinkageContext: Transaction.ShrinkageContext,
     ) {
         outerCellVertex.removeDependent(

@@ -38,7 +38,7 @@ abstract class StatelessCellVertex<ValueT> : PropagativeCellVertex<ValueT>() {
     final override fun onFirstDependentAdded(
         expansionContext: Transaction.ExpansionContext,
     ) {
-        activateStateless(
+        activate(
             expansionContext = expansionContext,
         )
     }
@@ -46,7 +46,7 @@ abstract class StatelessCellVertex<ValueT> : PropagativeCellVertex<ValueT>() {
     final override fun onLastDependentRemoved(
         shrinkageContext: Transaction.ShrinkageContext,
     ) {
-        deactivateStateless(
+        deactivate(
             shrinkageContext = shrinkageContext,
         )
     }
@@ -66,11 +66,11 @@ abstract class StatelessCellVertex<ValueT> : PropagativeCellVertex<ValueT>() {
         preProcessingContext: Transaction.PreProcessingContext,
     ): CellVertex.Update<ValueT>?
 
-    protected abstract fun activateStateless(
+    protected abstract fun activate(
         expansionContext: Transaction.ExpansionContext,
     )
 
-    protected abstract fun deactivateStateless(
+    protected abstract fun deactivate(
         shrinkageContext: Transaction.ShrinkageContext,
     )
 }
