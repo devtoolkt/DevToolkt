@@ -5,7 +5,7 @@ import dev.toolkt.reactive.cell.vertices.DependencyEventStreamVertex
 
 class EventStreamMapVertex<SourceEventT, TransformedEventT>(
     private val sourceEventStreamVertex: DependencyEventStreamVertex<SourceEventT>,
-    private val transform: (SourceEventT) -> TransformedEventT,
+    private val transform: (Transaction.PreProcessingContext, SourceEventT) -> TransformedEventT,
 ) : StatelessEventStreamVertex<TransformedEventT>() {
     override fun prepareMessage(
         preProcessingContext: Transaction.PreProcessingContext,
@@ -14,9 +14,9 @@ class EventStreamMapVertex<SourceEventT, TransformedEventT>(
             preProcessingContext = preProcessingContext,
         )
 
-        return sourceOccurrence?.map(
-            transform = transform,
-        )
+        return sourceOccurrence?.map {
+            transform(preProcessingContext, it)
+        }
     }
 
     override fun activate(

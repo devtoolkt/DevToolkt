@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 @Suppress("ClassName")
-class EventStream_single_tests {
+class EventStream_single_basic_tests {
     private fun setup(): Pair<EventStream<Int>, ReactiveTest<Int>> =
         ReactiveTest.setup {
             val sourceEventStream = formEventStream()

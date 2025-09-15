@@ -10,7 +10,6 @@ import kotlin.test.assertFails
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 
-@Ignore // TODO: Implement this logic
 @Suppress("ClassName")
 class EventStream_take_tests {
     private fun setup(
