@@ -35,6 +35,22 @@ abstract class StatelessCellVertex<ValueT> : PropagativeCellVertex<ValueT>() {
         else -> foundCachedStableValue.stableValue
     }
 
+    final override fun activate(
+        expansionContext: Transaction.ExpansionContext,
+    ) {
+        activateStateless(
+            expansionContext = expansionContext,
+        )
+    }
+
+    final override fun deactivate(
+        shrinkageContext: Transaction.ShrinkageContext,
+    ) {
+        deactivateStateless(
+            shrinkageContext = shrinkageContext,
+        )
+    }
+
     final override fun stabilize(
         postProcessingContext: Transaction.PostProcessingContext,
         message: CellVertex.Update<ValueT>?,
@@ -49,4 +65,12 @@ abstract class StatelessCellVertex<ValueT> : PropagativeCellVertex<ValueT>() {
     abstract fun prepareStateless(
         preProcessingContext: Transaction.PreProcessingContext,
     ): CellVertex.Update<ValueT>?
+
+    protected abstract fun activateStateless(
+        expansionContext: Transaction.ExpansionContext,
+    )
+
+    protected abstract fun deactivateStateless(
+        shrinkageContext: Transaction.ShrinkageContext,
+    )
 }
