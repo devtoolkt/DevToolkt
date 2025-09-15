@@ -9,6 +9,7 @@ import dev.toolkt.reactive.cell.DerivedCell
 import dev.toolkt.reactive.cell.vertices.HoldCellVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamFilterVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamMapNotNullVertex
+import dev.toolkt.reactive.event_stream.vertices.EventStreamMapVertex
 
 sealed interface EventStream<out EventT> {
     /**
@@ -86,7 +87,16 @@ sealed interface EventStream<out EventT> {
 
 context(pureContext: PureContext) fun <EventT, TransformedEventT> EventStream<EventT>.map(
     transform: (EventT) -> TransformedEventT,
-): EventStream<TransformedEventT> = TODO()
+): EventStream<TransformedEventT> = when (this) {
+    NeverEventStream -> NeverEventStream
+
+    is OperatedEventStream -> DerivedEventStream(
+        vertex = EventStreamMapVertex(
+            sourceEventStreamVertex = this.vertex,
+            transform = transform,
+        )
+    )
+}
 
 context(pureContext: PureContext) fun <EventT, TransformedEventT : Any> EventStream<EventT>.mapNotNull(
     transform: (EventT) -> TransformedEventT?,

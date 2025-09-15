@@ -2,7 +2,6 @@ package dev.toolkt.reactive.event_stream.vertices
 
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.vertices.DependencyEventStreamVertex
-import dev.toolkt.reactive.cell.vertices.DynamicEventStreamVertex
 
 class EventStreamMapVertex<SourceEventT, TransformedEventT>(
     private val sourceEventStreamVertex: DependencyEventStreamVertex<SourceEventT>,
