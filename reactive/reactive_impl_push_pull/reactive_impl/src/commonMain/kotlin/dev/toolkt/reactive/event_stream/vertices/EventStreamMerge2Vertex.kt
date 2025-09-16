@@ -7,7 +7,7 @@ class EventStreamMerge2Vertex<EventT>(
     private val sourceEventStream1Vertex: DependencyEventStreamVertex<EventT>,
     private val sourceEventStream2Vertex: DependencyEventStreamVertex<EventT>,
 ) : StatelessEventStreamVertex<EventT>() {
-    override fun prepare(
+    override fun process(
         processingContext: Transaction.ProcessingContext,
     ): EventStreamVertex.Occurrence<EventT>? {
         val sourceOccurrence1 = sourceEventStream1Vertex.pullOccurrence(
@@ -29,31 +29,23 @@ class EventStreamMerge2Vertex<EventT>(
         return null
     }
 
-    override fun resume(
-        expansionContext: Transaction.ExpansionContext,
-    ) {
+    override fun resume() {
         sourceEventStream1Vertex.addDependent(
-            expansionContext = expansionContext,
-            vertex = this,
+            dependentVertex = this,
         )
 
         sourceEventStream2Vertex.addDependent(
-            expansionContext = expansionContext,
-            vertex = this,
+            dependentVertex = this,
         )
     }
 
-    override fun pause(
-        shrinkageContext: Transaction.ShrinkageContext,
-    ) {
+    override fun pause() {
         sourceEventStream1Vertex.removeDependent(
-            shrinkageContext = shrinkageContext,
-            vertex = this,
+            dependentVertex = this,
         )
 
         sourceEventStream2Vertex.removeDependent(
-            shrinkageContext = shrinkageContext,
-            vertex = this,
+            dependentVertex = this,
         )
     }
 }

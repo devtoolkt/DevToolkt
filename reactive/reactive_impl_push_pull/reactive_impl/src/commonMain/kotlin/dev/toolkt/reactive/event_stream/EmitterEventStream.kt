@@ -13,7 +13,7 @@ class EmitterEventStream<EventT> : OperatedEventStream<EventT> {
         event: EventT,
     ) {
         Transaction.execute { processingContext ->
-            vertex.visit(
+            vertex.emit(
                 processingContext = processingContext,
                 event = event,
             )

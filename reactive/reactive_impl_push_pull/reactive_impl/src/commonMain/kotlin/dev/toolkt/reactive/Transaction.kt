@@ -1,84 +1,113 @@
 package dev.toolkt.reactive
 
 class Transaction private constructor() {
-    abstract class PreparationContext {
-        abstract fun enqueueForProcessing(
-            vertex: DynamicVertex,
-        )
+    interface SideEffect {
+        fun execute()
+    }
 
-        abstract fun enqueueForPostProcessing(
-            vertex: DynamicVertex,
-        )
+    interface RegistrationEffect {
+        fun register()
+    }
+
+    interface UnregistrationEffect {
+        fun unregister()
     }
 
     abstract class ProcessingContext {
-        abstract fun enqueueForVisiting(
-            dependentVertex: DynamicVertex,
+        abstract fun enqueueDependentVertex(
+            dependentVertex: DependentVertex,
         )
 
-        abstract fun enqueueForPostProcessing(
-            processedVertex: DynamicVertex,
+        abstract fun enqueueRegistrationEffect(
+            registrationEffect: RegistrationEffect,
+        )
+
+        abstract fun enqueueUnregistrationEffect(
+            unregistrationEffect: UnregistrationEffect,
+        )
+
+        abstract fun enqueueSideEffect(
+            sideEffect: SideEffect,
+        )
+
+        abstract fun enqueueDirtyVertex(
+            dirtyVertex: ResettableVertex,
         )
     }
-
-    abstract class EarlyPostProcessingContext : ExpansionContext()
-
-    abstract class ExpansionContext {
-        data object External : ExpansionContext()
-    }
-
-    abstract class ShrinkageContext {
-        data object External : ShrinkageContext()
-    }
-
-    abstract class LatePostProcessingContext : ShrinkageContext()
 
     companion object {
         fun <ResultT> execute(
             block: (ProcessingContext) -> ResultT,
         ): ResultT = with(Transaction()) {
-            val visitationQueue = ArrayDeque<DynamicVertex>()
+            // Dependent vertices to be visited
+            val dependentQueue = ArrayDeque<DependentVertex>()
 
-            val postProcessingQueue = mutableListOf<DynamicVertex>()
+            // Registration effects to be applied
+            val registrationEffectQueue = mutableListOf<RegistrationEffect>()
+
+            // Unregistration effects to be applied
+            val unregistrationEffectQueue = mutableListOf<UnregistrationEffect>()
+
+            // Side effects to be executed
+            val sideEffectQueue = mutableListOf<SideEffect>()
+
+            // Dirty vertices to be reset
+            val dirtyVertexQueue = mutableListOf<ResettableVertex>()
 
             val processingContext = object : ProcessingContext() {
-                override fun enqueueForVisiting(
-                    dependentVertex: DynamicVertex,
+                override fun enqueueDependentVertex(
+                    dependentVertex: DependentVertex,
                 ) {
-                    visitationQueue.addLast(dependentVertex)
+                    dependentQueue.addLast(dependentVertex)
                 }
 
-                override fun enqueueForPostProcessing(
-                    processedVertex: DynamicVertex,
+                override fun enqueueDirtyVertex(
+                    dirtyVertex: ResettableVertex,
                 ) {
-                    postProcessingQueue.add(processedVertex)
+                    dirtyVertexQueue.add(dirtyVertex)
+                }
+
+                override fun enqueueRegistrationEffect(
+                    registrationEffect: RegistrationEffect,
+                ) {
+                    registrationEffectQueue.add(registrationEffect)
+                }
+
+                override fun enqueueUnregistrationEffect(unregistrationEffect: UnregistrationEffect) {
+                    TODO("Not yet implemented")
+                }
+
+                override fun enqueueSideEffect(
+                    sideEffect: SideEffect,
+                ) {
+                    sideEffectQueue.add(sideEffect)
                 }
             }
 
             val result = block(processingContext)
 
-            while (visitationQueue.isNotEmpty()) {
-                val vertexToProcess = visitationQueue.removeFirst()
+            while (dependentQueue.isNotEmpty()) {
+                val vertexToProcess = dependentQueue.removeFirst()
 
                 vertexToProcess.visit(
                     processingContext = processingContext,
                 )
             }
 
-            val earlyPostProcessingContext = object : EarlyPostProcessingContext() {}
-
-            postProcessingQueue.forEach { processedVertex ->
-                processedVertex.postProcessEarly(
-                    earlyPostProcessingContext = earlyPostProcessingContext,
-                )
+            registrationEffectQueue.forEach { registrationEffect ->
+                registrationEffect.register()
             }
 
-            val latePostProcessingContext = object : LatePostProcessingContext() {}
+            unregistrationEffectQueue.forEach { unregistrationEffect ->
+                unregistrationEffect.unregister()
+            }
 
-            postProcessingQueue.forEach { processedVertex ->
-                processedVertex.postProcessLate(
-                    latePostProcessingContext = latePostProcessingContext,
-                )
+            sideEffectQueue.forEach { sideEffect ->
+                sideEffect.execute()
+            }
+
+            dirtyVertexQueue.forEach { dirtyVertex ->
+                dirtyVertex.reset()
             }
 
             return@with result

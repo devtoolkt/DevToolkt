@@ -3,6 +3,7 @@ package dev.toolkt.reactive.cell.vertices
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.vertices.CellVertex.Update
 import dev.toolkt.reactive.globalFinalizationRegistry
+import dev.toolkt.reactive.registerDependent
 
 class HoldCellVertex<ValueT> private constructor(
     private val sourceEventStreamVertex: DependencyEventStreamVertex<ValueT>,
@@ -19,7 +20,7 @@ class HoldCellVertex<ValueT> private constructor(
         ).apply {
             sourceEventStreamVertex.registerDependent(
                 processingContext = processingContext,
-                vertex = this,
+                this,
             )
 
             ensureProcessed(
@@ -36,7 +37,7 @@ class HoldCellVertex<ValueT> private constructor(
 
     private var heldStableValue: ValueT = initialValue
 
-    override fun prepare(
+    override fun process(
         processingContext: Transaction.ProcessingContext,
     ): Update<ValueT>? {
         val sourceOccurrence = sourceEventStreamVertex.pullOccurrence(
@@ -48,16 +49,13 @@ class HoldCellVertex<ValueT> private constructor(
         )
     }
 
-    override fun postProcessLatePv(
-        latePostProcessingContext: Transaction.LatePostProcessingContext,
-        message: Update<ValueT>?,
-    ) {
-        message?.let { update ->
-            heldStableValue = update.newValue
-        }
-    }
-
     override fun pullStableValue(
         processingContext: Transaction.ProcessingContext,
     ): ValueT = heldStableValue
+
+    override fun update(
+        currentNotification: Update<ValueT>,
+    ) {
+        heldStableValue = currentNotification.newValue
+    }
 }

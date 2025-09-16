@@ -1,44 +1,51 @@
 package dev.toolkt.reactive.cell.vertices
 
+import dev.toolkt.reactive.BaseDependencyVertex
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.vertices.CellVertex.Update
 
 class MutableCellVertex<ValueT>(
     initialValue: ValueT,
-) : StatefulCellVertex<ValueT>() {
+) : BaseDependencyVertex(), DependencyCellVertex<ValueT> {
     private var mutableStableValue: ValueT = initialValue
 
-    private var preparedUpdate: Update<ValueT>? = null
+    private val stableValue: ValueT
+        get() = mutableStableValue
 
-    fun preProcess(
+    private var setUpdate: Update<ValueT>? = null
+
+    fun set(
         processingContext: Transaction.ProcessingContext,
         newValue: ValueT,
     ) {
-        preparedUpdate = Update(
+        setUpdate = Update(
             newValue = newValue,
         )
 
         ensureMarkedDirty(
             processingContext = processingContext,
         )
-    }
 
-    override fun prepare(
-        processingContext: Transaction.ProcessingContext,
-    ): Update<ValueT>? = preparedUpdate
+        enqueueDependentsForVisiting(
+            processingContext = processingContext,
+        )
+    }
 
     override fun pullStableValue(
         processingContext: Transaction.ProcessingContext,
-    ): ValueT = mutableStableValue
+    ): ValueT = stableValue
 
-    override fun postProcessLatePv(
-        latePostProcessingContext: Transaction.LatePostProcessingContext,
-        message: Update<ValueT>?,
-    ) {
-        message?.let { update ->
-            mutableStableValue = update.newValue
-        }
+    override fun pullUpdate(
+        processingContext: Transaction.ProcessingContext,
+    ): Update<ValueT>? = setUpdate
 
-        preparedUpdate = null
+    override fun onFirstDependentAdded() {
+    }
+
+    override fun onLastDependentRemoved() {
+    }
+
+    override fun clean() {
+        setUpdate = null
     }
 }

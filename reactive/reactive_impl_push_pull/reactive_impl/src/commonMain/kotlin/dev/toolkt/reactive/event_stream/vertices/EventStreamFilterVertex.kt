@@ -7,7 +7,7 @@ class EventStreamFilterVertex<SourceEventT>(
     private val sourceEventStreamVertex: DependencyEventStreamVertex<SourceEventT>,
     private val predicate: (SourceEventT) -> Boolean,
 ) : StatelessEventStreamVertex<SourceEventT>() {
-    override fun prepare(
+    override fun process(
         processingContext: Transaction.ProcessingContext,
     ): EventStreamVertex.Occurrence<SourceEventT>? {
         val sourceOccurrence = sourceEventStreamVertex.pullOccurrence(
@@ -20,21 +20,15 @@ class EventStreamFilterVertex<SourceEventT>(
         }
     }
 
-    override fun resume(
-        expansionContext: Transaction.ExpansionContext,
-    ) {
+    override fun resume() {
         sourceEventStreamVertex.addDependent(
-            expansionContext = expansionContext,
-            vertex = this,
+            dependentVertex = this,
         )
     }
 
-    override fun pause(
-        shrinkageContext: Transaction.ShrinkageContext,
-    ) {
+    override fun pause() {
         sourceEventStreamVertex.removeDependent(
-            shrinkageContext = shrinkageContext,
-            vertex = this,
+            dependentVertex = this,
         )
     }
 }

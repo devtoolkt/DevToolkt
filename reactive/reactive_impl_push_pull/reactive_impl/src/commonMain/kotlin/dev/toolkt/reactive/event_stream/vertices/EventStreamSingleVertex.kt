@@ -3,10 +3,11 @@ package dev.toolkt.reactive.event_stream.vertices
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.vertices.DependencyEventStreamVertex
 import dev.toolkt.reactive.globalFinalizationRegistry
+import dev.toolkt.reactive.registerDependent
 
 class EventStreamSingleVertex<EventT> private constructor(
     private val sourceEventStreamVertex: DependencyEventStreamVertex<EventT>,
-) : StatefulEventStreamVertex<EventT>() {
+) : StatefulIntermediateEventStreamVertex<EventT>() {
     companion object {
         fun <ValueT> construct(
             processingContext: Transaction.ProcessingContext,
@@ -16,7 +17,7 @@ class EventStreamSingleVertex<EventT> private constructor(
         ).apply {
             sourceEventStreamVertex.registerDependent(
                 processingContext = processingContext,
-                vertex = this,
+                dependentVertex = this,
             )
 
             ensureProcessed(
@@ -33,7 +34,7 @@ class EventStreamSingleVertex<EventT> private constructor(
 
     private var wasPropagated = false
 
-    override fun prepare(
+    override fun process(
         processingContext: Transaction.ProcessingContext,
     ): EventStreamVertex.Occurrence<EventT>? {
         if (wasPropagated) {
@@ -47,17 +48,13 @@ class EventStreamSingleVertex<EventT> private constructor(
         return sourceOccurrence
     }
 
-    override fun postProcessLatePv(
-        latePostProcessingContext: Transaction.LatePostProcessingContext,
-        message: EventStreamVertex.Occurrence<EventT>?,
+    override fun update(
+        currentNotification: EventStreamVertex.Occurrence<EventT>,
     ) {
-        if (message != null) {
-            sourceEventStreamVertex.removeDependent(
-                shrinkageContext = latePostProcessingContext,
-                vertex = this,
-            )
+        sourceEventStreamVertex.removeDependent(
+            dependentVertex = this,
+        )
 
-            wasPropagated = true
-        }
+        wasPropagated = true
     }
 }

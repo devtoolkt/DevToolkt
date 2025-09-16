@@ -8,7 +8,7 @@ import dev.toolkt.reactive.cell.OperatedCell
 class CellSwitchVertex<SourceValueT>(
     private val outerCellVertex: DependencyCellVertex<Cell<SourceValueT>>,
 ) : StatelessCellVertex<SourceValueT>() {
-    override fun prepareStateless(
+    override fun process(
         processingContext: Transaction.ProcessingContext,
     ): CellVertex.Update<SourceValueT>? {
         val outerUpdate = outerCellVertex.pullUpdate(
@@ -52,21 +52,15 @@ class CellSwitchVertex<SourceValueT>(
         )
     }
 
-    override fun activate(
-        expansionContext: Transaction.ExpansionContext,
-    ) {
+    override fun activate() {
         outerCellVertex.addDependent(
-            expansionContext = expansionContext,
-            vertex = this,
+            dependentVertex = this,
         )
     }
 
-    override fun deactivate(
-        shrinkageContext: Transaction.ShrinkageContext,
-    ) {
+    override fun deactivate() {
         outerCellVertex.removeDependent(
-            shrinkageContext = shrinkageContext,
-            vertex = this,
+            dependentVertex = this,
         )
     }
 
