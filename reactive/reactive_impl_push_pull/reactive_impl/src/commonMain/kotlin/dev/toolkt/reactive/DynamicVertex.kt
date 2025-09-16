@@ -1,12 +1,7 @@
 package dev.toolkt.reactive
 
+// Thought: -> "DependentVertex" (again?)
 interface DynamicVertex : Vertex {
-    /**
-     * Processes this vertex.
-     *
-     * The implementation should either be prepared to be called multiple times in the same transaction or ignore all
-     * calls after the first one.
-     */
     fun visit(
         processingContext: Transaction.ProcessingContext,
     )
