@@ -51,7 +51,7 @@ abstract class StatelessCellVertex<ValueT> : PropagativeCellVertex<ValueT>() {
         )
     }
 
-    final override fun stabilize(
+    final override fun postProcessLatePv(
         latePostProcessingContext: Transaction.LatePostProcessingContext,
         message: CellVertex.Update<ValueT>?,
     ) {

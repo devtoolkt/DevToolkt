@@ -22,7 +22,7 @@ class HoldCellVertex<ValueT> private constructor(
                 vertex = this,
             )
 
-            ensureEffectivelyProcessed(
+            ensureProcessed(
                 processingContext = processingContext,
             )
 
@@ -48,7 +48,7 @@ class HoldCellVertex<ValueT> private constructor(
         )
     }
 
-    override fun stabilize(
+    override fun postProcessLatePv(
         latePostProcessingContext: Transaction.LatePostProcessingContext,
         message: Update<ValueT>?,
     ) {

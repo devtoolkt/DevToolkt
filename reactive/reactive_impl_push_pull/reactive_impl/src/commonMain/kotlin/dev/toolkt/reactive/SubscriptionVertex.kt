@@ -7,17 +7,26 @@ class SubscriptionVertex<EventT>(
     private val sourceEventStreamVertex: DynamicEventStreamVertex<EventT>,
     private val handle: (EventT) -> Unit,
 ) : OperativeVertex() {
-    private var receivedEventOccurrence: EventStreamVertex.Occurrence<EventT>? = null
+    private var mutableReceivedEventOccurrence: EventStreamVertex.Occurrence<EventT>? = null
 
-    override fun processEffectively(
+    val receivedEventOccurrence: EventStreamVertex.Occurrence<EventT>?
+        get() = mutableReceivedEventOccurrence
+
+    override fun visit(
         processingContext: Transaction.ProcessingContext,
     ) {
-        receivedEventOccurrence = sourceEventStreamVertex.pullOccurrence(
+        val receivedEventOccurrence = sourceEventStreamVertex.pullOccurrence(
             processingContext = processingContext,
         ) ?: return
+
+        mutableReceivedEventOccurrence = receivedEventOccurrence
+
+        ensureMarkedDirty(
+            processingContext = processingContext,
+        )
     }
 
-    override fun affect(
+    override fun postProcessEarlyOp(
         earlyPostProcessingContext: Transaction.EarlyPostProcessingContext,
     ) {
         receivedEventOccurrence?.let {
@@ -25,9 +34,9 @@ class SubscriptionVertex<EventT>(
         }
     }
 
-    override fun settle(
+    override fun postProcessLateOp(
         latePostProcessingContext: Transaction.LatePostProcessingContext,
     ) {
-        receivedEventOccurrence = null
+        mutableReceivedEventOccurrence = null
     }
 }

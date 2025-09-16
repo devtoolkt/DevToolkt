@@ -22,7 +22,7 @@ class EventStreamTakeVertex<EventT> private constructor(
                 vertex = this,
             )
 
-            ensureEffectivelyProcessed(
+            ensureProcessed(
                 processingContext = processingContext,
             )
 
@@ -50,7 +50,7 @@ class EventStreamTakeVertex<EventT> private constructor(
         return sourceOccurrence
     }
 
-    override fun stabilize(
+    override fun postProcessLatePv(
         latePostProcessingContext: Transaction.LatePostProcessingContext,
         message: EventStreamVertex.Occurrence<EventT>?,
     ) {

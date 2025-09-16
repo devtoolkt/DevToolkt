@@ -2,27 +2,19 @@ package dev.toolkt.reactive
 
 abstract class OperativeVertex : DynamicVertex {
     @VolatileProcessingState
-    private var mutableIsEffectivelyProcessed = false
+    private var mutableIsMarkedDirty = false
 
-    protected val isEffectivelyProcessed: Boolean
-        get() = mutableIsEffectivelyProcessed
-
-    final override fun visit(
-        processingContext: Transaction.ProcessingContext,
-    ) {
-        ensureEffectivelyProcessed(
-            processingContext = processingContext,
-        )
-    }
+    protected val isMarkedDirty: Boolean
+        get() = mutableIsMarkedDirty
 
     final override fun postProcessEarly(
         earlyPostProcessingContext: Transaction.EarlyPostProcessingContext,
     ) {
-        if (!isEffectivelyProcessed) {
+        if (!isMarkedDirty) {
             throw IllegalStateException("Vertex must be pre-processed before inter-processing")
         }
 
-        affect(
+        postProcessEarlyOp(
             earlyPostProcessingContext = earlyPostProcessingContext,
         )
     }
@@ -30,44 +22,32 @@ abstract class OperativeVertex : DynamicVertex {
     final override fun postProcessLate(
         latePostProcessingContext: Transaction.LatePostProcessingContext,
     ) {
-        mutableIsEffectivelyProcessed = false
+        mutableIsMarkedDirty = false
 
-        settle(
+        postProcessLateOp(
             latePostProcessingContext = latePostProcessingContext,
         )
     }
 
-    protected fun ensureEffectivelyProcessed(
+    protected fun ensureMarkedDirty(
         processingContext: Transaction.ProcessingContext,
     ) {
-        if (isEffectivelyProcessed) {
+        if (isMarkedDirty) {
             return
         }
 
-        mutableIsEffectivelyProcessed = true
-
-        processEffectively(
-            processingContext = processingContext,
-        )
+        mutableIsMarkedDirty = true
 
         processingContext.enqueueForPostProcessing(
             processedVertex = this,
         )
     }
 
-    /**
-     * - Prepare and cache the volatile state (if necessary)
-     * - Ensure that all dependent vertices are enqueued for processing (if any meaningful volatile state was produced)
-     */
-    protected abstract fun processEffectively(
-        processingContext: Transaction.ProcessingContext,
-    )
-
-    protected abstract fun affect(
+    protected abstract fun postProcessEarlyOp(
         earlyPostProcessingContext: Transaction.EarlyPostProcessingContext,
     )
 
-    protected abstract fun settle(
+    protected abstract fun postProcessLateOp(
         latePostProcessingContext: Transaction.LatePostProcessingContext,
     )
 }

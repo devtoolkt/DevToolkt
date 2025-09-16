@@ -18,7 +18,7 @@ class MutableCellVertex<ValueT>(
             newValue = newValue,
         )
 
-        ensureEffectivelyProcessed(
+        ensureMarkedDirty(
             processingContext = processingContext,
         )
     }
@@ -31,7 +31,7 @@ class MutableCellVertex<ValueT>(
         processingContext: Transaction.ProcessingContext,
     ): ValueT = mutableStableValue
 
-    override fun stabilize(
+    override fun postProcessLatePv(
         latePostProcessingContext: Transaction.LatePostProcessingContext,
         message: Update<ValueT>?,
     ) {
