@@ -22,7 +22,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
 
     private var cachedMessage: MessageT? = null
 
-    override fun visit(
+    override fun processEffectively(
         processingContext: Transaction.ProcessingContext,
     ) {
         val message = prepare(
@@ -41,7 +41,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
     fun pullMessage(
         processingContext: Transaction.ProcessingContext,
     ): MessageT? {
-        ensureVisited(
+        ensureEffectivelyProcessed(
             processingContext = processingContext,
         )
 

@@ -2,15 +2,15 @@ package dev.toolkt.reactive
 
 abstract class OperativeVertex : DynamicVertex {
     @VolatileProcessingState
-    private var mutableIsVisited = false
+    private var mutableIsEffectivelyProcessed = false
 
-    protected val isVisited: Boolean
-        get() = mutableIsVisited
+    protected val isEffectivelyProcessed: Boolean
+        get() = mutableIsEffectivelyProcessed
 
     final override fun process(
         processingContext: Transaction.ProcessingContext,
     ) {
-        ensureVisited(
+        ensureEffectivelyProcessed(
             processingContext = processingContext,
         )
     }
@@ -18,7 +18,7 @@ abstract class OperativeVertex : DynamicVertex {
     final override fun postProcessEarly(
         earlyPostProcessingContext: Transaction.EarlyPostProcessingContext,
     ) {
-        if (!isVisited) {
+        if (!isEffectivelyProcessed) {
             throw IllegalStateException("Vertex must be pre-processed before inter-processing")
         }
 
@@ -30,23 +30,23 @@ abstract class OperativeVertex : DynamicVertex {
     final override fun postProcessLate(
         latePostProcessingContext: Transaction.LatePostProcessingContext,
     ) {
-        mutableIsVisited = false
+        mutableIsEffectivelyProcessed = false
 
         settle(
             latePostProcessingContext = latePostProcessingContext,
         )
     }
 
-    protected fun ensureVisited(
+    protected fun ensureEffectivelyProcessed(
         processingContext: Transaction.ProcessingContext,
     ) {
-        if (isVisited) {
+        if (isEffectivelyProcessed) {
             return
         }
 
-        mutableIsVisited = true
+        mutableIsEffectivelyProcessed = true
 
-        visit(
+        processEffectively(
             processingContext = processingContext,
         )
 
@@ -59,7 +59,7 @@ abstract class OperativeVertex : DynamicVertex {
      * - Prepare and cache the volatile state (if necessary)
      * - Ensure that all dependent vertices are enqueued for processing (if any meaningful volatile state was produced)
      */
-    protected abstract fun visit(
+    protected abstract fun processEffectively(
         processingContext: Transaction.ProcessingContext,
     )
 
