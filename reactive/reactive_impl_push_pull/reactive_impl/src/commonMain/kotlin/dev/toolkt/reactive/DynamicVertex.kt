@@ -15,7 +15,7 @@ interface DynamicVertex : Vertex {
         earlyPostProcessingContext: Transaction.EarlyPostProcessingContext,
     )
 
-    fun postProcess(
-        postProcessingContext: Transaction.PostProcessingContext,
+    fun postProcessLate(
+        latePostProcessingContext: Transaction.LatePostProcessingContext,
     )
 }

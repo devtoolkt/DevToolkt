@@ -25,7 +25,7 @@ class EmitterEventStreamVertex<EventT>() : StatefulEventStreamVertex<EventT>() {
     ): Occurrence<EventT>? = preparedVolatileOccurrence
 
     override fun stabilize(
-        postProcessingContext: Transaction.PostProcessingContext,
+        latePostProcessingContext: Transaction.LatePostProcessingContext,
         message: Occurrence<EventT>?,
     ) {
         preparedVolatileOccurrence = null

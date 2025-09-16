@@ -51,7 +51,7 @@ class EventStreamTakeVertex<EventT> private constructor(
     }
 
     override fun stabilize(
-        postProcessingContext: Transaction.PostProcessingContext,
+        latePostProcessingContext: Transaction.LatePostProcessingContext,
         message: EventStreamVertex.Occurrence<EventT>?,
     ) {
         if (message != null) {
@@ -59,7 +59,7 @@ class EventStreamTakeVertex<EventT> private constructor(
 
             if (remainingCount <= 0) {
                 sourceEventStreamVertex.removeDependent(
-                    shrinkageContext = postProcessingContext,
+                    shrinkageContext = latePostProcessingContext,
                     vertex = this,
                 )
             }

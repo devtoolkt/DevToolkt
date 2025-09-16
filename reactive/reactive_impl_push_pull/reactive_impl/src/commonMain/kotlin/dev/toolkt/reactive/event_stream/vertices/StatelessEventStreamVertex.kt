@@ -20,7 +20,7 @@ abstract class StatelessEventStreamVertex<ValueT> : PropagativeEventStreamVertex
     }
 
     final override fun stabilize(
-        postProcessingContext: Transaction.PostProcessingContext,
+        latePostProcessingContext: Transaction.LatePostProcessingContext,
         message: EventStreamVertex.Occurrence<ValueT>?,
     ) {
     }
