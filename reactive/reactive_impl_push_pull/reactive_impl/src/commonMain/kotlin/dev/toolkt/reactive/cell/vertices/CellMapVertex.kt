@@ -8,8 +8,8 @@ class CellMapVertex<SourceValueT, TransformedValueT>(
 ) : StatelessCellVertex<TransformedValueT>() {
     override fun process(
         processingContext: Transaction.ProcessingContext,
-    ): CellVertex.Update<TransformedValueT>? {
-        val sourceUpdate = sourceCellVertex.pullUpdate(
+    ): CellVertex.UpdatedValue<TransformedValueT>? {
+        val sourceUpdate = sourceCellVertex.pullUpdatedValue(
             processingContext = processingContext,
         )
 

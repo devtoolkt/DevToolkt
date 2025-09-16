@@ -1,6 +1,8 @@
 package dev.toolkt.reactive.event_stream.vertices
 
-abstract class StatelessEventStreamVertex<EventT> : BaseIntermediateEventStreamVertex<EventT>() {
+import dev.toolkt.reactive.IntermediateEventStreamVertex
+
+abstract class StatelessEventStreamVertex<EventT> : IntermediateEventStreamVertex<EventT>() {
     final override fun onFirstDependentAdded() {
         resume()
     }
@@ -9,9 +11,7 @@ abstract class StatelessEventStreamVertex<EventT> : BaseIntermediateEventStreamV
         pause()
     }
 
-    final override fun update(
-        currentNotification: EventStreamVertex.Occurrence<EventT>,
-    ) {
+    final override fun transit() {
     }
 
     protected abstract fun resume()

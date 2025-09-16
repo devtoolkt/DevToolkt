@@ -2,7 +2,7 @@ package dev.toolkt.reactive
 
 import dev.toolkt.core.platform.PlatformNativeSet
 
-abstract class BaseDependencyVertex : BaseVertex(), DependencyVertex {
+abstract class BaseDependencyVertex : DependencyVertex {
     private val dependents = PlatformNativeSet<DependentVertex>()
 
     /**

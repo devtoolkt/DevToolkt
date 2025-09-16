@@ -36,21 +36,19 @@ class EventStreamSingleVertex<EventT> private constructor(
 
     override fun process(
         processingContext: Transaction.ProcessingContext,
-    ): EventStreamVertex.Occurrence<EventT>? {
+    ): EventStreamVertex.EmittedEvent<EventT>? {
         if (wasPropagated) {
             return null
         }
 
-        val sourceOccurrence = sourceEventStreamVertex.pullOccurrence(
+        val sourceOccurrence = sourceEventStreamVertex.pullEmittedEvent(
             processingContext = processingContext,
         )
 
         return sourceOccurrence
     }
 
-    override fun update(
-        currentNotification: EventStreamVertex.Occurrence<EventT>,
-    ) {
+    override fun transit() {
         sourceEventStreamVertex.removeDependent(
             dependentVertex = this,
         )

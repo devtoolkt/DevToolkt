@@ -1,39 +1,38 @@
 package dev.toolkt.reactive.cell.vertices
 
+import dev.toolkt.reactive.IntermediateDynamicCellVertex
 import dev.toolkt.reactive.Transaction
 
-abstract class StatelessCellVertex<ValueT> : IntermediateCellVertex<ValueT>() {
-    data class CachedStableValue<ValueT>(
-        val stableValue: ValueT,
-    )
+abstract class StatelessCellVertex<ValueT> : IntermediateDynamicCellVertex<ValueT>() {
+    private var mutableIsStableValueCached = false
 
-    // TODO: Is the cached stable value cleared if the cell wasn't actually pre-processed?
-    // Is this tested?
-    private var mutableCachedStableValue: CachedStableValue<ValueT>? = null
+    override val isStableValueCached: Boolean
+        get() = mutableIsStableValueCached
 
-    private val cachedStableValue: CachedStableValue<ValueT>?
+    private var mutableCachedStableValue: ValueT? = null
+
+    private val cachedStableValue: ValueT?
         get() = mutableCachedStableValue
 
     final override fun pullStableValue(
         processingContext: Transaction.ProcessingContext,
-    ): ValueT = when (val foundCachedStableValue = this.cachedStableValue) {
-        null -> {
-            val computedCachedStableValue = computeStableValue(
+    ): ValueT = when {
+        isStableValueCached -> @Suppress("UNCHECKED_CAST") (cachedStableValue as ValueT)
+
+        else -> {
+            val computeStableValue = computeStableValue(
                 processingContext,
             )
 
-            mutableCachedStableValue = CachedStableValue(
-                stableValue = computedCachedStableValue,
+            mutableIsStableValueCached = true
+            mutableCachedStableValue = computeStableValue
+
+            processingContext.enqueueDirtyVertex(
+                dirtyVertex = this,
             )
 
-            ensureMarkedDirty(
-                processingContext = processingContext,
-            )
-
-            computedCachedStableValue
+            computeStableValue
         }
-
-        else -> foundCachedStableValue.stableValue
     }
 
     final override fun onFirstDependentAdded() {
@@ -44,9 +43,14 @@ abstract class StatelessCellVertex<ValueT> : IntermediateCellVertex<ValueT>() {
         deactivate()
     }
 
-    final override fun update(
-        currentNotification: CellVertex.Update<ValueT>,
+    final override fun persist(
+        newValue: ValueT,
     ) {
+        // Stateless cells currently don't maintain persistent stable value
+    }
+
+    final override fun clearStableValueCache() {
+        mutableIsStableValueCached = false
         mutableCachedStableValue = null
     }
 

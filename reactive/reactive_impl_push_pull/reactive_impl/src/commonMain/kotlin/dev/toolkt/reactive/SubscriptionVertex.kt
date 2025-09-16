@@ -9,7 +9,7 @@ class SubscriptionVertex<EventT>(
     override fun visit(
         processingContext: Transaction.ProcessingContext,
     ) {
-        val receivedEventOccurrence = sourceEventStreamVertex.pullOccurrence(
+        val receivedEventOccurrence = sourceEventStreamVertex.pullEmittedEvent(
             processingContext = processingContext,
         ) ?: return
 

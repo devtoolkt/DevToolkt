@@ -10,8 +10,8 @@ class CellSwitchVertex<SourceValueT>(
 ) : StatelessCellVertex<SourceValueT>() {
     override fun process(
         processingContext: Transaction.ProcessingContext,
-    ): CellVertex.Update<SourceValueT>? {
-        val outerUpdate = outerCellVertex.pullUpdate(
+    ): CellVertex.UpdatedValue<SourceValueT>? {
+        val outerUpdate = outerCellVertex.pullUpdatedValue(
             processingContext = processingContext,
         )
 
@@ -20,7 +20,7 @@ class CellSwitchVertex<SourceValueT>(
                 processingContext = processingContext,
             )
 
-            else -> outerUpdate.newValue
+            else -> outerUpdate.value
         }
 
         val latestInnerOperatedCell = when (latestInnerCell) {
@@ -30,7 +30,7 @@ class CellSwitchVertex<SourceValueT>(
 
         val latestInnerOperatedCellVertex = latestInnerOperatedCell.vertex
 
-        val latestInnerOperatedCellUpdate = latestInnerOperatedCellVertex.pullUpdate(
+        val latestInnerOperatedCellUpdate = latestInnerOperatedCellVertex.pullUpdatedValue(
             processingContext = processingContext,
         )
 
@@ -44,11 +44,11 @@ class CellSwitchVertex<SourceValueT>(
                 processingContext = processingContext,
             )
 
-            else -> latestInnerOperatedCellUpdate.newValue
+            else -> latestInnerOperatedCellUpdate.value
         }
 
-        return CellVertex.Update(
-            newValue = latestInnerOperatedCellLatestValue,
+        return CellVertex.UpdatedValue(
+            value = latestInnerOperatedCellLatestValue,
         )
     }
 

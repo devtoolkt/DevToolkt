@@ -1,22 +1,24 @@
 package dev.toolkt.reactive.cell.vertices
 
 import dev.toolkt.reactive.BaseDependencyVertex
+import dev.toolkt.reactive.ResettableVertex
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.Occurrence
+import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.EmittedEvent
 
-class EmitterEventStreamVertex<EventT>() : BaseDependencyVertex(), DependencyEventStreamVertex<EventT> {
-    private var emittedOccurrence: Occurrence<EventT>? = null
+class EmitterEventStreamVertex<EventT>() : BaseDependencyVertex(), DependencyEventStreamVertex<EventT>,
+    ResettableVertex {
+    private var emittedEmittedEvent: EmittedEvent<EventT>? = null
 
     fun emit(
         processingContext: Transaction.ProcessingContext,
         event: EventT,
     ) {
-        emittedOccurrence = Occurrence(
+        emittedEmittedEvent = EmittedEvent(
             event = event,
         )
 
-        ensureMarkedDirty(
-            processingContext = processingContext,
+        processingContext.enqueueDirtyVertex(
+            dirtyVertex = this,
         )
 
         enqueueDependentsForVisiting(
@@ -24,9 +26,9 @@ class EmitterEventStreamVertex<EventT>() : BaseDependencyVertex(), DependencyEve
         )
     }
 
-    override fun pullOccurrence(
+    override fun pullEmittedEvent(
         processingContext: Transaction.ProcessingContext,
-    ): Occurrence<EventT>? = emittedOccurrence
+    ): EmittedEvent<EventT>? = emittedEmittedEvent
 
     override fun onFirstDependentAdded() {
     }
@@ -34,7 +36,7 @@ class EmitterEventStreamVertex<EventT>() : BaseDependencyVertex(), DependencyEve
     override fun onLastDependentRemoved() {
     }
 
-    override fun clean() {
-        emittedOccurrence = null
+    override fun reset() {
+        emittedEmittedEvent = null
     }
 }

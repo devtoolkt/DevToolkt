@@ -1,7 +1,7 @@
 package dev.toolkt.reactive.cell.vertices
 
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.cell.vertices.CellVertex.Update
+import dev.toolkt.reactive.cell.vertices.CellVertex.UpdatedValue
 import dev.toolkt.reactive.globalFinalizationRegistry
 import dev.toolkt.reactive.registerDependent
 
@@ -39,13 +39,13 @@ class HoldCellVertex<ValueT> private constructor(
 
     override fun process(
         processingContext: Transaction.ProcessingContext,
-    ): Update<ValueT>? {
-        val sourceOccurrence = sourceEventStreamVertex.pullOccurrence(
+    ): UpdatedValue<ValueT>? {
+        val sourceOccurrence = sourceEventStreamVertex.pullEmittedEvent(
             processingContext = processingContext,
         ) ?: return null
 
-        return Update(
-            newValue = sourceOccurrence.event,
+        return UpdatedValue(
+            value = sourceOccurrence.event,
         )
     }
 
@@ -53,9 +53,9 @@ class HoldCellVertex<ValueT> private constructor(
         processingContext: Transaction.ProcessingContext,
     ): ValueT = heldStableValue
 
-    override fun update(
-        currentNotification: Update<ValueT>,
+    override fun persist(
+        newValue: ValueT,
     ) {
-        heldStableValue = currentNotification.newValue
+        heldStableValue = newValue
     }
 }
