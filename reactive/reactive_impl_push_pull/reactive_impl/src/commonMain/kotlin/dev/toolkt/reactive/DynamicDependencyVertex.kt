@@ -1,6 +1,6 @@
 package dev.toolkt.reactive
 
-interface DependencyVertex : DynamicVertex {
+interface DynamicDependencyVertex : DynamicVertex {
     /**
      * Registers a dependent [vertex] to this vertex.
      *
