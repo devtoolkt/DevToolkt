@@ -112,26 +112,6 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
         }
     }
 
-
-
-
-
-//    /**
-//     * Removes all the unregistered vertices from the stable dependents.
-//     */
-//    override fun shrink(
-//        shrinkageContext: Transaction.ShrinkageContext,
-//    ) {
-//        volatileRegistrationRequests.forEach { vertex, request ->
-//            if (request == RegistrationRequest.Unregister) {
-//                removeDependent(
-//                    shrinkageContext = shrinkageContext,
-//                    vertex = vertex,
-//                )
-//            }
-//        }
-//    }
-
     /**
      * Adds [vertex] to the stable dependents. If this is the first stable dependent, activate this vertex.
      */

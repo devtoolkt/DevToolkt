@@ -12,13 +12,10 @@ class EmitterEventStream<EventT> : OperatedEventStream<EventT> {
     fun emit(
         event: EventT,
     ) {
-        vertex.prepareOccurrence(
-            event = event,
-        )
-
         Transaction.execute { preProcessingContext ->
             vertex.preProcess(
                 preProcessingContext = preProcessingContext,
+                event = event,
             )
         }
     }
