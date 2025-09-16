@@ -7,7 +7,7 @@ import dev.toolkt.reactive.event_stream.vertices.StatefulEventStreamVertex
 class EmitterEventStreamVertex<EventT>() : StatefulEventStreamVertex<EventT>() {
     private var preparedOccurrence: Occurrence<EventT>? = null
 
-    fun preProcess(
+    fun visit(
         processingContext: Transaction.ProcessingContext,
         event: EventT,
     ) {
@@ -15,7 +15,7 @@ class EmitterEventStreamVertex<EventT>() : StatefulEventStreamVertex<EventT>() {
             event = event,
         )
 
-        ensureEffectivelyProcessed(
+        ensureProcessed(
             processingContext = processingContext,
         )
     }
@@ -24,7 +24,7 @@ class EmitterEventStreamVertex<EventT>() : StatefulEventStreamVertex<EventT>() {
         processingContext: Transaction.ProcessingContext,
     ): Occurrence<EventT>? = preparedOccurrence
 
-    override fun stabilize(
+    override fun postProcessLatePv(
         latePostProcessingContext: Transaction.LatePostProcessingContext,
         message: Occurrence<EventT>?,
     ) {
