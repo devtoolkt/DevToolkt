@@ -12,9 +12,9 @@ class EmitterEventStream<EventT> : OperatedEventStream<EventT> {
     fun emit(
         event: EventT,
     ) {
-        Transaction.execute { processingContext ->
+        Transaction.execute { context ->
             vertex.emit(
-                context = processingContext,
+                context = context,
                 event = event,
             )
         }
