@@ -153,12 +153,12 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
     }
 
     final override fun affect(
-        interProcessingContext: Transaction.InterProcessingContext,
+        earlyPostProcessingContext: Transaction.EarlyPostProcessingContext,
     ) {
         volatileRegistrationRequests.forEach { vertex, request ->
             if (request == RegistrationRequest.Register) {
                 addDependent(
-                    expansionContext = interProcessingContext,
+                    expansionContext = earlyPostProcessingContext,
                     vertex = vertex,
                 )
             }

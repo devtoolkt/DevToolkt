@@ -21,7 +21,7 @@ class Transaction private constructor() {
         )
     }
 
-    abstract class InterProcessingContext : ExpansionContext()
+    abstract class EarlyPostProcessingContext : ExpansionContext()
 
     abstract class ExpansionContext {
         data object External : ExpansionContext()
@@ -63,11 +63,11 @@ class Transaction private constructor() {
                 )
             }
 
-            val interProcessingContext = object : InterProcessingContext() {}
+            val earlyPostProcessingContext = object : EarlyPostProcessingContext() {}
 
             processedVertices.forEach { processedVertex ->
-                processedVertex.interProcess(
-                    interProcessingContext = interProcessingContext,
+                processedVertex.postProcessEarly(
+                    earlyPostProcessingContext = earlyPostProcessingContext,
                 )
             }
 

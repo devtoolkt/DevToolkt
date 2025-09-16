@@ -11,15 +11,15 @@ abstract class OperativeVertex : DynamicVertex {
         )
     }
 
-    final override fun interProcess(
-        interProcessingContext: Transaction.InterProcessingContext,
+    final override fun postProcessEarly(
+        earlyPostProcessingContext: Transaction.EarlyPostProcessingContext,
     ) {
         if (!volatileIsVisited) {
             throw IllegalStateException("Vertex must be pre-processed before inter-processing")
         }
 
         affect(
-            interProcessingContext = interProcessingContext,
+            earlyPostProcessingContext = earlyPostProcessingContext,
         )
     }
 
@@ -60,7 +60,7 @@ abstract class OperativeVertex : DynamicVertex {
     )
 
     protected abstract fun affect(
-        interProcessingContext: Transaction.InterProcessingContext,
+        earlyPostProcessingContext: Transaction.EarlyPostProcessingContext,
     )
 
     protected abstract fun settle(
