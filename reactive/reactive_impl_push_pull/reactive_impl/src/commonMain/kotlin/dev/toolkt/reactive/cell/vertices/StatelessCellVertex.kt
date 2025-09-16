@@ -12,17 +12,17 @@ abstract class StatelessCellVertex<ValueT> : PropagativeCellVertex<ValueT>() {
     private var cachedStableValue: StableValueCache<ValueT>? = null
 
     final override fun prepare(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): CellVertex.Update<ValueT>? = prepareStateless(
-        preProcessingContext = preProcessingContext,
+        processingContext = processingContext,
     )
 
     final override fun pullStableValue(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): ValueT = when (val foundCachedStableValue = this.cachedStableValue) {
         null -> {
             val computedCachedStableValue = computeStableValue(
-                preProcessingContext,
+                processingContext,
             )
 
             this.cachedStableValue = StableValueCache(
@@ -59,11 +59,11 @@ abstract class StatelessCellVertex<ValueT> : PropagativeCellVertex<ValueT>() {
     }
 
     abstract fun computeStableValue(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): ValueT
 
     abstract fun prepareStateless(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): CellVertex.Update<ValueT>?
 
     protected abstract fun activate(

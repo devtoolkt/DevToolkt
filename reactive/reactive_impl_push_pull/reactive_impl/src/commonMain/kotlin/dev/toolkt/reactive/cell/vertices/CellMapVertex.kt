@@ -7,10 +7,10 @@ class CellMapVertex<SourceValueT, TransformedValueT>(
     private val transform: (SourceValueT) -> TransformedValueT,
 ) : StatelessCellVertex<TransformedValueT>() {
     override fun prepareStateless(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): CellVertex.Update<TransformedValueT>? {
         val sourceUpdate = sourceCellVertex.pullUpdate(
-            preProcessingContext = preProcessingContext,
+            processingContext = processingContext,
         )
 
         return sourceUpdate?.map(
@@ -37,10 +37,10 @@ class CellMapVertex<SourceValueT, TransformedValueT>(
     }
 
     override fun computeStableValue(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): TransformedValueT = transform(
         sourceCellVertex.pullStableValue(
-            preProcessingContext = preProcessingContext,
+            processingContext = processingContext,
         ),
     )
 }

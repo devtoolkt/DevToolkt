@@ -2,7 +2,6 @@ package dev.toolkt.reactive.event_stream.vertices
 
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.vertices.DependencyEventStreamVertex
-import dev.toolkt.reactive.cell.vertices.HoldCellVertex
 import dev.toolkt.reactive.globalFinalizationRegistry
 
 class EventStreamTakeVertex<EventT> private constructor(
@@ -11,7 +10,7 @@ class EventStreamTakeVertex<EventT> private constructor(
 ) : StatefulEventStreamVertex<EventT>() {
     companion object {
         fun <ValueT> construct(
-            preProcessingContext: Transaction.PreProcessingContext,
+            processingContext: Transaction.ProcessingContext,
             sourceEventStreamVertex: DependencyEventStreamVertex<ValueT>,
             totalCount: Int,
         ): EventStreamTakeVertex<ValueT> = EventStreamTakeVertex(
@@ -19,12 +18,12 @@ class EventStreamTakeVertex<EventT> private constructor(
             totalCount = totalCount,
         ).apply {
             sourceEventStreamVertex.registerDependent(
-                preProcessingContext = preProcessingContext,
+                processingContext = processingContext,
                 vertex = this,
             )
 
             ensureVisited(
-                preProcessingContext = preProcessingContext,
+                processingContext = processingContext,
             )
 
             // TODO: Figure out weak dependents!
@@ -38,14 +37,14 @@ class EventStreamTakeVertex<EventT> private constructor(
     private var remainingCount = totalCount
 
     override fun prepare(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): EventStreamVertex.Occurrence<EventT>? {
         if (remainingCount <= 0) {
             return null
         }
 
         val sourceOccurrence = sourceEventStreamVertex.pullOccurrence(
-            preProcessingContext = preProcessingContext,
+            processingContext = processingContext,
         )
 
         return sourceOccurrence

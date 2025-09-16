@@ -9,15 +9,15 @@ class CellSwitchVertex<SourceValueT>(
     private val outerCellVertex: DependencyCellVertex<Cell<SourceValueT>>,
 ) : StatelessCellVertex<SourceValueT>() {
     override fun prepareStateless(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): CellVertex.Update<SourceValueT>? {
         val outerUpdate = outerCellVertex.pullUpdate(
-            preProcessingContext = preProcessingContext,
+            processingContext = processingContext,
         )
 
         val latestInnerCell = when (outerUpdate) {
             null -> outerCellVertex.pullStableValue(
-                preProcessingContext = preProcessingContext,
+                processingContext = processingContext,
             )
 
             else -> outerUpdate.newValue
@@ -31,7 +31,7 @@ class CellSwitchVertex<SourceValueT>(
         val latestInnerOperatedCellVertex = latestInnerOperatedCell.vertex
 
         val latestInnerOperatedCellUpdate = latestInnerOperatedCellVertex.pullUpdate(
-            preProcessingContext = preProcessingContext,
+            processingContext = processingContext,
         )
 
         // TODO: Is this tested?
@@ -41,7 +41,7 @@ class CellSwitchVertex<SourceValueT>(
 
         val latestInnerOperatedCellLatestValue = when (latestInnerOperatedCellUpdate) {
             null -> latestInnerOperatedCellVertex.pullStableValue(
-                preProcessingContext = preProcessingContext,
+                processingContext = processingContext,
             )
 
             else -> latestInnerOperatedCellUpdate.newValue
@@ -71,17 +71,17 @@ class CellSwitchVertex<SourceValueT>(
     }
 
     override fun computeStableValue(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): SourceValueT {
         val stableOuterCell = outerCellVertex.pullStableValue(
-            preProcessingContext = preProcessingContext,
+            processingContext = processingContext,
         )
 
         val stableInnerValue = when (stableOuterCell) {
             is ConstCell -> stableOuterCell.value
 
             is OperatedCell -> stableOuterCell.vertex.pullStableValue(
-                preProcessingContext = preProcessingContext,
+                processingContext = processingContext,
             )
         }
 

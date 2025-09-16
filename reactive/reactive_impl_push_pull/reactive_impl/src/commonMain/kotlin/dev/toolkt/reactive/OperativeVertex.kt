@@ -3,11 +3,11 @@ package dev.toolkt.reactive
 abstract class OperativeVertex : DynamicVertex {
     private var volatileIsVisited = false
 
-    final override fun preProcess(
-        preProcessingContext: Transaction.PreProcessingContext,
+    final override fun process(
+        processingContext: Transaction.ProcessingContext,
     ) {
         ensureVisited(
-            preProcessingContext = preProcessingContext,
+            processingContext = processingContext,
         )
     }
 
@@ -34,7 +34,7 @@ abstract class OperativeVertex : DynamicVertex {
     }
 
     protected fun ensureVisited(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ) {
         if (volatileIsVisited) {
             return
@@ -43,10 +43,10 @@ abstract class OperativeVertex : DynamicVertex {
         volatileIsVisited = true
 
         visit(
-            preProcessingContext = preProcessingContext,
+            processingContext = processingContext,
         )
 
-        preProcessingContext.enqueueForPostProcessing(
+        processingContext.enqueueForPostProcessing(
             vertex = this,
         )
     }
@@ -56,7 +56,7 @@ abstract class OperativeVertex : DynamicVertex {
      * - Ensure that all dependent vertices are enqueued for processing (if any meaningful volatile state was produced)
      */
     protected abstract fun visit(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     )
 
     protected abstract fun affect(

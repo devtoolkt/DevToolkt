@@ -11,7 +11,7 @@ interface DependencyVertex : DynamicVertex {
      * is registered as a dependent in a given transaction, it can't be unregistered in the same transaction.
      */
     fun registerDependent(
-        @Suppress("unused") preProcessingContext: Transaction.PreProcessingContext,
+        @Suppress("unused") processingContext: Transaction.ProcessingContext,
         vertex: DynamicVertex,
     )
 
@@ -25,7 +25,7 @@ interface DependencyVertex : DynamicVertex {
      * is unregistered as a dependent in a given transaction, it can't be re-registered in the same transaction.
      */
     fun unregisterDependent(
-        @Suppress("unused") preProcessingContext: Transaction.PreProcessingContext,
+        @Suppress("unused") processingContext: Transaction.ProcessingContext,
         vertex: DynamicVertex,
     )
 

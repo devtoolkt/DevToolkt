@@ -17,6 +17,6 @@ interface CellVertex<ValueT> : Vertex {
     }
 
     fun pullStableValue(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): ValueT
 }

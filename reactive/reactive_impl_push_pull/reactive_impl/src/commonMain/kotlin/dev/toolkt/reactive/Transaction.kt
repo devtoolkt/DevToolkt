@@ -11,7 +11,7 @@ class Transaction private constructor() {
         )
     }
 
-    abstract class PreProcessingContext {
+    abstract class ProcessingContext {
         abstract fun enqueueForProcessing(
             dependentVertex: DynamicVertex,
         )
@@ -35,11 +35,11 @@ class Transaction private constructor() {
 
     companion object {
         fun <ResultT> execute(
-            block: (PreProcessingContext) -> ResultT,
+            block: (ProcessingContext) -> ResultT,
         ): ResultT = with(Transaction()) {
             val verticesEnqueuedForProcessing = ArrayDeque<DynamicVertex>()
 
-            val preProcessingContext = object : PreProcessingContext() {
+            val processingContext = object : ProcessingContext() {
                 override fun enqueueForProcessing(
                     dependentVertex: DynamicVertex,
                 ) {
@@ -53,13 +53,13 @@ class Transaction private constructor() {
                 }
             }
 
-            val result = block(preProcessingContext)
+            val result = block(processingContext)
 
             while (verticesEnqueuedForProcessing.isNotEmpty()) {
                 val vertexToProcess = verticesEnqueuedForProcessing.removeFirst()
 
-                vertexToProcess.preProcess(
-                    preProcessingContext = preProcessingContext,
+                vertexToProcess.process(
+                    processingContext = processingContext,
                 )
             }
 

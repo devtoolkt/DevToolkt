@@ -8,7 +8,7 @@ class EmitterEventStreamVertex<EventT>() : StatefulEventStreamVertex<EventT>() {
     private var preparedVolatileOccurrence: Occurrence<EventT>? = null
 
     fun preProcess(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
         event: EventT,
     ) {
         preparedVolatileOccurrence = Occurrence(
@@ -16,12 +16,12 @@ class EmitterEventStreamVertex<EventT>() : StatefulEventStreamVertex<EventT>() {
         )
 
         ensureVisited(
-            preProcessingContext = preProcessingContext,
+            processingContext = processingContext,
         )
     }
 
     override fun prepare(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): Occurrence<EventT>? = preparedVolatileOccurrence
 
     override fun stabilize(

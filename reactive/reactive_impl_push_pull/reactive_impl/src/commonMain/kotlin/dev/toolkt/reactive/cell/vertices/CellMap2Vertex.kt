@@ -8,14 +8,14 @@ class CellMap2Vertex<ValueT1, ValueT2, ResultT>(
     private val transform: (ValueT1, ValueT2) -> ResultT,
 ) : StatelessCellVertex<ResultT>() {
     override fun prepareStateless(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): CellVertex.Update<ResultT>? {
         val sourceUpdate1 = sourceCell1Vertex.pullUpdate(
-            preProcessingContext = preProcessingContext,
+            processingContext = processingContext,
         )
 
         val sourceUpdate2 = sourceCell2Vertex.pullUpdate(
-            preProcessingContext = preProcessingContext,
+            processingContext = processingContext,
         )
 
         if (sourceUpdate1 == null && sourceUpdate2 == null) {
@@ -24,7 +24,7 @@ class CellMap2Vertex<ValueT1, ValueT2, ResultT>(
 
         val source1LatestValue = when (sourceUpdate1) {
             null -> sourceCell1Vertex.pullStableValue(
-                preProcessingContext = preProcessingContext,
+                processingContext = processingContext,
             )
 
             else -> sourceUpdate1.newValue
@@ -32,7 +32,7 @@ class CellMap2Vertex<ValueT1, ValueT2, ResultT>(
 
         val source2LatestValue = when (sourceUpdate2) {
             null -> sourceCell2Vertex.pullStableValue(
-                preProcessingContext = preProcessingContext,
+                processingContext = processingContext,
             )
 
             else -> sourceUpdate2.newValue
@@ -75,13 +75,13 @@ class CellMap2Vertex<ValueT1, ValueT2, ResultT>(
     }
 
     override fun computeStableValue(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): ResultT = transform(
         sourceCell1Vertex.pullStableValue(
-            preProcessingContext = preProcessingContext,
+            processingContext = processingContext,
         ),
         sourceCell2Vertex.pullStableValue(
-            preProcessingContext = preProcessingContext,
+            processingContext = processingContext,
         ),
     )
 }

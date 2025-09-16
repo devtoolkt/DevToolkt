@@ -134,9 +134,9 @@ context(pureContext: PureContext) fun <EventT, TransformedEventT> EventStream<Ev
     is OperatedEventStream -> DerivedEventStream(
         vertex = EventStreamMapVertex(
             sourceEventStreamVertex = this.vertex,
-            transform = { preProcessingContext, event ->
+            transform = { processingContext, event ->
                 MomentContext(
-                    preProcessingContext = preProcessingContext,
+                    processingContext = processingContext,
                 ).run {
                     transform(event)
                 }
@@ -163,7 +163,7 @@ context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.single():
 
     is OperatedEventStream -> DerivedEventStream(
         vertex = EventStreamSingleVertex.construct(
-            preProcessingContext = momentContext.preProcessingContext,
+            processingContext = momentContext.processingContext,
             sourceEventStreamVertex = this.vertex,
         ),
     )
@@ -183,7 +183,7 @@ context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.take(
 
         is OperatedEventStream -> DerivedEventStream(
             vertex = EventStreamTakeVertex.construct(
-                preProcessingContext = momentContext.preProcessingContext,
+                processingContext = momentContext.processingContext,
                 sourceEventStreamVertex = this.vertex,
                 totalCount = count,
             ),
@@ -198,7 +198,7 @@ context(momentContext: MomentContext) fun <ValueT> EventStream<ValueT>.hold(
 
     is OperatedEventStream -> DerivedCell(
         HoldCellVertex.construct(
-            preProcessingContext = momentContext.preProcessingContext,
+            processingContext = momentContext.processingContext,
             sourceEventStreamVertex = this.vertex,
             initialValue = initialValue,
         ),

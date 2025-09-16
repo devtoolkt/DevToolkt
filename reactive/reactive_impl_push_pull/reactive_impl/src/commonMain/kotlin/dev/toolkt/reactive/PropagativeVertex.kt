@@ -23,36 +23,36 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
     private var cachedMessage: MessageT? = null
 
     override fun visit(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ) {
         val message = prepare(
-            preProcessingContext = preProcessingContext,
+            processingContext = processingContext,
         )
 
         if (message != null) {
             cachedMessage = message
 
             propagate(
-                preProcessingContext = preProcessingContext,
+                processingContext = processingContext,
             )
         }
     }
 
     fun pullMessage(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): MessageT? {
         ensureVisited(
-            preProcessingContext = preProcessingContext,
+            processingContext = processingContext,
         )
 
         return cachedMessage
     }
 
     private fun propagate(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ) {
         stableDependents.forEach { dependentVertex ->
-            preProcessingContext.enqueueForProcessing(
+            processingContext.enqueueForProcessing(
                 dependentVertex = dependentVertex,
             )
         }
@@ -68,7 +68,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
      * is registered as a dependent in a given transaction, it can't be unregistered in the same transaction.
      */
     final override fun registerDependent(
-        @Suppress("unused") preProcessingContext: Transaction.PreProcessingContext,
+        @Suppress("unused") processingContext: Transaction.ProcessingContext,
         vertex: DynamicVertex,
     ) {
         if (stableDependents.contains(vertex)) {
@@ -95,7 +95,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
      * is unregistered as a dependent in a given transaction, it can't be re-registered in the same transaction.
      */
     final override fun unregisterDependent(
-        @Suppress("unused") preProcessingContext: Transaction.PreProcessingContext,
+        @Suppress("unused") processingContext: Transaction.ProcessingContext,
         vertex: DynamicVertex,
     ) {
         if (!stableDependents.contains(vertex)) {
@@ -197,7 +197,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
      * @return true if any meaningful volatile state was produced, false otherwise
      */
     protected abstract fun prepare(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): MessageT?
 
     /**

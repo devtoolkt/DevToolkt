@@ -6,8 +6,8 @@ import dev.toolkt.reactive.cell.vertices.CellVertex.Update
 
 abstract class PropagativeCellVertex<ValueT>() : PropagativeVertex<Update<ValueT>>(), DependencyCellVertex<ValueT> {
     final override fun pullUpdate(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): Update<ValueT>? = pullMessage(
-        preProcessingContext = preProcessingContext,
+        processingContext = processingContext,
     )
 }
