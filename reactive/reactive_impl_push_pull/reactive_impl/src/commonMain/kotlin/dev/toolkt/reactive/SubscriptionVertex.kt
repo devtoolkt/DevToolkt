@@ -10,10 +10,10 @@ class SubscriptionVertex<EventT>(
     private var receivedEventOccurrence: EventStreamVertex.Occurrence<EventT>? = null
 
     override fun visit(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ) {
         receivedEventOccurrence = sourceEventStreamVertex.pullOccurrence(
-            preProcessingContext = preProcessingContext,
+            processingContext = processingContext,
         ) ?: return
     }
 

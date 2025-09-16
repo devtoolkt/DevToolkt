@@ -10,7 +10,7 @@ class HoldCellVertex<ValueT> private constructor(
 ) : StatefulCellVertex<ValueT>() {
     companion object {
         fun <ValueT> construct(
-            preProcessingContext: Transaction.PreProcessingContext,
+            processingContext: Transaction.ProcessingContext,
             sourceEventStreamVertex: DependencyEventStreamVertex<ValueT>,
             initialValue: ValueT,
         ): HoldCellVertex<ValueT> = HoldCellVertex(
@@ -18,12 +18,12 @@ class HoldCellVertex<ValueT> private constructor(
             initialValue = initialValue,
         ).apply {
             sourceEventStreamVertex.registerDependent(
-                preProcessingContext = preProcessingContext,
+                processingContext = processingContext,
                 vertex = this,
             )
 
             ensureVisited(
-                preProcessingContext = preProcessingContext,
+                processingContext = processingContext,
             )
 
             // TODO: Figure out weak dependents!
@@ -37,10 +37,10 @@ class HoldCellVertex<ValueT> private constructor(
     private var heldStableValue: ValueT = initialValue
 
     override fun prepare(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): Update<ValueT>? {
         val sourceOccurrence = sourceEventStreamVertex.pullOccurrence(
-            preProcessingContext = preProcessingContext,
+            processingContext = processingContext,
         ) ?: return null
 
         return Update(
@@ -58,6 +58,6 @@ class HoldCellVertex<ValueT> private constructor(
     }
 
     override fun pullStableValue(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): ValueT = heldStableValue
 }

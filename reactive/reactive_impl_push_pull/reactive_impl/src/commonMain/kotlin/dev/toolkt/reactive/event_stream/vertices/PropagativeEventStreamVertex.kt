@@ -8,8 +8,8 @@ abstract class PropagativeEventStreamVertex<EventT>() : PropagativeVertex<EventS
     DependencyEventStreamVertex<EventT> {
 
     final override fun pullOccurrence(
-        preProcessingContext: Transaction.PreProcessingContext,
+        processingContext: Transaction.ProcessingContext,
     ): EventStreamVertex.Occurrence<EventT>? = pullMessage(
-        preProcessingContext = preProcessingContext,
+        processingContext = processingContext,
     )
 }

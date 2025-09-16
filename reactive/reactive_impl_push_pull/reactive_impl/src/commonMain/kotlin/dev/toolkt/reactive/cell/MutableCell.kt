@@ -18,9 +18,9 @@ class MutableCell<ValueT>(
     fun set(
         newValue: ValueT,
     ) {
-        Transaction.execute { preProcessingContext ->
+        Transaction.execute { processingContext ->
             vertex.preProcess(
-                preProcessingContext = preProcessingContext,
+                processingContext = processingContext,
                 newValue = newValue,
             )
         }

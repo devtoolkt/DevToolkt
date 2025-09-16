@@ -67,7 +67,7 @@ context(momentContext: MomentContext) fun <ValueT> Cell<ValueT>.sample(): ValueT
     is ConstCell -> TODO()
 
     is OperatedCell -> vertex.pullStableValue(
-        preProcessingContext = momentContext.preProcessingContext,
+        processingContext = momentContext.processingContext,
     )
 }
 
