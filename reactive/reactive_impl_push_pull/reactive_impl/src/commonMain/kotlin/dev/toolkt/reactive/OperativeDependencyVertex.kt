@@ -3,7 +3,7 @@ package dev.toolkt.reactive
 import dev.toolkt.core.platform.PlatformNativeMap
 import dev.toolkt.core.platform.PlatformNativeSet
 
-abstract class BasePropagativeVertex : OperativeVertex(), DependencyVertex {
+abstract class OperativeDependencyVertex : OperativeVertex(), DependencyVertex {
     private enum class RegistrationRequest {
         /**
          * RegistrationRequest to register the dependent vertex
@@ -196,7 +196,7 @@ abstract class BasePropagativeVertex : OperativeVertex(), DependencyVertex {
 
         mutableIsProcessed = false
 
-        postProcessLateBpv(
+        postProcessLateOpd(
             latePostProcessingContext = latePostProcessingContext,
         )
     }
@@ -213,7 +213,7 @@ abstract class BasePropagativeVertex : OperativeVertex(), DependencyVertex {
         shrinkageContext: Transaction.ShrinkageContext,
     )
 
-    abstract fun postProcessLateBpv(
+    abstract fun postProcessLateOpd(
         latePostProcessingContext: Transaction.LatePostProcessingContext,
     )
 }
