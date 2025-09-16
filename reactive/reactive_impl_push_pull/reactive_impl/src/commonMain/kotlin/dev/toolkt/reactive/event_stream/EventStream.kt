@@ -133,9 +133,9 @@ context(pureContext: PureContext) fun <EventT, TransformedEventT> EventStream<Ev
     is OperatedEventStream -> DerivedEventStream(
         vertex = EventStreamMapVertex(
             sourceEventStreamVertex = this.vertex,
-            transform = { processingContext, event ->
+            transform = { context, event ->
                 MomentContext(
-                    context = processingContext,
+                    context = context,
                 ).run {
                     transform(event)
                 }

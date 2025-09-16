@@ -2,7 +2,7 @@ package dev.toolkt.reactive.event_stream.vertices
 
 import dev.toolkt.reactive.IntermediateEventStreamVertex
 
-abstract class StatelessEventStreamVertex<EventT> : IntermediateEventStreamVertex<EventT>() {
+abstract class DerivedEventStreamVertex<EventT> : IntermediateEventStreamVertex<EventT>() {
     final override fun onFirstDependentAdded() {
         resume()
     }

@@ -3,10 +3,10 @@ package dev.toolkt.reactive.cell.vertices
 import dev.toolkt.reactive.IntermediateDynamicCellVertex
 import dev.toolkt.reactive.Transaction
 
-abstract class StatelessCellVertex<ValueT> : IntermediateDynamicCellVertex<ValueT>() {
+abstract class DerivedCellVertex<ValueT> : IntermediateDynamicCellVertex<ValueT>() {
     private var mutableIsStableValueCached = false
 
-    override val isStableValueCached: Boolean
+    final override val isStableValueCached: Boolean
         get() = mutableIsStableValueCached
 
     private var mutableCachedStableValue: ValueT? = null

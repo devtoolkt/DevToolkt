@@ -2,7 +2,7 @@ package dev.toolkt.reactive.cell.vertices
 
 import dev.toolkt.reactive.IntermediateDynamicCellVertex
 
-abstract class StatefulCellVertex<ValueT> : IntermediateDynamicCellVertex<ValueT>() {
+abstract class InherentCellVertex<ValueT> : IntermediateDynamicCellVertex<ValueT>() {
     override val isStableValueCached: Boolean
         get() = false
 

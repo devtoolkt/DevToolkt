@@ -8,7 +8,7 @@ import dev.toolkt.reactive.registerDependent
 class EventStreamTakeVertex<EventT> private constructor(
     private val sourceEventStreamVertex: DependencyEventStreamVertex<EventT>,
     totalCount: Int,
-) : StatefulIntermediateEventStreamVertex<EventT>() {
+) : FiniteEventStreamVertex<EventT>() {
     companion object {
         fun <ValueT> construct(
             context: Transaction.Context,
@@ -24,7 +24,7 @@ class EventStreamTakeVertex<EventT> private constructor(
             )
 
             ensureProcessed(
-                processingContext = context,
+                context = context,
             )
 
             // TODO: Figure out weak dependents!

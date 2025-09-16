@@ -38,6 +38,7 @@ class Cell_map2_basic_tests {
         )
 
         // TODO: Add a test for a case where both sources are the same Cell object
+        // TODO: Add a test for a case where both sources are filtered out (but is it a supported case for cells? calm?)
         // (S2)
         val sourceCell2 = extractCell(
             initialValue = initialSourceValue2,

@@ -5,7 +5,7 @@ import dev.toolkt.reactive.Transaction
 class CellMapVertex<SourceValueT, TransformedValueT>(
     private val sourceCellVertex: DependencyCellVertex<SourceValueT>,
     private val transform: (SourceValueT) -> TransformedValueT,
-) : StatelessCellVertex<TransformedValueT>() {
+) : DerivedCellVertex<TransformedValueT>() {
     override fun process(
         context: Transaction.Context,
     ): CellVertex.UpdatedValue<TransformedValueT>? {
@@ -34,7 +34,7 @@ class CellMapVertex<SourceValueT, TransformedValueT>(
         context: Transaction.Context,
     ): TransformedValueT = transform(
         sourceCellVertex.pullStableValue(
-            processingContext = context,
+            context = context,
         ),
     )
 }

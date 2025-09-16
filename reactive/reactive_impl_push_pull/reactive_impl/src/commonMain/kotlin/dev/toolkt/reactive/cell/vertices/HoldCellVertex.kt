@@ -8,7 +8,7 @@ import dev.toolkt.reactive.registerDependent
 class HoldCellVertex<ValueT> private constructor(
     private val sourceEventStreamVertex: DependencyEventStreamVertex<ValueT>,
     initialValue: ValueT,
-) : StatefulCellVertex<ValueT>() {
+) : InherentCellVertex<ValueT>() {
     companion object {
         fun <ValueT> construct(
             context: Transaction.Context,
@@ -24,7 +24,7 @@ class HoldCellVertex<ValueT> private constructor(
             )
 
             ensureProcessed(
-                processingContext = context,
+                context = context,
             )
 
             // TODO: Figure out weak dependents!

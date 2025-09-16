@@ -25,10 +25,6 @@ class EmitterEventStreamVertex<EventT>() : BaseDependencyVertex(), DependencyEve
             event = event,
         )
 
-        context.enqueueDirtyVertex(
-            dirtyVertex = this,
-        )
-
         enqueueDependentsForVisiting(
             context = context,
         )

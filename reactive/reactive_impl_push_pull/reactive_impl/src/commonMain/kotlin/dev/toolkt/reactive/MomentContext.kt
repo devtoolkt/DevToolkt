@@ -13,8 +13,8 @@ class MomentContext internal constructor(
          */
         fun <ResultT> execute(
             block: context(MomentContext) () -> ResultT,
-        ): ResultT = Transaction.execute { processingContext ->
-            with(MomentContext(processingContext)) {
+        ): ResultT = Transaction.execute { context ->
+            with(MomentContext(context)) {
                 block()
             }
         }

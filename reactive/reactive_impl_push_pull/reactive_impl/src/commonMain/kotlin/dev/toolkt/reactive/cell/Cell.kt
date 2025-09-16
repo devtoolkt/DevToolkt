@@ -51,7 +51,7 @@ sealed interface Cell<out ValueT> {
             is ConstCell -> outerCell.value
 
             is OperatedCell -> DerivedCell(
-                CellSwitchVertex<ValueT>(
+                CellSwitchVertex(
                     outerCellVertex = outerCell.vertex,
                 ),
             )
@@ -67,7 +67,7 @@ context(momentContext: MomentContext) fun <ValueT> Cell<ValueT>.sample(): ValueT
     is ConstCell -> TODO()
 
     is OperatedCell -> vertex.pullStableValue(
-        processingContext = momentContext.context,
+        context = momentContext.context,
     )
 }
 

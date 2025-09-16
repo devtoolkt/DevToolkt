@@ -5,7 +5,7 @@ import dev.toolkt.reactive.cell.vertices.DependencyCellVertex
 
 class UpdatedValuesEventStreamVertex<ValueT>(
     private val sourceCellVertex: DependencyCellVertex<ValueT>,
-) : StatelessEventStreamVertex<ValueT>() {
+) : DerivedEventStreamVertex<ValueT>() {
     override fun process(
         context: Transaction.Context,
     ): EventStreamVertex.EmittedEvent<ValueT>? {

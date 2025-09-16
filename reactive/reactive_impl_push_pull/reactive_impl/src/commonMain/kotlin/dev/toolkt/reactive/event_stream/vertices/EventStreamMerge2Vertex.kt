@@ -6,7 +6,7 @@ import dev.toolkt.reactive.cell.vertices.DependencyEventStreamVertex
 class EventStreamMerge2Vertex<EventT>(
     private val sourceEventStream1Vertex: DependencyEventStreamVertex<EventT>,
     private val sourceEventStream2Vertex: DependencyEventStreamVertex<EventT>,
-) : StatelessEventStreamVertex<EventT>() {
+) : DerivedEventStreamVertex<EventT>() {
     override fun process(
         context: Transaction.Context,
     ): EventStreamVertex.EmittedEvent<EventT>? {

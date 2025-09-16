@@ -6,7 +6,7 @@ import dev.toolkt.reactive.cell.vertices.DependencyEventStreamVertex
 class EventStreamFilterVertex<SourceEventT>(
     private val sourceEventStreamVertex: DependencyEventStreamVertex<SourceEventT>,
     private val predicate: (SourceEventT) -> Boolean,
-) : StatelessEventStreamVertex<SourceEventT>() {
+) : DerivedEventStreamVertex<SourceEventT>() {
     override fun process(
         context: Transaction.Context,
     ): EventStreamVertex.EmittedEvent<SourceEventT>? {

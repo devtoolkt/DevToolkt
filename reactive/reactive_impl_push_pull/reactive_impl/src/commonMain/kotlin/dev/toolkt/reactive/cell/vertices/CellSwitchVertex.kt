@@ -5,19 +5,19 @@ import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.ConstCell
 import dev.toolkt.reactive.cell.OperatedCell
 
-class CellSwitchVertex<SourceValueT>(
-    private val outerCellVertex: DependencyCellVertex<Cell<SourceValueT>>,
-) : StatelessCellVertex<SourceValueT>() {
+class CellSwitchVertex<ValueT>(
+    private val outerCellVertex: DependencyCellVertex<Cell<ValueT>>,
+) : DerivedCellVertex<ValueT>() {
     override fun process(
         context: Transaction.Context,
-    ): CellVertex.UpdatedValue<SourceValueT>? {
+    ): CellVertex.UpdatedValue<ValueT>? {
         val outerUpdate = outerCellVertex.pullUpdatedValue(
             context = context,
         )
 
         val latestInnerCell = when (outerUpdate) {
             null -> outerCellVertex.pullStableValue(
-                processingContext = context,
+                context = context,
             )
 
             else -> outerUpdate.value
@@ -41,7 +41,7 @@ class CellSwitchVertex<SourceValueT>(
 
         val latestInnerOperatedCellLatestValue = when (latestInnerOperatedCellUpdate) {
             null -> latestInnerOperatedCellVertex.pullStableValue(
-                processingContext = context,
+                context = context,
             )
 
             else -> latestInnerOperatedCellUpdate.value
@@ -66,16 +66,16 @@ class CellSwitchVertex<SourceValueT>(
 
     override fun computeStableValue(
         context: Transaction.Context,
-    ): SourceValueT {
+    ): ValueT {
         val stableOuterCell = outerCellVertex.pullStableValue(
-            processingContext = context,
+            context = context,
         )
 
         val stableInnerValue = when (stableOuterCell) {
             is ConstCell -> stableOuterCell.value
 
             is OperatedCell -> stableOuterCell.vertex.pullStableValue(
-                processingContext = context,
+                context = context,
             )
         }
 
