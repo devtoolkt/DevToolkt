@@ -7,7 +7,7 @@ abstract class OperativeVertex : DynamicVertex {
     protected val isEffectivelyProcessed: Boolean
         get() = mutableIsEffectivelyProcessed
 
-    final override fun process(
+    final override fun visit(
         processingContext: Transaction.ProcessingContext,
     ) {
         ensureEffectivelyProcessed(
@@ -51,7 +51,7 @@ abstract class OperativeVertex : DynamicVertex {
         )
 
         processingContext.enqueueForPostProcessing(
-            vertex = this,
+            processedVertex = this,
         )
     }
 

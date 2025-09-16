@@ -12,12 +12,12 @@ class Transaction private constructor() {
     }
 
     abstract class ProcessingContext {
-        abstract fun enqueueForProcessing(
+        abstract fun enqueueForVisiting(
             dependentVertex: DynamicVertex,
         )
 
         abstract fun enqueueForPostProcessing(
-            vertex: DynamicVertex,
+            processedVertex: DynamicVertex,
         )
     }
 
@@ -37,35 +37,37 @@ class Transaction private constructor() {
         fun <ResultT> execute(
             block: (ProcessingContext) -> ResultT,
         ): ResultT = with(Transaction()) {
-            val verticesEnqueuedForProcessing = ArrayDeque<DynamicVertex>()
+            val visitationQueue = ArrayDeque<DynamicVertex>()
+
+            val postProcessingQueue = mutableListOf<DynamicVertex>()
 
             val processingContext = object : ProcessingContext() {
-                override fun enqueueForProcessing(
+                override fun enqueueForVisiting(
                     dependentVertex: DynamicVertex,
                 ) {
-                    verticesEnqueuedForProcessing.addLast(dependentVertex)
+                    visitationQueue.addLast(dependentVertex)
                 }
 
                 override fun enqueueForPostProcessing(
-                    vertex: DynamicVertex,
+                    processedVertex: DynamicVertex,
                 ) {
-                    this@with.enqueueForPostProcessing(processedVertex = vertex)
+                    postProcessingQueue.add(processedVertex)
                 }
             }
 
             val result = block(processingContext)
 
-            while (verticesEnqueuedForProcessing.isNotEmpty()) {
-                val vertexToProcess = verticesEnqueuedForProcessing.removeFirst()
+            while (visitationQueue.isNotEmpty()) {
+                val vertexToProcess = visitationQueue.removeFirst()
 
-                vertexToProcess.process(
+                vertexToProcess.visit(
                     processingContext = processingContext,
                 )
             }
 
             val earlyPostProcessingContext = object : EarlyPostProcessingContext() {}
 
-            processedVertices.forEach { processedVertex ->
+            postProcessingQueue.forEach { processedVertex ->
                 processedVertex.postProcessEarly(
                     earlyPostProcessingContext = earlyPostProcessingContext,
                 )
@@ -73,7 +75,7 @@ class Transaction private constructor() {
 
             val latePostProcessingContext = object : LatePostProcessingContext() {}
 
-            processedVertices.forEach { processedVertex ->
+            postProcessingQueue.forEach { processedVertex ->
                 processedVertex.postProcessLate(
                     latePostProcessingContext = latePostProcessingContext,
                 )
@@ -81,13 +83,5 @@ class Transaction private constructor() {
 
             return@with result
         }
-    }
-
-    private val processedVertices = mutableListOf<DynamicVertex>()
-
-    private fun enqueueForPostProcessing(
-        processedVertex: DynamicVertex,
-    ) {
-        processedVertices.add(processedVertex)
     }
 }
