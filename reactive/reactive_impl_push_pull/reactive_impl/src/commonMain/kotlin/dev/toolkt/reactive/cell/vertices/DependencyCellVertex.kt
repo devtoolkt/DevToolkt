@@ -9,6 +9,6 @@ interface DependencyCellVertex<ValueT> : CellVertex<ValueT>, DependencyVertex {
      * Returns a volatile update of this cell, triggering processing if necessary.
      */
     fun pullUpdatedValue(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ): UpdatedValue<ValueT>?
 }

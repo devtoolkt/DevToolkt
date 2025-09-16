@@ -20,9 +20,11 @@ class MutableCell<ValueT>(
     ) {
         Transaction.execute { processingContext ->
             vertex.set(
-                processingContext = processingContext,
+                context = processingContext,
                 newValue = newValue,
             )
         }
+
+        vertex.reset()
     }
 }

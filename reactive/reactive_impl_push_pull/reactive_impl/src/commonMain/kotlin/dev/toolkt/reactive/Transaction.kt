@@ -13,7 +13,7 @@ class Transaction private constructor() {
         fun unregister()
     }
 
-    abstract class ProcessingContext {
+    abstract class Context {
         abstract fun enqueueDependentVertex(
             dependentVertex: DependentVertex,
         )
@@ -37,10 +37,10 @@ class Transaction private constructor() {
 
     companion object {
         fun <ResultT> execute(
-            block: (ProcessingContext) -> ResultT,
+            block: (Context) -> ResultT,
         ): ResultT = with(Transaction()) {
             // Dependent vertices to be visited
-            val dependentQueue = ArrayDeque<DependentVertex>()
+            val dependentVertexQueue = ArrayDeque<DependentVertex>()
 
             // Registration effects to be applied
             val registrationEffectQueue = mutableListOf<RegistrationEffect>()
@@ -54,11 +54,11 @@ class Transaction private constructor() {
             // Dirty vertices to be reset
             val dirtyVertexQueue = mutableListOf<ResettableVertex>()
 
-            val processingContext = object : ProcessingContext() {
+            val context = object : Context() {
                 override fun enqueueDependentVertex(
                     dependentVertex: DependentVertex,
                 ) {
-                    dependentQueue.addLast(dependentVertex)
+                    dependentVertexQueue.addLast(dependentVertex)
                 }
 
                 override fun enqueueDirtyVertex(
@@ -73,8 +73,10 @@ class Transaction private constructor() {
                     registrationEffectQueue.add(registrationEffect)
                 }
 
-                override fun enqueueUnregistrationEffect(unregistrationEffect: UnregistrationEffect) {
-                    TODO("Not yet implemented")
+                override fun enqueueUnregistrationEffect(
+                    unregistrationEffect: UnregistrationEffect,
+                ) {
+                    unregistrationEffectQueue.add(unregistrationEffect)
                 }
 
                 override fun enqueueSideEffect(
@@ -84,13 +86,13 @@ class Transaction private constructor() {
                 }
             }
 
-            val result = block(processingContext)
+            val result = block(context)
 
-            while (dependentQueue.isNotEmpty()) {
-                val vertexToProcess = dependentQueue.removeFirst()
+            while (dependentVertexQueue.isNotEmpty()) {
+                val vertexToProcess = dependentVertexQueue.removeFirst()
 
                 vertexToProcess.visit(
-                    processingContext = processingContext,
+                    context = context,
                 )
             }
 

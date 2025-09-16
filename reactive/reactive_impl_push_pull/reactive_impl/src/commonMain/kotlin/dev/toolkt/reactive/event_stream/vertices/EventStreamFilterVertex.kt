@@ -8,10 +8,10 @@ class EventStreamFilterVertex<SourceEventT>(
     private val predicate: (SourceEventT) -> Boolean,
 ) : StatelessEventStreamVertex<SourceEventT>() {
     override fun process(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ): EventStreamVertex.EmittedEvent<SourceEventT>? {
         val sourceOccurrence = sourceEventStreamVertex.pullEmittedEvent(
-            processingContext = processingContext,
+            context = context,
         ) ?: return null
 
         return when {

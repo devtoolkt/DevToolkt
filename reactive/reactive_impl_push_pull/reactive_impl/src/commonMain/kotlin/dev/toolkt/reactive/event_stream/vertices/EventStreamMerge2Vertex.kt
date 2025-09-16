@@ -8,10 +8,10 @@ class EventStreamMerge2Vertex<EventT>(
     private val sourceEventStream2Vertex: DependencyEventStreamVertex<EventT>,
 ) : StatelessEventStreamVertex<EventT>() {
     override fun process(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ): EventStreamVertex.EmittedEvent<EventT>? {
         val sourceOccurrence1 = sourceEventStream1Vertex.pullEmittedEvent(
-            processingContext = processingContext,
+            context = context,
         )
 
         if (sourceOccurrence1 != null) {
@@ -19,7 +19,7 @@ class EventStreamMerge2Vertex<EventT>(
         }
 
         val sourceOccurrence2 = sourceEventStream2Vertex.pullEmittedEvent(
-            processingContext = processingContext,
+            context = context,
         )
 
         if (sourceOccurrence2 != null) {

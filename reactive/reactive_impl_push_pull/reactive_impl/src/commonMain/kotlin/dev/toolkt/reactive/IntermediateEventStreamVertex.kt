@@ -16,40 +16,40 @@ abstract class IntermediateEventStreamVertex<EventT> : BaseDependencyVertex(), D
         get() = mutableCachedEmittedEvent
 
     final override fun visit(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ) {
         ensureProcessed(
-            processingContext = processingContext,
+            context = context,
         )
     }
 
     final override fun pullEmittedEvent(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ): EventStreamVertex.EmittedEvent<EventT>? = ensureProcessed(
-        processingContext = processingContext,
+        context = context,
     )
 
     protected fun ensureProcessed(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ): EventStreamVertex.EmittedEvent<EventT>? {
         if (isProcessed) {
             return cachedEmittedEvent
         }
 
         val computedEmittedEvent = process(
-            processingContext = processingContext,
+            context = context,
         )
 
         mutableIsProcessed = true
         mutableCachedEmittedEvent = computedEmittedEvent
 
-        processingContext.enqueueDirtyVertex(
+        context.enqueueDirtyVertex(
             dirtyVertex = this,
         )
 
         if (computedEmittedEvent != null) {
             enqueueDependentsForVisiting(
-                processingContext = processingContext,
+                context = context,
             )
         }
 
@@ -72,7 +72,7 @@ abstract class IntermediateEventStreamVertex<EventT> : BaseDependencyVertex(), D
     }
 
     protected abstract fun process(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ): EventStreamVertex.EmittedEvent<EventT>?
 
     protected abstract fun transit()

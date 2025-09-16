@@ -14,10 +14,12 @@ class EmitterEventStream<EventT> : OperatedEventStream<EventT> {
     ) {
         Transaction.execute { processingContext ->
             vertex.emit(
-                processingContext = processingContext,
+                context = processingContext,
                 event = event,
             )
         }
+
+        vertex.reset()
     }
 
     override val vertex = EmitterEventStreamVertex<EventT>()

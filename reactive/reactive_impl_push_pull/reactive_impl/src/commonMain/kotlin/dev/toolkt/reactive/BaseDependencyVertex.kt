@@ -40,10 +40,10 @@ abstract class BaseDependencyVertex : DependencyVertex {
     }
 
     protected fun enqueueDependentsForVisiting(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ) {
         dependents.forEach { dependentVertex ->
-            processingContext.enqueueDependentVertex(
+            context.enqueueDependentVertex(
                 dependentVertex = dependentVertex,
             )
         }
