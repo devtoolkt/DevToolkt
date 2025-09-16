@@ -1,7 +1,11 @@
 package dev.toolkt.reactive
 
 abstract class OperativeVertex : DynamicVertex {
-    private var volatileIsVisited = false
+    @VolatileProcessingState
+    private var mutableIsVisited = false
+
+    protected val isVisited: Boolean
+        get() = mutableIsVisited
 
     final override fun process(
         processingContext: Transaction.ProcessingContext,
@@ -14,7 +18,7 @@ abstract class OperativeVertex : DynamicVertex {
     final override fun postProcessEarly(
         earlyPostProcessingContext: Transaction.EarlyPostProcessingContext,
     ) {
-        if (!volatileIsVisited) {
+        if (!isVisited) {
             throw IllegalStateException("Vertex must be pre-processed before inter-processing")
         }
 
@@ -26,7 +30,7 @@ abstract class OperativeVertex : DynamicVertex {
     final override fun postProcessLate(
         latePostProcessingContext: Transaction.LatePostProcessingContext,
     ) {
-        volatileIsVisited = false
+        mutableIsVisited = false
 
         settle(
             latePostProcessingContext = latePostProcessingContext,
@@ -36,11 +40,11 @@ abstract class OperativeVertex : DynamicVertex {
     protected fun ensureVisited(
         processingContext: Transaction.ProcessingContext,
     ) {
-        if (volatileIsVisited) {
+        if (isVisited) {
             return
         }
 
-        volatileIsVisited = true
+        isVisited = true
 
         visit(
             processingContext = processingContext,
