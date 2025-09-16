@@ -44,7 +44,7 @@ abstract class OperativeVertex : DynamicVertex {
             return
         }
 
-        isVisited = true
+        mutableIsVisited = true
 
         visit(
             processingContext = processingContext,
