@@ -1,29 +1,30 @@
 package dev.toolkt.reactive.cell.vertices
 
 import dev.toolkt.reactive.BaseDependencyVertex
+import dev.toolkt.reactive.ResettableVertex
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.cell.vertices.CellVertex.Update
+import dev.toolkt.reactive.cell.vertices.CellVertex.UpdatedValue
 
 class MutableCellVertex<ValueT>(
     initialValue: ValueT,
-) : BaseDependencyVertex(), DependencyCellVertex<ValueT> {
+) : BaseDependencyVertex(), DependencyCellVertex<ValueT>, ResettableVertex {
     private var mutableStableValue: ValueT = initialValue
 
     private val stableValue: ValueT
         get() = mutableStableValue
 
-    private var setUpdate: Update<ValueT>? = null
+    private var setUpdatedValue: UpdatedValue<ValueT>? = null
 
     fun set(
         processingContext: Transaction.ProcessingContext,
         newValue: ValueT,
     ) {
-        setUpdate = Update(
-            newValue = newValue,
+        setUpdatedValue = UpdatedValue(
+            value = newValue,
         )
 
-        ensureMarkedDirty(
-            processingContext = processingContext,
+        processingContext.enqueueDirtyVertex(
+            dirtyVertex = this,
         )
 
         enqueueDependentsForVisiting(
@@ -35,9 +36,9 @@ class MutableCellVertex<ValueT>(
         processingContext: Transaction.ProcessingContext,
     ): ValueT = stableValue
 
-    override fun pullUpdate(
+    override fun pullUpdatedValue(
         processingContext: Transaction.ProcessingContext,
-    ): Update<ValueT>? = setUpdate
+    ): UpdatedValue<ValueT>? = setUpdatedValue
 
     override fun onFirstDependentAdded() {
     }
@@ -45,7 +46,7 @@ class MutableCellVertex<ValueT>(
     override fun onLastDependentRemoved() {
     }
 
-    override fun clean() {
-        setUpdate = null
+    override fun reset() {
+        setUpdatedValue = null
     }
 }

@@ -8,13 +8,13 @@ class UpdatedValuesEventStreamVertex<ValueT>(
 ) : StatelessEventStreamVertex<ValueT>() {
     override fun process(
         processingContext: Transaction.ProcessingContext,
-    ): EventStreamVertex.Occurrence<ValueT>? {
-        val sourceUpdate = sourceCellVertex.pullUpdate(
+    ): EventStreamVertex.EmittedEvent<ValueT>? {
+        val sourceUpdate = sourceCellVertex.pullUpdatedValue(
             processingContext = processingContext,
         ) ?: return null
 
-        return EventStreamVertex.Occurrence(
-            event = sourceUpdate.newValue,
+        return EventStreamVertex.EmittedEvent(
+            event = sourceUpdate.value,
         )
     }
 

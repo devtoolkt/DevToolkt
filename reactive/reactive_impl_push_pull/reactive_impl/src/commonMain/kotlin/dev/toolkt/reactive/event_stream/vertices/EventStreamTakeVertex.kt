@@ -39,21 +39,19 @@ class EventStreamTakeVertex<EventT> private constructor(
 
     override fun process(
         processingContext: Transaction.ProcessingContext,
-    ): EventStreamVertex.Occurrence<EventT>? {
+    ): EventStreamVertex.EmittedEvent<EventT>? {
         if (remainingCount <= 0) {
             return null
         }
 
-        val sourceOccurrence = sourceEventStreamVertex.pullOccurrence(
+        val sourceOccurrence = sourceEventStreamVertex.pullEmittedEvent(
             processingContext = processingContext,
         )
 
         return sourceOccurrence
     }
 
-    override fun update(
-        currentNotification: EventStreamVertex.Occurrence<EventT>,
-    ) {
+    override fun transit() {
         remainingCount -= 1
 
         if (remainingCount <= 0) {

@@ -6,13 +6,13 @@ import kotlin.jvm.JvmInline
 
 interface CellVertex<ValueT> : Vertex {
     @JvmInline
-    value class Update<ValueT>(
-        val newValue: ValueT,
+    value class UpdatedValue<ValueT>(
+        val value: ValueT,
     ) {
         fun <TransformedValueT> map(
             transform: (ValueT) -> TransformedValueT,
-        ): Update<TransformedValueT> = Update(
-            newValue = transform(newValue),
+        ): UpdatedValue<TransformedValueT> = UpdatedValue(
+            value = transform(value),
         )
     }
 
