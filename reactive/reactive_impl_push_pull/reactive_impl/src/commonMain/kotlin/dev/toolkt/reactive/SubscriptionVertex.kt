@@ -6,7 +6,7 @@ import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex
 class SubscriptionVertex<EventT>(
     private val sourceEventStreamVertex: DynamicEventStreamVertex<EventT>,
     private val handle: (EventT) -> Unit,
-) : OperativeVertex() {
+) : DynamicVertex {
     private var mutableReceivedEventOccurrence: EventStreamVertex.Occurrence<EventT>? = null
 
     val receivedEventOccurrence: EventStreamVertex.Occurrence<EventT>?
@@ -19,14 +19,14 @@ class SubscriptionVertex<EventT>(
             processingContext = processingContext,
         ) ?: return
 
-        mutableReceivedEventOccurrence = receivedEventOccurrence
-
-        ensureMarkedDirty(
-            processingContext = processingContext,
+        processingContext.enqueueForPostProcessing(
+            processedVertex = this,
         )
+
+        mutableReceivedEventOccurrence = receivedEventOccurrence
     }
 
-    override fun postProcessEarlyOp(
+    override fun postProcessEarly(
         earlyPostProcessingContext: Transaction.EarlyPostProcessingContext,
     ) {
         receivedEventOccurrence?.let {
@@ -34,7 +34,7 @@ class SubscriptionVertex<EventT>(
         }
     }
 
-    override fun postProcessLateOp(
+    override fun postProcessLate(
         latePostProcessingContext: Transaction.LatePostProcessingContext,
     ) {
         mutableReceivedEventOccurrence = null
