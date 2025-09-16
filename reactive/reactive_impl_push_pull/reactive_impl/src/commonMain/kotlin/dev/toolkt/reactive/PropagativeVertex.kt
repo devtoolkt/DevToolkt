@@ -1,6 +1,6 @@
 package dev.toolkt.reactive
 
-abstract class PropagativeVertex<MessageT : Any> : BasePropagativeVertex() {
+abstract class PropagativeVertex<MessageT : Any> : OperativeDependencyVertex() {
     private var mutableCachedMessage: MessageT? = null
 
     val cachedMessage: MessageT?
@@ -46,7 +46,7 @@ abstract class PropagativeVertex<MessageT : Any> : BasePropagativeVertex() {
         return mutableCachedMessage
     }
 
-    override fun postProcessLateBpv(
+    override fun postProcessLateOpd(
         latePostProcessingContext: Transaction.LatePostProcessingContext,
     ) {
         val cachedMessage = this.cachedMessage
