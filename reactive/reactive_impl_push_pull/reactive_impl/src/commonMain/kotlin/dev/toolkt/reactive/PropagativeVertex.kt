@@ -16,9 +16,9 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
         Unregister,
     }
 
-    private val stableDependents = PlatformNativeSet<DynamicVertex>()
+    private val dependents = PlatformNativeSet<DynamicVertex>()
 
-    private val volatileRegistrationRequests = PlatformNativeMap<DynamicVertex, RegistrationRequest>()
+    private val registrationRequests = PlatformNativeMap<DynamicVertex, RegistrationRequest>()
 
     private var cachedMessage: MessageT? = null
 
@@ -51,7 +51,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
     private fun propagate(
         processingContext: Transaction.ProcessingContext,
     ) {
-        stableDependents.forEach { dependentVertex ->
+        dependents.forEach { dependentVertex ->
             processingContext.enqueueForProcessing(
                 dependentVertex = dependentVertex,
             )
@@ -71,11 +71,11 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
         @Suppress("unused") processingContext: Transaction.ProcessingContext,
         vertex: DynamicVertex,
     ) {
-        if (stableDependents.contains(vertex)) {
+        if (dependents.contains(vertex)) {
             throw IllegalArgumentException("Vertex $vertex is already a stable dependent of $this")
         }
 
-        val previousRegistrationRequest = volatileRegistrationRequests.put(
+        val previousRegistrationRequest = registrationRequests.put(
             key = vertex,
             value = RegistrationRequest.Register,
         )
@@ -98,11 +98,11 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
         @Suppress("unused") processingContext: Transaction.ProcessingContext,
         vertex: DynamicVertex,
     ) {
-        if (!stableDependents.contains(vertex)) {
+        if (!dependents.contains(vertex)) {
             throw IllegalArgumentException("Vertex $vertex is not a stable dependent of $this")
         }
 
-        val previousRegistrationRequest = volatileRegistrationRequests.put(
+        val previousRegistrationRequest = registrationRequests.put(
             key = vertex,
             value = RegistrationRequest.Unregister,
         )
@@ -119,13 +119,13 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
         expansionContext: Transaction.ExpansionContext,
         vertex: DynamicVertex,
     ) {
-        val wasAdded = stableDependents.add(vertex)
+        val wasAdded = dependents.add(vertex)
 
         if (!wasAdded) {
             throw IllegalStateException("Vertex $vertex is already a dependent of $this")
         }
 
-        if (stableDependents.size == 1) {
+        if (dependents.size == 1) {
             onFirstDependentAdded(
                 expansionContext = expansionContext,
             )
@@ -139,13 +139,13 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
         shrinkageContext: Transaction.ShrinkageContext,
         vertex: DynamicVertex,
     ) {
-        val wasRemoved = stableDependents.remove(vertex)
+        val wasRemoved = dependents.remove(vertex)
 
         if (!wasRemoved) {
             throw IllegalStateException("Vertex $vertex is not a dependent of $this")
         }
 
-        if (stableDependents.size == 0) {
+        if (dependents.size == 0) {
             onLastDependentRemoved(
                 shrinkageContext = shrinkageContext,
             )
@@ -155,7 +155,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
     final override fun affect(
         earlyPostProcessingContext: Transaction.EarlyPostProcessingContext,
     ) {
-        volatileRegistrationRequests.forEach { vertex, request ->
+        registrationRequests.forEach { vertex, request ->
             if (request == RegistrationRequest.Register) {
                 addDependent(
                     expansionContext = earlyPostProcessingContext,
@@ -177,7 +177,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
             message = cachedMessage,
         )
 
-        volatileRegistrationRequests.forEach { vertex, request ->
+        registrationRequests.forEach { vertex, request ->
             if (request == RegistrationRequest.Unregister) {
                 removeDependent(
                     shrinkageContext = latePostProcessingContext,
@@ -186,7 +186,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
             }
         }
 
-        volatileRegistrationRequests.clear()
+        registrationRequests.clear()
 
         cachedMessage = null
     }
