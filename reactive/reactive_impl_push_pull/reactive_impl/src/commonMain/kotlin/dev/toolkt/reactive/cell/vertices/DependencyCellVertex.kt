@@ -1,5 +1,5 @@
 package dev.toolkt.reactive.cell.vertices
 
-import dev.toolkt.reactive.DependencyVertex
+import dev.toolkt.reactive.DynamicDependencyVertex
 
-interface DependencyCellVertex<ValueT> : DynamicCellVertex<ValueT>, DependencyVertex
+interface DependencyCellVertex<ValueT> : DynamicCellVertex<ValueT>, DynamicDependencyVertex

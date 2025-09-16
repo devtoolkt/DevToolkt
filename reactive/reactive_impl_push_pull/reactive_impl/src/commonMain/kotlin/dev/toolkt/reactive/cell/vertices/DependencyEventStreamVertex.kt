@@ -1,5 +1,5 @@
 package dev.toolkt.reactive.cell.vertices
 
-import dev.toolkt.reactive.DependencyVertex
+import dev.toolkt.reactive.DynamicDependencyVertex
 
-interface DependencyEventStreamVertex<EventT> : DynamicEventStreamVertex<EventT>, DependencyVertex
+interface DependencyEventStreamVertex<EventT> : DynamicEventStreamVertex<EventT>, DynamicDependencyVertex

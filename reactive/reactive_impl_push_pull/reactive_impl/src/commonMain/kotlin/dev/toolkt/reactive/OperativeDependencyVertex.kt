@@ -3,7 +3,7 @@ package dev.toolkt.reactive
 import dev.toolkt.core.platform.PlatformNativeMap
 import dev.toolkt.core.platform.PlatformNativeSet
 
-abstract class OperativeDependencyVertex : OperativeVertex(), DependencyVertex {
+abstract class OperativeDependencyVertex : OperativeVertex(), DynamicDependencyVertex {
     private enum class RegistrationRequest {
         /**
          * RegistrationRequest to register the dependent vertex
