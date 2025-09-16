@@ -18,7 +18,7 @@ class SubscriptionVertex<EventT>(
     }
 
     override fun affect(
-        interProcessingContext: Transaction.InterProcessingContext,
+        earlyPostProcessingContext: Transaction.EarlyPostProcessingContext,
     ) {
         receivedEventOccurrence?.let {
             handle(it.event)
