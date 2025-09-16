@@ -7,7 +7,7 @@ abstract class BaseVertex : ResettableVertex {
         get() = mutableIsMarkedDirty
 
     protected fun ensureMarkedDirty(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ) {
         if (isMarkedDirty) {
             return
@@ -15,7 +15,7 @@ abstract class BaseVertex : ResettableVertex {
 
         mutableIsMarkedDirty = true
 
-        processingContext.enqueueDirtyVertex(
+        context.enqueueDirtyVertex(
             dirtyVertex = this,
         )
     }

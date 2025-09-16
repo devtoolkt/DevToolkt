@@ -10,18 +10,18 @@ class EventStreamSingleVertex<EventT> private constructor(
 ) : StatefulIntermediateEventStreamVertex<EventT>() {
     companion object {
         fun <ValueT> construct(
-            processingContext: Transaction.ProcessingContext,
+            context: Transaction.Context,
             sourceEventStreamVertex: DependencyEventStreamVertex<ValueT>,
         ): EventStreamSingleVertex<ValueT> = EventStreamSingleVertex(
             sourceEventStreamVertex = sourceEventStreamVertex,
         ).apply {
             sourceEventStreamVertex.registerDependent(
-                processingContext = processingContext,
+                context = context,
                 dependentVertex = this,
             )
 
             ensureProcessed(
-                processingContext = processingContext,
+                processingContext = context,
             )
 
             // TODO: Figure out weak dependents!
@@ -35,14 +35,14 @@ class EventStreamSingleVertex<EventT> private constructor(
     private var wasPropagated = false
 
     override fun process(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ): EventStreamVertex.EmittedEvent<EventT>? {
         if (wasPropagated) {
             return null
         }
 
         val sourceOccurrence = sourceEventStreamVertex.pullEmittedEvent(
-            processingContext = processingContext,
+            context = context,
         )
 
         return sourceOccurrence

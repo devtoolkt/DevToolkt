@@ -7,13 +7,13 @@ class SubscriptionVertex<EventT>(
     private val handle: (EventT) -> Unit,
 ) : DependentVertex {
     override fun visit(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ) {
         val receivedEventOccurrence = sourceEventStreamVertex.pullEmittedEvent(
-            processingContext = processingContext,
+            context = context,
         ) ?: return
 
-        processingContext.enqueueSideEffect(
+        context.enqueueSideEffect(
             sideEffect = object : Transaction.SideEffect {
                 override fun execute() {
                     handle(receivedEventOccurrence.event)

@@ -10,6 +10,6 @@ interface DependencyEventStreamVertex<EventT> : EventStreamVertex<EventT>, Depen
      * Returns the occurrence of this event stream, triggering processing if necessary.
      */
     fun pullEmittedEvent(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ): EmittedEvent<EventT>?
 }

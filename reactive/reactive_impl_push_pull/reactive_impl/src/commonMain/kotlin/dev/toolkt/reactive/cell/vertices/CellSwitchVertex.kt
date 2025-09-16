@@ -9,15 +9,15 @@ class CellSwitchVertex<SourceValueT>(
     private val outerCellVertex: DependencyCellVertex<Cell<SourceValueT>>,
 ) : StatelessCellVertex<SourceValueT>() {
     override fun process(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ): CellVertex.UpdatedValue<SourceValueT>? {
         val outerUpdate = outerCellVertex.pullUpdatedValue(
-            processingContext = processingContext,
+            context = context,
         )
 
         val latestInnerCell = when (outerUpdate) {
             null -> outerCellVertex.pullStableValue(
-                processingContext = processingContext,
+                processingContext = context,
             )
 
             else -> outerUpdate.value
@@ -31,7 +31,7 @@ class CellSwitchVertex<SourceValueT>(
         val latestInnerOperatedCellVertex = latestInnerOperatedCell.vertex
 
         val latestInnerOperatedCellUpdate = latestInnerOperatedCellVertex.pullUpdatedValue(
-            processingContext = processingContext,
+            context = context,
         )
 
         // TODO: Is this tested?
@@ -41,7 +41,7 @@ class CellSwitchVertex<SourceValueT>(
 
         val latestInnerOperatedCellLatestValue = when (latestInnerOperatedCellUpdate) {
             null -> latestInnerOperatedCellVertex.pullStableValue(
-                processingContext = processingContext,
+                processingContext = context,
             )
 
             else -> latestInnerOperatedCellUpdate.value
@@ -65,17 +65,17 @@ class CellSwitchVertex<SourceValueT>(
     }
 
     override fun computeStableValue(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ): SourceValueT {
         val stableOuterCell = outerCellVertex.pullStableValue(
-            processingContext = processingContext,
+            processingContext = context,
         )
 
         val stableInnerValue = when (stableOuterCell) {
             is ConstCell -> stableOuterCell.value
 
             is OperatedCell -> stableOuterCell.vertex.pullStableValue(
-                processingContext = processingContext,
+                processingContext = context,
             )
         }
 

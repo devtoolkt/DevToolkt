@@ -15,21 +15,24 @@ abstract class StatelessCellVertex<ValueT> : IntermediateDynamicCellVertex<Value
         get() = mutableCachedStableValue
 
     final override fun pullStableValue(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ): ValueT = when {
         isStableValueCached -> @Suppress("UNCHECKED_CAST") (cachedStableValue as ValueT)
 
         else -> {
             val computeStableValue = computeStableValue(
-                processingContext,
+                context,
             )
 
             mutableIsStableValueCached = true
             mutableCachedStableValue = computeStableValue
 
-            processingContext.enqueueDirtyVertex(
-                dirtyVertex = this,
-            )
+            if (!isProcessed) {
+                // If the vertex is processed, it means that the vertex is already enqueued for resetting
+                context.enqueueDirtyVertex(
+                    dirtyVertex = this,
+                )
+            }
 
             computeStableValue
         }
@@ -55,7 +58,7 @@ abstract class StatelessCellVertex<ValueT> : IntermediateDynamicCellVertex<Value
     }
 
     protected abstract fun computeStableValue(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ): ValueT
 
     protected abstract fun activate()

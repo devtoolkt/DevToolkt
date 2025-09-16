@@ -7,7 +7,7 @@ abstract class IntermediateDynamicCellVertex<ValueT> : BaseDependencyVertex(), D
     DependentVertex, ResettableVertex {
     private var mutableIsProcessed = false
 
-    private val isProcessed: Boolean
+    protected val isProcessed: Boolean
         get() = mutableIsProcessed
 
     private var mutableCachedUpdatedValue: CellVertex.UpdatedValue<ValueT>? = null
@@ -16,43 +16,44 @@ abstract class IntermediateDynamicCellVertex<ValueT> : BaseDependencyVertex(), D
         get() = mutableCachedUpdatedValue
 
     final override fun visit(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ) {
         // Thought: Possibly use "immediate visitation mode"
         ensureProcessed(
-            processingContext = processingContext,
+            context = context,
         )
     }
 
     final override fun pullUpdatedValue(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ): CellVertex.UpdatedValue<ValueT>? = ensureProcessed(
-        processingContext = processingContext,
+        context = context,
     )
 
     protected fun ensureProcessed(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ): CellVertex.UpdatedValue<ValueT>? {
         if (isProcessed) {
             return cachedUpdatedValue
         }
 
         val computedUpdatedValue = process(
-            processingContext = processingContext,
+            context = context,
         )
 
         mutableIsProcessed = true
         mutableCachedUpdatedValue = computedUpdatedValue
 
         if (!isStableValueCached) {
-            processingContext.enqueueDirtyVertex(
+            // If the stable value is cached, it means that the vertex is already enqueued for resetting
+            context.enqueueDirtyVertex(
                 dirtyVertex = this,
             )
         }
 
         if (computedUpdatedValue != null) {
             enqueueDependentsForVisiting(
-                processingContext = processingContext,
+                context = context,
             )
         }
 
@@ -78,7 +79,7 @@ abstract class IntermediateDynamicCellVertex<ValueT> : BaseDependencyVertex(), D
     }
 
     protected abstract fun process(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ): CellVertex.UpdatedValue<ValueT>?
 
     protected abstract fun persist(

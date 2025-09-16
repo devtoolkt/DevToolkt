@@ -17,10 +17,10 @@ interface DependencyVertex : Vertex {
 }
 
 fun DependencyVertex.registerDependent(
-    processingContext: Transaction.ProcessingContext,
+    context: Transaction.Context,
     dependentVertex: DependentVertex,
 ) {
-    processingContext.enqueueRegistrationEffect(
+    context.enqueueRegistrationEffect(
         registrationEffect = object : Transaction.RegistrationEffect {
             override fun register() {
                 addDependent(
@@ -32,10 +32,10 @@ fun DependencyVertex.registerDependent(
 }
 
 fun DependencyVertex.unregisterDependent(
-    processingContext: Transaction.ProcessingContext,
+    context: Transaction.Context,
     dependentVertex: DependentVertex,
 ) {
-    processingContext.enqueueUnregistrationEffect(
+    context.enqueueUnregistrationEffect(
         unregistrationEffect = object : Transaction.UnregistrationEffect {
             override fun unregister() {
                 removeDependent(

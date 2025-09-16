@@ -8,14 +8,14 @@ class CellMap2Vertex<ValueT1, ValueT2, ResultT>(
     private val transform: (ValueT1, ValueT2) -> ResultT,
 ) : StatelessCellVertex<ResultT>() {
     override fun process(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ): CellVertex.UpdatedValue<ResultT>? {
         val sourceUpdate1 = sourceCell1Vertex.pullUpdatedValue(
-            processingContext = processingContext,
+            context = context,
         )
 
         val sourceUpdate2 = sourceCell2Vertex.pullUpdatedValue(
-            processingContext = processingContext,
+            context = context,
         )
 
         if (sourceUpdate1 == null && sourceUpdate2 == null) {
@@ -24,7 +24,7 @@ class CellMap2Vertex<ValueT1, ValueT2, ResultT>(
 
         val source1LatestValue = when (sourceUpdate1) {
             null -> sourceCell1Vertex.pullStableValue(
-                processingContext = processingContext,
+                processingContext = context,
             )
 
             else -> sourceUpdate1.value
@@ -32,7 +32,7 @@ class CellMap2Vertex<ValueT1, ValueT2, ResultT>(
 
         val source2LatestValue = when (sourceUpdate2) {
             null -> sourceCell2Vertex.pullStableValue(
-                processingContext = processingContext,
+                processingContext = context,
             )
 
             else -> sourceUpdate2.value
@@ -67,13 +67,13 @@ class CellMap2Vertex<ValueT1, ValueT2, ResultT>(
     }
 
     override fun computeStableValue(
-        processingContext: Transaction.ProcessingContext,
+        context: Transaction.Context,
     ): ResultT = transform(
         sourceCell1Vertex.pullStableValue(
-            processingContext = processingContext,
+            processingContext = context,
         ),
         sourceCell2Vertex.pullStableValue(
-            processingContext = processingContext,
+            processingContext = context,
         ),
     )
 }
