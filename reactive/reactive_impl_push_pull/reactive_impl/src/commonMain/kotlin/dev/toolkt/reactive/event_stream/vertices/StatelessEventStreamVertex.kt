@@ -1,35 +1,20 @@
 package dev.toolkt.reactive.event_stream.vertices
 
-import dev.toolkt.reactive.Transaction
-
-abstract class StatelessEventStreamVertex<ValueT> : PropagativeEventStreamVertex<ValueT>() {
-    override fun onFirstDependentAdded(
-        expansionContext: Transaction.ExpansionContext,
-    ) {
-        resume(
-            expansionContext = expansionContext,
-        )
+abstract class StatelessEventStreamVertex<EventT> : BaseIntermediateEventStreamVertex<EventT>() {
+    final override fun onFirstDependentAdded() {
+        resume()
     }
 
-    override fun onLastDependentRemoved(
-        shrinkageContext: Transaction.ShrinkageContext,
-    ) {
-        pause(
-            shrinkageContext = shrinkageContext,
-        )
+    final override fun onLastDependentRemoved() {
+        pause()
     }
 
-    final override fun postProcessLatePv(
-        latePostProcessingContext: Transaction.LatePostProcessingContext,
-        message: EventStreamVertex.Occurrence<ValueT>?,
+    final override fun update(
+        currentNotification: EventStreamVertex.Occurrence<EventT>,
     ) {
     }
 
-    protected abstract fun resume(
-        expansionContext: Transaction.ExpansionContext,
-    )
+    protected abstract fun resume()
 
-    protected abstract fun pause(
-        shrinkageContext: Transaction.ShrinkageContext,
-    )
+    protected abstract fun pause()
 }

@@ -3,7 +3,6 @@ package dev.toolkt.reactive.event_stream
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.PureContext
 import dev.toolkt.reactive.SubscriptionVertex
-import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.DerivedCell
 import dev.toolkt.reactive.cell.vertices.HoldCellVertex
@@ -222,15 +221,13 @@ fun <EventT> EventStream<EventT>.subscribe(
         )
 
         this.vertex.addDependent(
-            expansionContext = Transaction.ExpansionContext.External,
-            vertex = subscriptionVertex,
+            dependentVertex = subscriptionVertex,
         )
 
         object : EventStream.Subscription {
             override fun cancel() {
                 this@subscribe.vertex.removeDependent(
-                    shrinkageContext = Transaction.ShrinkageContext.External,
-                    vertex = subscriptionVertex,
+                    dependentVertex = subscriptionVertex,
                 )
             }
         }

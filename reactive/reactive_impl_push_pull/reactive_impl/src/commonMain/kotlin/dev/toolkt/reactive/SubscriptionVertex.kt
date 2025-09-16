@@ -1,17 +1,11 @@
 package dev.toolkt.reactive
 
-import dev.toolkt.reactive.cell.vertices.DynamicEventStreamVertex
-import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex
+import dev.toolkt.reactive.cell.vertices.DependencyEventStreamVertex
 
 class SubscriptionVertex<EventT>(
-    private val sourceEventStreamVertex: DynamicEventStreamVertex<EventT>,
+    private val sourceEventStreamVertex: DependencyEventStreamVertex<EventT>,
     private val handle: (EventT) -> Unit,
-) : DynamicVertex {
-    private var mutableReceivedEventOccurrence: EventStreamVertex.Occurrence<EventT>? = null
-
-    val receivedEventOccurrence: EventStreamVertex.Occurrence<EventT>?
-        get() = mutableReceivedEventOccurrence
-
+) : DependentVertex {
     override fun visit(
         processingContext: Transaction.ProcessingContext,
     ) {
@@ -19,24 +13,12 @@ class SubscriptionVertex<EventT>(
             processingContext = processingContext,
         ) ?: return
 
-        processingContext.enqueueForPostProcessing(
-            processedVertex = this,
+        processingContext.enqueueSideEffect(
+            sideEffect = object : Transaction.SideEffect {
+                override fun execute() {
+                    handle(receivedEventOccurrence.event)
+                }
+            },
         )
-
-        mutableReceivedEventOccurrence = receivedEventOccurrence
-    }
-
-    override fun postProcessEarly(
-        earlyPostProcessingContext: Transaction.EarlyPostProcessingContext,
-    ) {
-        receivedEventOccurrence?.let {
-            handle(it.event)
-        }
-    }
-
-    override fun postProcessLate(
-        latePostProcessingContext: Transaction.LatePostProcessingContext,
-    ) {
-        mutableReceivedEventOccurrence = null
     }
 }

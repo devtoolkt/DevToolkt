@@ -3,11 +3,12 @@ package dev.toolkt.reactive.event_stream.vertices
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.vertices.DependencyEventStreamVertex
 import dev.toolkt.reactive.globalFinalizationRegistry
+import dev.toolkt.reactive.registerDependent
 
 class EventStreamTakeVertex<EventT> private constructor(
     private val sourceEventStreamVertex: DependencyEventStreamVertex<EventT>,
     totalCount: Int,
-) : StatefulEventStreamVertex<EventT>() {
+) : StatefulIntermediateEventStreamVertex<EventT>() {
     companion object {
         fun <ValueT> construct(
             processingContext: Transaction.ProcessingContext,
@@ -19,7 +20,7 @@ class EventStreamTakeVertex<EventT> private constructor(
         ).apply {
             sourceEventStreamVertex.registerDependent(
                 processingContext = processingContext,
-                vertex = this,
+                dependentVertex = this,
             )
 
             ensureProcessed(
@@ -36,7 +37,7 @@ class EventStreamTakeVertex<EventT> private constructor(
 
     private var remainingCount = totalCount
 
-    override fun prepare(
+    override fun process(
         processingContext: Transaction.ProcessingContext,
     ): EventStreamVertex.Occurrence<EventT>? {
         if (remainingCount <= 0) {
@@ -50,19 +51,15 @@ class EventStreamTakeVertex<EventT> private constructor(
         return sourceOccurrence
     }
 
-    override fun postProcessLatePv(
-        latePostProcessingContext: Transaction.LatePostProcessingContext,
-        message: EventStreamVertex.Occurrence<EventT>?,
+    override fun update(
+        currentNotification: EventStreamVertex.Occurrence<EventT>,
     ) {
-        if (message != null) {
-            remainingCount -= 1
+        remainingCount -= 1
 
-            if (remainingCount <= 0) {
-                sourceEventStreamVertex.removeDependent(
-                    shrinkageContext = latePostProcessingContext,
-                    vertex = this,
-                )
-            }
+        if (remainingCount <= 0) {
+            sourceEventStreamVertex.removeDependent(
+                dependentVertex = this,
+            )
         }
     }
 }

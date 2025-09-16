@@ -7,7 +7,7 @@ class CellMap2Vertex<ValueT1, ValueT2, ResultT>(
     private val sourceCell2Vertex: DependencyCellVertex<ValueT2>,
     private val transform: (ValueT1, ValueT2) -> ResultT,
 ) : StatelessCellVertex<ResultT>() {
-    override fun prepareStateless(
+    override fun process(
         processingContext: Transaction.ProcessingContext,
     ): CellVertex.Update<ResultT>? {
         val sourceUpdate1 = sourceCell1Vertex.pullUpdate(
@@ -46,31 +46,23 @@ class CellMap2Vertex<ValueT1, ValueT2, ResultT>(
         )
     }
 
-    override fun activate(
-        expansionContext: Transaction.ExpansionContext,
-    ) {
+    override fun activate() {
         sourceCell1Vertex.addDependent(
-            expansionContext = expansionContext,
-            vertex = this,
+            dependentVertex = this,
         )
 
         sourceCell2Vertex.addDependent(
-            expansionContext = expansionContext,
-            vertex = this,
+            dependentVertex = this,
         )
     }
 
-    override fun deactivate(
-        shrinkageContext: Transaction.ShrinkageContext,
-    ) {
+    override fun deactivate() {
         sourceCell1Vertex.removeDependent(
-            shrinkageContext = shrinkageContext,
-            vertex = this,
+            dependentVertex = this,
         )
 
         sourceCell2Vertex.removeDependent(
-            shrinkageContext = shrinkageContext,
-            vertex = this,
+            dependentVertex = this,
         )
     }
 

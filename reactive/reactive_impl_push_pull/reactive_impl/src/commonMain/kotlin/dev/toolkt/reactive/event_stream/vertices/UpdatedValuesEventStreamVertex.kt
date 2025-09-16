@@ -6,7 +6,7 @@ import dev.toolkt.reactive.cell.vertices.DependencyCellVertex
 class UpdatedValuesEventStreamVertex<ValueT>(
     private val sourceCellVertex: DependencyCellVertex<ValueT>,
 ) : StatelessEventStreamVertex<ValueT>() {
-    override fun prepare(
+    override fun process(
         processingContext: Transaction.ProcessingContext,
     ): EventStreamVertex.Occurrence<ValueT>? {
         val sourceUpdate = sourceCellVertex.pullUpdate(
@@ -18,21 +18,15 @@ class UpdatedValuesEventStreamVertex<ValueT>(
         )
     }
 
-    override fun resume(
-        expansionContext: Transaction.ExpansionContext,
-    ) {
+    override fun resume() {
         sourceCellVertex.addDependent(
-            expansionContext = expansionContext,
-            vertex = this,
+            dependentVertex = this,
         )
     }
 
-    override fun pause(
-        shrinkageContext: Transaction.ShrinkageContext,
-    ) {
+    override fun pause() {
         sourceCellVertex.removeDependent(
-            shrinkageContext = shrinkageContext,
-            vertex = this,
+            dependentVertex = this,
         )
     }
 }

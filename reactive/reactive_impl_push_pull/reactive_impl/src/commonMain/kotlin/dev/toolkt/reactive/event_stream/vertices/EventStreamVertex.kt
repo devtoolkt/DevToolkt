@@ -3,7 +3,7 @@ package dev.toolkt.reactive.event_stream.vertices
 import dev.toolkt.reactive.Vertex
 import kotlin.jvm.JvmInline
 
-// Thought: Merge with `DynamicEventStreamVertex`?
+// Thought: Merge with `DependentEventStreamVertex`?
 interface EventStreamVertex<EventT> : Vertex {
     @JvmInline
     value class Occurrence<EventT>(

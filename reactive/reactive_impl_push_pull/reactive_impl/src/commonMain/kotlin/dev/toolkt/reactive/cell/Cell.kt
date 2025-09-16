@@ -51,7 +51,7 @@ sealed interface Cell<out ValueT> {
             is ConstCell -> outerCell.value
 
             is OperatedCell -> DerivedCell(
-                CellSwitchVertex(
+                CellSwitchVertex<ValueT>(
                     outerCellVertex = outerCell.vertex,
                 ),
             )

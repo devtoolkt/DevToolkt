@@ -1,33 +1,40 @@
 package dev.toolkt.reactive.cell.vertices
 
+import dev.toolkt.reactive.BaseDependencyVertex
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.Occurrence
-import dev.toolkt.reactive.event_stream.vertices.StatefulEventStreamVertex
 
-class EmitterEventStreamVertex<EventT>() : StatefulEventStreamVertex<EventT>() {
-    private var preparedOccurrence: Occurrence<EventT>? = null
+class EmitterEventStreamVertex<EventT>() : BaseDependencyVertex(), DependencyEventStreamVertex<EventT> {
+    private var emittedOccurrence: Occurrence<EventT>? = null
 
-    fun visit(
+    fun emit(
         processingContext: Transaction.ProcessingContext,
         event: EventT,
     ) {
-        preparedOccurrence = Occurrence(
+        emittedOccurrence = Occurrence(
             event = event,
         )
 
-        ensureProcessed(
+        ensureMarkedDirty(
+            processingContext = processingContext,
+        )
+
+        enqueueDependentsForVisiting(
             processingContext = processingContext,
         )
     }
 
-    override fun prepare(
+    override fun pullOccurrence(
         processingContext: Transaction.ProcessingContext,
-    ): Occurrence<EventT>? = preparedOccurrence
+    ): Occurrence<EventT>? = emittedOccurrence
 
-    override fun postProcessLatePv(
-        latePostProcessingContext: Transaction.LatePostProcessingContext,
-        message: Occurrence<EventT>?,
-    ) {
-        preparedOccurrence = null
+    override fun onFirstDependentAdded() {
+    }
+
+    override fun onLastDependentRemoved() {
+    }
+
+    override fun clean() {
+        emittedOccurrence = null
     }
 }

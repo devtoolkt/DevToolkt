@@ -7,7 +7,7 @@ class EventStreamMapVertex<SourceEventT, TransformedEventT>(
     private val sourceEventStreamVertex: DependencyEventStreamVertex<SourceEventT>,
     private val transform: (Transaction.ProcessingContext, SourceEventT) -> TransformedEventT,
 ) : StatelessEventStreamVertex<TransformedEventT>() {
-    override fun prepare(
+    override fun process(
         processingContext: Transaction.ProcessingContext,
     ): EventStreamVertex.Occurrence<TransformedEventT>? {
         val sourceOccurrence = sourceEventStreamVertex.pullOccurrence(
@@ -19,21 +19,15 @@ class EventStreamMapVertex<SourceEventT, TransformedEventT>(
         }
     }
 
-    override fun resume(
-        expansionContext: Transaction.ExpansionContext,
-    ) {
+    override fun resume() {
         sourceEventStreamVertex.addDependent(
-            expansionContext = expansionContext,
-            vertex = this,
+            dependentVertex = this,
         )
     }
 
-    override fun pause(
-        shrinkageContext: Transaction.ShrinkageContext,
-    ) {
+    override fun pause() {
         sourceEventStreamVertex.removeDependent(
-            shrinkageContext = shrinkageContext,
-            vertex = this,
+            dependentVertex = this,
         )
     }
 }
