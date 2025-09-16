@@ -26,7 +26,7 @@ class SubscriptionVertex<EventT>(
     }
 
     override fun settle(
-        postProcessingContext: Transaction.PostProcessingContext,
+        latePostProcessingContext: Transaction.LatePostProcessingContext,
     ) {
         receivedEventOccurrence = null
     }

@@ -31,7 +31,7 @@ class Transaction private constructor() {
         data object External : ShrinkageContext()
     }
 
-    abstract class PostProcessingContext : ShrinkageContext()
+    abstract class LatePostProcessingContext : ShrinkageContext()
 
     companion object {
         fun <ResultT> execute(
@@ -71,11 +71,11 @@ class Transaction private constructor() {
                 )
             }
 
-            val postProcessingContext = object : PostProcessingContext() {}
+            val latePostProcessingContext = object : LatePostProcessingContext() {}
 
             processedVertices.forEach { processedVertex ->
-                processedVertex.postProcess(
-                    postProcessingContext = postProcessingContext,
+                processedVertex.postProcessLate(
+                    latePostProcessingContext = latePostProcessingContext,
                 )
             }
 

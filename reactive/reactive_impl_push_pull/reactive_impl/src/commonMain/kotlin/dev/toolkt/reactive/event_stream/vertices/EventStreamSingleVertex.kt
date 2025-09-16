@@ -48,12 +48,12 @@ class EventStreamSingleVertex<EventT> private constructor(
     }
 
     override fun stabilize(
-        postProcessingContext: Transaction.PostProcessingContext,
+        latePostProcessingContext: Transaction.LatePostProcessingContext,
         message: EventStreamVertex.Occurrence<EventT>?,
     ) {
         if (message != null) {
             sourceEventStreamVertex.removeDependent(
-                shrinkageContext = postProcessingContext,
+                shrinkageContext = latePostProcessingContext,
                 vertex = this,
             )
 

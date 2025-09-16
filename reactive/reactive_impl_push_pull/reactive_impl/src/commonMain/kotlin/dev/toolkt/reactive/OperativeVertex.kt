@@ -23,13 +23,13 @@ abstract class OperativeVertex : DynamicVertex {
         )
     }
 
-    final override fun postProcess(
-        postProcessingContext: Transaction.PostProcessingContext,
+    final override fun postProcessLate(
+        latePostProcessingContext: Transaction.LatePostProcessingContext,
     ) {
         volatileIsVisited = false
 
         settle(
-            postProcessingContext = postProcessingContext,
+            latePostProcessingContext = latePostProcessingContext,
         )
     }
 
@@ -64,6 +64,6 @@ abstract class OperativeVertex : DynamicVertex {
     )
 
     protected abstract fun settle(
-        postProcessingContext: Transaction.PostProcessingContext,
+        latePostProcessingContext: Transaction.LatePostProcessingContext,
     )
 }
