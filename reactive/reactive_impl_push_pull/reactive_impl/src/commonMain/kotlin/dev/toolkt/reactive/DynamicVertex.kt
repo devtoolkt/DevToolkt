@@ -7,7 +7,7 @@ interface DynamicVertex : Vertex {
      * The implementation should either be prepared to be called multiple times in the same transaction or ignore all
      * calls after the first one.
      */
-    fun process(
+    fun visit(
         processingContext: Transaction.ProcessingContext,
     )
 

@@ -52,7 +52,7 @@ abstract class PropagativeVertex<MessageT : Any> : OperativeVertex(), Dependency
         processingContext: Transaction.ProcessingContext,
     ) {
         dependents.forEach { dependentVertex ->
-            processingContext.enqueueForProcessing(
+            processingContext.enqueueForVisiting(
                 dependentVertex = dependentVertex,
             )
         }
