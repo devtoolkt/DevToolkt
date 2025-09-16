@@ -18,7 +18,7 @@ class MutableCellVertex<ValueT>(
             newValue = newValue,
         )
 
-        ensureVisited(
+        ensureEffectivelyProcessed(
             processingContext = processingContext,
         )
     }

@@ -19,7 +19,7 @@ class EventStreamSingleVertex<EventT> private constructor(
                 vertex = this,
             )
 
-            ensureVisited(
+            ensureEffectivelyProcessed(
                 processingContext = processingContext,
             )
 

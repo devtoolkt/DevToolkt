@@ -9,7 +9,7 @@ class SubscriptionVertex<EventT>(
 ) : OperativeVertex() {
     private var receivedEventOccurrence: EventStreamVertex.Occurrence<EventT>? = null
 
-    override fun visit(
+    override fun processEffectively(
         processingContext: Transaction.ProcessingContext,
     ) {
         receivedEventOccurrence = sourceEventStreamVertex.pullOccurrence(

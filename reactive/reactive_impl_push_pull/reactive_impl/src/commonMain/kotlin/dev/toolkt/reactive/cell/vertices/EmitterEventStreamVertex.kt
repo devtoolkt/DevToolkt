@@ -15,7 +15,7 @@ class EmitterEventStreamVertex<EventT>() : StatefulEventStreamVertex<EventT>() {
             event = event,
         )
 
-        ensureVisited(
+        ensureEffectivelyProcessed(
             processingContext = processingContext,
         )
     }
