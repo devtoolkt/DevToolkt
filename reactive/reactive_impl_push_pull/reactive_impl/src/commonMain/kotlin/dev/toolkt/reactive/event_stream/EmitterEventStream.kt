@@ -18,8 +18,6 @@ class EmitterEventStream<EventT> : OperatedEventStream<EventT> {
                 event = event,
             )
         }
-
-        vertex.reset()
     }
 
     override val vertex = EmitterEventStreamVertex<EventT>()

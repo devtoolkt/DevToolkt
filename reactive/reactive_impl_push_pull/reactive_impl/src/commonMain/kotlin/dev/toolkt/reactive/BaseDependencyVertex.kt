@@ -2,54 +2,40 @@ package dev.toolkt.reactive
 
 import dev.toolkt.core.platform.PlatformNativeSet
 
-abstract class BaseDependencyVertex : DependencyVertex {
+abstract class BaseDependencyVertex : BaseVertex() {
     private val dependents = PlatformNativeSet<DependentVertex>()
 
-    /**
-     * Adds [dependentVertex] to the stable dependents. If this is the first stable dependent, activate this vertex.
-     */
-    final override fun addDependent(
+    protected fun addDependent(
         dependentVertex: DependentVertex,
-    ) {
+    ): Boolean {
         val wasAdded = dependents.add(dependentVertex)
 
         if (!wasAdded) {
             throw IllegalStateException("Vertex $dependentVertex is already a dependent of $this")
         }
 
-        if (dependents.size == 1) {
-            onFirstDependentAdded()
-        }
+        return dependents.size == 1
     }
 
-    /**
-     * Removes [dependentVertex] from the stable dependents. If this was the last stable dependent, deactivate this vertex.
-     */
-    final override fun removeDependent(
+    protected fun removeDependent(
         dependentVertex: DependentVertex,
-    ) {
+    ): Boolean {
         val wasRemoved = dependents.remove(dependentVertex)
 
         if (!wasRemoved) {
             throw IllegalStateException("Vertex $dependentVertex is not a dependent of $this")
         }
 
-        if (dependents.size == 0) {
-            onLastDependentRemoved()
-        }
+        return dependents.size == 0
     }
 
     protected fun enqueueDependentsForVisiting(
-        context: Transaction.Context,
+        context: Transaction.ProcessingContext,
     ) {
         dependents.forEach { dependentVertex ->
-            context.enqueueDependentVertex(
+            context.enqueueForVisit(
                 dependentVertex = dependentVertex,
             )
         }
     }
-
-    protected abstract fun onFirstDependentAdded()
-
-    protected abstract fun onLastDependentRemoved()
 }

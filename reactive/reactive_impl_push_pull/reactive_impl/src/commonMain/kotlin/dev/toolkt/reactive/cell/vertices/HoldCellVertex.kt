@@ -1,61 +1,63 @@
 package dev.toolkt.reactive.cell.vertices
 
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.cell.vertices.CellVertex.UpdatedValue
-import dev.toolkt.reactive.globalFinalizationRegistry
-import dev.toolkt.reactive.registerDependent
+import dev.toolkt.reactive.cell.vertices.CellVertex.EffectiveUpdate
+import dev.toolkt.reactive.cell.vertices.CellVertex.Update
+import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex
 
 class HoldCellVertex<ValueT> private constructor(
     private val sourceEventStreamVertex: DependencyEventStreamVertex<ValueT>,
-    initialValue: ValueT,
-) : InherentCellVertex<ValueT>() {
+    initialStableValue: ValueT,
+) : InherentDependentCellVertex<ValueT>(
+    initialStableValue = initialStableValue,
+) {
     companion object {
         fun <ValueT> construct(
-            context: Transaction.Context,
+            context: Transaction.ProcessingContext,
             sourceEventStreamVertex: DependencyEventStreamVertex<ValueT>,
             initialValue: ValueT,
         ): HoldCellVertex<ValueT> = HoldCellVertex(
             sourceEventStreamVertex = sourceEventStreamVertex,
-            initialValue = initialValue,
+            initialStableValue = initialValue,
         ).apply {
-            sourceEventStreamVertex.registerDependent(
-                context = context,
-                this,
-            )
-
-            ensureProcessed(
+            initialize(
                 context = context,
             )
-
-            // TODO: Figure out weak dependents!
-            globalFinalizationRegistry.register(
-                target = this,
-            ) {
-            }
         }
     }
 
-    private var heldStableValue: ValueT = initialValue
-
-    override fun process(
-        context: Transaction.Context,
-    ): UpdatedValue<ValueT>? {
-        val sourceOccurrence = sourceEventStreamVertex.pullEmittedEvent(
+    override fun processAttaching(
+        context: Transaction.ProcessingContext,
+    ): Update<ValueT> {
+        // TODO: Figure out weak dependents!
+        // We can't add this vertex directly to the dependency's dependent set
+        val initialSourceOccurrence = sourceEventStreamVertex.pullOccurrenceSubscribing(
             context = context,
-        ) ?: return null
-
-        return UpdatedValue(
-            value = sourceOccurrence.event,
+            dependentVertex = this,
         )
+
+        return when (initialSourceOccurrence) {
+            EventStreamVertex.NilOccurrence -> CellVertex.NilUpdate
+
+            is EventStreamVertex.EffectiveOccurrence -> EffectiveUpdate(
+                updatedValue = initialSourceOccurrence.event,
+            )
+        }
     }
 
-    override fun pullStableValue(
-        context: Transaction.Context,
-    ): ValueT = heldStableValue
+    override fun process(
+        context: Transaction.ProcessingContext,
+    ): Update<ValueT> {
+        val sourceOccurrence = sourceEventStreamVertex.pullOccurrenceSubsequent(
+            context = context,
+        )
 
-    override fun persist(
-        newValue: ValueT,
-    ) {
-        heldStableValue = newValue
+        return when (sourceOccurrence) {
+            EventStreamVertex.NilOccurrence -> CellVertex.NilUpdate
+
+            is EventStreamVertex.EffectiveOccurrence -> EffectiveUpdate(
+                updatedValue = sourceOccurrence.event,
+            )
+        }
     }
 }

@@ -1,45 +1,49 @@
 package dev.toolkt.reactive.cell.vertices
 
 import dev.toolkt.reactive.Transaction
+import dev.toolkt.reactive.cell.vertices.CellVertex.RetrievalMode
 
 class CellMap2Vertex<ValueT1, ValueT2, ResultT>(
     private val sourceCell1Vertex: DependencyCellVertex<ValueT1>,
     private val sourceCell2Vertex: DependencyCellVertex<ValueT2>,
     private val transform: (ValueT1, ValueT2) -> ResultT,
-) : DerivedCellVertex<ResultT>() {
+) : SimpleDerivedCellVertex<ResultT>() {
     override fun process(
-        context: Transaction.Context,
-    ): CellVertex.UpdatedValue<ResultT>? {
-        val sourceUpdate1 = sourceCell1Vertex.pullUpdatedValue(
+        context: Transaction.ProcessingContext,
+        processingMode: ProcessingMode,
+    ): CellVertex.Update<ResultT> {
+        val sourceUpdate1 = sourceCell1Vertex.pullUpdate(
             context = context,
+            processingMode = processingMode,
         )
 
-        val sourceUpdate2 = sourceCell2Vertex.pullUpdatedValue(
+        val sourceUpdate2 = sourceCell2Vertex.pullUpdate(
             context = context,
+            processingMode = processingMode,
         )
 
-        if (sourceUpdate1 == null && sourceUpdate2 == null) {
-            return null
+        if (sourceUpdate1 is CellVertex.NilUpdate && sourceUpdate2 is CellVertex.NilUpdate) {
+            return CellVertex.NilUpdate
         }
 
         val source1LatestValue = when (sourceUpdate1) {
-            null -> sourceCell1Vertex.pullStableValue(
+            CellVertex.NilUpdate -> sourceCell1Vertex.sampleOldValue(
                 context = context,
             )
 
-            else -> sourceUpdate1.value
+            is CellVertex.EffectiveUpdate -> sourceUpdate1.updatedValue
         }
 
         val source2LatestValue = when (sourceUpdate2) {
-            null -> sourceCell2Vertex.pullStableValue(
+            CellVertex.NilUpdate -> sourceCell2Vertex.sampleOldValue(
                 context = context,
             )
 
-            else -> sourceUpdate2.value
+            is CellVertex.EffectiveUpdate -> sourceUpdate2.updatedValue
         }
 
-        return CellVertex.UpdatedValue(
-            value = transform(
+        return CellVertex.EffectiveUpdate(
+            updatedValue = transform(
                 source1LatestValue,
                 source2LatestValue,
             ),
@@ -47,33 +51,33 @@ class CellMap2Vertex<ValueT1, ValueT2, ResultT>(
     }
 
     override fun activate() {
-        sourceCell1Vertex.addDependent(
+        sourceCell1Vertex.observe(
             dependentVertex = this,
         )
 
-        sourceCell2Vertex.addDependent(
+        sourceCell2Vertex.observe(
             dependentVertex = this,
         )
     }
 
     override fun deactivate() {
-        sourceCell1Vertex.removeDependent(
+        sourceCell1Vertex.unobserve(
             dependentVertex = this,
         )
 
-        sourceCell2Vertex.removeDependent(
+        sourceCell2Vertex.unobserve(
             dependentVertex = this,
         )
     }
 
-    override fun computeStableValue(
-        context: Transaction.Context,
+    override fun computeOldValue(
+        retrievalMode: RetrievalMode,
     ): ResultT = transform(
-        sourceCell1Vertex.pullStableValue(
-            context = context,
+        sourceCell1Vertex.retrieve(
+            retrievalMode = retrievalMode,
         ),
-        sourceCell2Vertex.pullStableValue(
-            context = context,
+        sourceCell2Vertex.retrieve(
+            retrievalMode = retrievalMode,
         ),
     )
 }

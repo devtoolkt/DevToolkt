@@ -1,30 +1,33 @@
 package dev.toolkt.reactive
 
-abstract class BaseVertex : ResettableVertex {
-    private var mutableIsMarkedDirty = false
+abstract class BaseVertex : Vertex {
+    data object Tag
 
-    private val isMarkedDirty: Boolean
-        get() = mutableIsMarkedDirty
+    private var isMarkedDirty = false
 
     protected fun ensureMarkedDirty(
-        context: Transaction.Context,
+        context: Transaction.ProcessingContext,
     ) {
         if (isMarkedDirty) {
             return
         }
 
-        mutableIsMarkedDirty = true
-
-        context.enqueueDirtyVertex(
+        context.markDirty(
             dirtyVertex = this,
         )
+
+        isMarkedDirty = true
     }
 
     final override fun reset() {
-        mutableIsMarkedDirty = false
+        isMarkedDirty = false
 
-        clean()
+        reset(
+            tag = Tag,
+        )
     }
 
-    protected abstract fun clean()
+    protected abstract fun reset(
+        tag: Tag,
+    )
 }

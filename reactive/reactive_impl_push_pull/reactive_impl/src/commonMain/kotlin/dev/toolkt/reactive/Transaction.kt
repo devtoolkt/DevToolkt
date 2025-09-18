@@ -1,114 +1,59 @@
 package dev.toolkt.reactive
 
 class Transaction private constructor() {
-    interface SideEffect {
-        fun execute()
+    sealed interface SamplingContext {
+
     }
 
-    interface RegistrationEffect {
-        fun register()
-    }
-
-    interface UnregistrationEffect {
-        fun unregister()
-    }
-
-    abstract class Context {
-        abstract fun enqueueDependentVertex(
+    abstract class ProcessingContext {
+        abstract fun enqueueForVisit(
             dependentVertex: DependentVertex,
         )
 
-        abstract fun enqueueRegistrationEffect(
-            registrationEffect: RegistrationEffect,
-        )
-
-        abstract fun enqueueUnregistrationEffect(
-            unregistrationEffect: UnregistrationEffect,
-        )
-
-        abstract fun enqueueSideEffect(
-            sideEffect: SideEffect,
-        )
-
-        abstract fun enqueueDirtyVertex(
-            dirtyVertex: ResettableVertex,
+        abstract fun markDirty(
+            dirtyVertex: Vertex,
         )
     }
 
     companion object {
         fun <ResultT> execute(
-            block: (Context) -> ResultT,
+            block: (ProcessingContext) -> ResultT,
         ): ResultT = with(Transaction()) {
             // Dependent vertices to be visited
-            val dependentVertexQueue = ArrayDeque<DependentVertex>()
+            val visitQueue = ArrayDeque<DependentVertex>()
 
-            // Registration effects to be applied
-            val registrationEffectQueue = mutableListOf<RegistrationEffect>()
+            // Dirty vertices
+            val dirtyVertices = mutableListOf<Vertex>()
 
-            // Unregistration effects to be applied
-            val unregistrationEffectQueue = mutableListOf<UnregistrationEffect>()
-
-            // Side effects to be executed
-            val sideEffectQueue = mutableListOf<SideEffect>()
-
-            // Dirty vertices to be reset
-            val dirtyVertexQueue = mutableListOf<ResettableVertex>()
-
-            val context = object : Context() {
-                override fun enqueueDependentVertex(
+            val context = object : ProcessingContext() {
+                override fun enqueueForVisit(
                     dependentVertex: DependentVertex,
                 ) {
-                    dependentVertexQueue.addLast(dependentVertex)
+                    visitQueue.addLast(dependentVertex)
                 }
 
-                override fun enqueueDirtyVertex(
-                    dirtyVertex: ResettableVertex,
+                override fun markDirty(
+                    dirtyVertex: Vertex,
                 ) {
-                    dirtyVertexQueue.add(dirtyVertex)
-                }
-
-                override fun enqueueRegistrationEffect(
-                    registrationEffect: RegistrationEffect,
-                ) {
-                    registrationEffectQueue.add(registrationEffect)
-                }
-
-                override fun enqueueUnregistrationEffect(
-                    unregistrationEffect: UnregistrationEffect,
-                ) {
-                    unregistrationEffectQueue.add(unregistrationEffect)
-                }
-
-                override fun enqueueSideEffect(
-                    sideEffect: SideEffect,
-                ) {
-                    sideEffectQueue.add(sideEffect)
+                    dirtyVertices.add(dirtyVertex)
                 }
             }
 
             val result = block(context)
 
-            while (dependentVertexQueue.isNotEmpty()) {
-                val vertexToProcess = dependentVertexQueue.removeFirst()
+            while (visitQueue.isNotEmpty()) {
+                val vertexToProcess = visitQueue.removeFirst()
 
                 vertexToProcess.visit(
                     context = context,
                 )
             }
 
-            registrationEffectQueue.forEach { registrationEffect ->
-                registrationEffect.register()
+            dirtyVertices.forEach { dirtyVertex ->
+                dirtyVertex.commit()
             }
 
-            unregistrationEffectQueue.forEach { unregistrationEffect ->
-                unregistrationEffect.unregister()
-            }
-
-            sideEffectQueue.forEach { sideEffect ->
-                sideEffect.execute()
-            }
-
-            dirtyVertexQueue.forEach { dirtyVertex ->
+            dirtyVertices.forEach { dirtyVertex ->
                 dirtyVertex.reset()
             }
 

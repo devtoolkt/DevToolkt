@@ -220,13 +220,13 @@ fun <EventT> EventStream<EventT>.subscribe(
             handle = handle,
         )
 
-        this.vertex.addDependent(
+        this.vertex.subscribe(
             dependentVertex = subscriptionVertex,
         )
 
         object : EventStream.Subscription {
             override fun cancel() {
-                this@subscribe.vertex.removeDependent(
+                this@subscribe.vertex.unsubscribe(
                     dependentVertex = subscriptionVertex,
                 )
             }

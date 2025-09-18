@@ -2,8 +2,7 @@ package dev.toolkt.reactive.event_stream.vertices
 
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.vertices.DependencyEventStreamVertex
-import dev.toolkt.reactive.globalFinalizationRegistry
-import dev.toolkt.reactive.registerDependent
+import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.Occurrence
 
 class EventStreamTakeVertex<EventT> private constructor(
     private val sourceEventStreamVertex: DependencyEventStreamVertex<EventT>,
@@ -11,51 +10,51 @@ class EventStreamTakeVertex<EventT> private constructor(
 ) : FiniteEventStreamVertex<EventT>() {
     companion object {
         fun <ValueT> construct(
-            context: Transaction.Context,
+            context: Transaction.ProcessingContext,
             sourceEventStreamVertex: DependencyEventStreamVertex<ValueT>,
             totalCount: Int,
         ): EventStreamTakeVertex<ValueT> = EventStreamTakeVertex(
             sourceEventStreamVertex = sourceEventStreamVertex,
             totalCount = totalCount,
         ).apply {
-            sourceEventStreamVertex.registerDependent(
-                context = context,
-                dependentVertex = this,
-            )
-
-            ensureProcessed(
+            initialize(
                 context = context,
             )
+        }
+    }
 
-            // TODO: Figure out weak dependents!
-            globalFinalizationRegistry.register(
-                target = this,
-            ) {
-            }
+    init {
+        require(totalCount > 1) {
+            "totalCount must be greater than 1, but was $totalCount"
         }
     }
 
     private var remainingCount = totalCount
 
+    override fun processAttaching(
+        context: Transaction.ProcessingContext,
+    ): Occurrence<EventT> = sourceEventStreamVertex.pullOccurrenceSubscribing(
+        context = context,
+        dependentVertex = this,
+    )
+
     override fun process(
-        context: Transaction.Context,
-    ): EventStreamVertex.EmittedEvent<EventT>? {
+        context: Transaction.ProcessingContext,
+    ): Occurrence<EventT> {
         if (remainingCount <= 0) {
-            return null
+            return EventStreamVertex.NilOccurrence
         }
 
-        val sourceOccurrence = sourceEventStreamVertex.pullEmittedEvent(
+        return sourceEventStreamVertex.pullOccurrenceSubsequent(
             context = context,
         )
-
-        return sourceOccurrence
     }
 
     override fun transit() {
         remainingCount -= 1
 
-        if (remainingCount <= 0) {
-            sourceEventStreamVertex.removeDependent(
+        if (remainingCount == 0) {
+            sourceEventStreamVertex.unsubscribe(
                 dependentVertex = this,
             )
         }

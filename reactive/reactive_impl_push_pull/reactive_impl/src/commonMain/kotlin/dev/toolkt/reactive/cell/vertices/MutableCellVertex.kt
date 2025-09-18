@@ -1,39 +1,28 @@
 package dev.toolkt.reactive.cell.vertices
 
-import dev.toolkt.reactive.BaseDependencyVertex
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.cell.vertices.CellVertex.UpdatedValue
 
 class MutableCellVertex<ValueT>(
     initialValue: ValueT,
-) : BaseDependencyVertex(), DependencyCellVertex<ValueT> {
-    private var mutableStableValue: ValueT = initialValue
+) : InherentCellVertex<ValueT>(
+    initialStableValue = initialValue,
+) {
+    private var sourceUpdate: CellVertex.Update<ValueT> = CellVertex.NilUpdate
 
-    private val stableValue: ValueT
-        get() = mutableStableValue
-
-    private var sourceUpdatedValue: UpdatedValue<ValueT>? = null
-
-    override fun pullStableValue(
-        context: Transaction.Context,
-    ): ValueT = stableValue
-
-    override fun pullUpdatedValue(
-        context: Transaction.Context,
-    ): UpdatedValue<ValueT>? = sourceUpdatedValue
-
-    override fun onFirstDependentAdded() {
-    }
-
-    override fun onLastDependentRemoved() {
-    }
+    override fun process(
+        context: Transaction.ProcessingContext,
+    ): CellVertex.Update<ValueT> = sourceUpdate
 
     fun set(
-        context: Transaction.Context,
+        context: Transaction.ProcessingContext,
         newValue: ValueT,
     ) {
-        sourceUpdatedValue = UpdatedValue(
-            value = newValue,
+        sourceUpdate = CellVertex.EffectiveUpdate(
+            updatedValue = newValue,
+        )
+
+        ensureMarkedDirty(
+            context = context,
         )
 
         enqueueDependentsForVisiting(
@@ -41,7 +30,9 @@ class MutableCellVertex<ValueT>(
         )
     }
 
-    fun reset() {
-        sourceUpdatedValue = null
+    override fun reset(
+        tag: BaseCellVertex.Tag,
+    ) {
+        sourceUpdate = CellVertex.NilUpdate
     }
 }

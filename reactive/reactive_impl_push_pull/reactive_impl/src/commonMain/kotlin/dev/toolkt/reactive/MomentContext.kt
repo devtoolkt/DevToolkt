@@ -1,7 +1,7 @@
 package dev.toolkt.reactive
 
 class MomentContext internal constructor(
-    val context: Transaction.Context,
+    val context: Transaction.ProcessingContext,
 ) : PureContext() {
     companion object {
         /**
