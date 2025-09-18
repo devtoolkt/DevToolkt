@@ -1,3 +1,7 @@
 package dev.toolkt.reactive
 
-interface Vertex
+interface Vertex {
+    fun commit()
+
+    fun reset()
+}

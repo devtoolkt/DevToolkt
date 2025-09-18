@@ -1,14 +1,23 @@
 package dev.toolkt.reactive.cell.vertices
 
-import dev.toolkt.reactive.DependencyVertex
+import dev.toolkt.reactive.DependentVertex
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.cell.vertices.CellVertex.UpdatedValue
 
-interface DependencyCellVertex<ValueT> : CellVertex<ValueT>, DependencyVertex {
-    /**
-     * Returns a volatile update of this cell, triggering processing if necessary.
-     */
-    fun pullUpdatedValue(
-        context: Transaction.Context,
-    ): UpdatedValue<ValueT>?
+interface DependencyCellVertex<ValueT> : CellVertex<ValueT> {
+    fun pullUpdateObserving(
+        context: Transaction.ProcessingContext,
+        dependentVertex: DependentVertex,
+    ): CellVertex.Update<ValueT>
+
+    fun observe(
+        dependentVertex: DependentVertex,
+    )
+
+    fun pullUpdateSubsequent(
+        context: Transaction.ProcessingContext,
+    ): CellVertex.Update<ValueT>
+
+    fun unobserve(
+        dependentVertex: DependentVertex,
+    )
 }

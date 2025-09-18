@@ -2,30 +2,32 @@ package dev.toolkt.reactive.event_stream.vertices
 
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.vertices.DependencyCellVertex
+import dev.toolkt.reactive.cell.vertices.toOccurrence
 
 class UpdatedValuesEventStreamVertex<ValueT>(
     private val sourceCellVertex: DependencyCellVertex<ValueT>,
 ) : DerivedEventStreamVertex<ValueT>() {
-    override fun process(
-        context: Transaction.Context,
-    ): EventStreamVertex.EmittedEvent<ValueT>? {
-        val sourceUpdate = sourceCellVertex.pullUpdatedValue(
-            context = context,
-        ) ?: return null
+    override fun processResuming(
+        context: Transaction.ProcessingContext,
+    ): EventStreamVertex.Occurrence<ValueT> = sourceCellVertex.pullUpdateObserving(
+        context = context,
+        dependentVertex = this,
+    ).toOccurrence()
 
-        return EventStreamVertex.EmittedEvent(
-            event = sourceUpdate.value,
-        )
-    }
+    override fun processFollowing(
+        context: Transaction.ProcessingContext,
+    ): EventStreamVertex.Occurrence<ValueT> = sourceCellVertex.pullUpdateSubsequent(
+        context = context,
+    ).toOccurrence()
 
     override fun resume() {
-        sourceCellVertex.addDependent(
+        sourceCellVertex.observe(
             dependentVertex = this,
         )
     }
 
     override fun pause() {
-        sourceCellVertex.removeDependent(
+        sourceCellVertex.unobserve(
             dependentVertex = this,
         )
     }

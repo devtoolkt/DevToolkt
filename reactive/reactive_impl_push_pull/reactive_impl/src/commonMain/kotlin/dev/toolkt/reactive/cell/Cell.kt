@@ -66,7 +66,7 @@ sealed interface Cell<out ValueT> {
 context(momentContext: MomentContext) fun <ValueT> Cell<ValueT>.sample(): ValueT = when (this) {
     is ConstCell -> TODO()
 
-    is OperatedCell -> vertex.pullStableValue(
+    is OperatedCell -> vertex.sampleOldValue(
         context = momentContext.context,
     )
 }

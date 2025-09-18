@@ -1,67 +1,121 @@
 package dev.toolkt.reactive.cell.vertices
 
-import dev.toolkt.reactive.IntermediateDynamicCellVertex
+import dev.toolkt.reactive.DependentVertex
 import dev.toolkt.reactive.Transaction
+import dev.toolkt.reactive.Vertex
+import dev.toolkt.reactive.cell.vertices.CellVertex.RetrievalMode
 
-abstract class DerivedCellVertex<ValueT> : IntermediateDynamicCellVertex<ValueT>() {
-    private var mutableIsStableValueCached = false
+abstract class DerivedCellVertex<ValueT> : BaseCellVertex<ValueT>(), DependencyCellVertex<ValueT>, DependentVertex,
+    Vertex {
+    private var cachedOldValue: CellVertex.StableValue<ValueT>? = null
 
-    final override val isStableValueCached: Boolean
-        get() = mutableIsStableValueCached
+    override fun fetchOldValue(): ValueT {
+        return computeOldValue(
+            retrievalMode = RetrievalMode.Fetch,
+        )
+    }
 
-    private var mutableCachedStableValue: ValueT? = null
-
-    private val cachedStableValue: ValueT?
-        get() = mutableCachedStableValue
-
-    final override fun pullStableValue(
-        context: Transaction.Context,
-    ): ValueT = when {
-        isStableValueCached -> @Suppress("UNCHECKED_CAST") (cachedStableValue as ValueT)
-
-        else -> {
-            val computeStableValue = computeStableValue(
-                context,
-            )
-
-            mutableIsStableValueCached = true
-            mutableCachedStableValue = computeStableValue
-
-            if (!isProcessed) {
-                // If the vertex is processed, it means that the vertex is already enqueued for resetting
-                context.enqueueDirtyVertex(
-                    dirtyVertex = this,
+    final override fun sampleOldValue(
+        context: Transaction.ProcessingContext,
+    ): ValueT {
+        when (val cachedOldValue = this.cachedOldValue) {
+            null -> {
+                val computedOldValue = computeOldValue(
+                    retrievalMode = RetrievalMode.Sample(
+                        context = context,
+                    ),
                 )
+
+                this.cachedOldValue = CellVertex.StableValue(
+                    value = computedOldValue,
+                )
+
+                ensureMarkedDirty(
+                    context = context,
+                )
+
+                return computedOldValue
             }
 
-            computeStableValue
+            else -> {
+                return cachedOldValue.value
+            }
         }
     }
 
-    final override fun onFirstDependentAdded() {
+    final override fun visit(
+        context: Transaction.ProcessingContext,
+    ) {
+        ensureProcessedSubsequently(
+            context = context,
+        )
+    }
+
+    final override fun processObserved(
+        context: Transaction.ProcessingContext,
+        wasFirst: Boolean,
+    ): CellVertex.Update<ValueT> = when {
+        wasFirst -> processActivating(
+            context = context,
+        )
+
+        else -> processFollowing(
+            context = context,
+        )
+    }
+
+    final override fun processSubsequent(
+        context: Transaction.ProcessingContext,
+    ): CellVertex.Update<ValueT> = processFollowing(
+        context = context,
+    )
+
+    override fun onFirstObserverAdded() {
         activate()
     }
 
-    final override fun onLastDependentRemoved() {
+    final override fun onLastObserverRemoved() {
         deactivate()
     }
 
-    final override fun persist(
-        newValue: ValueT,
+    final override fun persist(updatedValue: ValueT) {
+    }
+
+    final override fun reset(
+        tag: BaseCellVertex.Tag,
     ) {
-        // Stateless cells currently don't maintain persistent stable value
+        cachedOldValue = null
     }
 
-    final override fun clearStableValueCache() {
-        mutableIsStableValueCached = false
-        mutableCachedStableValue = null
-    }
-
-    protected abstract fun computeStableValue(
-        context: Transaction.Context,
+    protected abstract fun computeOldValue(
+        retrievalMode: RetrievalMode,
     ): ValueT
 
+    /**
+     * Process this vertex and activate it at the same time.
+     *
+     * This method is called only if the vertex is inactive.
+     */
+    protected abstract fun processActivating(
+        context: Transaction.ProcessingContext,
+    ): CellVertex.Update<ValueT>
+
+    /**
+     * Process this vertex.
+     *
+     * This method is called only if the vertex is active.
+     */
+    protected abstract fun processFollowing(
+        context: Transaction.ProcessingContext,
+    ): CellVertex.Update<ValueT>
+
+    /**
+     * Activate this vertex.
+     */
     protected abstract fun activate()
 
+    /**
+     * Deactivate this vertex.
+     */
     protected abstract fun deactivate()
 }

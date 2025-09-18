@@ -24,7 +24,5 @@ class MutableCell<ValueT>(
                 newValue = newValue,
             )
         }
-
-        vertex.reset()
     }
 }

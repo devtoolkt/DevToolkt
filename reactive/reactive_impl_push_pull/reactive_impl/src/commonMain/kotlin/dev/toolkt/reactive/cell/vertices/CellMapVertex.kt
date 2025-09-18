@@ -1,41 +1,43 @@
 package dev.toolkt.reactive.cell.vertices
 
 import dev.toolkt.reactive.Transaction
+import dev.toolkt.reactive.cell.vertices.CellVertex.RetrievalMode
 
 class CellMapVertex<SourceValueT, TransformedValueT>(
     private val sourceCellVertex: DependencyCellVertex<SourceValueT>,
     private val transform: (SourceValueT) -> TransformedValueT,
-) : DerivedCellVertex<TransformedValueT>() {
+) : SimpleDerivedCellVertex<TransformedValueT>() {
     override fun process(
-        context: Transaction.Context,
-    ): CellVertex.UpdatedValue<TransformedValueT>? {
-        val sourceUpdate = sourceCellVertex.pullUpdatedValue(
+        context: Transaction.ProcessingContext,
+        processingMode: ProcessingMode,
+    ): CellVertex.Update<TransformedValueT> {
+        val sourceUpdate = sourceCellVertex.pullUpdate(
             context = context,
+            processingMode = processingMode,
         )
 
-        return sourceUpdate?.map(
+        return sourceUpdate.map(
             transform = transform,
         )
     }
 
     override fun activate() {
-        sourceCellVertex.addDependent(
+        sourceCellVertex.observe(
             dependentVertex = this,
         )
     }
 
     override fun deactivate() {
-        sourceCellVertex.removeDependent(
+        sourceCellVertex.unobserve(
             dependentVertex = this,
         )
     }
 
-    override fun computeStableValue(
-        context: Transaction.Context,
+    override fun computeOldValue(
+        retrievalMode: RetrievalMode,
     ): TransformedValueT = transform(
-        sourceCellVertex.pullStableValue(
-            context = context,
+        sourceCellVertex.retrieve(
+            retrievalMode = retrievalMode,
         ),
     )
 }
-

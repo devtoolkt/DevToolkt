@@ -2,6 +2,6 @@ package dev.toolkt.reactive
 
 interface DependentVertex : Vertex {
     fun visit(
-        context: Transaction.Context,
+        context: Transaction.ProcessingContext,
     )
 }

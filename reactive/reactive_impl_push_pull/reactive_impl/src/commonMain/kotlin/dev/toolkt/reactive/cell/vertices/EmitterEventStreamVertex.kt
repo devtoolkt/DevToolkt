@@ -1,28 +1,25 @@
 package dev.toolkt.reactive.cell.vertices
 
-import dev.toolkt.reactive.BaseDependencyVertex
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.EmittedEvent
+import dev.toolkt.reactive.event_stream.vertices.BaseEventStreamVertex
+import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex
+import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.EffectiveOccurrence
+import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.Occurrence
+import dev.toolkt.reactive.event_stream.vertices.InherentEventStreamVertex
 
-class EmitterEventStreamVertex<EventT>() : BaseDependencyVertex(), DependencyEventStreamVertex<EventT> {
-    private var sourceEmittedEvent: EmittedEvent<EventT>? = null
-
-    override fun pullEmittedEvent(
-        context: Transaction.Context,
-    ): EmittedEvent<EventT>? = sourceEmittedEvent
-
-    override fun onFirstDependentAdded() {
-    }
-
-    override fun onLastDependentRemoved() {
-    }
+class EmitterEventStreamVertex<EventT>() : InherentEventStreamVertex<EventT>() {
+    private var sourceOccurrence: Occurrence<EventT> = EventStreamVertex.NilOccurrence
 
     fun emit(
-        context: Transaction.Context,
+        context: Transaction.ProcessingContext,
         event: EventT,
     ) {
-        sourceEmittedEvent = EmittedEvent(
+        sourceOccurrence = EffectiveOccurrence(
             event = event,
+        )
+
+        ensureMarkedDirty(
+            context = context,
         )
 
         enqueueDependentsForVisiting(
@@ -30,7 +27,16 @@ class EmitterEventStreamVertex<EventT>() : BaseDependencyVertex(), DependencyEve
         )
     }
 
-    fun reset() {
-        sourceEmittedEvent = null
+    override fun reset(
+        tag: BaseEventStreamVertex.Tag,
+    ) {
+        sourceOccurrence = EventStreamVertex.NilOccurrence
     }
+
+    override fun transit() {
+    }
+
+    override fun process(
+        context: Transaction.ProcessingContext,
+    ): Occurrence<EventT> = sourceOccurrence
 }
