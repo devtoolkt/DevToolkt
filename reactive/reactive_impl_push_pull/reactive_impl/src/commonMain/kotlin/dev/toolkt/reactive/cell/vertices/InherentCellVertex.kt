@@ -4,8 +4,7 @@ import dev.toolkt.reactive.Transaction
 
 abstract class InherentCellVertex<ValueT>(
     initialStableValue: ValueT,
-) : BaseDynamicCellVertex<ValueT>(
-) {
+) : BaseDynamicCellVertex<ValueT>() {
     private var stableValue = initialStableValue
 
     final override fun processObserved(

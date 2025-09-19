@@ -47,7 +47,7 @@ abstract class BaseDerivedDynamicCellVertex<ValueT> : BaseDynamicCellVertex<Valu
         context = context,
     )
 
-    override fun onFirstObserverAdded() {
+    final override fun onFirstObserverAdded() {
         activate()
     }
 
