@@ -4,6 +4,7 @@ import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.vertices.CellVertex.EffectiveUpdate
 import dev.toolkt.reactive.cell.vertices.CellVertex.Update
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex
+import dev.toolkt.reactive.event_stream.vertices.toUpdate
 
 class HoldCellVertex<ValueT> private constructor(
     private val sourceEventStreamVertex: DependencyEventStreamVertex<ValueT>,
@@ -52,12 +53,6 @@ class HoldCellVertex<ValueT> private constructor(
             context = context,
         )
 
-        return when (sourceOccurrence) {
-            EventStreamVertex.NilOccurrence -> CellVertex.NilUpdate
-
-            is EventStreamVertex.EffectiveOccurrence -> EffectiveUpdate(
-                updatedValue = sourceOccurrence.event,
-            )
-        }
+        return sourceOccurrence.toUpdate()
     }
 }

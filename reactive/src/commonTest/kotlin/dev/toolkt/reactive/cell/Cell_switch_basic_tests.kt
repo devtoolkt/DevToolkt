@@ -52,13 +52,13 @@ class Cell_switch_basic_tests {
         // (I_2)
         val innerCell2 = extractCell(
             initialValue = initialInnerValue2,
-            selector = Stimulation::newInnerValue1,
+            selector = Stimulation::newInnerValue2,
         )
 
         // (I_3)
         val innerCell3 = extractCell(
             initialValue = initialInnerValue3,
-            selector = Stimulation::newInnerValue1,
+            selector = Stimulation::newInnerValue3,
         )
 
         val switchCaseId = extractCell(
@@ -347,7 +347,6 @@ class Cell_switch_basic_tests {
         )
     }
 
-    @Ignore // TODO: Figure out inner vertex subscription
     @Test
     fun test_updatePropagation_initialInnerUpdate_newValues() {
         test_updatePropagation_initialInnerUpdate(
@@ -355,7 +354,6 @@ class Cell_switch_basic_tests {
         )
     }
 
-    @Ignore // TODO: Figure out inner vertex subscription
     @Test
     fun test_updatePropagation_initialInnerUpdate_updatedValues() {
         test_updatePropagation_initialInnerUpdate(
@@ -382,7 +380,6 @@ class Cell_switch_basic_tests {
         )
     }
 
-    @Ignore // TODO: Figure out inner vertex subscription
     @Test
     fun test_updatePropagation_nonInitialInnerUpdate_newValues() {
         test_updatePropagation_nonInitialInnerUpdate(
@@ -390,7 +387,6 @@ class Cell_switch_basic_tests {
         )
     }
 
-    @Ignore // TODO: Figure out inner vertex subscription
     @Test
     fun test_updatePropagation_nonInitialInnerUpdate_updatedValues() {
         test_updatePropagation_nonInitialInnerUpdate(
