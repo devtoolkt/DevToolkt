@@ -33,7 +33,7 @@ abstract class BaseEventStreamVertex<EventT> : BaseDynamicVertex(), EventStreamV
     ): EventStreamVertex.Occurrence<EventT> = ensureProcessed(
         context = context,
     ) { context ->
-        processSubsequent(
+        processTriggered(
             context = context,
         )
     }
@@ -113,12 +113,12 @@ abstract class BaseEventStreamVertex<EventT> : BaseDynamicVertex(), EventStreamV
         )
     }
 
-    protected fun ensureProcessedSubsequently(
+    protected fun ensureProcessedTriggered(
         context: Transaction.ProcessingContext,
     ) {
         ensureProcessed(
             context = context,
-            processSpecifically = ::processSubsequent,
+            processSpecifically = ::processTriggered,
         )
     }
 
@@ -139,7 +139,7 @@ abstract class BaseEventStreamVertex<EventT> : BaseDynamicVertex(), EventStreamV
      *
      * @param context The transaction context.
      */
-    protected abstract fun processSubsequent(
+    protected abstract fun processTriggered(
         context: Transaction.ProcessingContext,
     ): EventStreamVertex.Occurrence<EventT>
 

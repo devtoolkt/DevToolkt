@@ -10,7 +10,7 @@ abstract class InherentDependentEventStreamVertex<EventT>() : InherentEventStrea
     final override fun visit(
         context: Transaction.ProcessingContext,
     ) {
-        ensureProcessedSubsequently(
+        ensureProcessedTriggered(
             context = context,
         )
     }

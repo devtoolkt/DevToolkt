@@ -21,7 +21,7 @@ class MutableCellVertex<ValueT>(
             updatedValue = newValue,
         )
 
-        ensureProcessedSubsequently(
+        ensureProcessedTriggered(
             context = context,
         )
     }

@@ -12,7 +12,7 @@ abstract class InherentDependentCellVertex<ValueT>(
     final override fun visit(
         context: Transaction.ProcessingContext,
     ) {
-        ensureProcessedSubsequently(
+        ensureProcessedTriggered(
             context = context,
         )
     }

@@ -11,7 +11,7 @@ abstract class InherentEventStreamVertex<EventT>() : BaseEventStreamVertex<Event
         context = context,
     )
 
-    final override fun processSubsequent(
+    final override fun processTriggered(
         context: Transaction.ProcessingContext,
     ): Occurrence<EventT> = process(
         context = context,

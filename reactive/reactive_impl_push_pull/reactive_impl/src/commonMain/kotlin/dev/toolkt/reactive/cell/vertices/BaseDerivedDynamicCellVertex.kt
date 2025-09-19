@@ -23,7 +23,7 @@ abstract class BaseDerivedDynamicCellVertex<ValueT> : BaseDynamicCellVertex<Valu
     final override fun visit(
         context: Transaction.ProcessingContext,
     ) {
-        ensureProcessedSubsequently(
+        ensureProcessedTriggered(
             context = context,
         )
     }
@@ -41,7 +41,7 @@ abstract class BaseDerivedDynamicCellVertex<ValueT> : BaseDynamicCellVertex<Valu
         )
     }
 
-    final override fun processSubsequent(
+    final override fun processTriggered(
         context: Transaction.ProcessingContext,
     ): CellVertex.Update<ValueT> = processFollowing(
         context = context,

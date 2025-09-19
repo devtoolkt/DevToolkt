@@ -14,7 +14,7 @@ abstract class InherentCellVertex<ValueT>(
         context = context,
     )
 
-    final override fun processSubsequent(
+    final override fun processTriggered(
         context: Transaction.ProcessingContext,
     ): CellVertex.Update<ValueT> = process(
         context = context,
