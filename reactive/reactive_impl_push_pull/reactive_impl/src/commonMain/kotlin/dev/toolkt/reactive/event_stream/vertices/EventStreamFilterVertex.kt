@@ -1,7 +1,6 @@
 package dev.toolkt.reactive.event_stream.vertices
 
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.cell.vertices.SimpleDerivedEventStreamVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.NilOccurrence
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.Occurrence
 
