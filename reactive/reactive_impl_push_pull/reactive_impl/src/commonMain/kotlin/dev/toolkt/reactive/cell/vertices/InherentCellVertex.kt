@@ -4,7 +4,7 @@ import dev.toolkt.reactive.Transaction
 
 abstract class InherentCellVertex<ValueT>(
     initialStableValue: ValueT,
-) : BaseCellVertex<ValueT>(
+) : BaseDynamicCellVertex<ValueT>(
 ) {
     private var stableValue = initialStableValue
 

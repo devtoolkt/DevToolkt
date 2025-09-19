@@ -1,11 +1,11 @@
 package dev.toolkt.reactive.cell.vertices
 
-import dev.toolkt.reactive.BaseDependencyVertex
+import dev.toolkt.reactive.BaseDynamicVertex
 import dev.toolkt.reactive.BaseVertex
 import dev.toolkt.reactive.DependentVertex
 import dev.toolkt.reactive.Transaction
 
-abstract class BaseCellVertex<ValueT> : BaseDependencyVertex(), DependencyCellVertex<ValueT> {
+abstract class BaseDynamicCellVertex<ValueT> : BaseDynamicVertex(), DependencyCellVertex<ValueT> {
     data object Tag
 
     private var cachedUpdate: CellVertex.Update<ValueT>? = null

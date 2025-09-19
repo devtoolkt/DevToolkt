@@ -1,9 +1,9 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
-import dev.toolkt.reactive.cell.vertices.CellMap2Vertex
-import dev.toolkt.reactive.cell.vertices.CellMapVertex
-import dev.toolkt.reactive.cell.vertices.CellSwitchVertex
+import dev.toolkt.reactive.cell.vertices.DynamicMap2CellVertex
+import dev.toolkt.reactive.cell.vertices.DynamicMapCellVertex
+import dev.toolkt.reactive.cell.vertices.SwitchCellVertex
 import dev.toolkt.reactive.event_stream.DerivedEventStream
 import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.vertices.UpdatedValuesEventStreamVertex
@@ -25,7 +25,7 @@ sealed interface Cell<out ValueT> {
                 }
 
                 is OperatedCell -> DerivedCell(
-                    CellMap2Vertex(
+                    DynamicMap2CellVertex(
                         sourceCell1Vertex = cell1.vertex,
                         sourceCell2Vertex = cell2.vertex,
                         transform = transform,
@@ -53,7 +53,7 @@ sealed interface Cell<out ValueT> {
             is ConstCell -> outerCell.value
 
             is OperatedCell -> DerivedCell(
-                CellSwitchVertex(
+                SwitchCellVertex(
                     outerCellVertex = outerCell.vertex,
                 ),
             )
@@ -79,7 +79,7 @@ fun <ValueT, TransformedValueT> Cell<ValueT>.map(
     is ConstCell -> TODO()
 
     is OperatedCell -> DerivedCell(
-        CellMapVertex(
+        DynamicMapCellVertex(
             sourceCellVertex = this.vertex,
             transform = transform,
         ),

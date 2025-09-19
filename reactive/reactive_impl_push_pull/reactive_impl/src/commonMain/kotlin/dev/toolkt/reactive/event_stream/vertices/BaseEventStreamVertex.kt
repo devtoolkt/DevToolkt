@@ -1,12 +1,12 @@
 package dev.toolkt.reactive.event_stream.vertices
 
-import dev.toolkt.reactive.BaseDependencyVertex
+import dev.toolkt.reactive.BaseDynamicVertex
 import dev.toolkt.reactive.BaseVertex
 import dev.toolkt.reactive.DependentVertex
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.vertices.DependencyEventStreamVertex
 
-abstract class BaseEventStreamVertex<EventT> : BaseDependencyVertex(), DependencyEventStreamVertex<EventT> {
+abstract class BaseEventStreamVertex<EventT> : BaseDynamicVertex(), DependencyEventStreamVertex<EventT> {
     data object Tag
 
     private var cachedOccurrence: EventStreamVertex.Occurrence<EventT>? = null

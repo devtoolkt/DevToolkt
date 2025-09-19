@@ -3,10 +3,10 @@ package dev.toolkt.reactive.cell.vertices
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.vertices.CellVertex.RetrievalMode
 
-class CellMapVertex<SourceValueT, TransformedValueT>(
+class DynamicMapCellVertex<SourceValueT, TransformedValueT>(
     private val sourceCellVertex: DependencyCellVertex<SourceValueT>,
     private val transform: (SourceValueT) -> TransformedValueT,
-) : SimpleDerivedCellVertex<TransformedValueT>() {
+) : BaseSimpleDerivedCellVertex<TransformedValueT>() {
     override fun process(
         context: Transaction.ProcessingContext,
         processingMode: ProcessingMode,

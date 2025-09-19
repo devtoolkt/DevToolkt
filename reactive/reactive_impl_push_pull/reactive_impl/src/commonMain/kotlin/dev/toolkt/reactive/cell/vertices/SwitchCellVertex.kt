@@ -6,9 +6,9 @@ import dev.toolkt.reactive.cell.ConstCell
 import dev.toolkt.reactive.cell.OperatedCell
 import dev.toolkt.reactive.cell.vertices.CellVertex.RetrievalMode
 
-class CellSwitchVertex<ValueT>(
+class SwitchCellVertex<ValueT>(
     private val outerCellVertex: DependencyCellVertex<Cell<ValueT>>,
-) : DerivedCellVertex<ValueT>() {
+) : BaseDerivedCellVertex<ValueT>() {
     private var innerCellVertex: DependencyCellVertex<ValueT>? = null
 
     override fun processActivating(
