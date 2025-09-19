@@ -11,7 +11,7 @@ abstract class DerivedEventStreamVertex<EventT> : BaseEventStreamVertex<EventT>(
     final override fun visit(
         context: Transaction.ProcessingContext,
     ) {
-        ensureProcessedSubsequently(
+        ensureProcessedTriggered(
             context = context,
         )
     }
@@ -29,7 +29,7 @@ abstract class DerivedEventStreamVertex<EventT> : BaseEventStreamVertex<EventT>(
         )
     }
 
-    final override fun processSubsequent(
+    final override fun processTriggered(
         context: Transaction.ProcessingContext,
     ): EventStreamVertex.Occurrence<EventT> = processFollowing(
         context = context,

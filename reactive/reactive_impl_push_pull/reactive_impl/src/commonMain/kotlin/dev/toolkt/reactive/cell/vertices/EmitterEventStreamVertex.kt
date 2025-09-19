@@ -18,7 +18,7 @@ class EmitterEventStreamVertex<EventT>() : InherentEventStreamVertex<EventT>() {
             event = event,
         )
 
-        ensureProcessedSubsequently(
+        ensureProcessedTriggered(
             context = context,
         )
     }

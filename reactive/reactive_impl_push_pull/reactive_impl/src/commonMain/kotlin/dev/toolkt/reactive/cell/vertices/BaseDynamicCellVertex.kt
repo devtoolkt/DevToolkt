@@ -33,7 +33,7 @@ abstract class BaseDynamicCellVertex<ValueT> : BaseDynamicVertex(), DynamicCellV
     ): CellVertex.Update<ValueT> = ensureProcessed(
         context = context,
     ) { context ->
-        processSubsequent(
+        processTriggered(
             context = context,
         )
     }
@@ -122,12 +122,12 @@ abstract class BaseDynamicCellVertex<ValueT> : BaseDynamicVertex(), DynamicCellV
         )
     }
 
-    protected fun ensureProcessedSubsequently(
+    protected fun ensureProcessedTriggered(
         context: Transaction.ProcessingContext,
     ) {
         ensureProcessed(
             context = context,
-            processSpecifically = ::processSubsequent,
+            processSpecifically = ::processTriggered,
         )
     }
 
@@ -148,7 +148,7 @@ abstract class BaseDynamicCellVertex<ValueT> : BaseDynamicVertex(), DynamicCellV
      *
      * @param context The transaction context.
      */
-    protected abstract fun processSubsequent(
+    protected abstract fun processTriggered(
         context: Transaction.ProcessingContext,
     ): CellVertex.Update<ValueT>
 
