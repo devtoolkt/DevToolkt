@@ -12,9 +12,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-@Ignore // TODO: Implement this logic
+//@Ignore // TODO: Implement this logic
 @Suppress("ClassName")
-class Cell_map3_tests {
+class Cell_map3_basic_tests {
     private data class Stimulation(
         val newSourceValue1: Int? = null,
         val newSourceValue2: Char? = null,

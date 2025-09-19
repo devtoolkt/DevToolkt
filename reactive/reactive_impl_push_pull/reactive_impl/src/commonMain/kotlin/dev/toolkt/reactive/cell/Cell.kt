@@ -4,9 +4,11 @@ import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.vertices.CellVertex
 import dev.toolkt.reactive.cell.vertices.DynamicCellVertex
 import dev.toolkt.reactive.cell.vertices.DynamicMap2CellVertex
+import dev.toolkt.reactive.cell.vertices.DynamicMap3CellVertex
 import dev.toolkt.reactive.cell.vertices.DynamicMapCellVertex
 import dev.toolkt.reactive.cell.vertices.InertCellVertex
 import dev.toolkt.reactive.cell.vertices.InertMap2CellVertex
+import dev.toolkt.reactive.cell.vertices.InertMap3CellVertex
 import dev.toolkt.reactive.cell.vertices.InertMapCellVertex
 import dev.toolkt.reactive.cell.vertices.PureCellVertex
 import dev.toolkt.reactive.cell.vertices.SwitchCellVertex
@@ -25,8 +27,8 @@ sealed interface Cell<out ValueT> {
             val cell2Vertex = cell2.vertex
 
             return OperatedCell(
-                when (cell1Vertex) {
-                    is InertCellVertex if cell2Vertex is InertCellVertex -> InertMap2CellVertex(
+                when {
+                    cell1Vertex is InertCellVertex && cell2Vertex is InertCellVertex -> InertMap2CellVertex(
                         sourceCell1Vertex = cell1Vertex,
                         sourceCell2Vertex = cell2Vertex,
                         transform = transform,
@@ -46,7 +48,30 @@ sealed interface Cell<out ValueT> {
             cell2: Cell<ValueT2>,
             cell3: Cell<ValueT3>,
             transform: (ValueT1, ValueT2, ValueT3) -> ResultT,
-        ): Cell<ResultT> = TODO()
+        ): Cell<ResultT> {
+            val cell1Vertex = cell1.vertex
+            val cell2Vertex = cell2.vertex
+            val cell3Vertex = cell3.vertex
+
+            return OperatedCell(
+
+                when {
+                    cell1Vertex is InertCellVertex && cell2Vertex is InertCellVertex && cell3Vertex is InertCellVertex -> InertMap3CellVertex(
+                        sourceCell1Vertex = cell1Vertex,
+                        sourceCell2Vertex = cell2Vertex,
+                        sourceCell3Vertex = cell3Vertex,
+                        transform = transform,
+                    )
+
+                    else -> DynamicMap3CellVertex(
+                        sourceCell1Vertex = cell1Vertex,
+                        sourceCell2Vertex = cell2Vertex,
+                        sourceCell3Vertex = cell3Vertex,
+                        transform = transform,
+                    )
+                },
+            )
+        }
 
         fun <ValueT> of(
             value: ValueT,
