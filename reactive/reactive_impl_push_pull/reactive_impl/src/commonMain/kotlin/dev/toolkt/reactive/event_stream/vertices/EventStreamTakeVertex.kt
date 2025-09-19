@@ -1,17 +1,16 @@
 package dev.toolkt.reactive.event_stream.vertices
 
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.cell.vertices.DependencyEventStreamVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.Occurrence
 
 class EventStreamTakeVertex<EventT> private constructor(
-    private val sourceEventStreamVertex: DependencyEventStreamVertex<EventT>,
+    private val sourceEventStreamVertex: EventStreamVertex<EventT>,
     totalCount: Int,
 ) : FiniteEventStreamVertex<EventT>() {
     companion object {
         fun <ValueT> construct(
             context: Transaction.ProcessingContext,
-            sourceEventStreamVertex: DependencyEventStreamVertex<ValueT>,
+            sourceEventStreamVertex: EventStreamVertex<ValueT>,
             totalCount: Int,
         ): EventStreamTakeVertex<ValueT> = EventStreamTakeVertex(
             sourceEventStreamVertex = sourceEventStreamVertex,

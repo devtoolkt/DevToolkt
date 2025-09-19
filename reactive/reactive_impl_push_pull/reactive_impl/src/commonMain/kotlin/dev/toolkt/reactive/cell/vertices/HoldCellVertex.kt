@@ -7,7 +7,7 @@ import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex
 import dev.toolkt.reactive.event_stream.vertices.toUpdate
 
 class HoldCellVertex<ValueT> private constructor(
-    private val sourceEventStreamVertex: DependencyEventStreamVertex<ValueT>,
+    private val sourceEventStreamVertex: EventStreamVertex<ValueT>,
     initialStableValue: ValueT,
 ) : InherentDependentCellVertex<ValueT>(
     initialStableValue = initialStableValue,
@@ -15,7 +15,7 @@ class HoldCellVertex<ValueT> private constructor(
     companion object {
         fun <ValueT> construct(
             context: Transaction.ProcessingContext,
-            sourceEventStreamVertex: DependencyEventStreamVertex<ValueT>,
+            sourceEventStreamVertex: EventStreamVertex<ValueT>,
             initialValue: ValueT,
         ): HoldCellVertex<ValueT> = HoldCellVertex(
             sourceEventStreamVertex = sourceEventStreamVertex,

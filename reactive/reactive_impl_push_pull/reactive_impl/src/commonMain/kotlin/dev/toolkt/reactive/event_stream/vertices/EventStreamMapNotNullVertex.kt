@@ -1,11 +1,10 @@
 package dev.toolkt.reactive.event_stream.vertices
 
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.cell.vertices.DependencyEventStreamVertex
 import dev.toolkt.reactive.cell.vertices.SimpleDerivedEventStreamVertex
 
 class EventStreamMapNotNullVertex<SourceEventT, TransformedEventT : Any>(
-    private val sourceEventStreamVertex: DependencyEventStreamVertex<SourceEventT>,
+    private val sourceEventStreamVertex: EventStreamVertex<SourceEventT>,
     private val transform: (SourceEventT) -> TransformedEventT?,
 ) : SimpleDerivedEventStreamVertex<TransformedEventT>() {
     override fun process(

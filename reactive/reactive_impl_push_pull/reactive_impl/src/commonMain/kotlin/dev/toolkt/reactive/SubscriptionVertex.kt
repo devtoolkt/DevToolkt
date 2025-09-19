@@ -1,10 +1,9 @@
 package dev.toolkt.reactive
 
-import dev.toolkt.reactive.cell.vertices.DependencyEventStreamVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex
 
 class SubscriptionVertex<EventT>(
-    private val sourceEventStreamVertex: DependencyEventStreamVertex<EventT>,
+    private val sourceEventStreamVertex: EventStreamVertex<EventT>,
     private val handle: (EventT) -> Unit,
 ) : DependentVertex {
     private var receivedEvent: EventStreamVertex.Occurrence<EventT>? = null
@@ -19,7 +18,7 @@ class SubscriptionVertex<EventT>(
         when (sourceOccurrence) {
             EventStreamVertex.NilOccurrence -> {}
 
-            is EventStreamVertex.EffectiveOccurrence -> {
+            is dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.EffectiveOccurrence -> {
                 context.markDirty(
                     dirtyVertex = this,
                 )

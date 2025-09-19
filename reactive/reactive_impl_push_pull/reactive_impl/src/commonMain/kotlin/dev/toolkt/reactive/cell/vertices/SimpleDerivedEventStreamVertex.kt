@@ -3,20 +3,21 @@ package dev.toolkt.reactive.cell.vertices
 import dev.toolkt.reactive.DependentVertex
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.event_stream.vertices.DerivedEventStreamVertex
+import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.Occurrence
 
 abstract class SimpleDerivedEventStreamVertex<ValueT> : DerivedEventStreamVertex<ValueT>() {
     sealed interface ProcessingMode {
         fun <ValueT> pullOccurrence(
             context: Transaction.ProcessingContext,
-            sourceVertex: DependencyEventStreamVertex<ValueT>,
+            sourceVertex: EventStreamVertex<ValueT>,
             dependentVertex: DependentVertex,
         ): Occurrence<ValueT>
 
         data object Resuming : ProcessingMode {
             override fun <ValueT> pullOccurrence(
                 context: Transaction.ProcessingContext,
-                sourceVertex: DependencyEventStreamVertex<ValueT>,
+                sourceVertex: EventStreamVertex<ValueT>,
                 dependentVertex: DependentVertex,
             ): Occurrence<ValueT> = sourceVertex.pullOccurrenceSubscribing(
                 context = context,
@@ -27,7 +28,7 @@ abstract class SimpleDerivedEventStreamVertex<ValueT> : DerivedEventStreamVertex
         data object Following : ProcessingMode {
             override fun <ValueT> pullOccurrence(
                 context: Transaction.ProcessingContext,
-                sourceVertex: DependencyEventStreamVertex<ValueT>,
+                sourceVertex: EventStreamVertex<ValueT>,
                 dependentVertex: DependentVertex,
             ): Occurrence<ValueT> = sourceVertex.pullOccurrenceSubsequent(
                 context = context,
@@ -49,7 +50,7 @@ abstract class SimpleDerivedEventStreamVertex<ValueT> : DerivedEventStreamVertex
         processingMode = ProcessingMode.Following,
     )
 
-    protected fun <ValueT> DependencyEventStreamVertex<ValueT>.pullOccurrence(
+    protected fun <ValueT> EventStreamVertex<ValueT>.pullOccurrence(
         context: Transaction.ProcessingContext,
         processingMode: ProcessingMode,
     ): Occurrence<ValueT> = processingMode.pullOccurrence(
