@@ -5,7 +5,7 @@ import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.Vertex
 import dev.toolkt.reactive.cell.vertices.CellVertex.RetrievalMode
 
-abstract class DerivedCellVertex<ValueT> : BaseCellVertex<ValueT>(), DependencyCellVertex<ValueT>, DependentVertex,
+abstract class BaseDerivedCellVertex<ValueT> : BaseDynamicCellVertex<ValueT>(), DependencyCellVertex<ValueT>, DependentVertex,
     Vertex {
     private var cachedOldValue: CellVertex.StableValue<ValueT>? = null
 
@@ -82,7 +82,7 @@ abstract class DerivedCellVertex<ValueT> : BaseCellVertex<ValueT>(), DependencyC
     }
 
     final override fun reset(
-        tag: BaseCellVertex.Tag,
+        tag: BaseDynamicCellVertex.Tag,
     ) {
         cachedOldValue = null
     }

@@ -36,7 +36,7 @@ abstract class InherentDependentCellVertex<ValueT>(
     }
 
     final override fun reset(
-        tag: BaseCellVertex.Tag,
+        tag: BaseDynamicCellVertex.Tag,
     ) {
     }
 

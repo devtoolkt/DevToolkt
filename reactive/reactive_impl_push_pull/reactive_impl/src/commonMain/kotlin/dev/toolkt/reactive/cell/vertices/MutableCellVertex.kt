@@ -27,7 +27,7 @@ class MutableCellVertex<ValueT>(
     }
 
     override fun reset(
-        tag: BaseCellVertex.Tag,
+        tag: BaseDynamicCellVertex.Tag,
     ) {
         sourceUpdate = CellVertex.NilUpdate
     }
