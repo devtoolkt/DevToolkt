@@ -9,8 +9,9 @@ import dev.toolkt.reactive.cell.vertices.CellVertex.RetrievalMode
 import dev.toolkt.reactive.cell.vertices.CellVertex.Update
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex
 import kotlin.jvm.JvmInline
+import kotlin.reflect.KProperty
 
-interface CellVertex<ValueT> : Vertex {
+sealed interface CellVertex<out ValueT> : Vertex {
     @JvmInline
     value class StableValue<ValueT>(
         val value: ValueT,

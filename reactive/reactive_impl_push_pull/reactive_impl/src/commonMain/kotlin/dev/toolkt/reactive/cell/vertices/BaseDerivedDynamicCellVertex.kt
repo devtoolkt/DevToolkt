@@ -2,46 +2,23 @@ package dev.toolkt.reactive.cell.vertices
 
 import dev.toolkt.reactive.DependentVertex
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.Vertex
 import dev.toolkt.reactive.cell.vertices.CellVertex.RetrievalMode
 
-abstract class BaseDerivedCellVertex<ValueT> : BaseDynamicCellVertex<ValueT>(), CellVertex<ValueT>, DependentVertex,
-    Vertex {
+abstract class BaseDerivedDynamicCellVertex<ValueT> : BaseDynamicCellVertex<ValueT>(), DependentVertex {
     private var cachedOldValue: CellVertex.StableValue<ValueT>? = null
 
-    override fun fetchOldValue(): ValueT {
-        return computeOldValue(
-            retrievalMode = RetrievalMode.Fetch,
-        )
-    }
+    final override fun fetchOldValue(): ValueT = computeOldValue(
+        retrievalMode = RetrievalMode.Fetch,
+    )
 
     final override fun sampleOldValue(
         context: Transaction.ProcessingContext,
-    ): ValueT {
-        when (val cachedOldValue = this.cachedOldValue) {
-            null -> {
-                val computedOldValue = computeOldValue(
-                    retrievalMode = RetrievalMode.Sample(
-                        context = context,
-                    ),
-                )
-
-                this.cachedOldValue = CellVertex.StableValue(
-                    value = computedOldValue,
-                )
-
-                ensureMarkedDirty(
-                    context = context,
-                )
-
-                return computedOldValue
-            }
-
-            else -> {
-                return cachedOldValue.value
-            }
-        }
-    }
+    ): ValueT = sampleValueCaching(
+        context = context,
+        getCachedValue = this::cachedOldValue,
+        setCachedValue = this::cachedOldValue::set,
+        computeValue = ::computeOldValue,
+    )
 
     final override fun visit(
         context: Transaction.ProcessingContext,
@@ -82,7 +59,7 @@ abstract class BaseDerivedCellVertex<ValueT> : BaseDynamicCellVertex<ValueT>(), 
     }
 
     final override fun reset(
-        tag: BaseDynamicCellVertex.Tag,
+        tag: Tag,
     ) {
         cachedOldValue = null
     }

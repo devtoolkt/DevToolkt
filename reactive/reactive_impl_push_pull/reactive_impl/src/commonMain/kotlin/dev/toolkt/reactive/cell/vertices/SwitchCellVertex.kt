@@ -2,13 +2,11 @@ package dev.toolkt.reactive.cell.vertices
 
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.Cell
-import dev.toolkt.reactive.cell.ConstCell
-import dev.toolkt.reactive.cell.OperatedCell
 import dev.toolkt.reactive.cell.vertices.CellVertex.RetrievalMode
 
 class SwitchCellVertex<ValueT>(
     private val outerCellVertex: CellVertex<Cell<ValueT>>,
-) : BaseDerivedCellVertex<ValueT>() {
+) : BaseDerivedDynamicCellVertex<ValueT>() {
     private var innerCellVertex: CellVertex<ValueT>? = null
 
     override fun processActivating(
@@ -27,88 +25,78 @@ class SwitchCellVertex<ValueT>(
             is CellVertex.EffectiveUpdate -> outerUpdate.updatedValue
         }
 
-        when (newInnerCell) {
-            is ConstCell -> {
-                innerCellVertex = null
+        val newInnerCellVertex = newInnerCell.vertex
 
-                return CellVertex.EffectiveUpdate(
-                    updatedValue = newInnerCell.value,
-                )
-            }
+        innerCellVertex = newInnerCellVertex
 
-            is OperatedCell -> {
-                val newInnerCellVertex = newInnerCell.vertex
-
-                innerCellVertex = newInnerCellVertex
-
-                return newInnerCellVertex.pullUpdateObserving(
+        return when (newInnerCellVertex) {
+            is InertCellVertex -> CellVertex.EffectiveUpdate(
+                updatedValue = newInnerCellVertex.sampleOldValue(
                     context = context,
-                    dependentVertex = this,
-                )
-            }
+                ),
+            )
+
+            is DynamicCellVertex -> newInnerCellVertex.pullUpdateObserving(
+                context = context,
+                dependentVertex = this,
+            )
         }
     }
 
     override fun processFollowing(
         context: Transaction.ProcessingContext,
     ): CellVertex.Update<ValueT> {
+        val innerCellVertex =
+            this.innerCellVertex ?: throw IllegalStateException("Inner cell vertex is null in following phase")
+
         val outerUpdate = outerCellVertex.pullUpdateSubsequent(
             context = context,
         )
 
-        when (outerUpdate) {
-            CellVertex.NilUpdate -> {
-                return when (val innerCellVertex = this.innerCellVertex) {
-                    null -> CellVertex.NilUpdate
-
-                    else -> innerCellVertex.pullUpdateSubsequent(
-                        context = context,
-                    )
-                }
-            }
+        return when (outerUpdate) {
+            CellVertex.NilUpdate -> innerCellVertex.pullUpdateSubsequent(
+                context = context,
+            )
 
             is CellVertex.EffectiveUpdate -> {
-                when (val updatedInnerCell = outerUpdate.updatedValue) {
-                    is ConstCell -> {
-                        innerCellVertex = null
+                val updatedInnerCell = outerUpdate.updatedValue
+                val updatedInnerCellVertex = updatedInnerCell.vertex
 
-                        return CellVertex.EffectiveUpdate(
-                            updatedValue = updatedInnerCell.value,
+                this.innerCellVertex = updatedInnerCellVertex
+
+                when (updatedInnerCellVertex) {
+                    is InertCellVertex -> {
+                        CellVertex.EffectiveUpdate(
+                            updatedValue = updatedInnerCellVertex.sampleOldValue(
+                                context = context,
+                            ),
                         )
                     }
 
-                    is OperatedCell -> {
-                        val newInnerCellVertex = updatedInnerCell.vertex
+                    is DynamicCellVertex -> {
+                        val updatedInnerUpdate = when {
+                            innerCellVertex == updatedInnerCellVertex -> innerCellVertex.pullUpdateSubsequent(
+                                context = context,
+                            )
 
-                        val newInnerUpdate = when (val innerCellVertex = this.innerCellVertex) {
-                            newInnerCellVertex -> {
-                                innerCellVertex.pullUpdateSubsequent(
-                                    context = context,
-                                )
-                            }
-
-                            else -> {
-                                innerCellVertex?.unobserve(
-                                    dependentVertex = this,
-                                )
-
-                                this.innerCellVertex = newInnerCellVertex
-
-                                newInnerCellVertex.pullUpdateObserving(
-                                    context = context,
+                            else -> updatedInnerCellVertex.pullUpdateObserving(
+                                context = context,
+                                dependentVertex = this,
+                            ).also {
+                                innerCellVertex.unobserve(
                                     dependentVertex = this,
                                 )
                             }
                         }
 
-                        return when (newInnerUpdate) {
+                        when (updatedInnerUpdate) {
                             CellVertex.NilUpdate -> CellVertex.EffectiveUpdate(
-                                updatedValue = newInnerCellVertex.sampleOldValue(
+                                updatedValue = updatedInnerCellVertex.sampleOldValue(
                                     context = context,
                                 ),
                             )
 
-                            is CellVertex.EffectiveUpdate -> newInnerUpdate
+                            is CellVertex.EffectiveUpdate -> updatedInnerUpdate
                         }
                     }
                 }
@@ -121,22 +109,14 @@ class SwitchCellVertex<ValueT>(
             dependentVertex = this,
         )
 
-        // TODO: Introduce an activation context that would allow caching such values?
-        when (val innerCell = outerCellVertex.fetchOldValue()) {
-            is ConstCell -> {
-                innerCellVertex = null
-            }
+        val innerCell = outerCellVertex.fetchOldValue()
+        val innerCellVertex = innerCell.vertex
 
-            is OperatedCell -> {
-                val innerCellVertex = innerCell.vertex
+        this.innerCellVertex = innerCellVertex
 
-                this.innerCellVertex = innerCellVertex
-
-                innerCellVertex.observe(
-                    dependentVertex = this,
-                )
-            }
-        }
+        innerCellVertex.observe(
+            dependentVertex = this,
+        )
     }
 
     override fun deactivate() {
@@ -158,12 +138,10 @@ class SwitchCellVertex<ValueT>(
             retrievalMode = retrievalMode,
         )
 
-        return when (stableOuterCell) {
-            is ConstCell -> stableOuterCell.value
+        val stableOuterCellVertex = stableOuterCell.vertex
 
-            is OperatedCell -> stableOuterCell.vertex.retrieve(
-                retrievalMode = retrievalMode,
-            )
-        }
+        return stableOuterCellVertex.retrieve(
+            retrievalMode = retrievalMode,
+        )
     }
 }

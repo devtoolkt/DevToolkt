@@ -5,7 +5,7 @@ import dev.toolkt.reactive.BaseVertex
 import dev.toolkt.reactive.DependentVertex
 import dev.toolkt.reactive.Transaction
 
-abstract class BaseDynamicCellVertex<ValueT> : BaseDynamicVertex(), CellVertex<ValueT> {
+abstract class BaseDynamicCellVertex<ValueT> : BaseDynamicVertex(), DynamicCellVertex<ValueT> {
     data object Tag
 
     private var cachedUpdate: CellVertex.Update<ValueT>? = null
