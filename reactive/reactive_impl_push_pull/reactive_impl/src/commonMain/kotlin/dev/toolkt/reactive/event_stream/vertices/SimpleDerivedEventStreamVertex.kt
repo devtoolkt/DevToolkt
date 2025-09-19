@@ -1,9 +1,7 @@
-package dev.toolkt.reactive.cell.vertices
+package dev.toolkt.reactive.event_stream.vertices
 
 import dev.toolkt.reactive.DependentVertex
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.event_stream.vertices.DerivedEventStreamVertex
-import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.Occurrence
 
 abstract class SimpleDerivedEventStreamVertex<ValueT> : DerivedEventStreamVertex<ValueT>() {

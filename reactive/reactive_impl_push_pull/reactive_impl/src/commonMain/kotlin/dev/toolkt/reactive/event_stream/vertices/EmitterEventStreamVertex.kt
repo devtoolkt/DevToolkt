@@ -1,11 +1,8 @@
-package dev.toolkt.reactive.cell.vertices
+package dev.toolkt.reactive.event_stream.vertices
 
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.event_stream.vertices.BaseEventStreamVertex
-import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.EffectiveOccurrence
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.Occurrence
-import dev.toolkt.reactive.event_stream.vertices.InherentEventStreamVertex
 
 class EmitterEventStreamVertex<EventT>() : InherentEventStreamVertex<EventT>() {
     private var sourceOccurrence: Occurrence<EventT> = EventStreamVertex.NilOccurrence
@@ -24,7 +21,7 @@ class EmitterEventStreamVertex<EventT>() : InherentEventStreamVertex<EventT>() {
     }
 
     override fun reset(
-        tag: BaseEventStreamVertex.Tag,
+        tag: Tag,
     ) {
         sourceOccurrence = EventStreamVertex.NilOccurrence
     }

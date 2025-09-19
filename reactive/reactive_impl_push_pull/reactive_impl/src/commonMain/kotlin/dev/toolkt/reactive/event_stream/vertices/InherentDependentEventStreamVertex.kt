@@ -1,9 +1,7 @@
-package dev.toolkt.reactive.cell.vertices
+package dev.toolkt.reactive.event_stream.vertices
 
 import dev.toolkt.reactive.DependentVertex
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex
-import dev.toolkt.reactive.event_stream.vertices.InherentEventStreamVertex
 import dev.toolkt.reactive.globalFinalizationRegistry
 
 abstract class InherentDependentEventStreamVertex<EventT>() : InherentEventStreamVertex<EventT>(), DependentVertex {

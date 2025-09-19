@@ -1,7 +1,7 @@
 package dev.toolkt.reactive.event_stream
 
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.cell.vertices.EmitterEventStreamVertex
+import dev.toolkt.reactive.event_stream.vertices.EmitterEventStreamVertex
 
 class EmitterEventStream<EventT> : OperatedEventStream<EventT> {
     /**
