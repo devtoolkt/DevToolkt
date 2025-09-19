@@ -43,7 +43,9 @@ sealed interface Cell<out ValueT> {
 
         fun <ValueT> of(
             value: ValueT,
-        ): Cell<ValueT> = TODO()
+        ): Cell<ValueT> = ConstCell(
+            value = value,
+        )
 
         fun <ValueT> switch(
             outerCell: Cell<Cell<ValueT>>,

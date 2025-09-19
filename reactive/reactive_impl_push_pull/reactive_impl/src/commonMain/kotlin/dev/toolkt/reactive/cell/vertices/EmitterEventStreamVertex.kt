@@ -18,11 +18,7 @@ class EmitterEventStreamVertex<EventT>() : InherentEventStreamVertex<EventT>() {
             event = event,
         )
 
-        ensureMarkedDirty(
-            context = context,
-        )
-
-        enqueueDependentsForVisiting(
+        ensureProcessedSubsequently(
             context = context,
         )
     }

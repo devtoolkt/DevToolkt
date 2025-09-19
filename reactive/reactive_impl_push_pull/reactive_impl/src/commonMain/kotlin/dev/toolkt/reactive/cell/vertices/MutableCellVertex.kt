@@ -21,11 +21,7 @@ class MutableCellVertex<ValueT>(
             updatedValue = newValue,
         )
 
-        ensureMarkedDirty(
-            context = context,
-        )
-
-        enqueueDependentsForVisiting(
+        ensureProcessedSubsequently(
             context = context,
         )
     }
