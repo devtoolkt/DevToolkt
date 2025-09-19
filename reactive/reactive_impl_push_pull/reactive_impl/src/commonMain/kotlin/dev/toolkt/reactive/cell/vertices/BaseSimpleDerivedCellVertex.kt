@@ -4,7 +4,7 @@ import dev.toolkt.reactive.DependentVertex
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.cell.vertices.CellVertex.Update
 
-abstract class BaseSimpleDerivedCellVertex<ValueT> : BaseDerivedCellVertex<ValueT>() {
+abstract class BaseSimpleDerivedCellVertex<ValueT> : BaseDerivedDynamicCellVertex<ValueT>() {
     sealed interface ProcessingMode {
         fun <ValueT> pullUpdate(
             context: Transaction.ProcessingContext,

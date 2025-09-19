@@ -4,7 +4,7 @@ import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.PureContext
 import dev.toolkt.reactive.SubscriptionVertex
 import dev.toolkt.reactive.cell.Cell
-import dev.toolkt.reactive.cell.DerivedCell
+import dev.toolkt.reactive.cell.OperatedCell
 import dev.toolkt.reactive.cell.vertices.HoldCellVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamFilterVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamMapNotNullVertex
@@ -195,7 +195,7 @@ context(momentContext: MomentContext) fun <ValueT> EventStream<ValueT>.hold(
 ): Cell<ValueT> = when (this) {
     NeverEventStream -> Cell.of(value = initialValue)
 
-    is OperatedEventStream -> DerivedCell(
+    is OperatedEventStream -> OperatedCell(
         HoldCellVertex.construct(
             context = momentContext.context,
             sourceEventStreamVertex = this.vertex,

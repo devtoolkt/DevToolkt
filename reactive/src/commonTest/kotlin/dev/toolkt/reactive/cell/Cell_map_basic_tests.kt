@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 @Suppress("ClassName")
-class Cell_map_tests {
+class Cell_map_basic_tests {
     private fun setup(
         initialSourceValue: Int,
     ): Pair<Cell<String>, ReactiveTest<Int>> = ReactiveTest.setup {

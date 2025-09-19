@@ -1,8 +1,14 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
+import dev.toolkt.reactive.cell.vertices.CellVertex
+import dev.toolkt.reactive.cell.vertices.DynamicCellVertex
 import dev.toolkt.reactive.cell.vertices.DynamicMap2CellVertex
 import dev.toolkt.reactive.cell.vertices.DynamicMapCellVertex
+import dev.toolkt.reactive.cell.vertices.InertCellVertex
+import dev.toolkt.reactive.cell.vertices.InertMap2CellVertex
+import dev.toolkt.reactive.cell.vertices.InertMapCellVertex
+import dev.toolkt.reactive.cell.vertices.PureCellVertex
 import dev.toolkt.reactive.cell.vertices.SwitchCellVertex
 import dev.toolkt.reactive.event_stream.DerivedEventStream
 import dev.toolkt.reactive.event_stream.EventStream
@@ -14,24 +20,25 @@ sealed interface Cell<out ValueT> {
             cell1: Cell<ValueT1>,
             cell2: Cell<ValueT2>,
             transform: (ValueT1, ValueT2) -> ResultT,
-        ): Cell<ResultT> = when (cell1) {
-            is ConstCell -> cell2.map {
-                transform(cell1.value, it)
-            }
+        ): Cell<ResultT> {
+            val cell1Vertex = cell1.vertex
+            val cell2Vertex = cell2.vertex
 
-            is OperatedCell -> when (cell2) {
-                is ConstCell -> cell1.map {
-                    transform(it, cell2.value)
-                }
-
-                is OperatedCell -> DerivedCell(
-                    DynamicMap2CellVertex(
-                        sourceCell1Vertex = cell1.vertex,
-                        sourceCell2Vertex = cell2.vertex,
+            return OperatedCell(
+                when (cell1Vertex) {
+                    is InertCellVertex if cell2Vertex is InertCellVertex -> InertMap2CellVertex(
+                        sourceCell1Vertex = cell1Vertex,
+                        sourceCell2Vertex = cell2Vertex,
                         transform = transform,
-                    ),
-                )
-            }
+                    )
+
+                    else -> DynamicMap2CellVertex(
+                        sourceCell1Vertex = cell1Vertex,
+                        sourceCell2Vertex = cell2Vertex,
+                        transform = transform,
+                    )
+                },
+            )
         }
 
         fun <ValueT1, ValueT2, ValueT3, ResultT> map3(
@@ -43,60 +50,67 @@ sealed interface Cell<out ValueT> {
 
         fun <ValueT> of(
             value: ValueT,
-        ): Cell<ValueT> = ConstCell(
-            value = value,
+        ): Cell<ValueT> = OperatedCell(
+            vertex = PureCellVertex(
+                value = value,
+            ),
         )
 
         fun <ValueT> switch(
             outerCell: Cell<Cell<ValueT>>,
-        ): Cell<ValueT> = when (outerCell) {
-            is ConstCell -> outerCell.value
+        ): Cell<ValueT> = OperatedCell(
+            vertex = when (val outerCellVertex = outerCell.vertex) {
+                is InertCellVertex -> {
+                    val inertInnerCell = outerCellVertex.fetchOldValue()
 
-            is OperatedCell -> DerivedCell(
-                SwitchCellVertex(
+                    inertInnerCell.vertex
+                }
+
+                is DynamicCellVertex -> SwitchCellVertex(
                     outerCellVertex = outerCell.vertex,
-                ),
-            )
-        }
+                )
+            },
+        )
 
         fun <ValueT> divert(
             outerCell: Cell<EventStream<ValueT>>,
         ): EventStream<ValueT> = TODO()
     }
+
+    val vertex: CellVertex<ValueT>
 }
 
-context(momentContext: MomentContext) fun <ValueT> Cell<ValueT>.sample(): ValueT = when (this) {
-    is ConstCell -> TODO()
-
-    is OperatedCell -> vertex.sampleOldValue(
-        context = momentContext.context,
-    )
-}
+context(momentContext: MomentContext) fun <ValueT> Cell<ValueT>.sample(): ValueT = vertex.sampleOldValue(
+    context = momentContext.context,
+)
 
 fun <ValueT, TransformedValueT> Cell<ValueT>.map(
     transform: (ValueT) -> TransformedValueT,
-): Cell<TransformedValueT> = when (this) {
-    is ConstCell -> TODO()
-
-    is OperatedCell -> DerivedCell(
-        DynamicMapCellVertex(
-            sourceCellVertex = this.vertex,
+): Cell<TransformedValueT> = OperatedCell(
+    vertex = when (val vertex = this.vertex) {
+        is InertCellVertex -> InertMapCellVertex(
+            sourceCellVertex = vertex,
             transform = transform,
-        ),
-    )
-}
+        )
+
+        is DynamicCellVertex -> DynamicMapCellVertex(
+            sourceCellVertex = vertex,
+            transform = transform,
+        )
+    },
+)
 
 // TODO: Optimize this
 val <ValueT> Cell<ValueT>.newValues: EventStream<ValueT>
     get() = updatedValues
 
 val <ValueT> Cell<ValueT>.updatedValues: EventStream<ValueT>
-    get() = when (this) {
-        is ConstCell -> TODO()
+    get() = when (val vertex = this.vertex) {
+        is InertCellVertex -> TODO()
 
-        is OperatedCell -> DerivedEventStream(
+        is DynamicCellVertex -> DerivedEventStream(
             vertex = UpdatedValuesEventStreamVertex(
-                sourceCellVertex = this.vertex,
+                sourceCellVertex = vertex,
             )
         )
     }

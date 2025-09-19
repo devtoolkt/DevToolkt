@@ -1,6 +1,8 @@
 package dev.toolkt.reactive
 
 import dev.toolkt.core.platform.PlatformNativeSet
+import dev.toolkt.reactive.cell.vertices.CellVertex
+import dev.toolkt.reactive.cell.vertices.CellVertex.RetrievalMode
 
 abstract class BaseDynamicVertex : BaseVertex() {
     private val dependents = PlatformNativeSet<DependentVertex>()
