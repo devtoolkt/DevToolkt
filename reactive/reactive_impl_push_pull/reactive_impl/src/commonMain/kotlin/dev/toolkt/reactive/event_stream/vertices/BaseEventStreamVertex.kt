@@ -4,9 +4,8 @@ import dev.toolkt.reactive.BaseDynamicVertex
 import dev.toolkt.reactive.BaseVertex
 import dev.toolkt.reactive.DependentVertex
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.cell.vertices.DependencyEventStreamVertex
 
-abstract class BaseEventStreamVertex<EventT> : BaseDynamicVertex(), DependencyEventStreamVertex<EventT> {
+abstract class BaseEventStreamVertex<EventT> : BaseDynamicVertex(), EventStreamVertex<EventT> {
     data object Tag
 
     private var cachedOccurrence: EventStreamVertex.Occurrence<EventT>? = null

@@ -3,9 +3,8 @@ package dev.toolkt.reactive.event_stream.vertices
 import dev.toolkt.reactive.DependentVertex
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.Vertex
-import dev.toolkt.reactive.cell.vertices.DependencyEventStreamVertex
 
-abstract class DerivedEventStreamVertex<EventT> : BaseEventStreamVertex<EventT>(), DependencyEventStreamVertex<EventT>,
+abstract class DerivedEventStreamVertex<EventT> : BaseEventStreamVertex<EventT>(), EventStreamVertex<EventT>,
     DependentVertex, Vertex {
     private var cachedOccurrence: EventStreamVertex.Occurrence<EventT>? = null
 

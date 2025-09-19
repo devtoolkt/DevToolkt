@@ -1,13 +1,12 @@
 package dev.toolkt.reactive.event_stream.vertices
 
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.cell.vertices.DependencyEventStreamVertex
 import dev.toolkt.reactive.cell.vertices.SimpleDerivedEventStreamVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.NilOccurrence
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.Occurrence
 
 class EventStreamFilterVertex<EventT>(
-    private val sourceEventStreamVertex: DependencyEventStreamVertex<EventT>,
+    private val sourceEventStreamVertex: EventStreamVertex<EventT>,
     private val predicate: (EventT) -> Boolean,
 ) : SimpleDerivedEventStreamVertex<EventT>() {
     override fun process(

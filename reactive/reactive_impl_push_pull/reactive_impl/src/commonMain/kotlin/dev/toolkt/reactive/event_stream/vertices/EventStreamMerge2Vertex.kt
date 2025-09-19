@@ -1,13 +1,12 @@
 package dev.toolkt.reactive.event_stream.vertices
 
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.cell.vertices.DependencyEventStreamVertex
 import dev.toolkt.reactive.cell.vertices.SimpleDerivedEventStreamVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.NilOccurrence
 
 class EventStreamMerge2Vertex<EventT>(
-    private val sourceEventStream1Vertex: DependencyEventStreamVertex<EventT>,
-    private val sourceEventStream2Vertex: DependencyEventStreamVertex<EventT>,
+    private val sourceEventStream1Vertex: EventStreamVertex<EventT>,
+    private val sourceEventStream2Vertex: EventStreamVertex<EventT>,
 ) : SimpleDerivedEventStreamVertex<EventT>() {
     override fun process(
         context: Transaction.ProcessingContext,
