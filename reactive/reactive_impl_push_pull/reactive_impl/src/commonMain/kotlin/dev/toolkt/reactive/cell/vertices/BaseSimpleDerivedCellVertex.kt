@@ -8,14 +8,14 @@ abstract class BaseSimpleDerivedCellVertex<ValueT> : BaseDerivedCellVertex<Value
     sealed interface ProcessingMode {
         fun <ValueT> pullUpdate(
             context: Transaction.ProcessingContext,
-            sourceVertex: DependencyCellVertex<ValueT>,
+            sourceVertex: CellVertex<ValueT>,
             dependentVertex: DependentVertex,
         ): Update<ValueT>
 
         data object Activating : ProcessingMode {
             override fun <ValueT> pullUpdate(
                 context: Transaction.ProcessingContext,
-                sourceVertex: DependencyCellVertex<ValueT>,
+                sourceVertex: CellVertex<ValueT>,
                 dependentVertex: DependentVertex,
             ): Update<ValueT> = sourceVertex.pullUpdateObserving(
                 context = context,
@@ -26,7 +26,7 @@ abstract class BaseSimpleDerivedCellVertex<ValueT> : BaseDerivedCellVertex<Value
         data object Following : ProcessingMode {
             override fun <ValueT> pullUpdate(
                 context: Transaction.ProcessingContext,
-                sourceVertex: DependencyCellVertex<ValueT>,
+                sourceVertex: CellVertex<ValueT>,
                 dependentVertex: DependentVertex,
             ): Update<ValueT> = sourceVertex.pullUpdateSubsequent(
                 context = context,
@@ -48,7 +48,7 @@ abstract class BaseSimpleDerivedCellVertex<ValueT> : BaseDerivedCellVertex<Value
         processingMode = ProcessingMode.Following,
     )
 
-    protected fun <ValueT> DependencyCellVertex<ValueT>.pullUpdate(
+    protected fun <ValueT> CellVertex<ValueT>.pullUpdate(
         context: Transaction.ProcessingContext,
         processingMode: ProcessingMode,
     ): Update<ValueT> = processingMode.pullUpdate(

@@ -1,11 +1,11 @@
 package dev.toolkt.reactive.event_stream.vertices
 
 import dev.toolkt.reactive.Transaction
-import dev.toolkt.reactive.cell.vertices.DependencyCellVertex
+import dev.toolkt.reactive.cell.vertices.CellVertex
 import dev.toolkt.reactive.cell.vertices.toOccurrence
 
 class UpdatedValuesEventStreamVertex<ValueT>(
-    private val sourceCellVertex: DependencyCellVertex<ValueT>,
+    private val sourceCellVertex: CellVertex<ValueT>,
 ) : DerivedEventStreamVertex<ValueT>() {
     override fun processResuming(
         context: Transaction.ProcessingContext,
