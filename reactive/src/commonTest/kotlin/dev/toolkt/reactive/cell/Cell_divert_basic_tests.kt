@@ -20,7 +20,6 @@ import kotlin.test.assertNotNull
  * O╶╶╶▶ D
  * ```
  */
-@Ignore // TODO: Implement this logic
 @Suppress("ClassName")
 class Cell_divert_basic_tests {
     private enum class DivertCaseId {
@@ -44,12 +43,12 @@ class Cell_divert_basic_tests {
 
         // (I_2)
         val innerEventStream2 = extractEventStream(
-            selector = Stimulation::innerEvent1,
+            selector = Stimulation::innerEvent2,
         )
 
         // (I_3)
         val innerEventStream3 = extractEventStream(
-            selector = Stimulation::innerEvent1,
+            selector = Stimulation::innerEvent3,
         )
 
         val divertCaseId = extractCell(

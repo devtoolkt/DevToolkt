@@ -6,12 +6,17 @@ import dev.toolkt.reactive.SubscriptionVertex
 import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.OperatedCell
 import dev.toolkt.reactive.cell.vertices.HoldCellVertex
+import dev.toolkt.reactive.cell.vertices.PureCellVertex
+import dev.toolkt.reactive.event_stream.vertices.DynamicEventStreamVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamFilterVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamMapNotNullVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamMapVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamMerge2Vertex
+import dev.toolkt.reactive.event_stream.vertices.EventStreamMerge3Vertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamSingleVertex
 import dev.toolkt.reactive.event_stream.vertices.EventStreamTakeVertex
+import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex
+import dev.toolkt.reactive.event_stream.vertices.SilentEventStreamVertex
 
 sealed interface EventStream<out EventT> {
     /**
@@ -77,62 +82,65 @@ sealed interface EventStream<out EventT> {
         context(pureContext: PureContext) fun <EventT> merge2(
             eventStream1: EventStream<EventT>,
             eventStream2: EventStream<EventT>,
-        ): EventStream<EventT> {
-            val operatedEventStream1 = eventStream1 as? OperatedEventStream ?: return eventStream2
-            val operatedEventStream2 = eventStream2 as? OperatedEventStream ?: return NeverEventStream
-
-            return DerivedEventStream(
-                vertex = EventStreamMerge2Vertex(
-                    sourceEventStream1Vertex = operatedEventStream1.vertex,
-                    sourceEventStream2Vertex = operatedEventStream2.vertex,
-                ),
+        ): EventStream<EventT> = OperatedEventStream(
+            EventStreamMerge2Vertex.construct0(
+                uncheckedSourceEventStream1Vertex = eventStream1.vertex,
+                uncheckedSourceEventStream2Vertex = eventStream2.vertex,
             )
-        }
+        )
 
         context(pureContext: PureContext) fun <EventT> merge3(
             eventStream1: EventStream<EventT>,
             eventStream2: EventStream<EventT>,
             eventStream3: EventStream<EventT>,
-        ): EventStream<EventT> = TODO()
+        ): EventStream<EventT> = OperatedEventStream(
+            EventStreamMerge3Vertex.construct0(
+                uncheckedSourceEventStream1Vertex = eventStream1.vertex,
+                uncheckedSourceEventStream2Vertex = eventStream2.vertex,
+                uncheckedSourceEventStream3Vertex = eventStream3.vertex,
+            )
+        )
     }
+
+    val vertex: EventStreamVertex<EventT>
 }
 
 context(pureContext: PureContext) fun <EventT, TransformedEventT> EventStream<EventT>.map(
     transform: (EventT) -> TransformedEventT,
-): EventStream<TransformedEventT> = when (this) {
-    NeverEventStream -> NeverEventStream
+): EventStream<TransformedEventT> = OperatedEventStream(
+    vertex = when (val vertex = this.vertex) {
+        SilentEventStreamVertex -> SilentEventStreamVertex
 
-    is OperatedEventStream -> DerivedEventStream(
-        vertex = EventStreamMapVertex(
-            sourceEventStreamVertex = this.vertex,
+        is DynamicEventStreamVertex -> EventStreamMapVertex(
+            sourceEventStreamVertex = vertex,
             transform = { _, event ->
                 transform(event)
             },
         )
-    )
-}
+    }
+)
 
 context(pureContext: PureContext) fun <EventT, TransformedEventT : Any> EventStream<EventT>.mapNotNull(
     transform: (EventT) -> TransformedEventT?,
-): EventStream<TransformedEventT> = when (this) {
-    NeverEventStream -> NeverEventStream
+): EventStream<TransformedEventT> = OperatedEventStream(
+    vertex = when (val vertex = this.vertex) {
+        SilentEventStreamVertex -> SilentEventStreamVertex
 
-    is OperatedEventStream -> DerivedEventStream(
-        vertex = EventStreamMapNotNullVertex(
-            sourceEventStreamVertex = this.vertex,
+        is DynamicEventStreamVertex -> EventStreamMapNotNullVertex(
+            sourceEventStreamVertex = vertex,
             transform = transform,
         )
-    )
-}
+    }
+)
 
 context(pureContext: PureContext) fun <EventT, TransformedEventT> EventStream<EventT>.mapAt(
     transform: context(MomentContext) (EventT) -> TransformedEventT,
-): EventStream<TransformedEventT> = when (this) {
-    NeverEventStream -> NeverEventStream
+): EventStream<TransformedEventT> = OperatedEventStream(
+    vertex = when (val vertex = this.vertex) {
+        SilentEventStreamVertex -> SilentEventStreamVertex
 
-    is OperatedEventStream -> DerivedEventStream(
-        vertex = EventStreamMapVertex(
-            sourceEventStreamVertex = this.vertex,
+        is DynamicEventStreamVertex -> EventStreamMapVertex(
+            sourceEventStreamVertex = vertex,
             transform = { context, event ->
                 MomentContext(
                     context = context,
@@ -141,32 +149,34 @@ context(pureContext: PureContext) fun <EventT, TransformedEventT> EventStream<Ev
                 }
             },
         )
-    )
-}
+    },
+)
 
 fun <EventT> EventStream<EventT>.filter(
     predicate: (EventT) -> Boolean,
-): EventStream<EventT> = when (this) {
-    NeverEventStream -> NeverEventStream
+): EventStream<EventT> = OperatedEventStream(
+    vertex = when (val vertex = this.vertex) {
+        SilentEventStreamVertex -> SilentEventStreamVertex
 
-    is OperatedEventStream -> DerivedEventStream(
-        vertex = EventStreamFilterVertex(
-            sourceEventStreamVertex = this.vertex,
+        is DynamicEventStreamVertex -> EventStreamFilterVertex(
+            sourceEventStreamVertex = vertex,
             predicate = predicate,
         )
-    )
-}
+    },
+)
 
-context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.single(): EventStream<EventT> = when (this) {
-    NeverEventStream -> NeverEventStream
+context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.single(): EventStream<EventT> =
+    OperatedEventStream(
+        vertex = when (val vertex = this.vertex) {
+            SilentEventStreamVertex -> SilentEventStreamVertex
 
-    is OperatedEventStream -> DerivedEventStream(
-        vertex = EventStreamSingleVertex.construct(
-            context = momentContext.context,
-            sourceEventStreamVertex = this.vertex,
-        ),
+            is DynamicEventStreamVertex -> EventStreamSingleVertex.construct(
+                context = momentContext.context,
+                sourceEventStreamVertex = vertex,
+            )
+        }
     )
-}
+
 
 context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.take(
     count: Int,
@@ -177,32 +187,35 @@ context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.take(
 
     count == 1 -> single()
 
-    else -> when (this) {
-        NeverEventStream -> NeverEventStream
+    else -> OperatedEventStream(
+        vertex = when (val vertex = this.vertex) {
+            SilentEventStreamVertex -> SilentEventStreamVertex
 
-        is OperatedEventStream -> DerivedEventStream(
-            vertex = EventStreamTakeVertex.construct(
+            is DynamicEventStreamVertex -> EventStreamTakeVertex.construct(
                 context = momentContext.context,
-                sourceEventStreamVertex = this.vertex,
+                sourceEventStreamVertex = vertex,
                 totalCount = count,
-            ),
-        )
-    }
+            )
+        }
+    )
 }
+
 
 context(momentContext: MomentContext) fun <ValueT> EventStream<ValueT>.hold(
     initialValue: ValueT,
-): Cell<ValueT> = when (this) {
-    NeverEventStream -> Cell.of(value = initialValue)
+): Cell<ValueT> = OperatedCell(
+    vertex = when (val vertex = this.vertex) {
+        SilentEventStreamVertex -> PureCellVertex(
+            value = initialValue,
+        )
 
-    is OperatedEventStream -> OperatedCell(
-        HoldCellVertex.construct(
+        is DynamicEventStreamVertex -> HoldCellVertex.construct(
             context = momentContext.context,
-            sourceEventStreamVertex = this.vertex,
+            sourceEventStreamVertex = vertex,
             initialValue = initialValue,
-        ),
-    )
-}
+        )
+    }
+)
 
 /**
  * Subscribe to this event stream.
@@ -211,16 +224,16 @@ context(momentContext: MomentContext) fun <ValueT> EventStream<ValueT>.hold(
  */
 fun <EventT> EventStream<EventT>.subscribe(
     handle: (EventT) -> Unit,
-): EventStream.Subscription? = when (this) {
-    NeverEventStream -> null
+): EventStream.Subscription? = when (val vertex = this.vertex) {
+    SilentEventStreamVertex -> null
 
-    is OperatedEventStream -> {
+    is DynamicEventStreamVertex -> {
         val subscriptionVertex = SubscriptionVertex(
             sourceEventStreamVertex = this.vertex,
             handle = handle,
         )
 
-        this.vertex.subscribe(
+        vertex.subscribe(
             dependentVertex = subscriptionVertex,
         )
 

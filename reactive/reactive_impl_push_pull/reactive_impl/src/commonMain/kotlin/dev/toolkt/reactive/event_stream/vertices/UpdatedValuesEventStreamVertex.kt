@@ -6,7 +6,7 @@ import dev.toolkt.reactive.cell.vertices.toOccurrence
 
 class UpdatedValuesEventStreamVertex<ValueT>(
     private val sourceCellVertex: CellVertex<ValueT>,
-) : DerivedEventStreamVertex<ValueT>() {
+) : BaseDerivedEventStreamVertex<ValueT>() {
     override fun processResuming(
         context: Transaction.ProcessingContext,
     ): EventStreamVertex.Occurrence<ValueT> = sourceCellVertex.pullUpdateObserving(

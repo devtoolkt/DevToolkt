@@ -9,8 +9,7 @@ import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.NilOccurrence
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.Occurrence
 import kotlin.jvm.JvmInline
 
-// Thought: Merge with `DependentEventStreamVertex`?
-interface EventStreamVertex<EventT> : Vertex {
+sealed interface EventStreamVertex<out EventT> : Vertex {
     sealed interface Occurrence<out EventT>
 
     data object NilOccurrence : Occurrence<Nothing>
@@ -53,6 +52,7 @@ interface EventStreamVertex<EventT> : Vertex {
      * It's required that this vertex has at least one dependent (if it supports resuming/pausing, it's required
      * that this vertex is resumed).
      */
+    // TODO: Rename?
     fun pullOccurrenceSubsequent(
         context: Transaction.ProcessingContext,
     ): Occurrence<EventT>

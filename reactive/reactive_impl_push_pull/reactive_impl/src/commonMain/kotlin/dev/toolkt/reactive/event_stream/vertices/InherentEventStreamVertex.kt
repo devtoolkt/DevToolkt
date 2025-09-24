@@ -3,7 +3,7 @@ package dev.toolkt.reactive.event_stream.vertices
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.Occurrence
 
-abstract class InherentEventStreamVertex<EventT>() : BaseEventStreamVertex<EventT>() {
+abstract class InherentEventStreamVertex<EventT>() : BaseDynamicEventStreamVertex<EventT>() {
     final override fun processSubscribed(
         context: Transaction.ProcessingContext,
         wasFirst: Boolean,
