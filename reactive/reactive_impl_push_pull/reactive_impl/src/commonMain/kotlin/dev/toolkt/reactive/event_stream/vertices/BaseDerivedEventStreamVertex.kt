@@ -4,8 +4,7 @@ import dev.toolkt.reactive.DependentVertex
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.Vertex
 
-abstract class DerivedEventStreamVertex<EventT> : BaseEventStreamVertex<EventT>(), EventStreamVertex<EventT>,
-    DependentVertex, Vertex {
+abstract class BaseDerivedEventStreamVertex<EventT> : BaseDynamicEventStreamVertex<EventT>(), DependentVertex, Vertex {
     private var cachedOccurrence: EventStreamVertex.Occurrence<EventT>? = null
 
     final override fun visit(

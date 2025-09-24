@@ -4,7 +4,7 @@ import dev.toolkt.reactive.DependentVertex
 import dev.toolkt.reactive.Transaction
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex.Occurrence
 
-abstract class SimpleDerivedEventStreamVertex<ValueT> : DerivedEventStreamVertex<ValueT>() {
+abstract class SimpleDerivedEventStreamVertex<ValueT> : BaseDerivedEventStreamVertex<ValueT>() {
     sealed interface ProcessingMode {
         fun <ValueT> pullOccurrence(
             context: Transaction.ProcessingContext,

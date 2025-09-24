@@ -2,6 +2,6 @@ package dev.toolkt.reactive.event_stream
 
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex
 
-sealed interface OperatedEventStream<EventT> : EventStream<EventT> {
-    val vertex: EventStreamVertex<EventT>
-}
+internal class OperatedEventStream<EventT>(
+    override val vertex: EventStreamVertex<EventT>,
+) : EventStream<EventT>

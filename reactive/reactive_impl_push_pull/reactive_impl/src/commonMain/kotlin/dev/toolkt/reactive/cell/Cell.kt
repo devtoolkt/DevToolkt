@@ -2,6 +2,7 @@ package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.vertices.CellVertex
+import dev.toolkt.reactive.cell.vertices.DivertEventStreamVertex
 import dev.toolkt.reactive.cell.vertices.DynamicCellVertex
 import dev.toolkt.reactive.cell.vertices.DynamicMap2CellVertex
 import dev.toolkt.reactive.cell.vertices.DynamicMap3CellVertex
@@ -12,8 +13,9 @@ import dev.toolkt.reactive.cell.vertices.InertMap3CellVertex
 import dev.toolkt.reactive.cell.vertices.InertMapCellVertex
 import dev.toolkt.reactive.cell.vertices.PureCellVertex
 import dev.toolkt.reactive.cell.vertices.SwitchCellVertex
-import dev.toolkt.reactive.event_stream.DerivedEventStream
+import dev.toolkt.reactive.event_stream.OperatedEventStream
 import dev.toolkt.reactive.event_stream.EventStream
+import dev.toolkt.reactive.event_stream.vertices.SilentEventStreamVertex
 import dev.toolkt.reactive.event_stream.vertices.UpdatedValuesEventStreamVertex
 
 sealed interface Cell<out ValueT> {
@@ -99,7 +101,19 @@ sealed interface Cell<out ValueT> {
 
         fun <ValueT> divert(
             outerCell: Cell<EventStream<ValueT>>,
-        ): EventStream<ValueT> = TODO()
+        ): EventStream<ValueT> = OperatedEventStream(
+            vertex = when (val outerCellVertex = outerCell.vertex) {
+                is InertCellVertex -> {
+                    val inertInnerEventStream = outerCellVertex.fetchOldValue()
+
+                    inertInnerEventStream.vertex
+                }
+
+                is DynamicCellVertex -> DivertEventStreamVertex(
+                    outerEventStreamVertex = outerCell.vertex,
+                )
+            },
+        )
     }
 
     val vertex: CellVertex<ValueT>
@@ -130,12 +144,12 @@ val <ValueT> Cell<ValueT>.newValues: EventStream<ValueT>
     get() = updatedValues
 
 val <ValueT> Cell<ValueT>.updatedValues: EventStream<ValueT>
-    get() = when (val vertex = this.vertex) {
-        is InertCellVertex -> TODO()
+    get() = OperatedEventStream(
+        vertex = when (val vertex = this.vertex) {
+            is InertCellVertex -> SilentEventStreamVertex
 
-        is DynamicCellVertex -> DerivedEventStream(
-            vertex = UpdatedValuesEventStreamVertex(
+            is DynamicCellVertex -> UpdatedValuesEventStreamVertex(
                 sourceCellVertex = vertex,
             )
-        )
-    }
+        }
+    )
