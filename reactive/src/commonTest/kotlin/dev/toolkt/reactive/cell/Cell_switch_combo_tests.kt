@@ -9,7 +9,6 @@ import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.hold
 import dev.toolkt.reactive.event_stream.map
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -443,7 +442,6 @@ class Cell_switch_combo_tests {
         )
     }
 
-    @Ignore // FIXME: Flaky test
     @Test
     fun test_outerUpdate_thenNewInnerUpdate_newInnerInert_activeSwitch() {
         test_outerUpdate_thenNewInnerUpdate(
@@ -476,7 +474,6 @@ class Cell_switch_combo_tests {
         )
     }
 
-    @Ignore // FIXME: Flaky test
     @Test
     fun test_outerUpdate_thenNewInnerUpdate_newInnerDynamic_activeSwitch() {
         test_outerUpdate_thenNewInnerUpdate(
@@ -613,11 +610,10 @@ class Cell_switch_combo_tests {
         doSwitch.emit(Unit)
 
         asserter.assertUpdatedValueEquals(
-            expectedUpdatedValue = 20,
+            expectedUpdatedValue = 21,
         )
     }
 
-    @Ignore // FIXME: Flaky test
     @Test
     fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerInert_passive() {
         test_outerUpdate_simultaneousNewInnerUpdate(
@@ -626,7 +622,6 @@ class Cell_switch_combo_tests {
         )
     }
 
-    @Ignore // FIXME: Flaky test
     @Test
     fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerInert_activeUpdatedValues() {
         test_outerUpdate_simultaneousNewInnerUpdate(
@@ -635,7 +630,6 @@ class Cell_switch_combo_tests {
         )
     }
 
-    @Ignore // FIXME: Flaky test
     @Test
     fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerInert_activeNewValues() {
         test_outerUpdate_simultaneousNewInnerUpdate(
@@ -644,7 +638,6 @@ class Cell_switch_combo_tests {
         )
     }
 
-    @Ignore // FIXME: Flaky test
     @Test
     fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerInert_activeSwitch() {
         test_outerUpdate_simultaneousNewInnerUpdate(
@@ -653,7 +646,6 @@ class Cell_switch_combo_tests {
         )
     }
 
-    @Ignore // FIXME: Flaky test
     @Test
     fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerDynamic_passive() {
         test_outerUpdate_simultaneousNewInnerUpdate(
@@ -662,7 +654,6 @@ class Cell_switch_combo_tests {
         )
     }
 
-    @Ignore // FIXME: Flaky test
     @Test
     fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerDynamic_activeUpdatedValues() {
         test_outerUpdate_simultaneousNewInnerUpdate(
@@ -671,7 +662,6 @@ class Cell_switch_combo_tests {
         )
     }
 
-    @Ignore // FIXME: Flaky test
     @Test
     fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerDynamic_activeNewValues() {
         test_outerUpdate_simultaneousNewInnerUpdate(
@@ -680,7 +670,6 @@ class Cell_switch_combo_tests {
         )
     }
 
-    @Ignore // FIXME: Flaky test
     @Test
     fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerDynamic_activeSwitch() {
         test_outerUpdate_simultaneousNewInnerUpdate(

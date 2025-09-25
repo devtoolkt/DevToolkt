@@ -40,7 +40,6 @@ class Cell_switch_updatePropagation_preSwitched_outerUpdate_noNewInnerUpdate_tes
         )
     }
 
-    @Ignore // FIXME: Fix this case
     @Test
     fun test_updatePropagation_switch() {
         testedSetup.testUpdatePropagation(

@@ -12,34 +12,48 @@ class SwitchCellVertex<ValueT>(
     override fun processActivating(
         context: Transaction.ProcessingContext,
     ): CellVertex.Update<ValueT> {
-        val outerUpdate = outerCellVertex.pullUpdateObserving(
+        val outerCellUpdate = outerCellVertex.pullUpdateObserving(
             context = context,
             dependentVertex = this,
         )
 
-        val newInnerCell = when (outerUpdate) {
-            CellVertex.NilUpdate -> outerCellVertex.sampleOldValue(
-                context = context,
-            )
-
-            is CellVertex.EffectiveUpdate -> outerUpdate.updatedValue
-        }
-
-        val newInnerCellVertex = newInnerCell.vertex
-
-        innerCellVertex = newInnerCellVertex
-
-        return when (newInnerCellVertex) {
-            is InertCellVertex -> CellVertex.EffectiveUpdate(
-                updatedValue = newInnerCellVertex.sampleOldValue(
+        return when (outerCellUpdate) {
+            CellVertex.NilUpdate -> {
+                val oldInnerCell = outerCellVertex.sampleOldValue(
                     context = context,
-                ),
-            )
+                )
 
-            is DynamicCellVertex -> newInnerCellVertex.pullUpdateObserving(
-                context = context,
-                dependentVertex = this,
-            )
+                val oldInnerCellVertex = oldInnerCell.vertex
+
+                innerCellVertex = oldInnerCellVertex
+
+                return oldInnerCellVertex.pullUpdateObserving(
+                    context = context,
+                    dependentVertex = this,
+                )
+            }
+
+            is CellVertex.EffectiveUpdate -> {
+                val updatedInnerCell = outerCellUpdate.updatedValue
+                val updatedInnerCellVertex = updatedInnerCell.vertex
+
+                innerCellVertex = updatedInnerCellVertex
+
+                val updatedInnerCellUpdate = updatedInnerCellVertex.pullUpdateObserving(
+                    context = context,
+                    dependentVertex = this,
+                )
+
+                when (updatedInnerCellUpdate) {
+                    CellVertex.NilUpdate -> CellVertex.EffectiveUpdate(
+                        updatedValue = updatedInnerCellVertex.sampleOldValue(
+                            context = context,
+                        ),
+                    )
+
+                    is CellVertex.EffectiveUpdate -> updatedInnerCellUpdate
+                }
+            }
         }
     }
 
@@ -49,22 +63,22 @@ class SwitchCellVertex<ValueT>(
         val oldInnerCellVertex =
             this.innerCellVertex ?: throw IllegalStateException("Inner cell vertex is null in following phase")
 
-        val outerUpdate = outerCellVertex.pullUpdateSubsequent(
+        val outerCellUpdate = outerCellVertex.pullUpdateSubsequent(
             context = context,
         )
 
-        return when (outerUpdate) {
+        return when (outerCellUpdate) {
             CellVertex.NilUpdate -> oldInnerCellVertex.pullUpdateSubsequent(
                 context = context,
             )
 
             is CellVertex.EffectiveUpdate -> {
-                val updatedInnerCell = outerUpdate.updatedValue
+                val updatedInnerCell = outerCellUpdate.updatedValue
                 val updatedInnerCellVertex = updatedInnerCell.vertex
 
                 this.innerCellVertex = updatedInnerCellVertex
 
-                val updatedInnerUpdate = when {
+                val updatedInnerCellUpdate = when {
                     oldInnerCellVertex == updatedInnerCellVertex -> oldInnerCellVertex.pullUpdateSubsequent(
                         context = context,
                     )
@@ -79,14 +93,14 @@ class SwitchCellVertex<ValueT>(
                     }
                 }
 
-                when (updatedInnerUpdate) {
+                when (updatedInnerCellUpdate) {
                     CellVertex.NilUpdate -> CellVertex.EffectiveUpdate(
                         updatedValue = updatedInnerCellVertex.sampleOldValue(
                             context = context,
                         ),
                     )
 
-                    is CellVertex.EffectiveUpdate -> updatedInnerUpdate
+                    is CellVertex.EffectiveUpdate -> updatedInnerCellUpdate
                 }
             }
         }
