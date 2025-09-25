@@ -1,6 +1,7 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
+import dev.toolkt.reactive.cell.test_utils.CellObservationChannel
 import dev.toolkt.reactive.cell.test_utils.CellObservationStrategy
 import dev.toolkt.reactive.cell.test_utils.CellSamplingStrategy
 import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
@@ -134,24 +135,14 @@ class Cell_map3_combo_tests {
     }
 
     @Test
-    fun test_source1Update_activeUpdatedValues() {
-        test_source1Update(
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_source1Update_activeNewValues() {
-        test_source1Update(
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_source1Update_activeSwitch() {
-        test_source1Update(
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
-        )
+    fun test_source1Update_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_source1Update(
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 
     private fun test_source2Update(
@@ -215,24 +206,14 @@ class Cell_map3_combo_tests {
     }
 
     @Test
-    fun test_source2Update_activeUpdatedValues() {
-        test_source2Update(
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_source2Update_activeNewValues() {
-        test_source2Update(
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_source2Update_activeSwitch() {
-        test_source2Update(
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
-        )
+    fun test_source2Update_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_source2Update(
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 
     private fun test_source3Update(
@@ -296,24 +277,14 @@ class Cell_map3_combo_tests {
     }
 
     @Test
-    fun test_source3Update_activeUpdatedValues() {
-        test_source3Update(
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_source3Update_activeNewValues() {
-        test_source3Update(
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_source3Update_activeSwitch() {
-        test_source3Update(
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
-        )
+    fun test_source3Update_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_source3Update(
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 
     private fun test_mixedUpdates(
@@ -355,7 +326,9 @@ class Cell_map3_combo_tests {
             "$value1:$value2:$value3"
         }
 
-        val asserter = CellObservationStrategy.ActiveUpdatedValues.observeForTesting(
+        val asserter = CellObservationStrategy.Active(
+            observationChannel = CellObservationChannel.UpdatedValues,
+        ).observeForTesting(
             doTrigger = doUpdate,
             cell = map3Cell,
         )

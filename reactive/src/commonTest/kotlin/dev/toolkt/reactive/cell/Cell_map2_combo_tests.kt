@@ -1,6 +1,7 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
+import dev.toolkt.reactive.cell.test_utils.CellObservationChannel
 import dev.toolkt.reactive.cell.test_utils.CellObservationStrategy
 import dev.toolkt.reactive.cell.test_utils.CellSamplingStrategy
 import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
@@ -152,27 +153,15 @@ class Cell_map2_combo_tests {
     }
 
     @Test
-    fun test_source1Update_source2Inert_activeUpdatedValues() {
-        test_source1Update(
-            source2ConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_source1Update_source2Inert_activeNewValues() {
-        test_source1Update(
-            source2ConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_source1Update_source2Inert_activeSwitch() {
-        test_source1Update(
-            source2ConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
-        )
+    fun test_source1Update_source2Inert_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_source1Update(
+                source2ConstCellFactory = ConstCellFactory.Inert,
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 
     @Test
@@ -184,27 +173,15 @@ class Cell_map2_combo_tests {
     }
 
     @Test
-    fun test_source1Update_source2Dynamic_activeUpdatedValues() {
-        test_source1Update(
-            source2ConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_source1Update_source2Dynamic_activeNewValues() {
-        test_source1Update(
-            source2ConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_source1Update_source2Dynamic_activeSwitch() {
-        test_source1Update(
-            source2ConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
-        )
+    fun test_source1Update_source2Dynamic_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_source1Update(
+                source2ConstCellFactory = ConstCellFactory.Dynamic,
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 
     private fun test_source2Update(
@@ -251,27 +228,15 @@ class Cell_map2_combo_tests {
     }
 
     @Test
-    fun test_source2Update_source1Inert_activeUpdatedValues() {
-        test_source2Update(
-            source1ConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_source2Update_source1Inert_activeNewValues() {
-        test_source2Update(
-            source1ConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_source2Update_source1Inert_activeSwitch() {
-        test_source2Update(
-            source1ConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
-        )
+    fun test_source2Update_source1Dynamic_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_source2Update(
+                source1ConstCellFactory = ConstCellFactory.Dynamic,
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 
     @Test
@@ -283,27 +248,15 @@ class Cell_map2_combo_tests {
     }
 
     @Test
-    fun test_source2Update_source1Dynamic_activeUpdatedValues() {
-        test_source2Update(
-            source1ConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_source2Update_source1Dynamic_activeNewValues() {
-        test_source2Update(
-            source1ConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_source2Update_source1Dynamic_activeSwitch() {
-        test_source2Update(
-            source1ConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
-        )
+    fun test_source2Update_source1Inert_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_source2Update(
+                source1ConstCellFactory = ConstCellFactory.Inert,
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 
     private fun test_simultaneousUpdates(
@@ -352,23 +305,13 @@ class Cell_map2_combo_tests {
     }
 
     @Test
-    fun test_simultaneousUpdates_activeUpdatedValues() {
-        test_simultaneousUpdates(
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_simultaneousUpdates_activeNewValues() {
-        test_simultaneousUpdates(
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_simultaneousUpdates_activeSwitch() {
-        test_simultaneousUpdates(
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
-        )
+    fun test_simultaneousUpdates_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_simultaneousUpdates(
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 }

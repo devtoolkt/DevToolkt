@@ -1,6 +1,7 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
+import dev.toolkt.reactive.cell.test_utils.CellObservationChannel
 import dev.toolkt.reactive.cell.test_utils.CellObservationStrategy
 import dev.toolkt.reactive.cell.test_utils.CellSamplingStrategy
 import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
@@ -92,23 +93,13 @@ class Cell_map_combo_tests {
     }
 
     @Test
-    fun test_sourceUpdate_activeUpdatedValues() {
-        test_sourceUpdate(
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_sourceUpdate_activeNewValues() {
-        test_sourceUpdate(
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_sourceUpdate_activeSwitch() {
-        test_sourceUpdate(
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
-        )
+    fun test_sourceUpdate_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_sourceUpdate(
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 }
