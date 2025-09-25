@@ -1,6 +1,8 @@
 package dev.toolkt.reactive.cell.test_utils
 
+import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.Cell
+import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.subscribe
 import kotlin.test.assertEquals
 
@@ -13,6 +15,7 @@ sealed class CellObservationStrategy {
 
     data object Passive : CellObservationStrategy() {
         override fun <ValueT> observe(
+            trigger: EventStream<*>,
             cell: Cell<ValueT>,
         ): Asserter<ValueT> = object : Asserter<ValueT> {
             override fun assertUpdatedValueEquals(
@@ -30,11 +33,17 @@ sealed class CellObservationStrategy {
         val observationChannel: CellObservationChannel,
     ) : CellObservationStrategy() {
         override fun <ValueT> observe(
+            trigger: EventStream<*>,
             cell: Cell<ValueT>,
         ): Asserter<ValueT> {
             val observedUpdatedValues = mutableListOf<ValueT>()
 
-            val values = observationChannel.extract(cell = cell)
+            val values = MomentContext.execute {
+                observationChannel.extract(
+                    trigger = trigger,
+                    cell = cell,
+                )
+            }
 
             values.subscribe { updatedValue ->
                 observedUpdatedValues.add(updatedValue)
@@ -68,9 +77,14 @@ sealed class CellObservationStrategy {
         val ActiveNewValues = Active(
             observationChannel = CellObservationChannel.NewValues,
         )
+
+        val ActiveSwitch = Active(
+            observationChannel = CellObservationChannel.Switch,
+        )
     }
 
     abstract fun <ValueT> observe(
+        trigger: EventStream<*>,
         cell: Cell<ValueT>,
     ): Asserter<ValueT>
 }

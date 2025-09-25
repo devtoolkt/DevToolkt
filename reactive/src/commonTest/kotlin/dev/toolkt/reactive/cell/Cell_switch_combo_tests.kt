@@ -6,6 +6,8 @@ import dev.toolkt.reactive.cell.test_utils.CellSamplingStrategy
 import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
 import dev.toolkt.reactive.cell.test_utils.sampleExternally
 import dev.toolkt.reactive.event_stream.EmitterEventStream
+import dev.toolkt.reactive.event_stream.EventStream
+import dev.toolkt.reactive.event_stream.hold
 import dev.toolkt.reactive.event_stream.map
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -30,7 +32,7 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_initial_outerInert_innerInert() {
+    fun test_initial_outerInert_innerInert_passive() {
         test_initial(
             outerConstCellFactory = ConstCellFactory.Inert,
             innerConstCellFactory = ConstCellFactory.Inert,
@@ -39,7 +41,7 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_initial_outerInert_innerInert_preActivate() {
+    fun test_initial_outerInert_innerInert_active() {
         test_initial(
             outerConstCellFactory = ConstCellFactory.Inert,
             innerConstCellFactory = ConstCellFactory.Inert,
@@ -48,7 +50,7 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_initial_outerInert_innerDynamic() {
+    fun test_initial_outerInert_innerDynamic_passive() {
         test_initial(
             outerConstCellFactory = ConstCellFactory.Inert,
             innerConstCellFactory = ConstCellFactory.Dynamic,
@@ -57,7 +59,7 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_initial_outerInert_innerDynamic_preActivate() {
+    fun test_initial_outerInert_innerDynamic_active() {
         test_initial(
             outerConstCellFactory = ConstCellFactory.Inert,
             innerConstCellFactory = ConstCellFactory.Dynamic,
@@ -66,7 +68,7 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_initial_outerDynamic_innerInert() {
+    fun test_initial_outerDynamic_innerInert_passive() {
         test_initial(
             outerConstCellFactory = ConstCellFactory.Dynamic,
             innerConstCellFactory = ConstCellFactory.Inert,
@@ -75,7 +77,7 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_initial_outerDynamic_innerInert_preActivate() {
+    fun test_initial_outerDynamic_innerInert_active() {
         test_initial(
             outerConstCellFactory = ConstCellFactory.Dynamic,
             innerConstCellFactory = ConstCellFactory.Inert,
@@ -84,7 +86,7 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_initial_outerDynamic_innerDynamic() {
+    fun test_initial_outerDynamic_innerDynamic_passive() {
         test_initial(
             outerConstCellFactory = ConstCellFactory.Dynamic,
             innerConstCellFactory = ConstCellFactory.Dynamic,
@@ -93,7 +95,7 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_initial_outerDynamic_innerDynamic_preActivate() {
+    fun test_initial_outerDynamic_innerDynamic_active() {
         test_initial(
             outerConstCellFactory = ConstCellFactory.Dynamic,
             innerConstCellFactory = ConstCellFactory.Dynamic,
@@ -105,17 +107,25 @@ class Cell_switch_combo_tests {
         outerConstCellFactory: ConstCellFactory,
         observationStrategy: CellObservationStrategy,
     ) {
-        val initialInnerCell = MutableCell(
-            initialValue = 10,
-        )
+        val doUpdateInner = EmitterEventStream<Int>()
+
+        val initialInnerCell = MomentContext.execute {
+            Cell.define(
+                initialValue = 10,
+                newValues = doUpdateInner,
+            )
+        }
 
         val switchCell = Cell.switch(
             outerConstCellFactory.create(initialInnerCell),
         )
 
-        val asserter = observationStrategy.observe(switchCell)
+        val asserter = observationStrategy.observe(
+            trigger = doUpdateInner,
+            cell = switchCell,
+        )
 
-        initialInnerCell.set(20)
+        doUpdateInner.emit(20)
 
         asserter.assertUpdatedValueEquals(
             expectedUpdatedValue = 20,
@@ -129,7 +139,6 @@ class Cell_switch_combo_tests {
             observationStrategy = CellObservationStrategy.Passive,
         )
     }
-
 
     @Test
     fun test_initialInnerUpdate_outerInert_activeUpdatedValues() {
@@ -171,23 +180,38 @@ class Cell_switch_combo_tests {
         )
     }
 
+    @Test
+    fun test_initialInnerUpdate_outerDynamic_activeSwitch() {
+        test_initialInnerUpdate(
+            outerConstCellFactory = ConstCellFactory.Dynamic,
+            observationStrategy = CellObservationStrategy.ActiveSwitch,
+        )
+    }
+
     private fun test_outerUpdate(
         newInnerConstCellFactory: ConstCellFactory,
         observationStrategy: CellObservationStrategy,
     ) {
+        val doUpdateOuter = EmitterEventStream<Cell<Int>>()
+
         val initialInnerCell = Cell.of(10)
 
         val newInnerCell = newInnerConstCellFactory.create(20)
 
-        val outerCell = MutableCell(
-            initialValue = initialInnerCell,
-        )
+        val outerCell = MomentContext.execute {
+            doUpdateOuter.hold(
+                initialValue = initialInnerCell,
+            )
+        }
 
         val switchCell = Cell.switch(outerCell)
 
-        val asserter = observationStrategy.observe(switchCell)
+        val asserter = observationStrategy.observe(
+            trigger = doUpdateOuter,
+            cell = switchCell,
+        )
 
-        outerCell.set(newInnerCell)
+        doUpdateOuter.emit(newInnerCell)
 
         asserter.assertUpdatedValueEquals(
             expectedUpdatedValue = 20,
@@ -242,38 +266,57 @@ class Cell_switch_combo_tests {
         )
     }
 
+    @Test
+    fun test_outerUpdate_newInnerDynamic_activeSwitch() {
+        test_outerUpdate(
+            newInnerConstCellFactory = ConstCellFactory.Dynamic,
+            observationStrategy = CellObservationStrategy.ActiveSwitch,
+        )
+    }
+
     private fun test_outerUpdate_thenInitialInnerUpdate(
         newInnerConstCellFactory: ConstCellFactory,
         observationStrategy: CellObservationStrategy,
     ) {
+        val doUpdateOuter = EmitterEventStream<Cell<Int>>()
+
+        val doUpdateInitialInner = EmitterEventStream<Int>()
+
         val initialInnerCell = MutableCell(
             initialValue = 10,
         )
 
         val newInnerCell = newInnerConstCellFactory.create(20)
 
-        val outerCell: MutableCell<Cell<Int>> = MutableCell(
-            initialValue = initialInnerCell,
-        )
+        val outerCell = MomentContext.execute {
+            doUpdateOuter.hold(
+                initialValue = initialInnerCell,
+            )
+        }
 
         val switchCell = Cell.switch(outerCell)
 
-        val asserter = observationStrategy.observe(switchCell)
+        val asserter = observationStrategy.observe(
+            trigger = EventStream.merge2(
+                doUpdateOuter,
+                doUpdateInitialInner,
+            ),
+            cell = switchCell,
+        )
 
-        outerCell.set(newInnerCell)
+        doUpdateOuter.emit(newInnerCell)
 
         asserter.assertUpdatedValueEquals(
             expectedUpdatedValue = 20,
         )
 
-        initialInnerCell.set(11)
+        doUpdateInitialInner.emit(11)
 
         assertEquals(
             expected = 20,
             actual = switchCell.sampleExternally(),
         )
     }
-
 
     @Test
     fun test_outerUpdate_thenInitialInnerUpdate_newInnerInert_passive() {
@@ -323,31 +366,53 @@ class Cell_switch_combo_tests {
         )
     }
 
+    @Test
+    fun test_outerUpdate_thenInitialInnerUpdate_newInnerDynamic_activeSwitch() {
+        test_outerUpdate_thenInitialInnerUpdate(
+            newInnerConstCellFactory = ConstCellFactory.Dynamic,
+            observationStrategy = CellObservationStrategy.ActiveSwitch,
+        )
+    }
+
     private fun test_outerUpdate_thenNewInnerUpdate(
         initialInnerConstCellFactory: ConstCellFactory,
         observationStrategy: CellObservationStrategy,
     ) {
+        val doUpdateOuter = EmitterEventStream<Cell<Int>>()
+
+        val doUpdateNewInner = EmitterEventStream<Int>()
+
         val initialInnerCell = initialInnerConstCellFactory.create(10)
 
-        val newInnerCell = MutableCell(
-            initialValue = 20,
-        )
+        val newInnerCell = MomentContext.execute {
+            doUpdateNewInner.hold(
+                initialValue = 20,
+            )
+        }
 
-        val outerCell = MutableCell(
-            initialValue = initialInnerCell,
-        )
+        val outerCell = MomentContext.execute {
+            doUpdateOuter.hold(
+                initialValue = initialInnerCell,
+            )
+        }
 
         val switchCell = Cell.switch(outerCell)
 
-        val asserter = observationStrategy.observe(switchCell)
+        val asserter = observationStrategy.observe(
+            trigger = EventStream.merge2(
+                doUpdateOuter,
+                doUpdateNewInner,
+            ),
+            cell = switchCell,
+        )
 
-        outerCell.set(newInnerCell)
+        doUpdateOuter.emit(newInnerCell)
 
         asserter.assertUpdatedValueEquals(
             expectedUpdatedValue = 20,
         )
 
-        newInnerCell.set(21)
+        doUpdateNewInner.emit(21)
 
         asserter.assertUpdatedValueEquals(
             expectedUpdatedValue = 21,
@@ -378,6 +443,15 @@ class Cell_switch_combo_tests {
         )
     }
 
+    @Ignore // FIXME: Flaky test
+    @Test
+    fun test_outerUpdate_thenNewInnerUpdate_newInnerInert_activeSwitch() {
+        test_outerUpdate_thenNewInnerUpdate(
+            initialInnerConstCellFactory = ConstCellFactory.Inert,
+            observationStrategy = CellObservationStrategy.ActiveSwitch,
+        )
+    }
+
     @Test
     fun test_outerUpdate_thenNewInnerUpdate_newInnerDynamic_passive() {
         test_outerUpdate_thenNewInnerUpdate(
@@ -399,6 +473,15 @@ class Cell_switch_combo_tests {
         test_outerUpdate_thenNewInnerUpdate(
             initialInnerConstCellFactory = ConstCellFactory.Dynamic,
             observationStrategy = CellObservationStrategy.ActiveNewValues,
+        )
+    }
+
+    @Ignore // FIXME: Flaky test
+    @Test
+    fun test_outerUpdate_thenNewInnerUpdate_newInnerDynamic_activeSwitch() {
+        test_outerUpdate_thenNewInnerUpdate(
+            initialInnerConstCellFactory = ConstCellFactory.Dynamic,
+            observationStrategy = CellObservationStrategy.ActiveSwitch,
         )
     }
 
@@ -424,7 +507,10 @@ class Cell_switch_combo_tests {
             Cell.switch(outerCell)
         }
 
-        val asserter = observationStrategy.observe(switchCell)
+        val asserter = observationStrategy.observe(
+            trigger = doSwitch,
+            cell = switchCell,
+        )
 
         doSwitch.emit(Unit)
 
@@ -458,6 +544,14 @@ class Cell_switch_combo_tests {
     }
 
     @Test
+    fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerInert_activeSwitch() {
+        test_outerUpdate_simultaneousInitialInnerUpdate(
+            newInnerConstCellFactory = ConstCellFactory.Inert,
+            observationStrategy = CellObservationStrategy.ActiveSwitch,
+        )
+    }
+
+    @Test
     fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerDynamic_passive() {
         test_outerUpdate_simultaneousInitialInnerUpdate(
             newInnerConstCellFactory = ConstCellFactory.Dynamic,
@@ -481,6 +575,13 @@ class Cell_switch_combo_tests {
         )
     }
 
+    @Test
+    fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerDynamic_activeSwitch() {
+        test_outerUpdate_simultaneousInitialInnerUpdate(
+            newInnerConstCellFactory = ConstCellFactory.Dynamic,
+            observationStrategy = CellObservationStrategy.ActiveSwitch,
+        )
+    }
 
     private fun test_outerUpdate_simultaneousNewInnerUpdate(
         initialInnerConstCellFactory: ConstCellFactory,
@@ -504,7 +605,10 @@ class Cell_switch_combo_tests {
             Cell.switch(outerCell)
         }
 
-        val asserter = observationStrategy.observe(switchCell)
+        val asserter = observationStrategy.observe(
+            trigger = doSwitch,
+            cell = switchCell,
+        )
 
         doSwitch.emit(Unit)
 
@@ -542,6 +646,15 @@ class Cell_switch_combo_tests {
 
     @Ignore // FIXME: Flaky test
     @Test
+    fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerInert_activeSwitch() {
+        test_outerUpdate_simultaneousNewInnerUpdate(
+            initialInnerConstCellFactory = ConstCellFactory.Inert,
+            observationStrategy = CellObservationStrategy.ActiveSwitch,
+        )
+    }
+
+    @Ignore // FIXME: Flaky test
+    @Test
     fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerDynamic_passive() {
         test_outerUpdate_simultaneousNewInnerUpdate(
             initialInnerConstCellFactory = ConstCellFactory.Dynamic,
@@ -564,6 +677,15 @@ class Cell_switch_combo_tests {
         test_outerUpdate_simultaneousNewInnerUpdate(
             initialInnerConstCellFactory = ConstCellFactory.Dynamic,
             observationStrategy = CellObservationStrategy.ActiveNewValues,
+        )
+    }
+
+    @Ignore // FIXME: Flaky test
+    @Test
+    fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerDynamic_activeSwitch() {
+        test_outerUpdate_simultaneousNewInnerUpdate(
+            initialInnerConstCellFactory = ConstCellFactory.Dynamic,
+            observationStrategy = CellObservationStrategy.ActiveSwitch,
         )
     }
 
@@ -591,7 +713,10 @@ class Cell_switch_combo_tests {
             Cell.switch(outerCell)
         }
 
-        val asserter = observationStrategy.observe(switchCell)
+        val asserter = observationStrategy.observe(
+            trigger = doSwitch,
+            cell = switchCell,
+        )
 
         doSwitch.emit(Unit)
 
@@ -618,6 +743,13 @@ class Cell_switch_combo_tests {
     fun test_outerUpdate_simultaneousBothInnerUpdates_activeNewValues() {
         test_outerUpdate_simultaneousBothInnerUpdates(
             observationStrategy = CellObservationStrategy.ActiveNewValues,
+        )
+    }
+
+    @Test
+    fun test_outerUpdate_simultaneousBothInnerUpdates_activeSwitch() {
+        test_outerUpdate_simultaneousBothInnerUpdates(
+            observationStrategy = CellObservationStrategy.ActiveSwitch,
         )
     }
 }

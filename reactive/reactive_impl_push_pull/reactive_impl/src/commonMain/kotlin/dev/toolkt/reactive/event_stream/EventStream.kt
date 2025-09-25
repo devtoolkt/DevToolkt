@@ -79,7 +79,7 @@ sealed interface EventStream<out EventT> {
             setup: (EventPropagator<EventT>) -> ExternalListenerController,
         ): EventStream<EventT> = TODO()
 
-        context(pureContext: PureContext) fun <EventT> merge2(
+        fun <EventT> merge2(
             eventStream1: EventStream<EventT>,
             eventStream2: EventStream<EventT>,
         ): EventStream<EventT> = OperatedEventStream(
@@ -89,7 +89,7 @@ sealed interface EventStream<out EventT> {
             )
         )
 
-        context(pureContext: PureContext) fun <EventT> merge3(
+        fun <EventT> merge3(
             eventStream1: EventStream<EventT>,
             eventStream2: EventStream<EventT>,
             eventStream3: EventStream<EventT>,
@@ -105,7 +105,7 @@ sealed interface EventStream<out EventT> {
     val vertex: EventStreamVertex<EventT>
 }
 
-context(pureContext: PureContext) fun <EventT, TransformedEventT> EventStream<EventT>.map(
+fun <EventT, TransformedEventT> EventStream<EventT>.map(
     transform: (EventT) -> TransformedEventT,
 ): EventStream<TransformedEventT> = OperatedEventStream(
     vertex = when (val vertex = this.vertex) {
@@ -120,7 +120,7 @@ context(pureContext: PureContext) fun <EventT, TransformedEventT> EventStream<Ev
     }
 )
 
-context(pureContext: PureContext) fun <EventT, TransformedEventT : Any> EventStream<EventT>.mapNotNull(
+fun <EventT, TransformedEventT : Any> EventStream<EventT>.mapNotNull(
     transform: (EventT) -> TransformedEventT?,
 ): EventStream<TransformedEventT> = OperatedEventStream(
     vertex = when (val vertex = this.vertex) {
@@ -133,7 +133,7 @@ context(pureContext: PureContext) fun <EventT, TransformedEventT : Any> EventStr
     }
 )
 
-context(pureContext: PureContext) fun <EventT, TransformedEventT> EventStream<EventT>.mapAt(
+fun <EventT, TransformedEventT> EventStream<EventT>.mapAt(
     transform: context(MomentContext) (EventT) -> TransformedEventT,
 ): EventStream<TransformedEventT> = OperatedEventStream(
     vertex = when (val vertex = this.vertex) {
