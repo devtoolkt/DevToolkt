@@ -1,26 +1,46 @@
 package dev.toolkt.reactive.cell.test_utils
 
+import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.newValues
+import dev.toolkt.reactive.cell.sample
 import dev.toolkt.reactive.cell.updatedValues
 import dev.toolkt.reactive.event_stream.EventStream
+import dev.toolkt.reactive.event_stream.map
 
 sealed class CellObservationChannel {
     data object UpdatedValues : CellObservationChannel() {
-        override fun <ValueT> extract(cell: Cell<ValueT>): EventStream<ValueT> = cell.updatedValues
+        context(momentContext: MomentContext) override fun <ValueT> extract(
+            trigger: EventStream<*>,
+            cell: Cell<ValueT>,
+        ): EventStream<ValueT> = cell.updatedValues
     }
 
     data object NewValues : CellObservationChannel() {
-        override fun <ValueT> extract(cell: Cell<ValueT>): EventStream<ValueT> = cell.newValues
+        context(momentContext: MomentContext) override fun <ValueT> extract(
+            trigger: EventStream<*>,
+            cell: Cell<ValueT>,
+        ): EventStream<ValueT> = cell.newValues
     }
-
 
     data object Switch : CellObservationChannel() {
-        override fun <ValueT> extract(cell: Cell<ValueT>): EventStream<ValueT> = cell.updatedValues
+        context(momentContext: MomentContext) override fun <ValueT> extract(
+            trigger: EventStream<*>,
+            cell: Cell<ValueT>,
+        ): EventStream<ValueT> {
+            val placeholderCell = Cell.of(cell.sample())
+
+            val outerCell = Cell.define(
+                initialValue = placeholderCell,
+                newValues = trigger.map { cell },
+            )
+
+            return Cell.switch(outerCell).updatedValues
+        }
     }
 
-
-    abstract fun <ValueT> extract(
+    context(momentContext: MomentContext) abstract fun <ValueT> extract(
+        trigger: EventStream<*>,
         cell: Cell<ValueT>,
     ): EventStream<ValueT>
 }
