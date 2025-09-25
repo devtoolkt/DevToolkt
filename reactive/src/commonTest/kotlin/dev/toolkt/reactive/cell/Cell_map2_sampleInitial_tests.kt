@@ -2,7 +2,7 @@ package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.cell.test_utils.CellSetup
 import dev.toolkt.reactive.cell.test_utils.SamplingStrategy
-import dev.toolkt.reactive.cell.test_utils.testSampleInitial
+import dev.toolkt.reactive.cell.test_utils.testSample
 import kotlin.test.Test
 
 @Suppress("ClassName")
@@ -52,22 +52,22 @@ class Cell_map2_sampleInitial_tests {
     fun test_sampleInitial_inactive() {
         val strategy = SamplingStrategy.Inactive<String>()
 
-        testedSetup_nonConst.testSampleInitial(
+        testedSetup_nonConst.testSample(
             strategy = strategy,
             expectedInitialValue = expectedInitialValue,
         )
 
-        testedSetup_constFirst.testSampleInitial(
+        testedSetup_constFirst.testSample(
             strategy = strategy,
             expectedInitialValue = expectedInitialValue,
         )
 
-        testedSetup_constSecond.testSampleInitial(
+        testedSetup_constSecond.testSample(
             strategy = strategy,
             expectedInitialValue = expectedInitialValue,
         )
 
-        testedSetup_constBoth.testSampleInitial(
+        testedSetup_constBoth.testSample(
             strategy = strategy,
             expectedInitialValue = expectedInitialValue,
         )
@@ -77,22 +77,22 @@ class Cell_map2_sampleInitial_tests {
     fun test_sampleInitial_active() {
         val strategy = SamplingStrategy.Active<String>()
 
-        testedSetup_nonConst.testSampleInitial(
+        testedSetup_nonConst.testSample(
             strategy = strategy,
             expectedInitialValue = expectedInitialValue,
         )
 
-        testedSetup_constFirst.testSampleInitial(
+        testedSetup_constFirst.testSample(
             strategy = strategy,
             expectedInitialValue = expectedInitialValue,
         )
 
-        testedSetup_constSecond.testSampleInitial(
+        testedSetup_constSecond.testSample(
             strategy = strategy,
             expectedInitialValue = expectedInitialValue,
         )
 
-        testedSetup_constBoth.testSampleInitial(
+        testedSetup_constBoth.testSample(
             strategy = strategy,
             expectedInitialValue = expectedInitialValue,
         )

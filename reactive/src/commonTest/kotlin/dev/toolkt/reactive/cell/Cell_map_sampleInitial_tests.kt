@@ -2,7 +2,7 @@ package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.cell.test_utils.CellSetup
 import dev.toolkt.reactive.cell.test_utils.SamplingStrategy
-import dev.toolkt.reactive.cell.test_utils.testSampleInitial
+import dev.toolkt.reactive.cell.test_utils.testSample
 import kotlin.test.Test
 
 @Suppress("ClassName")
@@ -25,12 +25,12 @@ class Cell_map_sampleInitial_tests {
     fun test_sampleInitial_inactive() {
         val strategy = SamplingStrategy.Inactive<String>()
 
-        testedSetup_nonConst.testSampleInitial(
+        testedSetup_nonConst.testSample(
             strategy = strategy,
             expectedInitialValue = expectedInitialValue,
         )
 
-        testedSetup_const.testSampleInitial(
+        testedSetup_const.testSample(
             strategy = strategy,
             expectedInitialValue = expectedInitialValue,
         )
@@ -40,12 +40,12 @@ class Cell_map_sampleInitial_tests {
     fun test_sampleInitial_active() {
         val strategy = SamplingStrategy.Active<String>()
 
-        testedSetup_nonConst.testSampleInitial(
+        testedSetup_nonConst.testSample(
             strategy = strategy,
             expectedInitialValue = expectedInitialValue,
         )
 
-        testedSetup_const.testSampleInitial(
+        testedSetup_const.testSample(
             strategy = strategy,
             expectedInitialValue = expectedInitialValue,
         )

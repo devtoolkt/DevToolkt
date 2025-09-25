@@ -15,6 +15,7 @@ import dev.toolkt.reactive.cell.vertices.PureCellVertex
 import dev.toolkt.reactive.cell.vertices.SwitchCellVertex
 import dev.toolkt.reactive.event_stream.OperatedEventStream
 import dev.toolkt.reactive.event_stream.EventStream
+import dev.toolkt.reactive.event_stream.hold
 import dev.toolkt.reactive.event_stream.vertices.SilentEventStreamVertex
 import dev.toolkt.reactive.event_stream.vertices.UpdatedValuesEventStreamVertex
 
@@ -81,6 +82,13 @@ sealed interface Cell<out ValueT> {
             vertex = PureCellVertex(
                 value = value,
             ),
+        )
+
+        context(momentContext: MomentContext) fun <ValueT> define(
+            initialValue: ValueT,
+            newValues: EventStream<ValueT>,
+        ): Cell<ValueT> = newValues.hold(
+            initialValue = initialValue,
         )
 
         fun <ValueT> switch(
