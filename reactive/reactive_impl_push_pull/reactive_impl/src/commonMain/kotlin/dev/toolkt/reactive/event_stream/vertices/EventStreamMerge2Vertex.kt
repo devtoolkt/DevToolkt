@@ -24,7 +24,7 @@ class EventStreamMerge2Vertex<EventT> private constructor(
             dynamicSourceEventStream1Vertex: DynamicEventStreamVertex<EventT>,
             uncheckedSourceEventStream2Vertex: EventStreamVertex<EventT>,
         ): EventStreamVertex<EventT> = when (val sourceEventStream2Vertex = uncheckedSourceEventStream2Vertex) {
-            is SilentEventStreamVertex -> SilentEventStreamVertex
+            is SilentEventStreamVertex -> SilentEventStreamVertex // FIXME
 
             is DynamicEventStreamVertex -> construct2(
                 dynamicSourceEventStream1Vertex = dynamicSourceEventStream1Vertex,

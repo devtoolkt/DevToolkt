@@ -10,9 +10,9 @@ import dev.toolkt.reactive.cell.test_utils.testUpdatePropagationDeactivated
 import kotlin.test.Test
 
 @Suppress("ClassName")
-class Cell_switch_sampling_tests {
-    private val testedSetup = CellSetup.SwitchCellSetup(
-        oldInnerCellSetup = CellSetup.MapToStringCellSetup.configure(
+class Cell_switch_sampleNew_tests {
+    private val testedSetup = CellSetup.SwitchCellSetups.Switching.configure(
+        initialInnerCellSetup = CellSetup.MapToStringCellSetup.configure(
             initialSourceValue = -10,
             newSourceValue = -20,
         ),
@@ -20,28 +20,9 @@ class Cell_switch_sampling_tests {
             initialSourceValue = 10,
             newSourceValue = 20,
         ),
-        shouldSwitch = true,
     )
 
-    private val expectedInitialValue = "-10"
-
     private val expectedNewValue = "20"
-
-    @Test
-    fun test_sampleInitial_inactive() {
-        testedSetup.testSampleInitial(
-            strategy = SamplingStrategy.Inactive(),
-            expectedInitialValue = expectedInitialValue,
-        )
-    }
-
-    @Test
-    fun test_sampleInitial_active() {
-        testedSetup.testSampleInitial(
-            strategy = SamplingStrategy.Active(),
-            expectedInitialValue = expectedInitialValue,
-        )
-    }
 
     @Test
     fun test_sampleNew_inactive() {

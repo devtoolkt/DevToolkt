@@ -15,29 +15,52 @@ import dev.toolkt.reactive.event_stream.map
 import dev.toolkt.reactive.event_stream.mapNotNull
 import dev.toolkt.reactive.event_stream.subscribe
 import dev.toolkt.reactive.event_stream.subscribeCollecting
-import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-interface CellSetup<ValueT> {
-    interface CellProvider<ValueT> {
+interface CellSetup<out ValueT> {
+    interface CellProvider<out ValueT> {
+        companion object {
+            fun <ValueT> pure(
+                cell: Cell<ValueT>,
+            ): CellProvider<ValueT> = object : CellProvider<ValueT> {
+                override fun provide(): Cell<ValueT> = cell
+            }
+        }
+
         fun provide(): Cell<ValueT>
     }
 
-    class ConstCellSetup<ValueT>(
-        private val value: ValueT,
+    class ConstCellSetup<out ValueT> private constructor(
+        private val constValue: ValueT,
     ) : CellSetup<ValueT> {
+        companion object {
+            fun <ValueT> configure(
+                constValue: ValueT,
+            ): ConstCellSetup<ValueT> = ConstCellSetup(
+                constValue = constValue,
+            )
+        }
+
         context(momentContext: MomentContext) override fun setup(
             preparationTickStream: EventStream<Unit>,
             propagationTickStream: EventStream<Unit>,
         ): CellProvider<ValueT> = object : CellProvider<ValueT> {
-            override fun provide(): Cell<ValueT> = Cell.of(value)
+            override fun provide(): Cell<ValueT> = Cell.of(constValue)
         }
     }
 
-    class NonConstCellSetup<ValueT>(
+    class NonConstCellSetup<ValueT> private constructor(
         private val value: ValueT,
     ) : CellSetup<ValueT> {
+        companion object {
+            fun <ValueT> configure(
+                value: ValueT,
+            ): NonConstCellSetup<ValueT> = NonConstCellSetup(
+                value = value,
+            )
+        }
+
         context(momentContext: MomentContext) override fun setup(
             preparationTickStream: EventStream<Unit>,
             propagationTickStream: EventStream<Unit>,
@@ -46,10 +69,20 @@ interface CellSetup<ValueT> {
         }
     }
 
-    class HoldCellSetup<ValueT>(
+    class HoldCellSetup<ValueT : Any> private constructor(
         private val initialValue: ValueT,
         private val newValue: ValueT?,
     ) : CellSetup<ValueT> {
+        companion object {
+            fun <ValueT : Any> configure(
+                initialValue: ValueT,
+                newValue: ValueT? = null,
+            ): HoldCellSetup<ValueT> = HoldCellSetup(
+                initialValue = initialValue,
+                newValue = newValue,
+            )
+        }
+
         context(momentContext: MomentContext) override fun setup(
             preparationTickStream: EventStream<Unit>,
             propagationTickStream: EventStream<Unit>,
@@ -64,15 +97,21 @@ interface CellSetup<ValueT> {
         }
     }
 
-    class MapToStringCellSetup<ValueT>(
+    class MapToStringCellSetup<out ValueT> private constructor(
         private val sourceSetup: CellSetup<ValueT>,
     ) : CellSetup<String> {
         companion object {
             fun <ValueT : Any> configure(
+                sourceSetup: CellSetup<ValueT>,
+            ): MapToStringCellSetup<ValueT> = MapToStringCellSetup(
+                sourceSetup = sourceSetup,
+            )
+
+            fun <ValueT : Any> configure(
                 initialSourceValue: ValueT,
                 newSourceValue: ValueT? = null,
             ): MapToStringCellSetup<ValueT> = MapToStringCellSetup(
-                sourceSetup = HoldCellSetup(
+                sourceSetup = HoldCellSetup.configure(
                     initialValue = initialSourceValue,
                     newValue = newSourceValue,
                 ),
@@ -94,22 +133,30 @@ interface CellSetup<ValueT> {
         }
     }
 
-    class Map2ConcatCellSetup(
+    class Map2ConcatCellSetup private constructor(
         private val source1Setup: CellSetup<Int>,
         private val source2Setup: CellSetup<Char>,
     ) : CellSetup<String> {
         companion object {
+            fun configure(
+                source1Setup: CellSetup<Int>,
+                source2Setup: CellSetup<Char>,
+            ): Map2ConcatCellSetup = Map2ConcatCellSetup(
+                source1Setup = source1Setup,
+                source2Setup = source2Setup,
+            )
+
             fun configure(
                 initialSourceValue1: Int,
                 newSourceValue1: Int? = null,
                 initialSourceValue2: Char,
                 newSourceValue2: Char? = null,
             ): Map2ConcatCellSetup = Map2ConcatCellSetup(
-                source1Setup = HoldCellSetup(
+                source1Setup = HoldCellSetup.configure(
                     initialValue = initialSourceValue1,
                     newValue = newSourceValue1,
                 ),
-                source2Setup = HoldCellSetup(
+                source2Setup = HoldCellSetup.configure(
                     initialValue = initialSourceValue2,
                     newValue = newSourceValue2,
                 ),
@@ -141,49 +188,123 @@ interface CellSetup<ValueT> {
         }
     }
 
-    class SwitchCellSetup<ValueT>(
-        private val initialInnerCellSetup: CellSetup<ValueT>? = null,
-        private val oldInnerCellSetup: CellSetup<ValueT>,
-        private val newInnerCellSetup: CellSetup<ValueT>,
-        private val shouldSwitch: Boolean,
-    ) : CellSetup<ValueT> {
-        context(momentContext: MomentContext) override fun setup(
-            preparationTickStream: EventStream<Unit>,
-            propagationTickStream: EventStream<Unit>,
-        ): CellProvider<ValueT> {
-            val effectiveInitialInnerCellSetup = initialInnerCellSetup ?: oldInnerCellSetup
+    object SwitchCellSetups {
+        class Const<ValueT : Any> private constructor(
+            private val constInnerCellSetup: CellSetup<ValueT>,
+        ) : CellSetup<ValueT> {
+            companion object {
+                fun <ValueT : Any> configure(
+                    constInnerCellSetup: CellSetup<ValueT>,
+                ): Const<ValueT> = Const(
+                    constInnerCellSetup = constInnerCellSetup,
+                )
+            }
 
-            val initialInnerCellProvider = effectiveInitialInnerCellSetup.setup(
-                preparationTickStream = preparationTickStream,
-                propagationTickStream = propagationTickStream,
-            )
+            context(momentContext: MomentContext) override fun setup(
+                preparationTickStream: EventStream<Unit>,
+                propagationTickStream: EventStream<Unit>,
+            ): CellProvider<ValueT> {
+                val innerCellProvider = constInnerCellSetup.setup(
+                    preparationTickStream = preparationTickStream,
+                    propagationTickStream = propagationTickStream,
+                )
 
-            val oldInnerCellProvider = oldInnerCellSetup.setup(
-                preparationTickStream = preparationTickStream,
-                propagationTickStream = propagationTickStream,
-            )
+                return object : CellProvider<ValueT> {
+                    override fun provide(): Cell<ValueT> = Cell.switch(
+                        Cell.of(innerCellProvider.provide()),
+                    )
+                }
+            }
+        }
 
-            val newInnerCellProvider = newInnerCellSetup.setup(
-                preparationTickStream = preparationTickStream,
-                propagationTickStream = propagationTickStream,
-            )
+        class Switching<ValueT : Any> private constructor(
+            private val initialInnerCellSetup: CellSetup<ValueT>,
+            private val intermediateInnerCellSetup: CellSetup<ValueT>?,
+            private val newInnerCellSetup: CellSetup<ValueT>?,
+        ) : CellSetup<ValueT> {
+            companion object {
+                fun <ValueT : Any> configure(
+                    initialInnerCellSetup: CellSetup<ValueT>,
+                    intermediateInnerCellSetup: CellSetup<ValueT>? = null,
+                    newInnerCellSetup: CellSetup<ValueT>? = null,
+                ): Switching<ValueT> = Switching(
+                    initialInnerCellSetup = initialInnerCellSetup,
+                    intermediateInnerCellSetup = intermediateInnerCellSetup,
+                    newInnerCellSetup = newInnerCellSetup,
+                )
+            }
 
-            val outerCell = EventStream.merge2(
-                preparationTickStream.map {
-                    oldInnerCellProvider.provide()
-                },
-                propagationTickStream.mapNotNull {
-                    when {
-                        shouldSwitch -> newInnerCellProvider.provide()
-                        else -> null
+            context(momentContext: MomentContext) override fun setup(
+                preparationTickStream: EventStream<Unit>,
+                propagationTickStream: EventStream<Unit>,
+            ): CellProvider<ValueT> {
+                val oldInnerCellProvider = initialInnerCellSetup.setup(
+                    preparationTickStream = preparationTickStream,
+                    propagationTickStream = propagationTickStream,
+                )
+
+                val intermediateInnerCellProvider = intermediateInnerCellSetup?.setup(
+                    preparationTickStream = preparationTickStream,
+                    propagationTickStream = propagationTickStream,
+                )
+
+                val newInnerCellProvider = newInnerCellSetup?.setup(
+                    preparationTickStream = preparationTickStream,
+                    propagationTickStream = propagationTickStream,
+                )
+
+                val intermediateInnerCellStream = intermediateInnerCellProvider?.let { provider ->
+                    preparationTickStream.mapNotNull {
+                        provider.provide()
                     }
-                },
-            ).hold(
-                initialValue = initialInnerCellProvider.provide(),
-            )
+                } ?: NeverEventStream
 
-            return object : CellProvider<ValueT> {
-                override fun provide(): Cell<ValueT> = Cell.switch(outerCell)
+                val newInnerCellStream = newInnerCellProvider?.let { provider ->
+                    propagationTickStream.mapNotNull {
+                        provider.provide()
+                    }
+                } ?: NeverEventStream
+
+                val updatedInnerCellStream = EventStream.merge2(
+                    intermediateInnerCellStream,
+                    newInnerCellStream,
+                )
+
+                val outerCell = updatedInnerCellStream.hold(
+                    initialValue = oldInnerCellProvider.provide(),
+                )
+
+                return object : CellProvider<ValueT> {
+                    override fun provide(): Cell<ValueT> = Cell.switch(outerCell)
+                }
+            }
+        }
+
+        /**
+         * A setup that switches to the same inner cell.
+         */
+        class QuasiSwitching<ValueT : Any>(
+            /**
+             * Initial / new inner cell setup
+             */
+            private val initialNewInnerCellSetup: CellSetup<ValueT>,
+        ) : CellSetup<ValueT> {
+            context(momentContext: MomentContext) override fun setup(
+                preparationTickStream: EventStream<Unit>,
+                propagationTickStream: EventStream<Unit>,
+            ): CellProvider<ValueT> {
+                val innerCell = initialNewInnerCellSetup.setup(
+                    preparationTickStream = preparationTickStream,
+                    propagationTickStream = propagationTickStream,
+                ).provide()
+
+                val outerCell = propagationTickStream.map { innerCell }.hold(
+                    initialValue = innerCell,
+                )
+
+                return object : CellProvider<ValueT> {
+                    override fun provide(): Cell<ValueT> = Cell.switch(outerCell)
+                }
             }
         }
     }
@@ -339,6 +460,7 @@ fun <ValueT : Any> CellSetup<ValueT>.testUpdatePropagation(
         )
     }
 
+    // FIXME: Shouldn't we subscribe before preparation?
     valueStream.subscribeCollecting(
         targetList = collectedUpdatedValues,
     )
