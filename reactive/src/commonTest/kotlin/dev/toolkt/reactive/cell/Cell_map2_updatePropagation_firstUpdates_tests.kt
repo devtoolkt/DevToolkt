@@ -7,15 +7,14 @@ import dev.toolkt.reactive.cell.test_utils.testUpdatePropagationDeactivated
 import kotlin.test.Test
 
 @Suppress("ClassName")
-class Cell_map2_updatePropagation_both_tests {
+class Cell_map2_updatePropagation_firstUpdates_tests {
     private val testedSetup = CellSetup.Map2ConcatCellSetup.configure(
         initialSourceValue1 = 10,
         newSourceValue1 = 20,
         initialSourceValue2 = 'A',
-        newSourceValue2 = 'B',
     )
 
-    private val expectedUpdatedValue = "20:B"
+    private val expectedUpdatedValue = "20:A"
 
     @Test
     fun test_updatePropagation_updatedValues() {
