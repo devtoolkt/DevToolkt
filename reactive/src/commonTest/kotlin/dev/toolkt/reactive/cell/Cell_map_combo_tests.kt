@@ -14,7 +14,11 @@ class Cell_map_combo_tests {
         sourceConstCellFactory: ConstCellFactory,
         samplingStrategy: CellSamplingStrategy,
     ) {
-        val mapCell = sourceConstCellFactory.create(10).map {
+        val sourceCell = MomentContext.execute {
+            sourceConstCellFactory.create(10)
+        }
+
+        val mapCell = sourceCell.map {
             it.toString()
         }
 
