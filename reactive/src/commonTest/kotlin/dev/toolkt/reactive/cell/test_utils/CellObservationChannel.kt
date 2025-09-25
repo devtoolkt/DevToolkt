@@ -35,7 +35,9 @@ sealed class CellObservationChannel {
                 newValues = trigger.map { cell },
             )
 
-            return Cell.switch(outerCell).updatedValues
+            val switchCell = Cell.switch(outerCell)
+
+            return switchCell.updatedValues
         }
     }
 

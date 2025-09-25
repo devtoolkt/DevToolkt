@@ -19,11 +19,13 @@ class Cell_switch_combo_tests {
         innerConstCellFactory: ConstCellFactory,
         samplingStrategy: CellSamplingStrategy,
     ) {
-        val switchCell = Cell.switch(
+        val outerCell = MomentContext.execute {
             outerConstCellFactory.create(
                 innerConstCellFactory.create(10),
-            ),
-        )
+            )
+        }
+
+        val switchCell = Cell.switch(outerCell)
 
         samplingStrategy.perceive(switchCell).assertCurrentValueEquals(
             expectedCurrentValue = 10,
@@ -108,16 +110,16 @@ class Cell_switch_combo_tests {
     ) {
         val doUpdateInner = EmitterEventStream<Int>()
 
-        val initialInnerCell = MomentContext.execute {
-            Cell.define(
+        val outerCell = MomentContext.execute {
+            val initialInnerCell = Cell.define(
                 initialValue = 10,
                 newValues = doUpdateInner,
             )
+
+            outerConstCellFactory.create(initialInnerCell)
         }
 
-        val switchCell = Cell.switch(
-            outerConstCellFactory.create(initialInnerCell),
-        )
+        val switchCell = Cell.switch(outerCell)
 
         val asserter = observationStrategy.observe(
             trigger = doUpdateInner,
@@ -195,7 +197,9 @@ class Cell_switch_combo_tests {
 
         val initialInnerCell = Cell.of(10)
 
-        val newInnerCell = newInnerConstCellFactory.create(20)
+        val newInnerCell = MomentContext.execute {
+            newInnerConstCellFactory.create(20)
+        }
 
         val outerCell = MomentContext.execute {
             doUpdateOuter.hold(
@@ -285,7 +289,9 @@ class Cell_switch_combo_tests {
             initialValue = 10,
         )
 
-        val newInnerCell = newInnerConstCellFactory.create(20)
+        val newInnerCell = MomentContext.execute {
+            newInnerConstCellFactory.create(20)
+        }
 
         val outerCell = MomentContext.execute {
             doUpdateOuter.hold(
@@ -381,7 +387,9 @@ class Cell_switch_combo_tests {
 
         val doUpdateNewInner = EmitterEventStream<Int>()
 
-        val initialInnerCell = initialInnerConstCellFactory.create(10)
+        val initialInnerCell = MomentContext.execute {
+            initialInnerConstCellFactory.create(10)
+        }
 
         val newInnerCell = MomentContext.execute {
             doUpdateNewInner.hold(
