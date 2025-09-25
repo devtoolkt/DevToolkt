@@ -73,7 +73,7 @@ class Cell_map_combo_tests {
         val mapCell = sourceCell.map { it.toString() }
 
         val asserter = observationStrategy.observeForTesting(
-            trigger = doUpdate,
+            doTrigger = doUpdate,
             cell = mapCell,
         )
 

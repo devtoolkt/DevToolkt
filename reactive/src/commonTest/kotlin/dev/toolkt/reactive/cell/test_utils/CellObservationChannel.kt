@@ -11,28 +11,28 @@ import dev.toolkt.reactive.event_stream.map
 sealed class CellObservationChannel {
     data object UpdatedValues : CellObservationChannel() {
         context(momentContext: MomentContext) override fun <ValueT> extract(
-            trigger: EventStream<*>,
+            doTrigger: EventStream<*>,
             cell: Cell<ValueT>,
         ): EventStream<ValueT> = cell.updatedValues
     }
 
     data object NewValues : CellObservationChannel() {
         context(momentContext: MomentContext) override fun <ValueT> extract(
-            trigger: EventStream<*>,
+            doTrigger: EventStream<*>,
             cell: Cell<ValueT>,
         ): EventStream<ValueT> = cell.newValues
     }
 
     data object Switch : CellObservationChannel() {
         context(momentContext: MomentContext) override fun <ValueT> extract(
-            trigger: EventStream<*>,
+            doTrigger: EventStream<*>,
             cell: Cell<ValueT>,
         ): EventStream<ValueT> {
             val placeholderCell = Cell.of(cell.sample())
 
             val outerCell = Cell.define(
                 initialValue = placeholderCell,
-                newValues = trigger.map { cell },
+                newValues = doTrigger.map { cell },
             )
 
             val switchCell = Cell.switch(outerCell)
@@ -41,8 +41,16 @@ sealed class CellObservationChannel {
         }
     }
 
+    companion object {
+        val values = listOf(
+            UpdatedValues,
+            NewValues,
+            Switch,
+        )
+    }
+
     context(momentContext: MomentContext) abstract fun <ValueT> extract(
-        trigger: EventStream<*>,
+        doTrigger: EventStream<*>,
         cell: Cell<ValueT>,
     ): EventStream<ValueT>
 }

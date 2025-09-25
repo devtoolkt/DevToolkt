@@ -15,7 +15,7 @@ sealed class CellObservationStrategy {
 
     data object Passive : CellObservationStrategy() {
         override fun <ValueT> observeForTesting(
-            trigger: EventStream<*>,
+            doTrigger: EventStream<*>,
             cell: Cell<ValueT>,
         ): Asserter<ValueT> = object : Asserter<ValueT> {
             override fun assertUpdatedValueEquals(
@@ -33,14 +33,14 @@ sealed class CellObservationStrategy {
         val observationChannel: CellObservationChannel,
     ) : CellObservationStrategy() {
         override fun <ValueT> observeForTesting(
-            trigger: EventStream<*>,
+            doTrigger: EventStream<*>,
             cell: Cell<ValueT>,
         ): Asserter<ValueT> {
             val receivedUpdatedValues = mutableListOf<ValueT>()
 
             val values = MomentContext.execute {
                 observationChannel.extract(
-                    trigger = trigger,
+                    doTrigger = doTrigger,
                     cell = cell,
                 )
             }
@@ -84,7 +84,7 @@ sealed class CellObservationStrategy {
     }
 
     abstract fun <ValueT> observeForTesting(
-        trigger: EventStream<*>,
+        doTrigger: EventStream<*>,
         cell: Cell<ValueT>,
     ): Asserter<ValueT>
 }
