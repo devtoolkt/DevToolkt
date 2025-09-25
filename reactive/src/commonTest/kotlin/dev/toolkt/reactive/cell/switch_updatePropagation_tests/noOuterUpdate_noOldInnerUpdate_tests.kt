@@ -9,14 +9,10 @@ import kotlin.test.Test
 
 @Suppress("ClassName")
 class Cell_switch_updatePropagation_noOuterUpdate_noOldInnerUpdate_tests {
-    private val testedSetup = CellSetup.SwitchCellSetup(
-        oldInnerCellSetup = CellSetup.MapToStringCellSetup.configure(
+    private val testedSetup = CellSetup.SwitchCellSetups.Switching.configure(
+        initialInnerCellSetup = CellSetup.MapToStringCellSetup.configure(
             initialSourceValue = -10,
         ),
-        newInnerCellSetup = CellSetup.ConstCellSetup(
-            value = "x",
-        ),
-        shouldSwitch = false,
     )
 
     private val expectedUpdatedValue: Nothing? = null
