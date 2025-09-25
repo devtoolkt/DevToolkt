@@ -121,7 +121,7 @@ class Cell_switch_combo_tests {
 
         val switchCell = Cell.switch(outerCell)
 
-        val asserter = observationStrategy.observe(
+        val asserter = observationStrategy.observeForTesting(
             trigger = doUpdateInner,
             cell = switchCell,
         )
@@ -209,7 +209,7 @@ class Cell_switch_combo_tests {
 
         val switchCell = Cell.switch(outerCell)
 
-        val asserter = observationStrategy.observe(
+        val asserter = observationStrategy.observeForTesting(
             trigger = doUpdateOuter,
             cell = switchCell,
         )
@@ -301,7 +301,7 @@ class Cell_switch_combo_tests {
 
         val switchCell = Cell.switch(outerCell)
 
-        val asserter = observationStrategy.observe(
+        val asserter = observationStrategy.observeForTesting(
             trigger = EventStream.merge2(
                 doUpdateOuter,
                 doUpdateInitialInner,
@@ -405,7 +405,7 @@ class Cell_switch_combo_tests {
 
         val switchCell = Cell.switch(outerCell)
 
-        val asserter = observationStrategy.observe(
+        val asserter = observationStrategy.observeForTesting(
             trigger = EventStream.merge2(
                 doUpdateOuter,
                 doUpdateNewInner,
@@ -512,7 +512,7 @@ class Cell_switch_combo_tests {
             Cell.switch(outerCell)
         }
 
-        val asserter = observationStrategy.observe(
+        val asserter = observationStrategy.observeForTesting(
             trigger = doSwitch,
             cell = switchCell,
         )
@@ -610,7 +610,7 @@ class Cell_switch_combo_tests {
             Cell.switch(outerCell)
         }
 
-        val asserter = observationStrategy.observe(
+        val asserter = observationStrategy.observeForTesting(
             trigger = doSwitch,
             cell = switchCell,
         )
@@ -710,7 +710,7 @@ class Cell_switch_combo_tests {
             Cell.switch(outerCell)
         }
 
-        val asserter = observationStrategy.observe(
+        val asserter = observationStrategy.observeForTesting(
             trigger = doSwitch,
             cell = switchCell,
         )

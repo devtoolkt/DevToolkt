@@ -14,7 +14,7 @@ sealed class CellObservationStrategy {
     }
 
     data object Passive : CellObservationStrategy() {
-        override fun <ValueT> observe(
+        override fun <ValueT> observeForTesting(
             trigger: EventStream<*>,
             cell: Cell<ValueT>,
         ): Asserter<ValueT> = object : Asserter<ValueT> {
@@ -32,11 +32,11 @@ sealed class CellObservationStrategy {
     data class Active(
         val observationChannel: CellObservationChannel,
     ) : CellObservationStrategy() {
-        override fun <ValueT> observe(
+        override fun <ValueT> observeForTesting(
             trigger: EventStream<*>,
             cell: Cell<ValueT>,
         ): Asserter<ValueT> {
-            val observedUpdatedValues = mutableListOf<ValueT>()
+            val receivedUpdatedValues = mutableListOf<ValueT>()
 
             val values = MomentContext.execute {
                 observationChannel.extract(
@@ -46,7 +46,7 @@ sealed class CellObservationStrategy {
             }
 
             values.subscribe { updatedValue ->
-                observedUpdatedValues.add(updatedValue)
+                receivedUpdatedValues.add(updatedValue)
             }
 
             return object : Asserter<ValueT> {
@@ -55,10 +55,10 @@ sealed class CellObservationStrategy {
                 ) {
                     assertEquals(
                         expected = listOf(expectedUpdatedValue),
-                        actual = observedUpdatedValues,
+                        actual = receivedUpdatedValues,
                     )
 
-                    observedUpdatedValues.clear()
+                    receivedUpdatedValues.clear()
 
                     assertEquals(
                         expected = expectedUpdatedValue,
@@ -83,7 +83,7 @@ sealed class CellObservationStrategy {
         )
     }
 
-    abstract fun <ValueT> observe(
+    abstract fun <ValueT> observeForTesting(
         trigger: EventStream<*>,
         cell: Cell<ValueT>,
     ): Asserter<ValueT>
