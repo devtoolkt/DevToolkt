@@ -69,20 +69,6 @@ sealed class CellObservationStrategy {
         }
     }
 
-    companion object {
-        val ActiveUpdatedValues = Active(
-            observationChannel = CellObservationChannel.UpdatedValues,
-        )
-
-        val ActiveNewValues = Active(
-            observationChannel = CellObservationChannel.NewValues,
-        )
-
-        val ActiveSwitch = Active(
-            observationChannel = CellObservationChannel.Switch,
-        )
-    }
-
     abstract fun <ValueT> observeForTesting(
         doTrigger: EventStream<*>,
         cell: Cell<ValueT>,

@@ -1,6 +1,7 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
+import dev.toolkt.reactive.cell.test_utils.CellObservationChannel
 import dev.toolkt.reactive.cell.test_utils.CellObservationStrategy
 import dev.toolkt.reactive.cell.test_utils.CellSamplingStrategy
 import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
@@ -142,19 +143,15 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_initialInnerUpdate_outerInert_activeUpdatedValues() {
-        test_initialInnerUpdate(
-            outerConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_initialInnerUpdate_outerInert_activeNewValues() {
-        test_initialInnerUpdate(
-            outerConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
+    fun test_initialInnerUpdate_outerInert_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_initialInnerUpdate(
+                outerConstCellFactory = ConstCellFactory.Inert,
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 
     @Test
@@ -166,27 +163,15 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_initialInnerUpdate_outerDynamic_activeUpdatedValues() {
-        test_initialInnerUpdate(
-            outerConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_initialInnerUpdate_outerDynamic_activeNewValues() {
-        test_initialInnerUpdate(
-            outerConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_initialInnerUpdate_outerDynamic_activeSwitch() {
-        test_initialInnerUpdate(
-            outerConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
-        )
+    fun test_initialInnerUpdate_outerDynamic_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_initialInnerUpdate(
+                outerConstCellFactory = ConstCellFactory.Dynamic,
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 
     private fun test_outerUpdate(
@@ -230,19 +215,15 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_outerUpdate_newInnerInert_activeUpdatedValues() {
-        test_outerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_newInnerInert_activeNewValues() {
-        test_outerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
+    fun test_outerUpdate_newInnerInert_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_outerUpdate(
+                newInnerConstCellFactory = ConstCellFactory.Inert,
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 
     @Test
@@ -254,27 +235,15 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_outerUpdate_newInnerDynamic_activeUpdatedValues() {
-        test_outerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_newInnerDynamic_activeNewValues() {
-        test_outerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_newInnerDynamic_activeSwitch() {
-        test_outerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
-        )
+    fun test_outerUpdate_newInnerDynamic_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_outerUpdate(
+                newInnerConstCellFactory = ConstCellFactory.Dynamic,
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 
     private fun test_outerUpdate_thenInitialInnerUpdate(
@@ -332,19 +301,15 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_outerUpdate_thenInitialInnerUpdate_newInnerInert_activeUpdatedValues() {
-        test_outerUpdate_thenInitialInnerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_thenInitialInnerUpdate_newInnerInert_activeNewValues() {
-        test_outerUpdate_thenInitialInnerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
+    fun test_outerUpdate_thenInitialInnerUpdate_newInnerInert_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_outerUpdate_thenInitialInnerUpdate(
+                newInnerConstCellFactory = ConstCellFactory.Inert,
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 
     @Test
@@ -356,27 +321,15 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_outerUpdate_thenInitialInnerUpdate_newInnerDynamic_activeUpdatedValues() {
-        test_outerUpdate_thenInitialInnerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_thenInitialInnerUpdate_newInnerDynamic_activeNewValues() {
-        test_outerUpdate_thenInitialInnerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_thenInitialInnerUpdate_newInnerDynamic_activeSwitch() {
-        test_outerUpdate_thenInitialInnerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
-        )
+    fun test_outerUpdate_thenInitialInnerUpdate_newInnerDynamic_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_outerUpdate_thenInitialInnerUpdate(
+                newInnerConstCellFactory = ConstCellFactory.Dynamic,
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 
     private fun test_outerUpdate_thenNewInnerUpdate(
@@ -435,27 +388,15 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_outerUpdate_thenNewInnerUpdate_newInnerInert_activeUpdatedValues() {
-        test_outerUpdate_thenNewInnerUpdate(
-            initialInnerConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_thenNewInnerUpdate_newInnerInert_activeNewValues() {
-        test_outerUpdate_thenNewInnerUpdate(
-            initialInnerConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_thenNewInnerUpdate_newInnerInert_activeSwitch() {
-        test_outerUpdate_thenNewInnerUpdate(
-            initialInnerConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
-        )
+    fun test_outerUpdate_thenNewInnerUpdate_newInnerInert_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_outerUpdate_thenNewInnerUpdate(
+                initialInnerConstCellFactory = ConstCellFactory.Inert,
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 
     @Test
@@ -467,27 +408,15 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_outerUpdate_thenNewInnerUpdate_newInnerDynamic_activeUpdatedValues() {
-        test_outerUpdate_thenNewInnerUpdate(
-            initialInnerConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_thenNewInnerUpdate_newInnerDynamic_activeNewValues() {
-        test_outerUpdate_thenNewInnerUpdate(
-            initialInnerConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_thenNewInnerUpdate_newInnerDynamic_activeSwitch() {
-        test_outerUpdate_thenNewInnerUpdate(
-            initialInnerConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
-        )
+    fun test_outerUpdate_thenNewInnerUpdate_newInnerDynamic_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_outerUpdate_thenNewInnerUpdate(
+                initialInnerConstCellFactory = ConstCellFactory.Dynamic,
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 
     private fun test_outerUpdate_simultaneousInitialInnerUpdate(
@@ -533,27 +462,15 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerInert_activeUpdatedValues() {
-        test_outerUpdate_simultaneousInitialInnerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerInert_activeNewValues() {
-        test_outerUpdate_simultaneousInitialInnerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerInert_activeSwitch() {
-        test_outerUpdate_simultaneousInitialInnerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
-        )
+    fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerInert_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_outerUpdate_simultaneousInitialInnerUpdate(
+                newInnerConstCellFactory = ConstCellFactory.Inert,
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 
     @Test
@@ -565,27 +482,15 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerDynamic_activeUpdatedValues() {
-        test_outerUpdate_simultaneousInitialInnerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerDynamic_activeNewValues() {
-        test_outerUpdate_simultaneousInitialInnerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerDynamic_activeSwitch() {
-        test_outerUpdate_simultaneousInitialInnerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
-        )
+    fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerDynamic_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_outerUpdate_simultaneousInitialInnerUpdate(
+                newInnerConstCellFactory = ConstCellFactory.Dynamic,
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 
     private fun test_outerUpdate_simultaneousNewInnerUpdate(
@@ -631,27 +536,15 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerInert_activeUpdatedValues() {
-        test_outerUpdate_simultaneousNewInnerUpdate(
-            initialInnerConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerInert_activeNewValues() {
-        test_outerUpdate_simultaneousNewInnerUpdate(
-            initialInnerConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerInert_activeSwitch() {
-        test_outerUpdate_simultaneousNewInnerUpdate(
-            initialInnerConstCellFactory = ConstCellFactory.Inert,
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
-        )
+    fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerInert_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_outerUpdate_simultaneousNewInnerUpdate(
+                initialInnerConstCellFactory = ConstCellFactory.Inert,
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 
     @Test
@@ -659,30 +552,6 @@ class Cell_switch_combo_tests {
         test_outerUpdate_simultaneousNewInnerUpdate(
             initialInnerConstCellFactory = ConstCellFactory.Dynamic,
             observationStrategy = CellObservationStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerDynamic_activeUpdatedValues() {
-        test_outerUpdate_simultaneousNewInnerUpdate(
-            initialInnerConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerDynamic_activeNewValues() {
-        test_outerUpdate_simultaneousNewInnerUpdate(
-            initialInnerConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerDynamic_activeSwitch() {
-        test_outerUpdate_simultaneousNewInnerUpdate(
-            initialInnerConstCellFactory = ConstCellFactory.Dynamic,
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
         )
     }
 
@@ -722,6 +591,19 @@ class Cell_switch_combo_tests {
         )
     }
 
+
+    @Test
+    fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerDynamic_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_outerUpdate_simultaneousNewInnerUpdate(
+                initialInnerConstCellFactory = ConstCellFactory.Dynamic,
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
+    }
+
     @Test
     fun test_outerUpdate_simultaneousBothInnerUpdates_passive() {
         test_outerUpdate_simultaneousBothInnerUpdates(
@@ -730,23 +612,13 @@ class Cell_switch_combo_tests {
     }
 
     @Test
-    fun test_outerUpdate_simultaneousBothInnerUpdates_activeUpdatedValues() {
-        test_outerUpdate_simultaneousBothInnerUpdates(
-            observationStrategy = CellObservationStrategy.ActiveUpdatedValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_simultaneousBothInnerUpdates_activeNewValues() {
-        test_outerUpdate_simultaneousBothInnerUpdates(
-            observationStrategy = CellObservationStrategy.ActiveNewValues,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_simultaneousBothInnerUpdates_activeSwitch() {
-        test_outerUpdate_simultaneousBothInnerUpdates(
-            observationStrategy = CellObservationStrategy.ActiveSwitch,
-        )
+    fun test_outerUpdate_simultaneousBothInnerUpdates_active() {
+        CellObservationChannel.values.forEach { observationChannel ->
+            test_outerUpdate_simultaneousBothInnerUpdates(
+                observationStrategy = CellObservationStrategy.Active(
+                    observationChannel = observationChannel,
+                ),
+            )
+        }
     }
 }
