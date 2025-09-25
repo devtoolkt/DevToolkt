@@ -101,7 +101,7 @@ class Cell_map3_combo_tests {
         }
 
         val asserter = observationStrategy.observeForTesting(
-            trigger = doUpdate,
+            doTrigger = doUpdate,
             cell = map3Cell,
         )
 
@@ -182,7 +182,7 @@ class Cell_map3_combo_tests {
         }
 
         val asserter = observationStrategy.observeForTesting(
-            trigger = doUpdate,
+            doTrigger = doUpdate,
             cell = map3Cell,
         )
 
@@ -263,7 +263,7 @@ class Cell_map3_combo_tests {
         }
 
         val asserter = observationStrategy.observeForTesting(
-            trigger = doUpdate,
+            doTrigger = doUpdate,
             cell = map3Cell,
         )
 
@@ -356,7 +356,7 @@ class Cell_map3_combo_tests {
         }
 
         val asserter = CellObservationStrategy.ActiveUpdatedValues.observeForTesting(
-            trigger = doUpdate,
+            doTrigger = doUpdate,
             cell = map3Cell,
         )
 

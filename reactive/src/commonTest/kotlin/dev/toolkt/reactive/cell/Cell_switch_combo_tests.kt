@@ -122,7 +122,7 @@ class Cell_switch_combo_tests {
         val switchCell = Cell.switch(outerCell)
 
         val asserter = observationStrategy.observeForTesting(
-            trigger = doUpdateInner,
+            doTrigger = doUpdateInner,
             cell = switchCell,
         )
 
@@ -210,7 +210,7 @@ class Cell_switch_combo_tests {
         val switchCell = Cell.switch(outerCell)
 
         val asserter = observationStrategy.observeForTesting(
-            trigger = doUpdateOuter,
+            doTrigger = doUpdateOuter,
             cell = switchCell,
         )
 
@@ -302,7 +302,7 @@ class Cell_switch_combo_tests {
         val switchCell = Cell.switch(outerCell)
 
         val asserter = observationStrategy.observeForTesting(
-            trigger = EventStream.merge2(
+            doTrigger = EventStream.merge2(
                 doUpdateOuter,
                 doUpdateInitialInner,
             ),
@@ -406,7 +406,7 @@ class Cell_switch_combo_tests {
         val switchCell = Cell.switch(outerCell)
 
         val asserter = observationStrategy.observeForTesting(
-            trigger = EventStream.merge2(
+            doTrigger = EventStream.merge2(
                 doUpdateOuter,
                 doUpdateNewInner,
             ),
@@ -513,7 +513,7 @@ class Cell_switch_combo_tests {
         }
 
         val asserter = observationStrategy.observeForTesting(
-            trigger = doSwitch,
+            doTrigger = doSwitch,
             cell = switchCell,
         )
 
@@ -611,7 +611,7 @@ class Cell_switch_combo_tests {
         }
 
         val asserter = observationStrategy.observeForTesting(
-            trigger = doSwitch,
+            doTrigger = doSwitch,
             cell = switchCell,
         )
 
@@ -711,7 +711,7 @@ class Cell_switch_combo_tests {
         }
 
         val asserter = observationStrategy.observeForTesting(
-            trigger = doSwitch,
+            doTrigger = doSwitch,
             cell = switchCell,
         )
 
