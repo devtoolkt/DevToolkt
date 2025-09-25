@@ -2,7 +2,6 @@ package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.cell.test_utils.CellSetup
 import dev.toolkt.reactive.cell.test_utils.SamplingStrategy
-import dev.toolkt.reactive.cell.test_utils.testSampleInitial
 import dev.toolkt.reactive.cell.test_utils.testSampleNew
 import kotlin.test.Test
 

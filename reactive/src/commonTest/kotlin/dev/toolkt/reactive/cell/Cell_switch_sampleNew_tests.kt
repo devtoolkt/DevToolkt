@@ -2,11 +2,7 @@ package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.cell.test_utils.CellSetup
 import dev.toolkt.reactive.cell.test_utils.SamplingStrategy
-import dev.toolkt.reactive.cell.test_utils.UpdatePropagationStrategy
-import dev.toolkt.reactive.cell.test_utils.testSampleInitial
 import dev.toolkt.reactive.cell.test_utils.testSampleNew
-import dev.toolkt.reactive.cell.test_utils.testUpdatePropagation
-import dev.toolkt.reactive.cell.test_utils.testUpdatePropagationDeactivated
 import kotlin.test.Test
 
 @Suppress("ClassName")

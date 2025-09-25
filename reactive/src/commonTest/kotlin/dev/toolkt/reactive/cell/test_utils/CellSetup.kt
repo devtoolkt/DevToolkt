@@ -315,7 +315,7 @@ interface CellSetup<out ValueT> {
     ): CellProvider<ValueT>
 }
 
-
+// Thought: Rename?
 interface SamplingStrategy<ValueT> {
     class Inactive<ValueT> : SamplingStrategy<ValueT> {
         override fun prepare(subjectCell: Cell<ValueT>) {
@@ -334,7 +334,7 @@ interface SamplingStrategy<ValueT> {
 }
 
 
-fun <ValueT> CellSetup<ValueT>.testSampleInitial(
+fun <ValueT> CellSetup<ValueT>.testSample(
     strategy: SamplingStrategy<ValueT>,
     expectedInitialValue: ValueT,
 ) {

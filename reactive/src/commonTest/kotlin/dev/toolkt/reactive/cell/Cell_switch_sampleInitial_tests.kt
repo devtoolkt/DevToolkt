@@ -2,7 +2,7 @@ package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.cell.test_utils.CellSetup
 import dev.toolkt.reactive.cell.test_utils.SamplingStrategy
-import dev.toolkt.reactive.cell.test_utils.testSampleInitial
+import dev.toolkt.reactive.cell.test_utils.testSample
 import kotlin.test.Test
 
 @Suppress("ClassName")
@@ -29,17 +29,17 @@ class Cell_switch_sampleInitial_tests {
 
     @Test
     fun test_sampleInitial_inactive() {
-        testedSetup_nonConst.testSampleInitial(
+        testedSetup_nonConst.testSample(
             strategy = SamplingStrategy.Inactive(),
             expectedInitialValue = expectedInitialValue,
         )
 
-        testedSetup_constOuter.testSampleInitial(
+        testedSetup_constOuter.testSample(
             strategy = SamplingStrategy.Inactive(),
             expectedInitialValue = expectedInitialValue,
         )
 
-        testedSetup_constInner.testSampleInitial(
+        testedSetup_constInner.testSample(
             strategy = SamplingStrategy.Inactive(),
             expectedInitialValue = expectedInitialValue,
         )
@@ -47,7 +47,7 @@ class Cell_switch_sampleInitial_tests {
 
     @Test
     fun test_sampleInitial_active() {
-        testedSetup_nonConst.testSampleInitial(
+        testedSetup_nonConst.testSample(
             strategy = SamplingStrategy.Active(),
             expectedInitialValue = expectedInitialValue,
         )
