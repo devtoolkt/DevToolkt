@@ -98,7 +98,7 @@ class EventStream_hold_basic_tests {
         )
     }
 
-    private fun test_updatePropagation(
+    private fun test_occurrencePropagation(
         valueEventStreamExtractor: ValueEventStreamExtractor,
     ) {
         val (holdCell, reactiveSystem) = setup(
@@ -129,20 +129,20 @@ class EventStream_hold_basic_tests {
     }
 
     @Test
-    fun test_updatePropagation_newValues() {
-        test_updatePropagation(
+    fun test_occurrencePropagation_newValues() {
+        test_occurrencePropagation(
             valueEventStreamExtractor = NewValuesExtractor,
         )
     }
 
     @Test
-    fun test_updatePropagation_updatedValues() {
-        test_updatePropagation(
+    fun test_occurrencePropagation_updatedValues() {
+        test_occurrencePropagation(
             valueEventStreamExtractor = UpdatedValuesExtractor,
         )
     }
 
-    private fun test_updatePropagation_afterCancel(
+    private fun test_occurrencePropagation_afterCancel(
         valueEventStreamExtractor: ValueEventStreamExtractor,
     ) {
         val (holdCell, reactiveSystem) = setup(
@@ -174,15 +174,15 @@ class EventStream_hold_basic_tests {
     }
 
     @Test
-    fun test_updatePropagation_afterCancel_newValues() {
-        test_updatePropagation_afterCancel(
+    fun test_occurrencePropagation_afterCancel_newValues() {
+        test_occurrencePropagation_afterCancel(
             valueEventStreamExtractor = NewValuesExtractor,
         )
     }
 
     @Test
-    fun test_updatePropagation_afterCancel_updatedValues() {
-        test_updatePropagation_afterCancel(
+    fun test_occurrencePropagation_afterCancel_updatedValues() {
+        test_occurrencePropagation_afterCancel(
             valueEventStreamExtractor = UpdatedValuesExtractor,
         )
     }
