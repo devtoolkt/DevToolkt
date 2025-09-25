@@ -5,6 +5,10 @@ import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.MutableCell
 
 sealed interface ConstCellFactory {
+    companion object {
+        val values = listOf(Inert, Dynamic)
+    }
+
     data object Inert : ConstCellFactory {
         context(momentContext: MomentContext) override fun <ValueT> create(
             value: ValueT,
