@@ -10,6 +10,7 @@ import dev.toolkt.reactive.cell.updatedValues
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.NeverEventStream
+import dev.toolkt.reactive.event_stream.emit
 import dev.toolkt.reactive.event_stream.hold
 import dev.toolkt.reactive.event_stream.map
 import dev.toolkt.reactive.event_stream.mapNotNull
@@ -333,7 +334,6 @@ interface SamplingStrategy<ValueT> {
     )
 }
 
-
 fun <ValueT> CellSetup<ValueT>.testSample(
     strategy: SamplingStrategy<ValueT>,
     expectedInitialValue: ValueT,
@@ -347,7 +347,7 @@ fun <ValueT> CellSetup<ValueT>.testSample(
         )
     }.provide()
 
-    preparationTickStream.emit(Unit)
+    preparationTickStream.emit()
 
     strategy.prepare(
         subjectCell = subjectCell,
@@ -378,13 +378,13 @@ fun <ValueT> CellSetup<ValueT>.testSampleNew(
         )
     }.provide()
 
-    preparationTickStream.emit(Unit)
+    preparationTickStream.emit()
 
     strategy.prepare(
         subjectCell = subjectCell,
     )
 
-    propagationTickStream.emit(Unit)
+    propagationTickStream.emit()
 
     val sampledNewValue = MomentContext.execute {
         subjectCell.sample()
@@ -449,7 +449,7 @@ fun <ValueT : Any> CellSetup<ValueT>.testUpdatePropagation(
         )
     }.provide()
 
-    preparationTickStream.emit(Unit)
+    preparationTickStream.emit()
 
     val collectedUpdatedValues = mutableListOf<ValueT?>()
 
@@ -465,7 +465,7 @@ fun <ValueT : Any> CellSetup<ValueT>.testUpdatePropagation(
         targetList = collectedUpdatedValues,
     )
 
-    propagationTickStream.emit(Unit)
+    propagationTickStream.emit()
 
     val expectedUpdatedValues: List<ValueT?> = listOfNotNull(expectedUpdatedValue)
 
@@ -487,7 +487,7 @@ fun <ValueT> CellSetup<ValueT>.testUpdatePropagationDeactivated() {
         )
     }.provide()
 
-    preparationTickStream.emit(Unit)
+    preparationTickStream.emit()
 
     val collectedEvents = mutableListOf<ValueT>()
 
@@ -499,7 +499,7 @@ fun <ValueT> CellSetup<ValueT>.testUpdatePropagationDeactivated() {
 
     subscription.cancel()
 
-    propagationTickStream.emit(Unit)
+    propagationTickStream.emit()
 
     assertEquals(
         expected = emptyList(),

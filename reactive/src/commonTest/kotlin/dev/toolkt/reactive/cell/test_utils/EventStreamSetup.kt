@@ -4,6 +4,7 @@ import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.NeverEventStream
+import dev.toolkt.reactive.event_stream.emit
 import dev.toolkt.reactive.event_stream.map
 import dev.toolkt.reactive.event_stream.subscribeCollecting
 import kotlin.test.assertEquals
@@ -128,7 +129,7 @@ fun <EventT : Any> EventStreamSetup<EventT>.testOccurrencePropagation(
         )
     }.provide()
 
-    preparationTickStream.emit(Unit)
+    preparationTickStream.emit()
 
     val collectedOccurredEvents = mutableListOf<EventT?>()
 
@@ -137,7 +138,7 @@ fun <EventT : Any> EventStreamSetup<EventT>.testOccurrencePropagation(
         targetList = collectedOccurredEvents,
     )
 
-    propagationTickStream.emit(Unit)
+    propagationTickStream.emit()
 
     val expectedOccurredEvents: List<EventT?> = listOfNotNull(expectedOccurredEvent)
 
@@ -159,7 +160,7 @@ fun <EventT> EventStreamSetup<EventT>.testOccurrencePropagationDeactivated() {
         )
     }.provide()
 
-    preparationTickStream.emit(Unit)
+    preparationTickStream.emit()
 
     val collectedEvents = mutableListOf<EventT>()
 
@@ -171,7 +172,7 @@ fun <EventT> EventStreamSetup<EventT>.testOccurrencePropagationDeactivated() {
 
     subscription.cancel()
 
-    propagationTickStream.emit(Unit)
+    propagationTickStream.emit()
 
     assertEquals(
         expected = emptyList(),

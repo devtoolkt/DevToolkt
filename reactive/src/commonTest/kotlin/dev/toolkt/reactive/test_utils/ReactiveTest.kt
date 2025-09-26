@@ -7,6 +7,7 @@ import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.hold
 import dev.toolkt.reactive.event_stream.mapNotNull
 
+// TODO: Nuke
 abstract class ReactiveTest<StimulationT : Any> {
     abstract class Input<StimulationEventT : Any> {
         abstract fun <EventT : Any> extractEventStream(
