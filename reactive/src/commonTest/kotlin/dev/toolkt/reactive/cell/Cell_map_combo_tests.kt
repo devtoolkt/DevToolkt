@@ -1,12 +1,12 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
-import dev.toolkt.reactive.cell.test_utils.CellObservationChannel
-import dev.toolkt.reactive.cell.test_utils.CellObservationStrategy
 import dev.toolkt.reactive.cell.test_utils.CellSamplingStrategy
 import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
+import dev.toolkt.reactive.cell.test_utils.UpdateVerificationStrategy
+import dev.toolkt.reactive.cell.test_utils.assertUpdates
 import dev.toolkt.reactive.event_stream.EmitterEventStream
-import dev.toolkt.reactive.event_stream.hold
+import dev.toolkt.reactive.event_stream.map
 import kotlin.test.Test
 
 @Suppress("ClassName")
@@ -61,26 +61,27 @@ class Cell_map_combo_tests {
     }
 
     private fun test_sourceUpdate(
-        observationStrategy: CellObservationStrategy,
+        updateVerificationStrategy: UpdateVerificationStrategy?,
     ) {
-        val doUpdate = EmitterEventStream<Int>()
+        val doUpdate = EmitterEventStream<Unit>()
 
         val sourceCell = MomentContext.execute {
-            doUpdate.hold(
+            Cell.define(
                 initialValue = 10,
+                newValues = doUpdate.map { 20 },
             )
         }
 
         val mapCell = sourceCell.map { it.toString() }
 
-        val asserter = observationStrategy.observeForTesting(
-            doTrigger = doUpdate,
-            cell = mapCell,
+        val updateVerificationProcess = updateVerificationStrategy?.begin(
+            subjectCell = mapCell,
         )
 
-        doUpdate.emit(20)
-
-        asserter.assertUpdatedValueEquals(
+        assertUpdates(
+            subjectCell = mapCell,
+            updateVerificationProcess = updateVerificationProcess,
+            doTrigger = doUpdate,
             expectedUpdatedValue = "20",
         )
     }
@@ -88,17 +89,15 @@ class Cell_map_combo_tests {
     @Test
     fun test_sourceUpdate_passive() {
         test_sourceUpdate(
-            observationStrategy = CellObservationStrategy.Passive,
+            updateVerificationStrategy = null,
         )
     }
 
     @Test
     fun test_sourceUpdate_active() {
-        CellObservationChannel.values.forEach { observationChannel ->
+        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
             test_sourceUpdate(
-                observationStrategy = CellObservationStrategy.Active(
-                    observationChannel = observationChannel,
-                ),
+                updateVerificationStrategy = updateVerificationStrategy,
             )
         }
     }

@@ -22,3 +22,7 @@ class EmitterEventStream<EventT> : EventStream<EventT> {
 
     override val vertex = EmitterEventStreamVertex<EventT>()
 }
+
+fun EmitterEventStream<Unit>.emit() {
+    emit(Unit)
+}
