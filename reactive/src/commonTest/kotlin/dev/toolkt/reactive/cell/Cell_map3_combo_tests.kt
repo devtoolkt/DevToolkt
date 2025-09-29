@@ -3,7 +3,7 @@ package dev.toolkt.reactive.cell
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.CellSamplingStrategy
 import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
-import dev.toolkt.reactive.cell.test_utils.UpdateVerificationProcess
+import dev.toolkt.reactive.cell.test_utils.UpdateVerifier
 import dev.toolkt.reactive.cell.test_utils.UpdateVerificationStrategy
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.filter
@@ -96,11 +96,11 @@ class Cell_map3_combo_tests {
             "$value1:$value2:$value3"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = map3Cell,
         )
 
-        updateVerificationProcess.verifyUpdates(
+        updateVerifier.verifyUpdates(
             doUpdate = doUpdate,
             expectedUpdatedValue = "20:20:20",
         )
@@ -157,11 +157,11 @@ class Cell_map3_combo_tests {
             "$value1:$value2:$value3"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = map3Cell,
         )
 
-        updateVerificationProcess.verifyDoesNotUpdate(
+        updateVerifier.verifyDoesNotUpdate(
             doTrigger = doUpdate,
             expectedNonUpdatedValue = "10:A:true",
         )
@@ -210,11 +210,11 @@ class Cell_map3_combo_tests {
             "$value1:$value2:$value3"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = map3Cell,
         )
 
-        updateVerificationProcess.verifyUpdates(
+        updateVerifier.verifyUpdates(
             doUpdate = doUpdate,
             expectedUpdatedValue = "20:A:true",
         )
@@ -277,11 +277,11 @@ class Cell_map3_combo_tests {
             "$value1:$value2:$value3"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = map3Cell,
         )
 
-        updateVerificationProcess.verifyUpdates(
+        updateVerifier.verifyUpdates(
             doUpdate = doUpdate,
             expectedUpdatedValue = "10:B:true",
         )
@@ -344,11 +344,11 @@ class Cell_map3_combo_tests {
             "$value1:$value2:$value3"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = map3Cell,
         )
 
-        updateVerificationProcess.verifyUpdates(
+        updateVerifier.verifyUpdates(
             doUpdate = doUpdate,
             expectedUpdatedValue = "10:A:false",
         )
@@ -420,7 +420,7 @@ class Cell_map3_combo_tests {
             "$value1:$value2:$value3"
         }
 
-        val updateVerificationProcess = UpdateVerificationProcess.observeActively(
+        val updateVerifier = UpdateVerifier.observeActively(
             subjectCell = map3Cell,
         )
 
@@ -428,7 +428,7 @@ class Cell_map3_combo_tests {
         val expectedValue2 = newSource2Value ?: initialSource2Value
         val expectedValue3 = newSource3Value ?: initialSource3Value
 
-        updateVerificationProcess.verifyUpdates(
+        updateVerifier.verifyUpdates(
             doUpdate = doUpdate,
             expectedUpdatedValue = "$expectedValue1:$expectedValue2:$expectedValue3",
         )

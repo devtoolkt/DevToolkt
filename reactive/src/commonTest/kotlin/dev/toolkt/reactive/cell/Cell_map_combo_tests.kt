@@ -73,11 +73,11 @@ class Cell_map_combo_tests {
 
         val mapCell = sourceCell.map { it.toString() }
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = mapCell,
         )
 
-        updateVerificationProcess.verifyUpdates(
+        updateVerifier.verifyUpdates(
             doUpdate = doUpdate,
             expectedUpdatedValue = "20",
         )

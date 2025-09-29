@@ -119,11 +119,11 @@ class Cell_switch_combo_tests {
 
         val switchCell = Cell.switch(outerCell)
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = switchCell,
         )
 
-        updateVerificationProcess.verifyUpdates(
+        updateVerifier.verifyUpdates(
             doUpdate = doUpdateInner,
             expectedUpdatedValue = 20,
         )
@@ -185,11 +185,11 @@ class Cell_switch_combo_tests {
 
         val switchCell = Cell.switch(outerCell)
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = switchCell,
         )
 
-        updateVerificationProcess.verifyUpdates(
+        updateVerifier.verifyUpdates(
             doUpdate = doUpdateOuter,
             expectedUpdatedValue = 20,
         )
@@ -259,13 +259,13 @@ class Cell_switch_combo_tests {
 
         val switchCell = Cell.switch(outerCell)
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = switchCell,
         )
 
         doUpdateOuter.emit()
 
-        updateVerificationProcess.verifyDoesNotUpdate(
+        updateVerifier.verifyDoesNotUpdate(
             doTrigger = doUpdateInitialInner,
             expectedNonUpdatedValue = 20,
         )
@@ -333,13 +333,13 @@ class Cell_switch_combo_tests {
 
         val switchCell = Cell.switch(outerCell)
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = switchCell,
         )
 
         doUpdateOuter.emit()
 
-        updateVerificationProcess.verifyUpdates(
+        updateVerifier.verifyUpdates(
             doUpdate = doUpdateNewInner,
             expectedUpdatedValue = 21,
         )
@@ -403,11 +403,11 @@ class Cell_switch_combo_tests {
             Cell.switch(outerCell)
         }
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = switchCell,
         )
 
-        updateVerificationProcess.verifyUpdates(
+        updateVerifier.verifyUpdates(
             doUpdate = doSwitch,
             expectedUpdatedValue = 20,
         )
@@ -471,11 +471,11 @@ class Cell_switch_combo_tests {
             Cell.switch(outerCell)
         }
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = switchCell,
         )
 
-        updateVerificationProcess.verifyUpdates(
+        updateVerifier.verifyUpdates(
             doUpdate = doSwitch,
             expectedUpdatedValue = 21,
         )
@@ -541,11 +541,11 @@ class Cell_switch_combo_tests {
             Cell.switch(outerCell)
         }
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = switchCell,
         )
 
-        updateVerificationProcess.verifyUpdates(
+        updateVerifier.verifyUpdates(
             doUpdate = doSwitch,
             expectedUpdatedValue = 21,
         )
