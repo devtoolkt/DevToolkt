@@ -30,74 +30,30 @@ class Cell_switch_combo_tests {
         )
     }
 
+    private fun test_initial(
+        samplingStrategy: CellSamplingStrategy,
+    ) {
+        ConstCellFactory.values.forEach { outerConstCellFactory ->
+            ConstCellFactory.values.forEach { innerConstCellFactory ->
+                test_initial(
+                    outerConstCellFactory = outerConstCellFactory,
+                    innerConstCellFactory = innerConstCellFactory,
+                    samplingStrategy = samplingStrategy,
+                )
+            }
+        }
+    }
+
     @Test
-    fun test_initial_outerInert_innerInert_passive() {
+    fun test_initial_passive() {
         test_initial(
-            outerConstCellFactory = ConstCellFactory.Inert,
-            innerConstCellFactory = ConstCellFactory.Inert,
             samplingStrategy = CellSamplingStrategy.Passive,
         )
     }
 
     @Test
-    fun test_initial_outerInert_innerInert_active() {
+    fun test_initial_active() {
         test_initial(
-            outerConstCellFactory = ConstCellFactory.Inert,
-            innerConstCellFactory = ConstCellFactory.Inert,
-            samplingStrategy = CellSamplingStrategy.Active,
-        )
-    }
-
-    @Test
-    fun test_initial_outerInert_innerDynamic_passive() {
-        test_initial(
-            outerConstCellFactory = ConstCellFactory.Inert,
-            innerConstCellFactory = ConstCellFactory.Dynamic,
-            samplingStrategy = CellSamplingStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_initial_outerInert_innerDynamic_active() {
-        test_initial(
-            outerConstCellFactory = ConstCellFactory.Inert,
-            innerConstCellFactory = ConstCellFactory.Dynamic,
-            samplingStrategy = CellSamplingStrategy.Active,
-        )
-    }
-
-    @Test
-    fun test_initial_outerDynamic_innerInert_passive() {
-        test_initial(
-            outerConstCellFactory = ConstCellFactory.Dynamic,
-            innerConstCellFactory = ConstCellFactory.Inert,
-            samplingStrategy = CellSamplingStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_initial_outerDynamic_innerInert_active() {
-        test_initial(
-            outerConstCellFactory = ConstCellFactory.Dynamic,
-            innerConstCellFactory = ConstCellFactory.Inert,
-            samplingStrategy = CellSamplingStrategy.Active,
-        )
-    }
-
-    @Test
-    fun test_initial_outerDynamic_innerDynamic_passive() {
-        test_initial(
-            outerConstCellFactory = ConstCellFactory.Dynamic,
-            innerConstCellFactory = ConstCellFactory.Dynamic,
-            samplingStrategy = CellSamplingStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_initial_outerDynamic_innerDynamic_active() {
-        test_initial(
-            outerConstCellFactory = ConstCellFactory.Dynamic,
-            innerConstCellFactory = ConstCellFactory.Dynamic,
             samplingStrategy = CellSamplingStrategy.Active,
         )
     }
@@ -129,40 +85,38 @@ class Cell_switch_combo_tests {
         )
     }
 
-    @Test
-    fun test_initialInnerUpdate_outerInert_passive() {
-        test_initialInnerUpdate(
-            outerConstCellFactory = ConstCellFactory.Inert,
-            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_initialInnerUpdate_outerInert_active() {
-        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
+    private fun test_initialInnerUpdate(
+        updateVerificationStrategy: UpdateVerificationStrategy,
+    ) {
+        ConstCellFactory.values.forEach { outerConstCellFactory ->
             test_initialInnerUpdate(
-                outerConstCellFactory = ConstCellFactory.Inert,
+                outerConstCellFactory = outerConstCellFactory,
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_initialInnerUpdate_outerDynamic_passive() {
+    fun test_initialInnerUpdate_passive() {
         test_initialInnerUpdate(
-            outerConstCellFactory = ConstCellFactory.Dynamic,
             updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_initialInnerUpdate_outerDynamic_active() {
+    fun test_initialInnerUpdate_active() {
         UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_initialInnerUpdate(
-                outerConstCellFactory = ConstCellFactory.Dynamic,
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
+    }
+
+    @Test
+    fun test_initialInnerUpdate_quick() {
+        test_initialInnerUpdate(
+            updateVerificationStrategy = UpdateVerificationStrategy.Quick,
+        )
     }
 
     private fun test_outerUpdate(
@@ -195,40 +149,38 @@ class Cell_switch_combo_tests {
         )
     }
 
-    @Test
-    fun test_outerUpdate_newInnerInert_passive() {
-        test_outerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Inert,
-            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_newInnerInert_active() {
-        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
+    private fun test_outerUpdate(
+        updateVerificationStrategy: UpdateVerificationStrategy,
+    ) {
+        ConstCellFactory.values.forEach { newInnerConstCellFactory ->
             test_outerUpdate(
-                newInnerConstCellFactory = ConstCellFactory.Inert,
+                newInnerConstCellFactory = newInnerConstCellFactory,
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerUpdate_newInnerDynamic_passive() {
+    fun test_outerUpdate_passive() {
         test_outerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Dynamic,
             updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerUpdate_newInnerDynamic_active() {
+    fun test_outerUpdate_active() {
         UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_outerUpdate(
-                newInnerConstCellFactory = ConstCellFactory.Dynamic,
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
+    }
+
+    @Test
+    fun test_outerUpdate_quick() {
+        test_outerUpdate(
+            updateVerificationStrategy = UpdateVerificationStrategy.Quick,
+        )
     }
 
     private fun test_outerUpdate_thenInitialInnerUpdate(
@@ -271,37 +223,28 @@ class Cell_switch_combo_tests {
         )
     }
 
-    @Test
-    fun test_outerUpdate_thenInitialInnerUpdate_newInnerInert_passive() {
-        test_outerUpdate_thenInitialInnerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Inert,
-            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_thenInitialInnerUpdate_newInnerInert_active() {
-        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
+    private fun test_outerUpdate_thenInitialInnerUpdate(
+        updateVerificationStrategy: UpdateVerificationStrategy.Total,
+    ) {
+        ConstCellFactory.values.forEach { newInnerConstCellFactory ->
             test_outerUpdate_thenInitialInnerUpdate(
-                newInnerConstCellFactory = ConstCellFactory.Inert,
+                newInnerConstCellFactory = newInnerConstCellFactory,
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerUpdate_thenInitialInnerUpdate_newInnerDynamic_passive() {
+    fun test_outerUpdate_thenInitialInnerUpdate_passive() {
         test_outerUpdate_thenInitialInnerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Dynamic,
             updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerUpdate_thenInitialInnerUpdate_newInnerDynamic_active() {
+    fun test_outerUpdate_thenInitialInnerUpdate_active() {
         UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_outerUpdate_thenInitialInnerUpdate(
-                newInnerConstCellFactory = ConstCellFactory.Dynamic,
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
@@ -345,40 +288,38 @@ class Cell_switch_combo_tests {
         )
     }
 
-    @Test
-    fun test_outerUpdate_thenNewInnerUpdate_newInnerInert_passive() {
-        test_outerUpdate_thenNewInnerUpdate(
-            initialInnerConstCellFactory = ConstCellFactory.Inert,
-            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_thenNewInnerUpdate_newInnerInert_active() {
-        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
+    private fun test_outerUpdate_thenNewInnerUpdate(
+        updateVerificationStrategy: UpdateVerificationStrategy,
+    ) {
+        ConstCellFactory.values.forEach { initialInnerConstCellFactory ->
             test_outerUpdate_thenNewInnerUpdate(
-                initialInnerConstCellFactory = ConstCellFactory.Inert,
+                initialInnerConstCellFactory = initialInnerConstCellFactory,
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerUpdate_thenNewInnerUpdate_newInnerDynamic_passive() {
+    fun test_outerUpdate_thenNewInnerUpdate_passive() {
         test_outerUpdate_thenNewInnerUpdate(
-            initialInnerConstCellFactory = ConstCellFactory.Dynamic,
             updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerUpdate_thenNewInnerUpdate_newInnerDynamic_active() {
+    fun test_outerUpdate_thenNewInnerUpdate_active() {
         UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_outerUpdate_thenNewInnerUpdate(
-                initialInnerConstCellFactory = ConstCellFactory.Dynamic,
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
+    }
+
+    @Test
+    fun test_outerUpdate_thenNewInnerUpdate_quick() {
+        test_outerUpdate_thenNewInnerUpdate(
+            updateVerificationStrategy = UpdateVerificationStrategy.Quick,
+        )
     }
 
     private fun test_outerUpdate_simultaneousInitialInnerUpdate(
@@ -413,40 +354,38 @@ class Cell_switch_combo_tests {
         )
     }
 
-    @Test
-    fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerInert_passive() {
-        test_outerUpdate_simultaneousInitialInnerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Inert,
-            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerInert_active() {
-        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
+    private fun test_outerUpdate_simultaneousInitialInnerUpdate(
+        updateVerificationStrategy: UpdateVerificationStrategy,
+    ) {
+        ConstCellFactory.values.forEach { newInnerConstCellFactory ->
             test_outerUpdate_simultaneousInitialInnerUpdate(
-                newInnerConstCellFactory = ConstCellFactory.Inert,
+                newInnerConstCellFactory = newInnerConstCellFactory,
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerDynamic_passive() {
+    fun test_outerUpdate_simultaneousInitialInnerUpdate_passive() {
         test_outerUpdate_simultaneousInitialInnerUpdate(
-            newInnerConstCellFactory = ConstCellFactory.Dynamic,
             updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerDynamic_active() {
+    fun test_outerUpdate_simultaneousInitialInnerUpdate_active() {
         UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_outerUpdate_simultaneousInitialInnerUpdate(
-                newInnerConstCellFactory = ConstCellFactory.Dynamic,
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
+    }
+
+    @Test
+    fun test_outerUpdate_simultaneousInitialInnerUpdate_quick() {
+        test_outerUpdate_simultaneousInitialInnerUpdate(
+            updateVerificationStrategy = UpdateVerificationStrategy.Quick,
+        )
     }
 
     private fun test_outerUpdate_simultaneousNewInnerUpdate(
@@ -481,40 +420,38 @@ class Cell_switch_combo_tests {
         )
     }
 
-    @Test
-    fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerInert_passive() {
-        test_outerUpdate_simultaneousNewInnerUpdate(
-            initialInnerConstCellFactory = ConstCellFactory.Inert,
-            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerInert_active() {
-        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
+    private fun test_outerUpdate_simultaneousNewInnerUpdate(
+        updateVerificationStrategy: UpdateVerificationStrategy,
+    ) {
+        ConstCellFactory.values.forEach { initialInnerConstCellFactory ->
             test_outerUpdate_simultaneousNewInnerUpdate(
-                initialInnerConstCellFactory = ConstCellFactory.Inert,
+                initialInnerConstCellFactory = initialInnerConstCellFactory,
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerDynamic_passive() {
+    fun test_outerUpdate_simultaneousNewInnerUpdate_passive() {
         test_outerUpdate_simultaneousNewInnerUpdate(
-            initialInnerConstCellFactory = ConstCellFactory.Dynamic,
             updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerDynamic_active() {
+    fun test_outerUpdate_simultaneousNewInnerUpdate_active() {
         UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_outerUpdate_simultaneousNewInnerUpdate(
-                initialInnerConstCellFactory = ConstCellFactory.Dynamic,
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
+    }
+
+    @Test
+    fun test_outerUpdate_simultaneousNewInnerUpdate_quick() {
+        test_outerUpdate_simultaneousNewInnerUpdate(
+            updateVerificationStrategy = UpdateVerificationStrategy.Quick,
+        )
     }
 
     private fun test_outerUpdate_simultaneousBothInnerUpdates(
@@ -565,5 +502,12 @@ class Cell_switch_combo_tests {
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
+    }
+
+    @Test
+    fun test_outerUpdate_simultaneousBothInnerUpdates_quick() {
+        test_outerUpdate_simultaneousBothInnerUpdates(
+            updateVerificationStrategy = UpdateVerificationStrategy.Quick,
+        )
     }
 }

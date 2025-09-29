@@ -98,4 +98,11 @@ class Cell_map_combo_tests {
             )
         }
     }
+
+    @Test
+    fun test_sourceUpdate_quick() {
+        test_sourceUpdate(
+            updateVerificationStrategy = UpdateVerificationStrategy.Quick,
+        )
+    }
 }
