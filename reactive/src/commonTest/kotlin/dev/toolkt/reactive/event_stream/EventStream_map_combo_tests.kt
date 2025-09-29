@@ -1,6 +1,6 @@
 package dev.toolkt.reactive.event_stream
 
-import dev.toolkt.reactive.event_stream.test_utils.EventStreamSubscriptionUtils
+import dev.toolkt.reactive.event_stream.test_utils.OccurrenceVerificationStrategy
 import kotlin.test.Test
 import kotlin.test.assertNull
 
@@ -19,20 +19,55 @@ class EventStream_map_combo_tests {
         )
     }
 
-    @Test
-    fun test_sourceUpdate() {
-        val sourceEventStream = EmitterEventStream<Int>()
+    private fun test_sourceOccurrence(
+        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+    ) {
+        val doOccur = EmitterEventStream<Unit>()
+
+        val sourceEventStream = doOccur.map { 10 }
 
         val mapEventStream = sourceEventStream.map { it.toString() }
 
-        val updateVerifier = EventStreamSubscriptionUtils.subscribeForTesting(
-            eventStream = mapEventStream,
+        val occurrenceVerifier = occurrenceVerificationStrategy.begin(
+            subjectEventStream = mapEventStream,
         )
 
-        sourceEventStream.emit(10)
-
-        updateVerifier.assertOccurredEventEquals(
-            expectedOccurredEvent = "10",
+        occurrenceVerifier.verifyOccurrencePropagated(
+            doOccur = doOccur,
+            expectedPropagatedEvent = "10",
         )
+    }
+
+    @Test
+    fun test_sourceOccurrence() {
+        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+            test_sourceOccurrence(
+                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+            )
+        }
+    }
+
+    private fun test_deactivation(
+        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+    ) {
+        val doTrigger = EmitterEventStream<Unit>()
+
+        val sourceEventStream = doTrigger.map { 10 }
+
+        val mapEventStream = sourceEventStream.map { it.toString() }
+
+        occurrenceVerificationStrategy.verifyDeactivation(
+            subjectEventStream = mapEventStream,
+            doTrigger = doTrigger,
+        )
+    }
+
+    @Test
+    fun test_deactivation() {
+        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+            test_deactivation(
+                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+            )
+        }
     }
 }

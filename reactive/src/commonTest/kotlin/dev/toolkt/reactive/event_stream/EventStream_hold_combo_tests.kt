@@ -1,41 +1,24 @@
-package dev.toolkt.reactive.cell
+package dev.toolkt.reactive.event_stream
 
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.CellSamplingStrategy
-import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
 import dev.toolkt.reactive.cell.test_utils.UpdateVerificationStrategy
-import dev.toolkt.reactive.event_stream.EmitterEventStream
-import dev.toolkt.reactive.event_stream.map
 import kotlin.test.Test
 
 @Suppress("ClassName")
-class Cell_map_combo_tests {
+class EventStream_hold_combo_tests {
     private fun test_initial(
-        sourceConstCellFactory: ConstCellFactory,
         samplingStrategy: CellSamplingStrategy,
     ) {
-        val sourceCell = MomentContext.execute {
-            sourceConstCellFactory.create(10)
+        val sourceEventStream = EmitterEventStream<Int>()
+
+        val holdCell = MomentContext.execute {
+            sourceEventStream.hold(initialValue = 10)
         }
 
-        val mapCell = sourceCell.map {
-            it.toString()
-        }
-
-        samplingStrategy.perceive(mapCell).assertCurrentValueEquals(
-            expectedCurrentValue = "10",
+        samplingStrategy.perceive(holdCell).assertCurrentValueEquals(
+            expectedCurrentValue = 10,
         )
-    }
-
-    private fun test_initial(
-        samplingStrategy: CellSamplingStrategy,
-    ) {
-        ConstCellFactory.values.forEach { sourceConstCellFactory ->
-            test_initial(
-                sourceConstCellFactory = sourceConstCellFactory,
-                samplingStrategy = samplingStrategy,
-            )
-        }
     }
 
     @Test
@@ -52,49 +35,46 @@ class Cell_map_combo_tests {
         )
     }
 
-    private fun test_sourceUpdate(
+    private fun test_sourceOccurrence(
         updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
-        val sourceCell = MomentContext.execute {
-            Cell.define(
-                initialValue = 10,
-                newValues = doUpdate.map { 20 },
-            )
+        val sourceEventStream = doUpdate.map { 11 }
+
+        val holdCell = MomentContext.execute {
+            sourceEventStream.hold(initialValue = 10)
         }
 
-        val mapCell = sourceCell.map { it.toString() }
-
         val updateVerifier = updateVerificationStrategy.begin(
-            subjectCell = mapCell,
+            subjectCell = holdCell,
         )
 
         updateVerifier.verifyUpdates(
             doUpdate = doUpdate,
-            expectedUpdatedValue = "20",
+            expectedUpdatedValue = 11,
         )
     }
 
     @Test
-    fun test_sourceUpdate_passive() {
-        test_sourceUpdate(
+    fun test_sourceOccurrence_passive() {
+        test_sourceOccurrence(
             updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_sourceUpdate_active() {
+    fun test_sourceOccurrence_active() {
         UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
-            test_sourceUpdate(
+            test_sourceOccurrence(
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_sourceUpdate_quick() {
-        test_sourceUpdate(
+    fun test_sourceOccurrence_quick() {
+        test_sourceOccurrence(
             updateVerificationStrategy = UpdateVerificationStrategy.Quick,
         )
     }
@@ -104,17 +84,14 @@ class Cell_map_combo_tests {
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
-        val sourceCell = MomentContext.execute {
-            Cell.define(
-                initialValue = 10,
-                newValues = doTrigger.map { 11 },
-            )
+        val sourceEventStream = doTrigger.map { 11 }
+
+        val holdCell = MomentContext.execute {
+            sourceEventStream.hold(initialValue = 10)
         }
 
-        val mapCell = sourceCell.map { it.toString() }
-
         updateVerificationStrategy.verifyDeactivation(
-            subjectCell = mapCell,
+            subjectCell = holdCell,
             doTrigger = doTrigger,
         )
     }
