@@ -5,8 +5,6 @@ import dev.toolkt.reactive.cell.test_utils.CellSamplingStrategy
 import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
 import dev.toolkt.reactive.cell.test_utils.UpdateVerificationProcess
 import dev.toolkt.reactive.cell.test_utils.UpdateVerificationStrategy
-import dev.toolkt.reactive.cell.test_utils.assertDoesNotUpdate
-import dev.toolkt.reactive.cell.test_utils.assertUpdates
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.filter
 import dev.toolkt.reactive.event_stream.hold
@@ -80,7 +78,7 @@ class Cell_map3_combo_tests {
     }
 
     private fun test_sameSource(
-        updateVerificationStrategy: UpdateVerificationStrategy?,
+        updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
@@ -98,14 +96,12 @@ class Cell_map3_combo_tests {
             "$value1:$value2:$value3"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy?.begin(
+        val updateVerificationProcess = updateVerificationStrategy.begin(
             subjectCell = map3Cell,
         )
 
-        assertUpdates(
-            subjectCell = map3Cell,
-            updateVerificationProcess = updateVerificationProcess,
-            doTrigger = doUpdate,
+        updateVerificationProcess.verifyUpdates(
+            doUpdate = doUpdate,
             expectedUpdatedValue = "20:20:20",
         )
     }
@@ -113,14 +109,14 @@ class Cell_map3_combo_tests {
     @Test
     fun test_sameSource_passive() {
         test_sameSource(
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Ignore // FIXME: Flaky test
     @Test
     fun test_sameSource_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_sameSource(
                 updateVerificationStrategy = updateVerificationStrategy,
             )
@@ -128,7 +124,7 @@ class Cell_map3_combo_tests {
     }
 
     private fun test_allFilteredOut(
-        updateVerificationStrategy: UpdateVerificationStrategy.Total?,
+        updateVerificationStrategy: UpdateVerificationStrategy.Total,
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
@@ -161,13 +157,11 @@ class Cell_map3_combo_tests {
             "$value1:$value2:$value3"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy?.begin(
+        val updateVerificationProcess = updateVerificationStrategy.begin(
             subjectCell = map3Cell,
         )
 
-        assertDoesNotUpdate(
-            subjectCell = map3Cell,
-            updateVerificationProcess = updateVerificationProcess,
+        updateVerificationProcess.verifyDoesNotUpdate(
             doTrigger = doUpdate,
             expectedNonUpdatedValue = "10:A:true",
         )
@@ -176,13 +170,13 @@ class Cell_map3_combo_tests {
     @Test
     fun test_allFilteredOut_passive() {
         test_allFilteredOut(
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_allFilteredOut_active() {
-        UpdateVerificationStrategy.Total.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_allFilteredOut(
                 updateVerificationStrategy = updateVerificationStrategy,
             )
@@ -192,7 +186,7 @@ class Cell_map3_combo_tests {
     private fun test_source1Update(
         source2ConstCellFactory: ConstCellFactory,
         source3ConstCellFactory: ConstCellFactory,
-        updateVerificationStrategy: UpdateVerificationStrategy?,
+        updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
@@ -216,20 +210,18 @@ class Cell_map3_combo_tests {
             "$value1:$value2:$value3"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy?.begin(
+        val updateVerificationProcess = updateVerificationStrategy.begin(
             subjectCell = map3Cell,
         )
 
-        assertUpdates(
-            subjectCell = map3Cell,
-            updateVerificationProcess = updateVerificationProcess,
-            doTrigger = doUpdate,
+        updateVerificationProcess.verifyUpdates(
+            doUpdate = doUpdate,
             expectedUpdatedValue = "20:A:true",
         )
     }
 
     private fun test_source1Update(
-        updateVerificationStrategy: UpdateVerificationStrategy?,
+        updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         ConstCellFactory.values.forEach { source2ConstCellFactory ->
             ConstCellFactory.values.forEach { source3ConstCellFactory ->
@@ -245,13 +237,13 @@ class Cell_map3_combo_tests {
     @Test
     fun test_source1Update_passive() {
         test_source1Update(
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_source1Update_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_source1Update(
                 updateVerificationStrategy = updateVerificationStrategy,
             )
@@ -261,7 +253,7 @@ class Cell_map3_combo_tests {
     private fun test_source2Update(
         source1ConstCellFactory: ConstCellFactory,
         source3ConstCellFactory: ConstCellFactory,
-        updateVerificationStrategy: UpdateVerificationStrategy?,
+        updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
@@ -285,20 +277,18 @@ class Cell_map3_combo_tests {
             "$value1:$value2:$value3"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy?.begin(
+        val updateVerificationProcess = updateVerificationStrategy.begin(
             subjectCell = map3Cell,
         )
 
-        assertUpdates(
-            subjectCell = map3Cell,
-            updateVerificationProcess = updateVerificationProcess,
-            doTrigger = doUpdate,
+        updateVerificationProcess.verifyUpdates(
+            doUpdate = doUpdate,
             expectedUpdatedValue = "10:B:true",
         )
     }
 
     private fun test_source2Update(
-        updateVerificationStrategy: UpdateVerificationStrategy?,
+        updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         ConstCellFactory.values.forEach { source1ConstCellFactory ->
             ConstCellFactory.values.forEach { source3ConstCellFactory ->
@@ -314,13 +304,13 @@ class Cell_map3_combo_tests {
     @Test
     fun test_source2Update_passive() {
         test_source2Update(
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_source2Update_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_source2Update(
                 updateVerificationStrategy = updateVerificationStrategy,
             )
@@ -330,7 +320,7 @@ class Cell_map3_combo_tests {
     private fun test_source3Update(
         source1ConstCellFactory: ConstCellFactory,
         source2ConstCellFactory: ConstCellFactory,
-        updateVerificationStrategy: UpdateVerificationStrategy?,
+        updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
@@ -354,20 +344,18 @@ class Cell_map3_combo_tests {
             "$value1:$value2:$value3"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy?.begin(
+        val updateVerificationProcess = updateVerificationStrategy.begin(
             subjectCell = map3Cell,
         )
 
-        assertUpdates(
-            subjectCell = map3Cell,
-            updateVerificationProcess = updateVerificationProcess,
-            doTrigger = doUpdate,
+        updateVerificationProcess.verifyUpdates(
+            doUpdate = doUpdate,
             expectedUpdatedValue = "10:A:false",
         )
     }
 
     private fun test_source3Update(
-        updateVerificationStrategy: UpdateVerificationStrategy?,
+        updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         ConstCellFactory.values.forEach { source1ConstCellFactory ->
             ConstCellFactory.values.forEach { source2ConstCellFactory ->
@@ -383,13 +371,13 @@ class Cell_map3_combo_tests {
     @Test
     fun test_source3Update_passive() {
         test_source3Update(
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_source3Update_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_source3Update(
                 updateVerificationStrategy = updateVerificationStrategy,
             )
@@ -432,7 +420,7 @@ class Cell_map3_combo_tests {
             "$value1:$value2:$value3"
         }
 
-        val updateVerificationProcess = UpdateVerificationProcess.Total.observe(
+        val updateVerificationProcess = UpdateVerificationProcess.observeActively(
             subjectCell = map3Cell,
         )
 
@@ -440,10 +428,8 @@ class Cell_map3_combo_tests {
         val expectedValue2 = newSource2Value ?: initialSource2Value
         val expectedValue3 = newSource3Value ?: initialSource3Value
 
-        assertUpdates(
-            subjectCell = map3Cell,
-            updateVerificationProcess = updateVerificationProcess,
-            doTrigger = doUpdate,
+        updateVerificationProcess.verifyUpdates(
+            doUpdate = doUpdate,
             expectedUpdatedValue = "$expectedValue1:$expectedValue2:$expectedValue3",
         )
     }
