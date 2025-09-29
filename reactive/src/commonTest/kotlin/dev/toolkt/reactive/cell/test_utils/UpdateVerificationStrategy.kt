@@ -74,6 +74,10 @@ sealed class UpdateVerificationStrategy {
         ): UpdateVerifier.Partial<ValueT>
     }
 
+    /**
+     * A tricky update verifier that triggers a corner case path, where the subject cell might be activated and pulled
+     * at the same time.
+     */
     data object Quick : Partial() {
         override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,

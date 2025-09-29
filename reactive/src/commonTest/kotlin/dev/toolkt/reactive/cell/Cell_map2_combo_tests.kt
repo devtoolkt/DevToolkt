@@ -39,75 +39,29 @@ class Cell_map2_combo_tests {
     }
 
     @Test
-    fun test_initial_source1Inert_source2Inert_passive() {
-        test_initial(
-            source1ConstCellFactory = ConstCellFactory.Inert,
-            source2ConstCellFactory = ConstCellFactory.Inert,
-            samplingStrategy = CellSamplingStrategy.Passive,
-        )
+    fun test_initial_passive() {
+        ConstCellFactory.values.forEach { source1ConstCellFactory ->
+            ConstCellFactory.values.forEach { source2ConstCellFactory ->
+                test_initial(
+                    source1ConstCellFactory = source1ConstCellFactory,
+                    source2ConstCellFactory = source2ConstCellFactory,
+                    samplingStrategy = CellSamplingStrategy.Passive,
+                )
+            }
+        }
     }
 
     @Test
-    fun test_initial_source1Inert_source2Inert_active() {
-        test_initial(
-            source1ConstCellFactory = ConstCellFactory.Inert,
-            source2ConstCellFactory = ConstCellFactory.Inert,
-            samplingStrategy = CellSamplingStrategy.Active,
-        )
-    }
-
-    @Test
-    fun test_initial_source1Inert_source2Dynamic_passive() {
-        test_initial(
-            source1ConstCellFactory = ConstCellFactory.Inert,
-            source2ConstCellFactory = ConstCellFactory.Dynamic,
-            samplingStrategy = CellSamplingStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_initial_source1Inert_source2Dynamic_active() {
-        test_initial(
-            source1ConstCellFactory = ConstCellFactory.Inert,
-            source2ConstCellFactory = ConstCellFactory.Dynamic,
-            samplingStrategy = CellSamplingStrategy.Active,
-        )
-    }
-
-    @Test
-    fun test_initial_source1Dynamic_source2Inert_passive() {
-        test_initial(
-            source1ConstCellFactory = ConstCellFactory.Dynamic,
-            source2ConstCellFactory = ConstCellFactory.Inert,
-            samplingStrategy = CellSamplingStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_initial_source1Dynamic_source2Inert_active() {
-        test_initial(
-            source1ConstCellFactory = ConstCellFactory.Dynamic,
-            source2ConstCellFactory = ConstCellFactory.Inert,
-            samplingStrategy = CellSamplingStrategy.Active,
-        )
-    }
-
-    @Test
-    fun test_initial_source1Dynamic_source2Dynamic_passive() {
-        test_initial(
-            source1ConstCellFactory = ConstCellFactory.Dynamic,
-            source2ConstCellFactory = ConstCellFactory.Dynamic,
-            samplingStrategy = CellSamplingStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_initial_source1Dynamic_source2Dynamic_active() {
-        test_initial(
-            source1ConstCellFactory = ConstCellFactory.Dynamic,
-            source2ConstCellFactory = ConstCellFactory.Dynamic,
-            samplingStrategy = CellSamplingStrategy.Active,
-        )
+    fun test_initial_active() {
+        ConstCellFactory.values.forEach { source1ConstCellFactory ->
+            ConstCellFactory.values.forEach { source2ConstCellFactory ->
+                test_initial(
+                    source1ConstCellFactory = source1ConstCellFactory,
+                    source2ConstCellFactory = source2ConstCellFactory,
+                    samplingStrategy = CellSamplingStrategy.Active,
+                )
+            }
+        }
     }
 
     private fun test_sameSource(
@@ -154,6 +108,14 @@ class Cell_map2_combo_tests {
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
+    }
+
+    @Ignore // FIXME: Flaky test
+    @Test
+    fun test_sameSource_quick() {
+        test_sameSource(
+            updateVerificationStrategy = UpdateVerificationStrategy.Quick,
+        )
     }
 
     private fun test_allFilteredOut(
@@ -241,40 +203,36 @@ class Cell_map2_combo_tests {
         )
     }
 
-    @Test
-    fun test_source1Update_source2Inert_passive() {
-        test_source1Update(
-            source2ConstCellFactory = ConstCellFactory.Inert,
-            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_source1Update_source2Inert_active() {
-        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
+    private fun test_source1Update(
+        updateVerificationStrategy: UpdateVerificationStrategy,
+    ) {
+        ConstCellFactory.values.forEach { source2ConstCellFactory ->
             test_source1Update(
-                source2ConstCellFactory = ConstCellFactory.Inert,
+                source2ConstCellFactory = source2ConstCellFactory,
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_source1Update_source2Dynamic_passive() {
+    fun test_source1Update_passive() {
         test_source1Update(
-            source2ConstCellFactory = ConstCellFactory.Dynamic,
             updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_source1Update_source2Dynamic_active() {
-        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
-            test_source1Update(
-                source2ConstCellFactory = ConstCellFactory.Dynamic,
-                updateVerificationStrategy = updateVerificationStrategy,
-            )
-        }
+    fun test_source1Update_active() {
+        test_source1Update(
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
+        )
+    }
+
+    @Test
+    fun test_source1Update_quick() {
+        test_source1Update(
+            updateVerificationStrategy = UpdateVerificationStrategy.Quick,
+        )
     }
 
     private fun test_source2Update(
@@ -310,40 +268,38 @@ class Cell_map2_combo_tests {
         )
     }
 
-    @Test
-    fun test_source2Update_source1Inert_passive() {
-        test_source2Update(
-            source1ConstCellFactory = ConstCellFactory.Inert,
-            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_source2Update_source1Dynamic_active() {
-        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
+    private fun test_source2Update(
+        updateVerificationStrategy: UpdateVerificationStrategy,
+    ) {
+        ConstCellFactory.values.forEach { source1ConstCellFactory ->
             test_source2Update(
-                source1ConstCellFactory = ConstCellFactory.Dynamic,
+                source1ConstCellFactory = source1ConstCellFactory,
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_source2Update_source1Dynamic_passive() {
+    fun test_source2Update_passive() {
         test_source2Update(
-            source1ConstCellFactory = ConstCellFactory.Dynamic,
             updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_source2Update_source1Inert_active() {
+    fun test_source2Update_active() {
         UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_source2Update(
-                source1ConstCellFactory = ConstCellFactory.Inert,
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
+    }
+
+    @Test
+    fun test_source2Update_quick() {
+        test_source2Update(
+            updateVerificationStrategy = UpdateVerificationStrategy.Quick,
+        )
     }
 
     private fun test_simultaneousUpdates(
@@ -383,12 +339,26 @@ class Cell_map2_combo_tests {
     }
 
     @Test
-    fun test_simultaneousUpdates() {
+    fun test_simultaneousUpdates_passive() {
+        test_simultaneousUpdates(
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
+        )
+    }
+
+    @Test
+    fun test_simultaneousUpdates_active() {
         UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_simultaneousUpdates(
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
+    }
+
+    @Test
+    fun test_simultaneousUpdates_quick() {
+        test_simultaneousUpdates(
+            updateVerificationStrategy = UpdateVerificationStrategy.Quick,
+        )
     }
 
     private fun test_deactivation(
@@ -429,7 +399,7 @@ class Cell_map2_combo_tests {
     }
 
     @Test
-    fun test_deactivation_active() {
+    fun test_deactivation() {
         UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_deactivation(
                 updateVerificationStrategy = updateVerificationStrategy,

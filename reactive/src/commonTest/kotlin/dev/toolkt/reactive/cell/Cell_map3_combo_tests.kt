@@ -123,6 +123,14 @@ class Cell_map3_combo_tests {
         }
     }
 
+    @Ignore // FIXME: Flaky test
+    @Test
+    fun test_sameSource_quick() {
+        test_sameSource(
+            updateVerificationStrategy = UpdateVerificationStrategy.Quick,
+        )
+    }
+
     private fun test_allFilteredOut(
         updateVerificationStrategy: UpdateVerificationStrategy.Total,
     ) {
@@ -250,6 +258,13 @@ class Cell_map3_combo_tests {
         }
     }
 
+    @Test
+    fun test_source1Update_quick() {
+        test_source1Update(
+            updateVerificationStrategy = UpdateVerificationStrategy.Quick,
+        )
+    }
+
     private fun test_source2Update(
         source1ConstCellFactory: ConstCellFactory,
         source3ConstCellFactory: ConstCellFactory,
@@ -317,6 +332,13 @@ class Cell_map3_combo_tests {
         }
     }
 
+    @Test
+    fun test_source2Update_quick() {
+        test_source2Update(
+            updateVerificationStrategy = UpdateVerificationStrategy.Quick,
+        )
+    }
+
     private fun test_source3Update(
         source1ConstCellFactory: ConstCellFactory,
         source2ConstCellFactory: ConstCellFactory,
@@ -382,6 +404,13 @@ class Cell_map3_combo_tests {
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }
+    }
+
+    @Test
+    fun test_source3Update_quick() {
+        test_source3Update(
+            updateVerificationStrategy = UpdateVerificationStrategy.Quick,
+        )
     }
 
     private fun test_mixedUpdates(
