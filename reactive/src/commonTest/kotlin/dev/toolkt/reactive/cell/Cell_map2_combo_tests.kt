@@ -4,8 +4,6 @@ import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.CellSamplingStrategy
 import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
 import dev.toolkt.reactive.cell.test_utils.UpdateVerificationStrategy
-import dev.toolkt.reactive.cell.test_utils.assertDoesNotUpdate
-import dev.toolkt.reactive.cell.test_utils.assertUpdates
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.filter
 import dev.toolkt.reactive.event_stream.hold
@@ -113,7 +111,7 @@ class Cell_map2_combo_tests {
     }
 
     private fun test_sameSource(
-        updateVerificationStrategy: UpdateVerificationStrategy?,
+        updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
@@ -131,14 +129,12 @@ class Cell_map2_combo_tests {
             "$value1:$value2"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy?.begin(
+        val updateVerificationProcess = updateVerificationStrategy.begin(
             subjectCell = map2Cell,
         )
 
-        assertUpdates(
-            subjectCell = map2Cell,
-            updateVerificationProcess = updateVerificationProcess,
-            doTrigger = doUpdate,
+        updateVerificationProcess.verifyUpdates(
+            doUpdate = doUpdate,
             expectedUpdatedValue = "20:20",
         )
     }
@@ -146,14 +142,14 @@ class Cell_map2_combo_tests {
     @Test
     fun test_sameSource_passive() {
         test_sameSource(
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Ignore // FIXME: Flaky test
     @Test
     fun test_sameSource_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_sameSource(
                 updateVerificationStrategy = updateVerificationStrategy,
             )
@@ -161,7 +157,7 @@ class Cell_map2_combo_tests {
     }
 
     private fun test_allFilteredOut(
-        updateVerificationStrategy: UpdateVerificationStrategy.Total?,
+        updateVerificationStrategy: UpdateVerificationStrategy.Total,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
@@ -186,13 +182,11 @@ class Cell_map2_combo_tests {
             "$value1:$value2"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy?.begin(
+        val updateVerificationProcess = updateVerificationStrategy.begin(
             subjectCell = map2Cell,
         )
 
-        assertDoesNotUpdate(
-            subjectCell = map2Cell,
-            updateVerificationProcess = updateVerificationProcess,
+        updateVerificationProcess.verifyDoesNotUpdate(
             doTrigger = doTrigger,
             expectedNonUpdatedValue = "10:A",
         )
@@ -201,13 +195,13 @@ class Cell_map2_combo_tests {
     @Test
     fun test_allFilteredOut_passive() {
         test_allFilteredOut(
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_allFilteredOut_active() {
-        UpdateVerificationStrategy.Total.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_allFilteredOut(
                 updateVerificationStrategy = updateVerificationStrategy,
             )
@@ -216,7 +210,7 @@ class Cell_map2_combo_tests {
 
     private fun test_source1Update(
         source2ConstCellFactory: ConstCellFactory,
-        updateVerificationStrategy: UpdateVerificationStrategy?,
+        updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
@@ -237,14 +231,12 @@ class Cell_map2_combo_tests {
             "$value1:$value2"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy?.begin(
+        val updateVerificationProcess = updateVerificationStrategy.begin(
             subjectCell = map2Cell,
         )
 
-        assertUpdates(
-            subjectCell = map2Cell,
-            updateVerificationProcess = updateVerificationProcess,
-            doTrigger = doUpdate,
+        updateVerificationProcess.verifyUpdates(
+            doUpdate = doUpdate,
             expectedUpdatedValue = "20:A",
         )
     }
@@ -253,13 +245,13 @@ class Cell_map2_combo_tests {
     fun test_source1Update_source2Inert_passive() {
         test_source1Update(
             source2ConstCellFactory = ConstCellFactory.Inert,
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_source1Update_source2Inert_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_source1Update(
                 source2ConstCellFactory = ConstCellFactory.Inert,
                 updateVerificationStrategy = updateVerificationStrategy,
@@ -271,13 +263,13 @@ class Cell_map2_combo_tests {
     fun test_source1Update_source2Dynamic_passive() {
         test_source1Update(
             source2ConstCellFactory = ConstCellFactory.Dynamic,
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_source1Update_source2Dynamic_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_source1Update(
                 source2ConstCellFactory = ConstCellFactory.Dynamic,
                 updateVerificationStrategy = updateVerificationStrategy,
@@ -287,7 +279,7 @@ class Cell_map2_combo_tests {
 
     private fun test_source2Update(
         source1ConstCellFactory: ConstCellFactory,
-        updateVerificationStrategy: UpdateVerificationStrategy?,
+        updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
@@ -308,14 +300,12 @@ class Cell_map2_combo_tests {
             "$value1:$value2"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy?.begin(
+        val updateVerificationProcess = updateVerificationStrategy.begin(
             subjectCell = map2Cell,
         )
 
-        assertUpdates(
-            subjectCell = map2Cell,
-            updateVerificationProcess = updateVerificationProcess,
-            doTrigger = doUpdate,
+        updateVerificationProcess.verifyUpdates(
+            doUpdate = doUpdate,
             expectedUpdatedValue = "10:B",
         )
     }
@@ -324,13 +314,13 @@ class Cell_map2_combo_tests {
     fun test_source2Update_source1Inert_passive() {
         test_source2Update(
             source1ConstCellFactory = ConstCellFactory.Inert,
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_source2Update_source1Dynamic_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_source2Update(
                 source1ConstCellFactory = ConstCellFactory.Dynamic,
                 updateVerificationStrategy = updateVerificationStrategy,
@@ -342,13 +332,13 @@ class Cell_map2_combo_tests {
     fun test_source2Update_source1Dynamic_passive() {
         test_source2Update(
             source1ConstCellFactory = ConstCellFactory.Dynamic,
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_source2Update_source1Inert_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_source2Update(
                 source1ConstCellFactory = ConstCellFactory.Inert,
                 updateVerificationStrategy = updateVerificationStrategy,
@@ -357,7 +347,7 @@ class Cell_map2_combo_tests {
     }
 
     private fun test_simultaneousUpdates(
-        updateVerificationStrategy: UpdateVerificationStrategy?,
+        updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
@@ -382,29 +372,66 @@ class Cell_map2_combo_tests {
             "$value1:$value2"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy?.begin(
+        val updateVerificationProcess = updateVerificationStrategy.begin(
             subjectCell = map2Cell,
         )
 
-        assertUpdates(
-            subjectCell = map2Cell,
-            updateVerificationProcess = updateVerificationProcess,
-            doTrigger = doUpdate,
+        updateVerificationProcess.verifyUpdates(
+            doUpdate = doUpdate,
             expectedUpdatedValue = "11:B",
         )
     }
 
     @Test
-    fun test_simultaneousUpdates_passive() {
-        test_simultaneousUpdates(
-            updateVerificationStrategy = null,
+    fun test_simultaneousUpdates() {
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
+            test_simultaneousUpdates(
+                updateVerificationStrategy = updateVerificationStrategy,
+            )
+        }
+    }
+
+    private fun test_deactivation(
+        updateVerificationStrategy: UpdateVerificationStrategy.Active,
+    ) {
+        val doTrigger = EmitterEventStream<Unit>()
+
+        val sourceCell1 = MomentContext.execute {
+            Cell.define(
+                initialValue = 10,
+                newValues = doTrigger.map { 11 },
+            )
+        }
+
+        val sourceCell2 = MomentContext.execute {
+            Cell.define(
+                initialValue = 'A',
+                newValues = doTrigger.map { 'B' },
+            )
+        }
+
+        val map2Cell = Cell.map2(
+            sourceCell1,
+            sourceCell2,
+        ) { value1, value2 ->
+            "$value1:$value2"
+        }
+
+        val updateVerificationProcess = updateVerificationStrategy.begin(
+            subjectCell = map2Cell,
+        )
+
+        updateVerificationProcess.end()
+
+        updateVerificationProcess.verifyUpdateDidNotPropagate(
+            doTrigger = doTrigger,
         )
     }
 
     @Test
-    fun test_simultaneousUpdates_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
-            test_simultaneousUpdates(
+    fun test_deactivation_active() {
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
+            test_deactivation(
                 updateVerificationStrategy = updateVerificationStrategy,
             )
         }

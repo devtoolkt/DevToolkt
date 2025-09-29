@@ -1,78 +1,200 @@
 package dev.toolkt.reactive.cell.test_utils
 
 import dev.toolkt.reactive.cell.Cell
+import dev.toolkt.reactive.cell.MutableCell
 import dev.toolkt.reactive.cell.updatedValues
+import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
+import dev.toolkt.reactive.event_stream.emit
 import dev.toolkt.reactive.event_stream.subscribe
 import kotlin.test.assertEquals
 
 sealed class UpdateVerificationProcess<ValueT> {
-    class Total<ValueT>(
+    abstract class Total<ValueT>() : UpdateVerificationProcess<ValueT>() {
+        abstract fun verifyDoesNotUpdate(
+            doTrigger: EmitterEventStream<Unit>,
+            expectedNonUpdatedValue: ValueT,
+        )
+    }
+
+    abstract class Active<ValueT>(
+        private val subjectCell: Cell<ValueT>,
         private val receivedUpdatedValues: List<ValueT>,
-    ) : UpdateVerificationProcess<ValueT>() {
-        companion object {
-            fun <ValueT> observe(
-                subjectCell: Cell<ValueT>,
-            ): Total<ValueT> = observeVia(
-                subjectCell = subjectCell,
-                extract = Cell<ValueT>::updatedValues,
+    ) : Total<ValueT>() {
+        private val receivedUpdateCount: Int
+            get() = receivedUpdatedValues.size
+
+        final override fun verifyUpdates(
+            doUpdate: EmitterEventStream<Unit>,
+            expectedUpdatedValue: ValueT,
+        ) {
+            verifyUpdatePropagated(
+                doUpdate = doUpdate,
+                expectedPropagatedUpdatedValue = expectedUpdatedValue,
             )
 
-            fun <ValueT> observeVia(
-                subjectCell: Cell<ValueT>,
-                extract: (Cell<ValueT>) -> EventStream<ValueT>,
-            ): Total<ValueT> {
-                val receivedUpdatedValues = mutableListOf<ValueT>()
+            val activelySampledValue = subjectCell.sampleExternally()
 
-                extract(subjectCell).subscribe { updatedValue ->
-                    receivedUpdatedValues.add(updatedValue)
-                }
+            assertEquals(
+                expected = expectedUpdatedValue,
+                actual = activelySampledValue,
+            )
+        }
 
-                return Total(
-                    receivedUpdatedValues = receivedUpdatedValues,
+        fun verifyUpdatePropagated(
+            doUpdate: EmitterEventStream<Unit>,
+            expectedPropagatedUpdatedValue: ValueT,
+        ) {
+            val previousReceivedUpdateCount = receivedUpdateCount
+
+            doUpdate.emit()
+
+            val deltaReceivedUpdateCount = receivedUpdateCount - previousReceivedUpdateCount
+
+            assertEquals(
+                expected = 1,
+                actual = deltaReceivedUpdateCount,
+                message = "Expected a single update, but got $deltaReceivedUpdateCount updates instead."
+            )
+
+            val singleUpdatedValue = receivedUpdatedValues.last()
+
+            assertEquals(
+                expected = expectedPropagatedUpdatedValue,
+                actual = singleUpdatedValue,
+                message = "Expected the single update to be $singleUpdatedValue, but got $singleUpdatedValue instead."
+            )
+        }
+
+        final override fun verifyDoesNotUpdate(
+            doTrigger: EmitterEventStream<Unit>,
+            expectedNonUpdatedValue: ValueT,
+        ) {
+            verifyUpdateDidNotPropagate(
+                doTrigger = doTrigger,
+            )
+
+            val activelySampledValue = subjectCell.sampleExternally()
+
+            assertEquals(
+                expected = expectedNonUpdatedValue,
+                actual = activelySampledValue,
+            )
+        }
+
+        fun verifyUpdateDidNotPropagate(
+            doTrigger: EmitterEventStream<Unit>,
+        ) {
+            val previousReceivedUpdateCount = receivedUpdateCount
+
+            doTrigger.emit()
+
+            val deltaReceivedUpdateCount = receivedUpdateCount - previousReceivedUpdateCount
+
+            assertEquals(
+                expected = 0,
+                actual = deltaReceivedUpdateCount,
+                message = "Expected no updates, but got $deltaReceivedUpdateCount updates instead."
+            )
+        }
+
+        abstract fun end()
+    }
+
+    abstract class Passive<ValueT> : Total<ValueT>()
+
+    abstract class Partial<ValueT> : UpdateVerificationProcess<ValueT>()
+
+    companion object {
+        fun <ValueT> observePassively(
+            subjectCell: Cell<ValueT>,
+        ): Passive<ValueT> = object : Passive<ValueT>() {
+            override fun verifyUpdates(
+                doUpdate: EmitterEventStream<Unit>,
+                expectedUpdatedValue: ValueT,
+            ) {
+                doUpdate.emit()
+
+                val passivelySampledValue = subjectCell.sampleExternally()
+
+                assertEquals(
+                    expected = expectedUpdatedValue,
+                    actual = passivelySampledValue,
+                )
+            }
+
+            override fun verifyDoesNotUpdate(
+                doTrigger: EmitterEventStream<Unit>,
+                expectedNonUpdatedValue: ValueT,
+            ) {
+                doTrigger.emit()
+
+                val passivelySampledValue = subjectCell.sampleExternally()
+
+                assertEquals(
+                    expected = expectedNonUpdatedValue,
+                    actual = passivelySampledValue,
                 )
             }
         }
 
-        private val receivedUpdateCount: Int
-            get() = receivedUpdatedValues.size
+        fun <ValueT> observeActively(
+            subjectCell: Cell<ValueT>,
+        ): Active<ValueT> = observeActivelyViaEventStream(
+            subjectCell = subjectCell,
+            extract = Cell<ValueT>::updatedValues,
+        )
 
-        override fun prepareVerifier(
-            onTriggered: EventStream<*>,
-        ): TotalUpdateVerifier<ValueT> = prepareVerifier()
+        fun <ValueT> observeActivelyViaEventStream(
+            subjectCell: Cell<ValueT>,
+            extract: (Cell<ValueT>) -> EventStream<ValueT>,
+        ): Active<ValueT> {
+            val receivedUpdatedValues = mutableListOf<ValueT>()
 
-        fun prepareVerifier(): TotalUpdateVerifier<ValueT> {
-            val previousReceivedUpdateCount = receivedUpdateCount
+            val subscription = extract(subjectCell).subscribe { updatedValue ->
+                receivedUpdatedValues.add(updatedValue)
+            } ?: throw IllegalStateException("Subscription should not be null.")
 
-            return object : TotalUpdateVerifier<ValueT>() {
-                override fun verifyDidNotUpdate() {
-                    val deltaReceivedUpdateCount = receivedUpdateCount - previousReceivedUpdateCount
-
-                    assertEquals(
-                        expected = 0,
-                        actual = deltaReceivedUpdateCount,
-                        message = "Expected no updates, but got $deltaReceivedUpdateCount updates instead."
-                    )
+            return object : Active<ValueT>(
+                subjectCell = subjectCell,
+                receivedUpdatedValues = receivedUpdatedValues,
+            ) {
+                override fun end() {
+                    subscription.cancel()
                 }
+            }
+        }
 
-                override fun verifyUpdated(): ValueT {
-                    val deltaReceivedUpdateCount = receivedUpdateCount - previousReceivedUpdateCount
+        fun <ValueT> observeActivelyViaSwitch(
+            subjectCell: Cell<ValueT>,
+        ): Active<ValueT> {
+            val helperOuterCell = MutableCell(
+                initialValue = subjectCell,
+            )
 
-                    assertEquals(
-                        expected = 1,
-                        actual = deltaReceivedUpdateCount,
-                        message = "Expected exactly one update, but got $deltaReceivedUpdateCount updates instead."
+            val helperSwitchCell = Cell.switch(helperOuterCell)
+
+            val receivedUpdatedValues = mutableListOf<ValueT>()
+
+            helperSwitchCell.updatedValues.subscribe { updatedValue ->
+                receivedUpdatedValues.add(updatedValue)
+            }
+
+            return object : Active<ValueT>(
+                subjectCell = subjectCell,
+                receivedUpdatedValues = receivedUpdatedValues,
+            ) {
+                override fun end() {
+                    helperOuterCell.set(
+                        Cell.of(subjectCell.sampleExternally()),
                     )
-
-                    return receivedUpdatedValues.last()
                 }
             }
         }
     }
 
-    abstract class Partial<ValueT> : UpdateVerificationProcess<ValueT>()
-
-    abstract fun prepareVerifier(
-        onTriggered: EventStream<*>,
-    ): UpdateVerifier<ValueT>
+    abstract fun verifyUpdates(
+        doUpdate: EmitterEventStream<Unit>,
+        expectedUpdatedValue: ValueT,
+    )
 }

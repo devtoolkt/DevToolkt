@@ -4,8 +4,6 @@ import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.CellSamplingStrategy
 import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
 import dev.toolkt.reactive.cell.test_utils.UpdateVerificationStrategy
-import dev.toolkt.reactive.cell.test_utils.assertDoesNotUpdate
-import dev.toolkt.reactive.cell.test_utils.assertUpdates
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.emit
 import dev.toolkt.reactive.event_stream.hold
@@ -106,7 +104,7 @@ class Cell_switch_combo_tests {
 
     private fun test_initialInnerUpdate(
         outerConstCellFactory: ConstCellFactory,
-        updateVerificationStrategy: UpdateVerificationStrategy?,
+        updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         val doUpdateInner = EmitterEventStream<Unit>()
 
@@ -121,14 +119,12 @@ class Cell_switch_combo_tests {
 
         val switchCell = Cell.switch(outerCell)
 
-        val updateVerificationProcess = updateVerificationStrategy?.begin(
+        val updateVerificationProcess = updateVerificationStrategy.begin(
             subjectCell = switchCell,
         )
 
-        assertUpdates(
-            subjectCell = switchCell,
-            updateVerificationProcess = updateVerificationProcess,
-            doTrigger = doUpdateInner,
+        updateVerificationProcess.verifyUpdates(
+            doUpdate = doUpdateInner,
             expectedUpdatedValue = 20,
         )
     }
@@ -137,13 +133,13 @@ class Cell_switch_combo_tests {
     fun test_initialInnerUpdate_outerInert_passive() {
         test_initialInnerUpdate(
             outerConstCellFactory = ConstCellFactory.Inert,
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_initialInnerUpdate_outerInert_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_initialInnerUpdate(
                 outerConstCellFactory = ConstCellFactory.Inert,
                 updateVerificationStrategy = updateVerificationStrategy,
@@ -155,13 +151,13 @@ class Cell_switch_combo_tests {
     fun test_initialInnerUpdate_outerDynamic_passive() {
         test_initialInnerUpdate(
             outerConstCellFactory = ConstCellFactory.Dynamic,
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_initialInnerUpdate_outerDynamic_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_initialInnerUpdate(
                 outerConstCellFactory = ConstCellFactory.Dynamic,
                 updateVerificationStrategy = updateVerificationStrategy,
@@ -171,7 +167,7 @@ class Cell_switch_combo_tests {
 
     private fun test_outerUpdate(
         newInnerConstCellFactory: ConstCellFactory,
-        updateVerificationStrategy: UpdateVerificationStrategy?,
+        updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
@@ -189,14 +185,12 @@ class Cell_switch_combo_tests {
 
         val switchCell = Cell.switch(outerCell)
 
-        val updateVerificationProcess = updateVerificationStrategy?.begin(
+        val updateVerificationProcess = updateVerificationStrategy.begin(
             subjectCell = switchCell,
         )
 
-        assertUpdates(
-            subjectCell = switchCell,
-            updateVerificationProcess = updateVerificationProcess,
-            doTrigger = doUpdateOuter,
+        updateVerificationProcess.verifyUpdates(
+            doUpdate = doUpdateOuter,
             expectedUpdatedValue = 20,
         )
     }
@@ -205,13 +199,13 @@ class Cell_switch_combo_tests {
     fun test_outerUpdate_newInnerInert_passive() {
         test_outerUpdate(
             newInnerConstCellFactory = ConstCellFactory.Inert,
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_outerUpdate_newInnerInert_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_outerUpdate(
                 newInnerConstCellFactory = ConstCellFactory.Inert,
                 updateVerificationStrategy = updateVerificationStrategy,
@@ -223,13 +217,13 @@ class Cell_switch_combo_tests {
     fun test_outerUpdate_newInnerDynamic_passive() {
         test_outerUpdate(
             newInnerConstCellFactory = ConstCellFactory.Dynamic,
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_outerUpdate_newInnerDynamic_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_outerUpdate(
                 newInnerConstCellFactory = ConstCellFactory.Dynamic,
                 updateVerificationStrategy = updateVerificationStrategy,
@@ -239,7 +233,7 @@ class Cell_switch_combo_tests {
 
     private fun test_outerUpdate_thenInitialInnerUpdate(
         newInnerConstCellFactory: ConstCellFactory,
-        updateVerificationStrategy: UpdateVerificationStrategy.Total?,
+        updateVerificationStrategy: UpdateVerificationStrategy.Total,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
@@ -265,15 +259,13 @@ class Cell_switch_combo_tests {
 
         val switchCell = Cell.switch(outerCell)
 
-        val updateVerificationProcess = updateVerificationStrategy?.begin(
+        val updateVerificationProcess = updateVerificationStrategy.begin(
             subjectCell = switchCell,
         )
 
         doUpdateOuter.emit()
 
-        assertDoesNotUpdate(
-            subjectCell = switchCell,
-            updateVerificationProcess = updateVerificationProcess,
+        updateVerificationProcess.verifyDoesNotUpdate(
             doTrigger = doUpdateInitialInner,
             expectedNonUpdatedValue = 20,
         )
@@ -283,13 +275,13 @@ class Cell_switch_combo_tests {
     fun test_outerUpdate_thenInitialInnerUpdate_newInnerInert_passive() {
         test_outerUpdate_thenInitialInnerUpdate(
             newInnerConstCellFactory = ConstCellFactory.Inert,
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_outerUpdate_thenInitialInnerUpdate_newInnerInert_active() {
-        UpdateVerificationStrategy.Total.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_outerUpdate_thenInitialInnerUpdate(
                 newInnerConstCellFactory = ConstCellFactory.Inert,
                 updateVerificationStrategy = updateVerificationStrategy,
@@ -301,13 +293,13 @@ class Cell_switch_combo_tests {
     fun test_outerUpdate_thenInitialInnerUpdate_newInnerDynamic_passive() {
         test_outerUpdate_thenInitialInnerUpdate(
             newInnerConstCellFactory = ConstCellFactory.Dynamic,
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_outerUpdate_thenInitialInnerUpdate_newInnerDynamic_active() {
-        UpdateVerificationStrategy.Total.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_outerUpdate_thenInitialInnerUpdate(
                 newInnerConstCellFactory = ConstCellFactory.Dynamic,
                 updateVerificationStrategy = updateVerificationStrategy,
@@ -317,7 +309,7 @@ class Cell_switch_combo_tests {
 
     private fun test_outerUpdate_thenNewInnerUpdate(
         initialInnerConstCellFactory: ConstCellFactory,
-        updateVerificationStrategy: UpdateVerificationStrategy?,
+        updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
@@ -341,16 +333,14 @@ class Cell_switch_combo_tests {
 
         val switchCell = Cell.switch(outerCell)
 
-        val updateVerificationProcess = updateVerificationStrategy?.begin(
+        val updateVerificationProcess = updateVerificationStrategy.begin(
             subjectCell = switchCell,
         )
 
         doUpdateOuter.emit()
 
-        assertUpdates(
-            subjectCell = switchCell,
-            updateVerificationProcess = updateVerificationProcess,
-            doTrigger = doUpdateNewInner,
+        updateVerificationProcess.verifyUpdates(
+            doUpdate = doUpdateNewInner,
             expectedUpdatedValue = 21,
         )
     }
@@ -359,13 +349,13 @@ class Cell_switch_combo_tests {
     fun test_outerUpdate_thenNewInnerUpdate_newInnerInert_passive() {
         test_outerUpdate_thenNewInnerUpdate(
             initialInnerConstCellFactory = ConstCellFactory.Inert,
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_outerUpdate_thenNewInnerUpdate_newInnerInert_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_outerUpdate_thenNewInnerUpdate(
                 initialInnerConstCellFactory = ConstCellFactory.Inert,
                 updateVerificationStrategy = updateVerificationStrategy,
@@ -377,13 +367,13 @@ class Cell_switch_combo_tests {
     fun test_outerUpdate_thenNewInnerUpdate_newInnerDynamic_passive() {
         test_outerUpdate_thenNewInnerUpdate(
             initialInnerConstCellFactory = ConstCellFactory.Dynamic,
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_outerUpdate_thenNewInnerUpdate_newInnerDynamic_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_outerUpdate_thenNewInnerUpdate(
                 initialInnerConstCellFactory = ConstCellFactory.Dynamic,
                 updateVerificationStrategy = updateVerificationStrategy,
@@ -393,7 +383,7 @@ class Cell_switch_combo_tests {
 
     private fun test_outerUpdate_simultaneousInitialInnerUpdate(
         newInnerConstCellFactory: ConstCellFactory,
-        updateVerificationStrategy: UpdateVerificationStrategy?,
+        updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         val doSwitch = EmitterEventStream<Unit>()
 
@@ -413,14 +403,12 @@ class Cell_switch_combo_tests {
             Cell.switch(outerCell)
         }
 
-        val updateVerificationProcess = updateVerificationStrategy?.begin(
+        val updateVerificationProcess = updateVerificationStrategy.begin(
             subjectCell = switchCell,
         )
 
-        assertUpdates(
-            subjectCell = switchCell,
-            updateVerificationProcess = updateVerificationProcess,
-            doTrigger = doSwitch,
+        updateVerificationProcess.verifyUpdates(
+            doUpdate = doSwitch,
             expectedUpdatedValue = 20,
         )
     }
@@ -429,13 +417,13 @@ class Cell_switch_combo_tests {
     fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerInert_passive() {
         test_outerUpdate_simultaneousInitialInnerUpdate(
             newInnerConstCellFactory = ConstCellFactory.Inert,
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerInert_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_outerUpdate_simultaneousInitialInnerUpdate(
                 newInnerConstCellFactory = ConstCellFactory.Inert,
                 updateVerificationStrategy = updateVerificationStrategy,
@@ -447,13 +435,13 @@ class Cell_switch_combo_tests {
     fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerDynamic_passive() {
         test_outerUpdate_simultaneousInitialInnerUpdate(
             newInnerConstCellFactory = ConstCellFactory.Dynamic,
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_outerUpdate_simultaneousInitialInnerUpdate_newInnerDynamic_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_outerUpdate_simultaneousInitialInnerUpdate(
                 newInnerConstCellFactory = ConstCellFactory.Dynamic,
                 updateVerificationStrategy = updateVerificationStrategy,
@@ -463,7 +451,7 @@ class Cell_switch_combo_tests {
 
     private fun test_outerUpdate_simultaneousNewInnerUpdate(
         initialInnerConstCellFactory: ConstCellFactory,
-        updateVerificationStrategy: UpdateVerificationStrategy?,
+        updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         val doSwitch = EmitterEventStream<Unit>()
 
@@ -483,14 +471,12 @@ class Cell_switch_combo_tests {
             Cell.switch(outerCell)
         }
 
-        val updateVerificationProcess = updateVerificationStrategy?.begin(
+        val updateVerificationProcess = updateVerificationStrategy.begin(
             subjectCell = switchCell,
         )
 
-        assertUpdates(
-            subjectCell = switchCell,
-            updateVerificationProcess = updateVerificationProcess,
-            doTrigger = doSwitch,
+        updateVerificationProcess.verifyUpdates(
+            doUpdate = doSwitch,
             expectedUpdatedValue = 21,
         )
     }
@@ -499,13 +485,13 @@ class Cell_switch_combo_tests {
     fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerInert_passive() {
         test_outerUpdate_simultaneousNewInnerUpdate(
             initialInnerConstCellFactory = ConstCellFactory.Inert,
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerInert_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_outerUpdate_simultaneousNewInnerUpdate(
                 initialInnerConstCellFactory = ConstCellFactory.Inert,
                 updateVerificationStrategy = updateVerificationStrategy,
@@ -517,13 +503,13 @@ class Cell_switch_combo_tests {
     fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerDynamic_passive() {
         test_outerUpdate_simultaneousNewInnerUpdate(
             initialInnerConstCellFactory = ConstCellFactory.Dynamic,
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_outerUpdate_simultaneousNewInnerUpdate_newInnerDynamic_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_outerUpdate_simultaneousNewInnerUpdate(
                 initialInnerConstCellFactory = ConstCellFactory.Dynamic,
                 updateVerificationStrategy = updateVerificationStrategy,
@@ -532,7 +518,7 @@ class Cell_switch_combo_tests {
     }
 
     private fun test_outerUpdate_simultaneousBothInnerUpdates(
-        updateVerificationStrategy: UpdateVerificationStrategy?,
+        updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         val doSwitch = EmitterEventStream<Unit>()
 
@@ -555,14 +541,12 @@ class Cell_switch_combo_tests {
             Cell.switch(outerCell)
         }
 
-        val updateVerificationProcess = updateVerificationStrategy?.begin(
+        val updateVerificationProcess = updateVerificationStrategy.begin(
             subjectCell = switchCell,
         )
 
-        assertUpdates(
-            subjectCell = switchCell,
-            updateVerificationProcess = updateVerificationProcess,
-            doTrigger = doSwitch,
+        updateVerificationProcess.verifyUpdates(
+            doUpdate = doSwitch,
             expectedUpdatedValue = 21,
         )
     }
@@ -570,13 +554,13 @@ class Cell_switch_combo_tests {
     @Test
     fun test_outerUpdate_simultaneousBothInnerUpdates_passive() {
         test_outerUpdate_simultaneousBothInnerUpdates(
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_outerUpdate_simultaneousBothInnerUpdates_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_outerUpdate_simultaneousBothInnerUpdates(
                 updateVerificationStrategy = updateVerificationStrategy,
             )

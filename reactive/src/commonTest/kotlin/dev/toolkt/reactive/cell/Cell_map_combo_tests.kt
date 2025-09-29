@@ -4,7 +4,6 @@ import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.CellSamplingStrategy
 import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
 import dev.toolkt.reactive.cell.test_utils.UpdateVerificationStrategy
-import dev.toolkt.reactive.cell.test_utils.assertUpdates
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.map
 import kotlin.test.Test
@@ -61,7 +60,7 @@ class Cell_map_combo_tests {
     }
 
     private fun test_sourceUpdate(
-        updateVerificationStrategy: UpdateVerificationStrategy?,
+        updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
@@ -74,14 +73,12 @@ class Cell_map_combo_tests {
 
         val mapCell = sourceCell.map { it.toString() }
 
-        val updateVerificationProcess = updateVerificationStrategy?.begin(
+        val updateVerificationProcess = updateVerificationStrategy.begin(
             subjectCell = mapCell,
         )
 
-        assertUpdates(
-            subjectCell = mapCell,
-            updateVerificationProcess = updateVerificationProcess,
-            doTrigger = doUpdate,
+        updateVerificationProcess.verifyUpdates(
+            doUpdate = doUpdate,
             expectedUpdatedValue = "20",
         )
     }
@@ -89,13 +86,13 @@ class Cell_map_combo_tests {
     @Test
     fun test_sourceUpdate_passive() {
         test_sourceUpdate(
-            updateVerificationStrategy = null,
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_sourceUpdate_active() {
-        UpdateVerificationStrategy.values.forEach { updateVerificationStrategy ->
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
             test_sourceUpdate(
                 updateVerificationStrategy = updateVerificationStrategy,
             )
