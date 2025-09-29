@@ -129,11 +129,11 @@ class Cell_map2_combo_tests {
             "$value1:$value2"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = map2Cell,
         )
 
-        updateVerificationProcess.verifyUpdates(
+        updateVerifier.verifyUpdates(
             doUpdate = doUpdate,
             expectedUpdatedValue = "20:20",
         )
@@ -182,11 +182,11 @@ class Cell_map2_combo_tests {
             "$value1:$value2"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = map2Cell,
         )
 
-        updateVerificationProcess.verifyDoesNotUpdate(
+        updateVerifier.verifyDoesNotUpdate(
             doTrigger = doTrigger,
             expectedNonUpdatedValue = "10:A",
         )
@@ -231,11 +231,11 @@ class Cell_map2_combo_tests {
             "$value1:$value2"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = map2Cell,
         )
 
-        updateVerificationProcess.verifyUpdates(
+        updateVerifier.verifyUpdates(
             doUpdate = doUpdate,
             expectedUpdatedValue = "20:A",
         )
@@ -300,11 +300,11 @@ class Cell_map2_combo_tests {
             "$value1:$value2"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = map2Cell,
         )
 
-        updateVerificationProcess.verifyUpdates(
+        updateVerifier.verifyUpdates(
             doUpdate = doUpdate,
             expectedUpdatedValue = "10:B",
         )
@@ -372,11 +372,11 @@ class Cell_map2_combo_tests {
             "$value1:$value2"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = map2Cell,
         )
 
-        updateVerificationProcess.verifyUpdates(
+        updateVerifier.verifyUpdates(
             doUpdate = doUpdate,
             expectedUpdatedValue = "11:B",
         )
@@ -417,13 +417,13 @@ class Cell_map2_combo_tests {
             "$value1:$value2"
         }
 
-        val updateVerificationProcess = updateVerificationStrategy.begin(
+        val updateVerifier = updateVerificationStrategy.begin(
             subjectCell = map2Cell,
         )
 
-        updateVerificationProcess.end()
+        updateVerifier.end()
 
-        updateVerificationProcess.verifyUpdateDidNotPropagate(
+        updateVerifier.verifyUpdateDidNotPropagate(
             doTrigger = doTrigger,
         )
     }

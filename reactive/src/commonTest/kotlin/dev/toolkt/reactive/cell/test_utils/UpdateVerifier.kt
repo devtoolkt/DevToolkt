@@ -9,8 +9,8 @@ import dev.toolkt.reactive.event_stream.emit
 import dev.toolkt.reactive.event_stream.subscribe
 import kotlin.test.assertEquals
 
-sealed class UpdateVerificationProcess<ValueT> {
-    abstract class Total<ValueT>() : UpdateVerificationProcess<ValueT>() {
+sealed class UpdateVerifier<ValueT> {
+    abstract class Total<ValueT>() : UpdateVerifier<ValueT>() {
         abstract fun verifyDoesNotUpdate(
             doTrigger: EmitterEventStream<Unit>,
             expectedNonUpdatedValue: ValueT,
@@ -103,7 +103,7 @@ sealed class UpdateVerificationProcess<ValueT> {
 
     abstract class Passive<ValueT> : Total<ValueT>()
 
-    abstract class Partial<ValueT> : UpdateVerificationProcess<ValueT>()
+    abstract class Partial<ValueT> : UpdateVerifier<ValueT>()
 
     companion object {
         fun <ValueT> observePassively(

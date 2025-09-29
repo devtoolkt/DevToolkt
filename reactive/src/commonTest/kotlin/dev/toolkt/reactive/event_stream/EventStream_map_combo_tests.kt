@@ -25,13 +25,13 @@ class EventStream_map_combo_tests {
 
         val mapEventStream = sourceEventStream.map { it.toString() }
 
-        val updateVerificationProcess = EventStreamSubscriptionUtils.subscribeForTesting(
+        val updateVerifier = EventStreamSubscriptionUtils.subscribeForTesting(
             eventStream = mapEventStream,
         )
 
         sourceEventStream.emit(10)
 
-        updateVerificationProcess.assertOccurredEventEquals(
+        updateVerifier.assertOccurredEventEquals(
             expectedOccurredEvent = "10",
         )
     }

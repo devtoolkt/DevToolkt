@@ -6,20 +6,22 @@ import dev.toolkt.reactive.cell.newValues
 import dev.toolkt.reactive.cell.sample
 import dev.toolkt.reactive.cell.updatedValues
 import dev.toolkt.reactive.event_stream.EmitterEventStream
+import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.emit
 import dev.toolkt.reactive.event_stream.map
+import dev.toolkt.reactive.event_stream.mapAt
 
 sealed class UpdateVerificationStrategy {
     abstract class Total : UpdateVerificationStrategy() {
         abstract override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): UpdateVerificationProcess.Total<ValueT>
+        ): UpdateVerifier.Total<ValueT>
     }
 
     data object Passive : Total() {
         override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): UpdateVerificationProcess.Passive<ValueT> = UpdateVerificationProcess.observePassively(
+        ): UpdateVerifier.Passive<ValueT> = UpdateVerifier.observePassively(
             subjectCell = subjectCell,
         )
     }
@@ -37,13 +39,13 @@ sealed class UpdateVerificationStrategy {
 
         abstract override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): UpdateVerificationProcess.Active<ValueT>
+        ): UpdateVerifier.Active<ValueT>
     }
 
     data object ViaUpdatedValues : Active() {
         override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): UpdateVerificationProcess.Active<ValueT> = UpdateVerificationProcess.observeActivelyViaEventStream(
+        ): UpdateVerifier.Active<ValueT> = UpdateVerifier.observeActivelyViaEventStream(
             subjectCell = subjectCell,
             extract = Cell<ValueT>::updatedValues,
         )
@@ -52,7 +54,7 @@ sealed class UpdateVerificationStrategy {
     data object ViaNewValues : Active() {
         override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): UpdateVerificationProcess.Active<ValueT> = UpdateVerificationProcess.observeActivelyViaEventStream(
+        ): UpdateVerifier.Active<ValueT> = UpdateVerifier.observeActivelyViaEventStream(
             subjectCell = subjectCell,
             extract = Cell<ValueT>::newValues,
         )
@@ -61,57 +63,54 @@ sealed class UpdateVerificationStrategy {
     data object ViaSwitch : Active() {
         override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): UpdateVerificationProcess.Active<ValueT> = UpdateVerificationProcess.observeActivelyViaSwitch(
+        ): UpdateVerifier.Active<ValueT> = UpdateVerifier.observeActivelyViaSwitch(
             subjectCell = subjectCell,
         )
     }
 
     abstract class Partial : UpdateVerificationStrategy() {
-        companion object {
-            val values by lazy {
-                listOf(
-                    ViaSimultaneousSwitch,
-                )
-            }
-        }
-
         abstract override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): UpdateVerificationProcess.Partial<ValueT>
+        ): UpdateVerifier.Partial<ValueT>
     }
 
-    data object ViaSimultaneousSwitch : Partial() {
+    data object Quick : Partial() {
         override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): UpdateVerificationProcess.Partial<ValueT> = object : UpdateVerificationProcess.Partial<ValueT>() {
+        ): UpdateVerifier.Partial<ValueT> = object : UpdateVerifier.Partial<ValueT>() {
             override fun verifyUpdates(
                 doUpdate: EmitterEventStream<Unit>,
                 expectedUpdatedValue: ValueT,
             ) {
+                val doReset = EmitterEventStream<Unit>()
+
                 val helperOuterCell = MomentContext.execute {
                     Cell.define(
                         initialValue = Cell.of(subjectCell.sample()),
-                        newValues = doUpdate.map { subjectCell },
+                        newValues = EventStream.merge2(
+                            doUpdate.map { subjectCell },
+                            doReset.mapAt { Cell.of(subjectCell.sampleExternally()) },
+                        ),
                     )
                 }
 
                 val helperSwitchCell = Cell.switch(helperOuterCell)
 
-                val helperUpdateVerifier = UpdateVerificationProcess.observeActively(
+                val helperUpdateVerifier = UpdateVerifier.observeActively(
                     subjectCell = helperSwitchCell,
                 )
-
-                doUpdate.emit()
 
                 helperUpdateVerifier.verifyUpdates(
                     doUpdate = doUpdate,
                     expectedUpdatedValue = expectedUpdatedValue,
                 )
+
+                doReset.emit()
             }
         }
     }
 
     abstract fun <ValueT> begin(
         subjectCell: Cell<ValueT>,
-    ): UpdateVerificationProcess<ValueT>
+    ): UpdateVerifier<ValueT>
 }
