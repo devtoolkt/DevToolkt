@@ -223,9 +223,11 @@ class Cell_map2_combo_tests {
 
     @Test
     fun test_source1Update_active() {
-        test_source1Update(
-            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
-        )
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
+            test_source1Update(
+                updateVerificationStrategy = updateVerificationStrategy,
+            )
+        }
     }
 
     @Test
