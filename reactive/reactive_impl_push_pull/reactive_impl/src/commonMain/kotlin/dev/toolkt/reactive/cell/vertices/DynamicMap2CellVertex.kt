@@ -64,10 +64,11 @@ class DynamicMap2CellVertex<ValueT1, ValueT2, ResultT>(
         sourceCell1Vertex.unobserve(
             dependentVertex = this,
         )
+// FIXME: Add a test for this!
 
-        sourceCell2Vertex.unobserve(
-            dependentVertex = this,
-        )
+//        sourceCell2Vertex.unobserve(
+//            dependentVertex = this,
+//        )
     }
 
     override fun computeOldValue(
