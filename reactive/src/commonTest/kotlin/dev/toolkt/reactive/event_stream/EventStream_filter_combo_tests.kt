@@ -1,7 +1,6 @@
 package dev.toolkt.reactive.event_stream
 
 import dev.toolkt.reactive.event_stream.test_utils.OccurrenceVerificationStrategy
-import dev.toolkt.reactive.test_utils.ReactiveTest
 import kotlin.test.Test
 
 @Suppress("ClassName")

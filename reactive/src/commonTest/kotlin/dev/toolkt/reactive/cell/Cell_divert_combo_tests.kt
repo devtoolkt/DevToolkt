@@ -91,6 +91,40 @@ class Cell_divert_combo_tests {
         }
     }
 
+    private fun test_outerUpdate_sameEventStream(
+        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+    ) {
+        val doUpdateOuter = EmitterEventStream<Unit>()
+
+        val innerEventStream = EmitterEventStream<Int>()
+
+        val outerCell = MomentContext.execute {
+            Cell.define(
+                innerEventStream,
+                doUpdateOuter.map { innerEventStream },
+            )
+        }
+
+        val divertCell = Cell.divert(outerCell)
+
+        val occurrenceVerifier = occurrenceVerificationStrategy.begin(
+            subjectEventStream = divertCell,
+        )
+
+        occurrenceVerifier.verifyOccurrenceDidNotPropagate(
+            doTrigger = doUpdateOuter,
+        )
+    }
+
+    @Test
+    fun test_outerUpdate_sameEventStream() {
+        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+            test_outerUpdate_sameEventStream(
+                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+            )
+        }
+    }
+
     private fun test_outerUpdate_thenInitialInnerOccurrence(
         occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
     ) {
