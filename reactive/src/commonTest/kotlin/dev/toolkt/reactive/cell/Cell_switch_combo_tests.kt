@@ -184,6 +184,69 @@ class Cell_switch_combo_tests {
         )
     }
 
+    private fun test_outerUpdate_sameCell(
+        innerConstCellFactory: ConstCellFactory,
+        updateVerificationStrategy: UpdateVerificationStrategy,
+    ) {
+        val doUpdateOuter = EmitterEventStream<Unit>()
+
+        val innerCell = MomentContext.execute {
+            innerConstCellFactory.create(20)
+        }
+
+        val outerCell = MomentContext.execute {
+            Cell.define(
+                innerCell,
+                doUpdateOuter.map { innerCell },
+            )
+        }
+
+        val switchCell = Cell.switch(outerCell)
+
+        val updateVerifier = updateVerificationStrategy.begin(
+            subjectCell = switchCell,
+        )
+
+        updateVerifier.verifyUpdates(
+            doUpdate = doUpdateOuter,
+            expectedUpdatedValue = 20,
+        )
+    }
+
+    private fun test_outerUpdate_sameCell(
+        updateVerificationStrategy: UpdateVerificationStrategy,
+    ) {
+        ConstCellFactory.values.forEach { innerConstCellFactory ->
+            test_outerUpdate_sameCell(
+                innerConstCellFactory = innerConstCellFactory,
+                updateVerificationStrategy = updateVerificationStrategy,
+            )
+        }
+    }
+
+    @Test
+    fun test_outerUpdate_sameCell_passive() {
+        test_outerUpdate_sameCell(
+            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
+        )
+    }
+
+    @Test
+    fun test_outerUpdate_sameCell_active() {
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
+            test_outerUpdate_sameCell(
+                updateVerificationStrategy = updateVerificationStrategy,
+            )
+        }
+    }
+
+    @Test
+    fun test_outerUpdate_sameCell_quick() {
+        test_outerUpdate(
+            updateVerificationStrategy = UpdateVerificationStrategy.Quick,
+        )
+    }
+
     private fun test_outerUpdate_thenInitialInnerUpdate(
         newInnerConstCellFactory: ConstCellFactory,
         updateVerificationStrategy: UpdateVerificationStrategy.Total,
