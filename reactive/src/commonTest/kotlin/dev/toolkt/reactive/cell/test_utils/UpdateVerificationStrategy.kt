@@ -37,6 +37,21 @@ sealed class UpdateVerificationStrategy {
             }
         }
 
+        fun <ValueT> verifyDeactivation(
+            subjectCell: Cell<ValueT>,
+            doTrigger: EmitterEventStream<Unit>,
+        ) {
+            val updateVerifier = begin(
+                subjectCell = subjectCell,
+            )
+
+            updateVerifier.end()
+
+            updateVerifier.verifyUpdateDidNotPropagate(
+                doTrigger = doTrigger,
+            )
+        }
+
         abstract override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
         ): UpdateVerifier.Active<ValueT>

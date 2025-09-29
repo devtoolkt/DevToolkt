@@ -5,6 +5,7 @@ import dev.toolkt.reactive.cell.test_utils.CellSamplingStrategy
 import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
 import dev.toolkt.reactive.cell.test_utils.UpdateVerificationStrategy
 import dev.toolkt.reactive.event_stream.EmitterEventStream
+import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.emit
 import dev.toolkt.reactive.event_stream.hold
 import dev.toolkt.reactive.event_stream.map
@@ -509,5 +510,96 @@ class Cell_switch_combo_tests {
         test_outerUpdate_simultaneousBothInnerUpdates(
             updateVerificationStrategy = UpdateVerificationStrategy.Quick,
         )
+    }
+
+    private fun test_deactivation_initial(
+        updateVerificationStrategy: UpdateVerificationStrategy.Active,
+    ) {
+        val doSwitch = EmitterEventStream<Unit>()
+
+        val switchCell = MomentContext.execute {
+            val initialInnerCell = Cell.define(
+                initialValue = 10,
+                newValues = doSwitch.map { 11 },
+            )
+
+            val newInnerCell = Cell.define(
+                initialValue = 20,
+                newValues = doSwitch.map { 21 },
+            )
+
+            val outerCell = Cell.define(
+                initialValue = initialInnerCell,
+                newValues = doSwitch.map { newInnerCell },
+            )
+
+            Cell.switch(outerCell)
+        }
+
+        updateVerificationStrategy.verifyDeactivation(
+            subjectCell = switchCell,
+            doTrigger = doSwitch,
+        )
+    }
+
+    @Test
+    fun test_deactivation_initial() {
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
+            test_deactivation_initial(
+                updateVerificationStrategy = updateVerificationStrategy,
+            )
+        }
+    }
+
+
+    private fun test_deactivation_afterOuterUpdate(
+        updateVerificationStrategy: UpdateVerificationStrategy.Active,
+    ) {
+        val doSwitchFirst = EmitterEventStream<Unit>()
+
+        val doSwitchSecond = EmitterEventStream<Unit>()
+
+        val switchCell = MomentContext.execute {
+            val initialInnerCell = Cell.define(
+                initialValue = 10,
+                newValues = doSwitchSecond.map { 11 },
+            )
+
+            val newInnerCell = Cell.define(
+                initialValue = 20,
+                newValues = doSwitchSecond.map { 21 },
+            )
+
+            val newerInnerCell = Cell.define(
+                initialValue = 30,
+                newValues = doSwitchSecond.map { 31 },
+            )
+
+            val outerCell = Cell.define(
+                initialValue = initialInnerCell,
+                newValues = EventStream.merge2(
+                    doSwitchFirst.map { newInnerCell },
+                    doSwitchSecond.map { newerInnerCell },
+                ),
+            )
+
+            Cell.switch(outerCell)
+        }
+
+        doSwitchFirst.emit()
+
+        updateVerificationStrategy.verifyDeactivation(
+            subjectCell = switchCell,
+            doTrigger = doSwitchSecond,
+        )
+    }
+
+    @Test
+    fun test_deactivation_afterOuterUpdate() {
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
+            test_deactivation_afterOuterUpdate(
+                updateVerificationStrategy = updateVerificationStrategy,
+            )
+        }
     }
 }

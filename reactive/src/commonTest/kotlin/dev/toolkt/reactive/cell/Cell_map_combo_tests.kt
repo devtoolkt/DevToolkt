@@ -105,4 +105,33 @@ class Cell_map_combo_tests {
             updateVerificationStrategy = UpdateVerificationStrategy.Quick,
         )
     }
+
+    private fun test_deactivation(
+        updateVerificationStrategy: UpdateVerificationStrategy.Active,
+    ) {
+        val doTrigger = EmitterEventStream<Unit>()
+
+        val sourceCell = MomentContext.execute {
+            Cell.define(
+                initialValue = 10,
+                newValues = doTrigger.map { 11 },
+            )
+        }
+
+        val mapCell = sourceCell.map { it.toString() }
+
+        updateVerificationStrategy.verifyDeactivation(
+            subjectCell = mapCell,
+            doTrigger = doTrigger,
+        )
+    }
+
+    @Test
+    fun test_deactivation() {
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
+            test_deactivation(
+                updateVerificationStrategy = updateVerificationStrategy,
+            )
+        }
+    }
 }

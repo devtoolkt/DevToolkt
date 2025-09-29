@@ -17,6 +17,8 @@ sealed class UpdateVerifier<ValueT> {
         )
     }
 
+    abstract class Passive<ValueT> : Total<ValueT>()
+
     abstract class Active<ValueT>(
         private val subjectCell: Cell<ValueT>,
         private val receivedUpdatedValues: List<ValueT>,
@@ -100,8 +102,6 @@ sealed class UpdateVerifier<ValueT> {
 
         abstract fun end()
     }
-
-    abstract class Passive<ValueT> : Total<ValueT>()
 
     abstract class Partial<ValueT> : UpdateVerifier<ValueT>()
 
