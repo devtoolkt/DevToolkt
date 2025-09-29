@@ -387,13 +387,8 @@ class Cell_map2_combo_tests {
             "$value1:$value2"
         }
 
-        val updateVerifier = updateVerificationStrategy.begin(
+        updateVerificationStrategy.verifyDeactivation(
             subjectCell = map2Cell,
-        )
-
-        updateVerifier.end()
-
-        updateVerifier.verifyUpdateDidNotPropagate(
             doTrigger = doTrigger,
         )
     }

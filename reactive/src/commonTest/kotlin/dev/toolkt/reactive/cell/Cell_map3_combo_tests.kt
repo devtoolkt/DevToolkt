@@ -413,6 +413,7 @@ class Cell_map3_combo_tests {
         )
     }
 
+    @Suppress("SameParameterValue")
     private fun test_mixedUpdates(
         initialSource1Value: Int,
         newSource1Value: Int?,
@@ -464,7 +465,7 @@ class Cell_map3_combo_tests {
     }
 
     @Test
-    fun test_mixedUpdates_all() {
+    fun test_mixedUpdates() {
         val initialSource1Value = 10
         val initialSource2Value = 'A'
         val initialSource3Value = true
@@ -486,6 +487,55 @@ class Cell_map3_combo_tests {
                     }
                 }
             }
+        }
+    }
+
+    private fun test_deactivation(
+        updateVerificationStrategy: UpdateVerificationStrategy.Active,
+    ) {
+        val doTrigger = EmitterEventStream<Unit>()
+
+        val sourceCell1 = MomentContext.execute {
+            Cell.define(
+                initialValue = 10,
+                newValues = doTrigger.map { 11 },
+            )
+        }
+
+        val sourceCell2 = MomentContext.execute {
+            Cell.define(
+                initialValue = 'A',
+                newValues = doTrigger.map { 'B' },
+            )
+        }
+
+        val sourceCell3 = MomentContext.execute {
+            Cell.define(
+                initialValue = true,
+                newValues = doTrigger.map { false },
+            )
+        }
+
+        val map3Cell = Cell.map3(
+            sourceCell1,
+            sourceCell2,
+            sourceCell3,
+        ) { value1, value2, value3 ->
+            "$value1:$value2:$value3"
+        }
+
+        updateVerificationStrategy.verifyDeactivation(
+            subjectCell = map3Cell,
+            doTrigger = doTrigger,
+        )
+    }
+
+    @Test
+    fun test_deactivation() {
+        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
+            test_deactivation(
+                updateVerificationStrategy = updateVerificationStrategy,
+            )
         }
     }
 }
