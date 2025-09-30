@@ -27,11 +27,11 @@ sealed class UpdateVerifier<ValueT> {
             get() = receivedUpdatedValues.size
 
         final override fun verifyUpdates(
-            doUpdate: EmitterEventStream<Unit>,
+            doTrigger: EmitterEventStream<Unit>,
             expectedUpdatedValue: ValueT,
         ) {
             verifyUpdatePropagated(
-                doUpdate = doUpdate,
+                doTrigger = doTrigger,
                 expectedPropagatedUpdatedValue = expectedUpdatedValue,
             )
 
@@ -44,12 +44,12 @@ sealed class UpdateVerifier<ValueT> {
         }
 
         fun verifyUpdatePropagated(
-            doUpdate: EmitterEventStream<Unit>,
+            doTrigger: EmitterEventStream<Unit>,
             expectedPropagatedUpdatedValue: ValueT,
         ) {
             val previousReceivedUpdateCount = receivedUpdateCount
 
-            doUpdate.emit()
+            doTrigger.emit()
 
             val deltaReceivedUpdateCount = receivedUpdateCount - previousReceivedUpdateCount
 
@@ -110,10 +110,10 @@ sealed class UpdateVerifier<ValueT> {
             subjectCell: Cell<ValueT>,
         ): Passive<ValueT> = object : Passive<ValueT>() {
             override fun verifyUpdates(
-                doUpdate: EmitterEventStream<Unit>,
+                doTrigger: EmitterEventStream<Unit>,
                 expectedUpdatedValue: ValueT,
             ) {
-                doUpdate.emit()
+                doTrigger.emit()
 
                 val passivelySampledValue = subjectCell.sampleExternally()
 
@@ -194,7 +194,7 @@ sealed class UpdateVerifier<ValueT> {
     }
 
     abstract fun verifyUpdates(
-        doUpdate: EmitterEventStream<Unit>,
+        doTrigger: EmitterEventStream<Unit>,
         expectedUpdatedValue: ValueT,
     )
 }

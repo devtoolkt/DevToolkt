@@ -81,7 +81,7 @@ class Cell_switch_combo_tests {
         )
 
         updateVerifier.verifyUpdates(
-            doUpdate = doUpdateInner,
+            doTrigger = doUpdateInner,
             expectedUpdatedValue = 20,
         )
     }
@@ -145,7 +145,7 @@ class Cell_switch_combo_tests {
         )
 
         updateVerifier.verifyUpdates(
-            doUpdate = doUpdateOuter,
+            doTrigger = doUpdateOuter,
             expectedUpdatedValue = 20,
         )
     }
@@ -208,7 +208,7 @@ class Cell_switch_combo_tests {
         )
 
         updateVerifier.verifyUpdates(
-            doUpdate = doUpdateOuter,
+            doTrigger = doUpdateOuter,
             expectedUpdatedValue = 20,
         )
     }
@@ -347,7 +347,7 @@ class Cell_switch_combo_tests {
         doUpdateOuter.emit()
 
         updateVerifier.verifyUpdates(
-            doUpdate = doUpdateNewInner,
+            doTrigger = doUpdateNewInner,
             expectedUpdatedValue = 21,
         )
     }
@@ -413,7 +413,7 @@ class Cell_switch_combo_tests {
         )
 
         updateVerifier.verifyUpdates(
-            doUpdate = doSwitch,
+            doTrigger = doSwitch,
             expectedUpdatedValue = 20,
         )
     }
@@ -479,7 +479,7 @@ class Cell_switch_combo_tests {
         )
 
         updateVerifier.verifyUpdates(
-            doUpdate = doSwitch,
+            doTrigger = doSwitch,
             expectedUpdatedValue = 21,
         )
     }
@@ -547,7 +547,7 @@ class Cell_switch_combo_tests {
         )
 
         updateVerifier.verifyUpdates(
-            doUpdate = doSwitch,
+            doTrigger = doSwitch,
             expectedUpdatedValue = 21,
         )
     }

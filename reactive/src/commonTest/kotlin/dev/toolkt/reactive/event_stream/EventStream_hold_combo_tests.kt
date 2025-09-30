@@ -38,9 +38,9 @@ class EventStream_hold_combo_tests {
     private fun test_sourceOccurrence(
         updateVerificationStrategy: UpdateVerificationStrategy,
     ) {
-        val doUpdate = EmitterEventStream<Unit>()
+        val doTrigger = EmitterEventStream<Unit>()
 
-        val sourceEventStream = doUpdate.map { 11 }
+        val sourceEventStream = doTrigger.map { 11 }
 
         val holdCell = MomentContext.execute {
             sourceEventStream.hold(initialValue = 10)
@@ -51,7 +51,7 @@ class EventStream_hold_combo_tests {
         )
 
         updateVerifier.verifyUpdates(
-            doUpdate = doUpdate,
+            doTrigger = doTrigger,
             expectedUpdatedValue = 11,
         )
     }

@@ -101,7 +101,7 @@ class Cell_map3_combo_tests {
         )
 
         updateVerifier.verifyUpdates(
-            doUpdate = doUpdate,
+            doTrigger = doUpdate,
             expectedUpdatedValue = "20:20:20",
         )
     }
@@ -223,7 +223,7 @@ class Cell_map3_combo_tests {
         )
 
         updateVerifier.verifyUpdates(
-            doUpdate = doUpdate,
+            doTrigger = doUpdate,
             expectedUpdatedValue = "20:A:true",
         )
     }
@@ -297,7 +297,7 @@ class Cell_map3_combo_tests {
         )
 
         updateVerifier.verifyUpdates(
-            doUpdate = doUpdate,
+            doTrigger = doUpdate,
             expectedUpdatedValue = "10:B:true",
         )
     }
@@ -371,7 +371,7 @@ class Cell_map3_combo_tests {
         )
 
         updateVerifier.verifyUpdates(
-            doUpdate = doUpdate,
+            doTrigger = doUpdate,
             expectedUpdatedValue = "10:A:false",
         )
     }
@@ -459,7 +459,7 @@ class Cell_map3_combo_tests {
         val expectedValue3 = newSource3Value ?: initialSource3Value
 
         updateVerifier.verifyUpdates(
-            doUpdate = doUpdate,
+            doTrigger = doUpdate,
             expectedUpdatedValue = "$expectedValue1:$expectedValue2:$expectedValue3",
         )
     }

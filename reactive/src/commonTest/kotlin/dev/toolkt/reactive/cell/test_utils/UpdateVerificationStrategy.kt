@@ -98,7 +98,7 @@ sealed class UpdateVerificationStrategy {
             subjectCell: Cell<ValueT>,
         ): UpdateVerifier.Partial<ValueT> = object : UpdateVerifier.Partial<ValueT>() {
             override fun verifyUpdates(
-                doUpdate: EmitterEventStream<Unit>,
+                doTrigger: EmitterEventStream<Unit>,
                 expectedUpdatedValue: ValueT,
             ) {
                 val doReset = EmitterEventStream<Unit>()
@@ -107,7 +107,7 @@ sealed class UpdateVerificationStrategy {
                     Cell.define(
                         initialValue = Cell.of(subjectCell.sample()),
                         newValues = EventStream.merge2(
-                            doUpdate.map { subjectCell },
+                            doTrigger.map { subjectCell },
                             doReset.mapAt { Cell.of(subjectCell.sampleExternally()) },
                         ),
                     )
@@ -120,7 +120,7 @@ sealed class UpdateVerificationStrategy {
                 )
 
                 helperUpdateVerifier.verifyUpdates(
-                    doUpdate = doUpdate,
+                    doTrigger = doTrigger,
                     expectedUpdatedValue = expectedUpdatedValue,
                 )
 

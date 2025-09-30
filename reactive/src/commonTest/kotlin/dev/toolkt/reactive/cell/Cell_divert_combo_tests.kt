@@ -15,10 +15,10 @@ class Cell_divert_combo_tests {
         outerConstCellFactory: ConstCellFactory,
         occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
     ) {
-        val doOccurInner = EmitterEventStream<Unit>()
+        val doTriggerInner = EmitterEventStream<Unit>()
 
         val outerCell = MomentContext.execute {
-            val initialInnerEventStream = doOccurInner.map { 20 }
+            val initialInnerEventStream = doTriggerInner.map { 20 }
 
             outerConstCellFactory.create(initialInnerEventStream)
         }
@@ -30,7 +30,7 @@ class Cell_divert_combo_tests {
         )
 
         occurrenceVerifier.verifyOccurrencePropagated(
-            doOccur = doOccurInner,
+            doTrigger = doTriggerInner,
             expectedPropagatedEvent = 20,
         )
     }
@@ -170,11 +170,11 @@ class Cell_divert_combo_tests {
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
-        val doOccurNewInner = EmitterEventStream<Unit>()
+        val doTriggerNewInner = EmitterEventStream<Unit>()
 
         val initialInnerEventStream = EmitterEventStream<Int>()
 
-        val newInnerEventStream = doOccurNewInner.map { 21 }
+        val newInnerEventStream = doTriggerNewInner.map { 21 }
 
         val outerCell = MomentContext.execute {
             Cell.define(
@@ -192,7 +192,7 @@ class Cell_divert_combo_tests {
         doUpdateOuter.emit()
 
         occurrenceVerifier.verifyOccurrencePropagated(
-            doOccur = doOccurNewInner,
+            doTrigger = doTriggerNewInner,
             expectedPropagatedEvent = 21,
         )
     }
@@ -229,7 +229,7 @@ class Cell_divert_combo_tests {
         )
 
         occurrenceVerifier.verifyOccurrencePropagated(
-            doOccur = doDivert,
+            doTrigger = doDivert,
             expectedPropagatedEvent = 11,
         )
     }
@@ -302,7 +302,7 @@ class Cell_divert_combo_tests {
         )
 
         occurrenceVerifier.verifyOccurrencePropagated(
-            doOccur = doDivert,
+            doTrigger = doDivert,
             expectedPropagatedEvent = 11,
         )
     }
