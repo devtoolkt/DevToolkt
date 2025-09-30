@@ -1,13 +1,13 @@
 package dev.toolkt.reactive.event_stream
 
-import dev.toolkt.reactive.event_stream.test_utils.OccurrenceVerificationStrategy
+import dev.toolkt.reactive.event_stream.test_utils.EventStreamVerificationStrategy
 import kotlin.test.Ignore
 import kotlin.test.Test
 
 @Suppress("ClassName")
 class EventStream_merge2_combo_tests {
     private fun test_sameSource(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
@@ -18,7 +18,7 @@ class EventStream_merge2_combo_tests {
             sourceEventStream,
         )
 
-        val verifier = occurrenceVerificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectEventStream = merge2EventStream,
         )
 
@@ -31,15 +31,15 @@ class EventStream_merge2_combo_tests {
     @Ignore // FIXME: Flaky test
     @Test
     fun test_sameSource() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_sameSource(
-                occurrenceVerificationStrategy,
+                verificationStrategy,
             )
         }
     }
 
     private fun test_source1Occurrence(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
@@ -52,7 +52,7 @@ class EventStream_merge2_combo_tests {
             sourceEventStream2,
         )
 
-        val verifier = occurrenceVerificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectEventStream = merge2EventStream,
         )
 
@@ -64,15 +64,15 @@ class EventStream_merge2_combo_tests {
 
     @Test
     fun test_source1Occurrence() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_source1Occurrence(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }
 
     private fun test_source2Occurrence(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
@@ -85,7 +85,7 @@ class EventStream_merge2_combo_tests {
             sourceEventStream2,
         )
 
-        val verifier = occurrenceVerificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectEventStream = merge2EventStream,
         )
 
@@ -97,15 +97,15 @@ class EventStream_merge2_combo_tests {
 
     @Test
     fun test_source2Occurrence() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_source2Occurrence(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }
 
     private fun test_simultaneousOccurrences(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
@@ -118,7 +118,7 @@ class EventStream_merge2_combo_tests {
             sourceEventStream2,
         )
 
-        val verifier = occurrenceVerificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectEventStream = merge2EventStream,
         )
 
@@ -130,15 +130,15 @@ class EventStream_merge2_combo_tests {
 
     @Test
     fun test_simultaneousOccurrences_active() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_simultaneousOccurrences(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }
 
     private fun test_deactivation(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
@@ -151,7 +151,7 @@ class EventStream_merge2_combo_tests {
             sourceEventStream2,
         )
 
-        occurrenceVerificationStrategy.verifyDeactivation(
+        verificationStrategy.verifyDeactivation(
             subjectEventStream = merge2EventStream,
             doTrigger = doTrigger,
         )
@@ -159,9 +159,9 @@ class EventStream_merge2_combo_tests {
 
     @Test
     fun test_deactivation() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_deactivation(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }

@@ -5,7 +5,7 @@ import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.emit
 import dev.toolkt.reactive.event_stream.map
-import dev.toolkt.reactive.event_stream.test_utils.OccurrenceVerificationStrategy
+import dev.toolkt.reactive.event_stream.test_utils.EventStreamVerificationStrategy
 import kotlin.test.Ignore
 import kotlin.test.Test
 
@@ -13,7 +13,7 @@ import kotlin.test.Test
 class Cell_divert_combo_tests {
     private fun test_initialInnerOccurrence(
         outerConstCellFactory: ConstCellFactory,
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTriggerInner = EmitterEventStream<Unit>()
 
@@ -25,38 +25,38 @@ class Cell_divert_combo_tests {
 
         val divertCell = Cell.divert(outerCell)
 
-        val occurrenceVerifier = occurrenceVerificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectEventStream = divertCell,
         )
 
-        occurrenceVerifier.verifyOccurrencePropagates(
+        verifier.verifyOccurrencePropagates(
             doTrigger = doTriggerInner,
             expectedPropagatedEvent = 20,
         )
     }
 
     private fun test_initialInnerOccurrence(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         ConstCellFactory.values.forEach { outerConstCellFactory ->
             test_initialInnerOccurrence(
                 outerConstCellFactory = outerConstCellFactory,
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
     fun test_initialInnerOccurrence() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_initialInnerOccurrence(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }
 
     private fun test_outerUpdate(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
@@ -73,26 +73,26 @@ class Cell_divert_combo_tests {
 
         val divertCell = Cell.divert(outerCell)
 
-        val occurrenceVerifier = occurrenceVerificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectEventStream = divertCell,
         )
 
-        occurrenceVerifier.verifyOccurrenceDoesNotPropagate(
+        verifier.verifyOccurrenceDoesNotPropagate(
             doTrigger = doUpdateOuter,
         )
     }
 
     @Test
     fun test_outerUpdate() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_outerUpdate(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }
 
     private fun test_outerUpdate_sameEventStream(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
@@ -107,26 +107,26 @@ class Cell_divert_combo_tests {
 
         val divertCell = Cell.divert(outerCell)
 
-        val occurrenceVerifier = occurrenceVerificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectEventStream = divertCell,
         )
 
-        occurrenceVerifier.verifyOccurrenceDoesNotPropagate(
+        verifier.verifyOccurrenceDoesNotPropagate(
             doTrigger = doUpdateOuter,
         )
     }
 
     @Test
     fun test_outerUpdate_sameEventStream() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_outerUpdate_sameEventStream(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }
 
     private fun test_outerUpdate_thenInitialInnerOccurrence(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
@@ -145,28 +145,28 @@ class Cell_divert_combo_tests {
 
         val divertCell = Cell.divert(outerCell)
 
-        val occurrenceVerifier = occurrenceVerificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectEventStream = divertCell,
         )
 
         doUpdateOuter.emit()
 
-        occurrenceVerifier.verifyOccurrenceDoesNotPropagate(
+        verifier.verifyOccurrenceDoesNotPropagate(
             doTrigger = doUpdateInitialInner,
         )
     }
 
     @Test
     fun test_outerUpdate_thenInitialInnerOccurrence_active() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_outerUpdate_thenInitialInnerOccurrence(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }
 
     private fun test_outerUpdate_thenNewInnerUpdate(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
@@ -185,13 +185,13 @@ class Cell_divert_combo_tests {
 
         val divertCell = Cell.divert(outerCell)
 
-        val occurrenceVerifier = occurrenceVerificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectEventStream = divertCell,
         )
 
         doUpdateOuter.emit()
 
-        occurrenceVerifier.verifyOccurrencePropagates(
+        verifier.verifyOccurrencePropagates(
             doTrigger = doTriggerNewInner,
             expectedPropagatedEvent = 21,
         )
@@ -199,15 +199,15 @@ class Cell_divert_combo_tests {
 
     @Test
     fun test_outerUpdate_thenNewInnerUpdate() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_outerUpdate_thenNewInnerUpdate(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }
 
     private fun test_outerUpdate_simultaneousInitialInnerOccurrence(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doDivert = EmitterEventStream<Unit>()
 
@@ -224,11 +224,11 @@ class Cell_divert_combo_tests {
             Cell.divert(outerCell)
         }
 
-        val occurrenceVerifier = occurrenceVerificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectEventStream = divertCell,
         )
 
-        occurrenceVerifier.verifyOccurrencePropagates(
+        verifier.verifyOccurrencePropagates(
             doTrigger = doDivert,
             expectedPropagatedEvent = 11,
         )
@@ -236,15 +236,15 @@ class Cell_divert_combo_tests {
 
     @Test
     fun test_outerUpdate_simultaneousInitialInnerOccurrence_active() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_outerUpdate_simultaneousInitialInnerOccurrence(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }
 
     private fun test_outerUpdate_simultaneousNewInnerUpdate(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doDivert = EmitterEventStream<Unit>()
 
@@ -261,26 +261,26 @@ class Cell_divert_combo_tests {
             Cell.divert(outerCell)
         }
 
-        val occurrenceVerifier = occurrenceVerificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectEventStream = divertCell,
         )
 
-        occurrenceVerifier.verifyOccurrenceDoesNotPropagate(
+        verifier.verifyOccurrenceDoesNotPropagate(
             doTrigger = doDivert,
         )
     }
 
     @Test
     fun test_outerUpdate_simultaneousNewInnerUpdate_active() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_outerUpdate_simultaneousNewInnerUpdate(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }
 
     private fun test_outerUpdate_simultaneousBothInnerUpdates(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doDivert = EmitterEventStream<Unit>()
 
@@ -297,11 +297,11 @@ class Cell_divert_combo_tests {
             Cell.divert(outerCell)
         }
 
-        val occurrenceVerifier = occurrenceVerificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectEventStream = divertCell,
         )
 
-        occurrenceVerifier.verifyOccurrencePropagates(
+        verifier.verifyOccurrencePropagates(
             doTrigger = doDivert,
             expectedPropagatedEvent = 11,
         )
@@ -309,15 +309,15 @@ class Cell_divert_combo_tests {
 
     @Test
     fun test_outerUpdate_simultaneousBothInnerUpdates_active() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_outerUpdate_simultaneousBothInnerUpdates(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }
 
     private fun test_deactivation_initial(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
@@ -332,7 +332,7 @@ class Cell_divert_combo_tests {
             Cell.divert(outerCell)
         }
 
-        occurrenceVerificationStrategy.verifyDeactivation(
+        verificationStrategy.verifyDeactivation(
             subjectEventStream = divertCell,
             doTrigger = doTrigger,
         )
@@ -341,15 +341,15 @@ class Cell_divert_combo_tests {
     @Ignore // FIXME: Flaky test
     @Test
     fun test_deactivation_initial() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_deactivation_initial(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }
 
     private fun test_deactivation_afterOuterUpdate(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doPrepare = EmitterEventStream<Unit>()
 
@@ -370,7 +370,7 @@ class Cell_divert_combo_tests {
 
         doPrepare.emit()
 
-        occurrenceVerificationStrategy.verifyDeactivation(
+        verificationStrategy.verifyDeactivation(
             subjectEventStream = divertCell,
             doTrigger = doTrigger,
         )
@@ -379,9 +379,9 @@ class Cell_divert_combo_tests {
     @Ignore // FIXME: Flaky test
     @Test
     fun test_deactivation_afterOuterUpdate() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_deactivation_afterOuterUpdate(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }

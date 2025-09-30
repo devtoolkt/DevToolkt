@@ -1,12 +1,12 @@
 package dev.toolkt.reactive.event_stream
 
-import dev.toolkt.reactive.event_stream.test_utils.OccurrenceVerificationStrategy
+import dev.toolkt.reactive.event_stream.test_utils.EventStreamVerificationStrategy
 import kotlin.test.Test
 
 @Suppress("ClassName")
 class EventStream_filter_combo_tests {
     private fun test_sourceOccurrence_passed(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
@@ -14,11 +14,11 @@ class EventStream_filter_combo_tests {
 
         val filterEventStream = sourceEventStream.filter { true }
 
-        val occurrenceVerifier = occurrenceVerificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectEventStream = filterEventStream,
         )
 
-        occurrenceVerifier.verifyOccurrencePropagates(
+        verifier.verifyOccurrencePropagates(
             doTrigger = doTrigger,
             expectedPropagatedEvent = 10,
         )
@@ -26,15 +26,15 @@ class EventStream_filter_combo_tests {
 
     @Test
     fun test_sourceOccurrence_passed() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_sourceOccurrence_passed(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }
 
     private fun test_sourceOccurrence_filteredOut(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
@@ -42,26 +42,26 @@ class EventStream_filter_combo_tests {
 
         val filterEventStream = sourceEventStream.filter { false }
 
-        val occurrenceVerifier = occurrenceVerificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectEventStream = filterEventStream,
         )
 
-        occurrenceVerifier.verifyOccurrenceDoesNotPropagate(
+        verifier.verifyOccurrenceDoesNotPropagate(
             doTrigger = doTrigger,
         )
     }
 
     @Test
     fun test_sourceOccurrence_filteredOut() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_sourceOccurrence_filteredOut(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }
 
     private fun test_deactivation(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
@@ -69,7 +69,7 @@ class EventStream_filter_combo_tests {
 
         val filterEventStream = sourceEventStream.filter { true }
 
-        occurrenceVerificationStrategy.verifyDeactivation(
+        verificationStrategy.verifyDeactivation(
             subjectEventStream = filterEventStream,
             doTrigger = doTrigger,
         )
@@ -77,9 +77,9 @@ class EventStream_filter_combo_tests {
 
     @Test
     fun test_deactivation() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_deactivation(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }

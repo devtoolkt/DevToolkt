@@ -9,18 +9,18 @@ import dev.toolkt.reactive.event_stream.emit
 import dev.toolkt.reactive.event_stream.subscribe
 import kotlin.test.assertEquals
 
-abstract class OccurrenceVerifier<EventT> {
+abstract class EventStreamVerifier<EventT> {
     companion object {
         fun <EventT> observeDirectly(
             subjectEventStream: EventStream<EventT>,
-        ): OccurrenceVerifier<EventT> {
+        ): EventStreamVerifier<EventT> {
             val receivedOccurredEvents = mutableListOf<EventT>()
 
             val subscription = subjectEventStream.subscribe { occurredEvent ->
                 receivedOccurredEvents.add(occurredEvent)
             } ?: throw IllegalStateException("Subscription should not be null.")
 
-            return object : OccurrenceVerifier<EventT>() {
+            return object : EventStreamVerifier<EventT>() {
                 private val receivedOccurrenceCount: Int
                     get() = receivedOccurredEvents.size
 
@@ -73,7 +73,7 @@ abstract class OccurrenceVerifier<EventT> {
 
         fun <EventT> observeViaDivert(
             subjectEventStream: EventStream<EventT>,
-        ): OccurrenceVerifier<EventT> {
+        ): EventStreamVerifier<EventT> {
             val helperOuterCell = MutableCell(
                 initialValue = subjectEventStream,
             )
@@ -84,7 +84,7 @@ abstract class OccurrenceVerifier<EventT> {
                 subjectEventStream = helperDivertEventStream,
             )
 
-            return object : OccurrenceVerifier<EventT>() {
+            return object : EventStreamVerifier<EventT>() {
                 override fun end() {
                     helperOuterCell.set(NeverEventStream)
                 }
