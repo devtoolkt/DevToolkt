@@ -1,11 +1,15 @@
 package dev.toolkt.reactive.cell.test_utils
 
+import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.MutableCell
+import dev.toolkt.reactive.cell.sample
 import dev.toolkt.reactive.cell.updatedValues
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.emit
+import dev.toolkt.reactive.event_stream.map
+import dev.toolkt.reactive.event_stream.mapAt
 import dev.toolkt.reactive.event_stream.subscribe
 import kotlin.test.assertEquals
 
@@ -189,6 +193,48 @@ sealed class UpdateVerifier<ValueT> {
                         Cell.of(subjectCell.sampleExternally()),
                     )
                 }
+            }
+        }
+
+        /**
+         * A tricky update verifier that triggers a corner case path, where the subject cell might be activated and pulled
+         * at the same time by a dependent `switch` cell.
+         *
+         * This is a "partial" verifier, as it's not able to effectively detect a non-updated value, because the `switch`
+         * cell emits the current value of the new inner cell if the new inner cell doesn't update at the time of the
+         * switch.
+         */
+        fun <ValueT> observeQuick(
+            subjectCell: Cell<ValueT>,
+        ): Partial<ValueT> = object : UpdateVerifier.Partial<ValueT>() {
+            override fun verifyUpdates(
+                doTrigger: EmitterEventStream<Unit>,
+                expectedUpdatedValue: ValueT,
+            ) {
+                val doReset = EmitterEventStream<Unit>()
+
+                val helperOuterCell = MomentContext.execute {
+                    Cell.define(
+                        initialValue = Cell.of(subjectCell.sample()),
+                        newValues = EventStream.merge2(
+                            doTrigger.map { subjectCell },
+                            doReset.mapAt { Cell.of(subjectCell.sampleExternally()) },
+                        ),
+                    )
+                }
+
+                val helperSwitchCell = Cell.switch(helperOuterCell)
+
+                val helperUpdateVerifier = UpdateVerifier.observeActively(
+                    subjectCell = helperSwitchCell,
+                )
+
+                helperUpdateVerifier.verifyUpdates(
+                    doTrigger = doTrigger,
+                    expectedUpdatedValue = expectedUpdatedValue,
+                )
+
+                doReset.emit()
             }
         }
     }
