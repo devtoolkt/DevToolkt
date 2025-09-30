@@ -37,7 +37,7 @@ sealed class EventStreamVerificationStrategy {
             subjectEventStream = subjectEventStream,
         )
 
-        verifier.end()
+        verifier.pause()
 
         verifier.verifyOccurrenceDoesNotPropagate(
             doTrigger = doTrigger,

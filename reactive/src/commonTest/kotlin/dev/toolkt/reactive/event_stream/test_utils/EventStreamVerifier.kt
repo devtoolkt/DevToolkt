@@ -24,7 +24,7 @@ abstract class EventStreamVerifier<EventT> {
                 private val receivedOccurrenceCount: Int
                     get() = receivedOccurredEvents.size
 
-                override fun end() {
+                override fun pause() {
                     subscription.cancel()
                 }
 
@@ -85,7 +85,7 @@ abstract class EventStreamVerifier<EventT> {
             )
 
             return object : EventStreamVerifier<EventT>() {
-                override fun end() {
+                override fun pause() {
                     helperOuterCell.set(NeverEventStream)
                 }
 
@@ -119,5 +119,5 @@ abstract class EventStreamVerifier<EventT> {
         doTrigger: EmitterEventStream<Unit>,
     )
 
-    abstract fun end()
+    abstract fun pause()
 }
