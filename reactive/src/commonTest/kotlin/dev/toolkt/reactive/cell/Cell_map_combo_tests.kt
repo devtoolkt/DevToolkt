@@ -2,6 +2,7 @@ package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.CellVerificationStrategy
+import dev.toolkt.reactive.cell.test_utils.FreezingCellFactory
 import dev.toolkt.reactive.cell.test_utils.NonChangingCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.map
@@ -102,6 +103,55 @@ class Cell_map_combo_tests {
         test_sourceUpdate(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
+    }
+
+    private fun test_sourceFreeze(
+        sourceCellFactory: FreezingCellFactory,
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        val doFreeze = EmitterEventStream<Unit>()
+
+        val sourceCell = MomentContext.execute {
+            sourceCellFactory.create(
+                value = 10,
+                doFreeze = doFreeze,
+            )
+        }
+
+        val mapCell = sourceCell.map { it.toString() }
+
+        verificationStrategy.verifyCompleteFreeze(
+            subjectCell = mapCell,
+            doFreeze = doFreeze,
+            expectedFrozenValue = "10",
+        )
+    }
+
+    private fun test_sourceFreeze(
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        FreezingCellFactory.values.forEach { sourceCellFactory ->
+            test_sourceFreeze(
+                sourceCellFactory = sourceCellFactory,
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
+    @Test
+    fun test_sourceFreeze_passive() {
+        test_sourceFreeze(
+            verificationStrategy = CellVerificationStrategy.Passive,
+        )
+    }
+
+    @Test
+    fun test_sourceFreeze_active() {
+        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
+            test_sourceFreeze(
+                verificationStrategy = verificationStrategy,
+            )
+        }
     }
 
     private fun test_deactivation(

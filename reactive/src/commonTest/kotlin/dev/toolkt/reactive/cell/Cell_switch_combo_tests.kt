@@ -2,6 +2,7 @@ package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.CellVerificationStrategy
+import dev.toolkt.reactive.cell.test_utils.FreezingCellFactory
 import dev.toolkt.reactive.cell.test_utils.NonChangingCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
@@ -201,8 +202,8 @@ class Cell_switch_combo_tests {
 
         val outerCell = MomentContext.execute {
             Cell.define(
-                innerCell,
-                doUpdateOuter.map { innerCell },
+                initialValue = innerCell,
+                newValues = doUpdateOuter.map { innerCell },
             )
         }
 
@@ -578,6 +579,320 @@ class Cell_switch_combo_tests {
         test_outerUpdate_simultaneousBothInnerUpdates(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
+    }
+
+    private fun test_outerFreeze_innerNonChanging(
+        outerCellFactory: FreezingCellFactory,
+        innerCellFactory: NonChangingCellFactory,
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        val doFreeze = EmitterEventStream<Unit>()
+
+        val initialInnerCell = MomentContext.execute {
+            innerCellFactory.create(10)
+        }
+
+        val outerCell = MomentContext.execute {
+            outerCellFactory.create(
+                value = initialInnerCell,
+                doFreeze = doFreeze,
+            )
+        }
+
+        val switchCell = Cell.switch(outerCell)
+
+        verificationStrategy.verifyCompleteFreeze(
+            subjectCell = switchCell,
+            doFreeze = doFreeze,
+            expectedFrozenValue = 10,
+        )
+    }
+
+    private fun test_outerFreeze_innerNonChanging(
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        FreezingCellFactory.values.forEach { outerCellFactory ->
+            NonChangingCellFactory.values.forEach { innerCellFactory ->
+                test_outerFreeze_innerNonChanging(
+                    outerCellFactory = outerCellFactory,
+                    innerCellFactory = innerCellFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
+        }
+    }
+
+    @Test
+    fun test_outerFreeze_innerNonChanging_passive() {
+        test_outerFreeze_innerNonChanging(
+            verificationStrategy = CellVerificationStrategy.Passive,
+        )
+    }
+
+    @Test
+    fun test_outerFreeze_innerNonChanging_active() {
+        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
+            test_outerFreeze_innerNonChanging(
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
+    private fun test_outerFreeze_thenInnerUpdate(
+        outerCellFactory: FreezingCellFactory,
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        val doFreeze = EmitterEventStream<Unit>()
+
+        val doTrigger = EmitterEventStream<Unit>()
+
+        val innerCell = MomentContext.execute {
+            Cell.define(
+                initialValue = 10,
+                newValues = doTrigger.map { 11 },
+            )
+        }
+
+        val outerCell = MomentContext.execute {
+            outerCellFactory.create(
+                value = innerCell,
+                doFreeze = doFreeze,
+            )
+        }
+
+        val switchCell = Cell.switch(outerCell)
+
+        val verifier = verificationStrategy.begin(
+            subjectCell = switchCell,
+        )
+
+        verifier.verifyUpdates(
+            doTrigger = doTrigger,
+            expectedUpdatedValue = 11,
+        )
+    }
+
+    private fun test_outerFreeze_thenInnerUpdate(
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        FreezingCellFactory.values.forEach { outerCellFactory ->
+            test_outerFreeze_thenInnerUpdate(
+                outerCellFactory = outerCellFactory,
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
+    @Test
+    fun test_outerFreeze_thenInnerUpdate_passive() {
+        test_outerFreeze_thenInnerUpdate(
+            verificationStrategy = CellVerificationStrategy.Passive,
+        )
+    }
+
+    @Test
+    fun test_outerFreeze_thenInnerUpdate_active() {
+        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
+            test_outerFreeze_thenInnerUpdate(
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
+    private fun test_outerFreeze_simultaneousInnerUpdate(
+        outerCellFactory: FreezingCellFactory,
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        val doFreeze = EmitterEventStream<Unit>()
+
+        val innerCell = MomentContext.execute {
+            Cell.define(
+                initialValue = 10,
+                newValues = doFreeze.map { 11 },
+            )
+        }
+
+        val outerCell = MomentContext.execute {
+            outerCellFactory.create(
+                value = innerCell,
+                doFreeze = doFreeze,
+            )
+        }
+
+        val switchCell = Cell.switch(outerCell)
+
+        val verifier = verificationStrategy.begin(
+            subjectCell = switchCell,
+        )
+
+        verifier.verifyUpdates(
+            doTrigger = doFreeze,
+            expectedUpdatedValue = 11,
+        )
+    }
+
+    private fun test_outerFreeze_simultaneousInnerUpdate(
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        FreezingCellFactory.values.forEach { outerCellFactory ->
+            test_outerFreeze_simultaneousInnerUpdate(
+                outerCellFactory = outerCellFactory,
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
+    @Test
+    fun test_outerFreeze_simultaneousInnerUpdate_passive() {
+        test_outerFreeze_simultaneousInnerUpdate(
+            verificationStrategy = CellVerificationStrategy.Passive,
+        )
+    }
+
+    @Test
+    fun test_outerFreeze_simultaneousInnerUpdate_active() {
+        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
+            test_outerFreeze_simultaneousInnerUpdate(
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
+    private fun test_outerFreeze_simultaneousInnerFreeze(
+        outerCellFactory: FreezingCellFactory,
+        innerCellFactory: FreezingCellFactory,
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        val doFreeze = EmitterEventStream<Unit>()
+
+        val innerCell = MomentContext.execute {
+            innerCellFactory.create(
+                value = 10,
+                doFreeze = doFreeze,
+            )
+        }
+
+        val outerCell = MomentContext.execute {
+            outerCellFactory.create(
+                value = innerCell,
+                doFreeze = doFreeze,
+            )
+        }
+
+        val switchCell = Cell.switch(outerCell)
+
+        verificationStrategy.verifyCompleteFreeze(
+            subjectCell = switchCell,
+            doFreeze = doFreeze,
+            expectedFrozenValue = 10,
+        )
+    }
+
+    private fun test_outerFreeze_simultaneousInnerFreeze(
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        FreezingCellFactory.values.forEach { outerCellFactory ->
+            FreezingCellFactory.values.forEach { innerCellFactory ->
+                test_outerFreeze_simultaneousInnerFreeze(
+                    outerCellFactory = outerCellFactory,
+                    innerCellFactory = innerCellFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
+        }
+    }
+
+    @Test
+    fun test_outerFreeze_simultaneousInnerFreeze_passive() {
+        test_outerFreeze_simultaneousInnerFreeze(
+            verificationStrategy = CellVerificationStrategy.Passive,
+        )
+    }
+
+    @Test
+    fun test_outerFreeze_simultaneousInnerFreeze_active() {
+        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
+            test_outerFreeze_simultaneousInnerFreeze(
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
+    private fun test_initialInnerFreeze_thenOuterUpdate_thenNewInnerUpdate(
+        initialInnerCellFactory: FreezingCellFactory,
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        val doFreezeInitialInner = EmitterEventStream<Unit>()
+
+        val doTriggerOuter = EmitterEventStream<Unit>()
+
+        val doTriggerNewInner = EmitterEventStream<Unit>()
+
+        val initialInnerCell = MomentContext.execute {
+            initialInnerCellFactory.create(
+                value = 10,
+                doFreeze = doFreezeInitialInner,
+            )
+        }
+
+        val newInnerCell = MomentContext.execute {
+            Cell.define(
+                initialValue = 20,
+                newValues = doTriggerNewInner.map { 21 },
+            )
+        }
+
+        val outerCell = MomentContext.execute {
+            Cell.define(
+                initialValue = initialInnerCell,
+                newValues = doTriggerOuter.map { newInnerCell },
+            )
+        }
+
+        val switchCell = Cell.switch(outerCell)
+
+        val verifier = verificationStrategy.begin(
+            subjectCell = switchCell,
+        )
+
+        doFreezeInitialInner.emit()
+
+        verifier.verifyUpdates(
+            doTrigger = doTriggerOuter,
+            expectedUpdatedValue = 20,
+        )
+
+        verifier.verifyUpdates(
+            doTrigger = doTriggerNewInner,
+            expectedUpdatedValue = 21,
+        )
+    }
+
+    private fun test_initialInnerFreeze_thenOuterUpdate_thenNewInnerUpdate(
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        FreezingCellFactory.values.forEach { initialInnerCellFactory ->
+            test_initialInnerFreeze_thenOuterUpdate_thenNewInnerUpdate(
+                initialInnerCellFactory = initialInnerCellFactory,
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
+    @Test
+    fun test_initialInnerFreeze_thenOuterUpdate_thenNewInnerUpdate_passive() {
+        test_initialInnerFreeze_thenOuterUpdate_thenNewInnerUpdate(
+            verificationStrategy = CellVerificationStrategy.Passive,
+        )
+    }
+
+    @Test
+    fun test_initialInnerFreeze_thenOuterUpdate_thenNewInnerUpdate_active() {
+        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
+            test_initialInnerFreeze_thenOuterUpdate_thenNewInnerUpdate(
+                verificationStrategy = verificationStrategy,
+            )
+        }
     }
 
     private fun test_deactivation_initial(

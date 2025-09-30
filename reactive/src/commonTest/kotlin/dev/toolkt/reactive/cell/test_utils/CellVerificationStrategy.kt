@@ -4,9 +4,26 @@ import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.newValues
 import dev.toolkt.reactive.cell.updatedValues
 import dev.toolkt.reactive.event_stream.EmitterEventStream
+import dev.toolkt.reactive.event_stream.emit
 
 sealed class CellVerificationStrategy {
     abstract class Total : CellVerificationStrategy() {
+        fun <ValueT> verifyCompleteFreeze(
+            subjectCell: Cell<ValueT>,
+            doFreeze: EmitterEventStream<Unit>,
+            expectedFrozenValue: ValueT,
+        ) {
+            val verifier = begin(
+                subjectCell = subjectCell,
+            )
+
+            doFreeze.emit()
+
+            verifier.verifyCurrentValue(
+                expectedCurrentValue = expectedFrozenValue,
+            )
+        }
+
         abstract override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
         ): CellVerifier.Total<ValueT>
