@@ -121,7 +121,7 @@ sealed class CellVerifier<ValueT> {
             )
         }
 
-        abstract fun end()
+        abstract fun deactivate()
     }
 
     abstract class Partial<ValueT> : CellVerifier<ValueT>()
@@ -204,7 +204,7 @@ sealed class CellVerifier<ValueT> {
                     )
                 }
 
-                override fun end() {
+                override fun deactivate() {
                     subscription.cancel()
                 }
             }
@@ -240,7 +240,7 @@ sealed class CellVerifier<ValueT> {
                     )
                 }
 
-                override fun end() {
+                override fun deactivate() {
                     helperOuterCell.set(
                         Cell.of(subjectCell.sampleExternally()),
                     )

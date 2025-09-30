@@ -39,7 +39,7 @@ sealed class CellVerificationStrategy {
                 subjectCell = subjectCell,
             )
 
-            verifier.end()
+            verifier.deactivate()
 
             verifier.verifyUpdateDoesNotPropagate(
                 doTrigger = doTrigger,
