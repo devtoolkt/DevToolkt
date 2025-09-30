@@ -28,7 +28,7 @@ abstract class OccurrenceVerifier<EventT> {
                     subscription.cancel()
                 }
 
-                override fun verifyOccurrencePropagated(
+                override fun verifyOccurrencePropagates(
                     doTrigger: EmitterEventStream<Unit>,
                     expectedPropagatedEvent: EventT,
                 ) {
@@ -53,7 +53,7 @@ abstract class OccurrenceVerifier<EventT> {
                     )
                 }
 
-                override fun verifyOccurrenceDidNotPropagate(
+                override fun verifyOccurrenceDoesNotPropagate(
                     doTrigger: EmitterEventStream<Unit>,
                 ) {
                     val previousReceivedOccurrenceCount = receivedOccurrenceCount
@@ -89,20 +89,20 @@ abstract class OccurrenceVerifier<EventT> {
                     helperOuterCell.set(NeverEventStream)
                 }
 
-                override fun verifyOccurrencePropagated(
+                override fun verifyOccurrencePropagates(
                     doTrigger: EmitterEventStream<Unit>,
                     expectedPropagatedEvent: EventT,
                 ) {
-                    helperOccurrenceVerifier.verifyOccurrencePropagated(
+                    helperOccurrenceVerifier.verifyOccurrencePropagates(
                         doTrigger = doTrigger,
                         expectedPropagatedEvent = expectedPropagatedEvent,
                     )
                 }
 
-                override fun verifyOccurrenceDidNotPropagate(
+                override fun verifyOccurrenceDoesNotPropagate(
                     doTrigger: EmitterEventStream<Unit>,
                 ) {
-                    helperOccurrenceVerifier.verifyOccurrenceDidNotPropagate(
+                    helperOccurrenceVerifier.verifyOccurrenceDoesNotPropagate(
                         doTrigger = doTrigger,
                     )
                 }
@@ -110,12 +110,12 @@ abstract class OccurrenceVerifier<EventT> {
         }
     }
 
-    abstract fun verifyOccurrencePropagated(
+    abstract fun verifyOccurrencePropagates(
         doTrigger: EmitterEventStream<Unit>,
         expectedPropagatedEvent: EventT,
     )
 
-    abstract fun verifyOccurrenceDidNotPropagate(
+    abstract fun verifyOccurrenceDoesNotPropagate(
         doTrigger: EmitterEventStream<Unit>,
     )
 

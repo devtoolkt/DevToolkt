@@ -29,7 +29,7 @@ class Cell_divert_combo_tests {
             subjectEventStream = divertCell,
         )
 
-        occurrenceVerifier.verifyOccurrencePropagated(
+        occurrenceVerifier.verifyOccurrencePropagates(
             doTrigger = doTriggerInner,
             expectedPropagatedEvent = 20,
         )
@@ -77,7 +77,7 @@ class Cell_divert_combo_tests {
             subjectEventStream = divertCell,
         )
 
-        occurrenceVerifier.verifyOccurrenceDidNotPropagate(
+        occurrenceVerifier.verifyOccurrenceDoesNotPropagate(
             doTrigger = doUpdateOuter,
         )
     }
@@ -111,7 +111,7 @@ class Cell_divert_combo_tests {
             subjectEventStream = divertCell,
         )
 
-        occurrenceVerifier.verifyOccurrenceDidNotPropagate(
+        occurrenceVerifier.verifyOccurrenceDoesNotPropagate(
             doTrigger = doUpdateOuter,
         )
     }
@@ -151,7 +151,7 @@ class Cell_divert_combo_tests {
 
         doUpdateOuter.emit()
 
-        occurrenceVerifier.verifyOccurrenceDidNotPropagate(
+        occurrenceVerifier.verifyOccurrenceDoesNotPropagate(
             doTrigger = doUpdateInitialInner,
         )
     }
@@ -191,7 +191,7 @@ class Cell_divert_combo_tests {
 
         doUpdateOuter.emit()
 
-        occurrenceVerifier.verifyOccurrencePropagated(
+        occurrenceVerifier.verifyOccurrencePropagates(
             doTrigger = doTriggerNewInner,
             expectedPropagatedEvent = 21,
         )
@@ -228,7 +228,7 @@ class Cell_divert_combo_tests {
             subjectEventStream = divertCell,
         )
 
-        occurrenceVerifier.verifyOccurrencePropagated(
+        occurrenceVerifier.verifyOccurrencePropagates(
             doTrigger = doDivert,
             expectedPropagatedEvent = 11,
         )
@@ -265,7 +265,7 @@ class Cell_divert_combo_tests {
             subjectEventStream = divertCell,
         )
 
-        occurrenceVerifier.verifyOccurrenceDidNotPropagate(
+        occurrenceVerifier.verifyOccurrenceDoesNotPropagate(
             doTrigger = doDivert,
         )
     }
@@ -301,7 +301,7 @@ class Cell_divert_combo_tests {
             subjectEventStream = divertCell,
         )
 
-        occurrenceVerifier.verifyOccurrencePropagated(
+        occurrenceVerifier.verifyOccurrencePropagates(
             doTrigger = doDivert,
             expectedPropagatedEvent = 11,
         )

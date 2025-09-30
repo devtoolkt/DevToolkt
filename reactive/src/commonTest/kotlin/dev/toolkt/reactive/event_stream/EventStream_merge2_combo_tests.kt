@@ -22,7 +22,7 @@ class EventStream_merge2_combo_tests {
             subjectEventStream = merge2EventStream,
         )
 
-        updateVerifier.verifyOccurrencePropagated(
+        updateVerifier.verifyOccurrencePropagates(
             doTrigger = doTrigger,
             expectedPropagatedEvent = 11,
         )
@@ -56,7 +56,7 @@ class EventStream_merge2_combo_tests {
             subjectEventStream = merge2EventStream,
         )
 
-        updateVerifier.verifyOccurrencePropagated(
+        updateVerifier.verifyOccurrencePropagates(
             doTrigger = doTrigger,
             expectedPropagatedEvent = 11,
         )
@@ -89,7 +89,7 @@ class EventStream_merge2_combo_tests {
             subjectEventStream = merge2EventStream,
         )
 
-        updateVerifier.verifyOccurrencePropagated(
+        updateVerifier.verifyOccurrencePropagates(
             doTrigger = doTrigger,
             expectedPropagatedEvent = 21,
         )
@@ -122,7 +122,7 @@ class EventStream_merge2_combo_tests {
             subjectEventStream = merge2EventStream,
         )
 
-        updateVerifier.verifyOccurrencePropagated(
+        updateVerifier.verifyOccurrencePropagates(
             doTrigger = doTrigger,
             expectedPropagatedEvent = 11,
         )

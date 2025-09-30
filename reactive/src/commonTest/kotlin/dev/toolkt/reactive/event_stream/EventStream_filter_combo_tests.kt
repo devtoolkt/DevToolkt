@@ -18,7 +18,7 @@ class EventStream_filter_combo_tests {
             subjectEventStream = filterEventStream,
         )
 
-        occurrenceVerifier.verifyOccurrencePropagated(
+        occurrenceVerifier.verifyOccurrencePropagates(
             doTrigger = doTrigger,
             expectedPropagatedEvent = 10,
         )
@@ -46,7 +46,7 @@ class EventStream_filter_combo_tests {
             subjectEventStream = filterEventStream,
         )
 
-        occurrenceVerifier.verifyOccurrenceDidNotPropagate(
+        occurrenceVerifier.verifyOccurrenceDoesNotPropagate(
             doTrigger = doTrigger,
         )
     }
