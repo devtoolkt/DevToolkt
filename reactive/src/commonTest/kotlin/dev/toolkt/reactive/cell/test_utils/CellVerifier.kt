@@ -77,7 +77,7 @@ sealed class CellVerifier<ValueT> {
             assertEquals(
                 expected = expectedPropagatedUpdatedValue,
                 actual = singleUpdatedValue,
-                message = "Expected the single update to be $singleUpdatedValue, but got $singleUpdatedValue instead."
+                message = "Expected the single update to be $expectedPropagatedUpdatedValue, but got $singleUpdatedValue instead."
             )
         }
 

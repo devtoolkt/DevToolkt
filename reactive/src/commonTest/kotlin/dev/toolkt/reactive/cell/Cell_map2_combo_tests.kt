@@ -2,10 +2,10 @@ package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.CellVerificationStrategy
+import dev.toolkt.reactive.cell.test_utils.FreezingCellFactory
 import dev.toolkt.reactive.cell.test_utils.NonChangingCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.filter
-import dev.toolkt.reactive.event_stream.hold
 import dev.toolkt.reactive.event_stream.map
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -183,8 +183,9 @@ class Cell_map2_combo_tests {
         val doUpdate = EmitterEventStream<Unit>()
 
         val sourceCell1 = MomentContext.execute {
-            doUpdate.map { 20 }.hold(
+            Cell.define(
                 initialValue = 10,
+                newValues = doUpdate.map { 20 },
             )
         }
 
@@ -254,8 +255,9 @@ class Cell_map2_combo_tests {
         }
 
         val sourceCell2 = MomentContext.execute {
-            doUpdate.map { 'B' }.hold(
+            Cell.define(
                 initialValue = 'A',
+                newValues = doUpdate.map { 'B' },
             )
         }
 
@@ -367,6 +369,203 @@ class Cell_map2_combo_tests {
         test_simultaneousUpdates(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
+    }
+
+    private fun test_source1Freeze(
+        source1CellFactory: FreezingCellFactory,
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        val doFreeze = EmitterEventStream<Unit>()
+
+        val doTrigger = EmitterEventStream<Unit>()
+
+        val sourceCell1 = MomentContext.execute {
+            source1CellFactory.create(
+                value = 10,
+                doFreeze = doFreeze,
+            )
+        }
+
+        val sourceCell2 = MomentContext.execute {
+            Cell.define(
+                initialValue = 'A',
+                newValues = doTrigger.map { 'B' },
+            )
+        }
+
+        val map2Cell = Cell.map2(
+            sourceCell1,
+            sourceCell2,
+        ) { value1, value2 ->
+            "$value1:$value2"
+        }
+
+        val verifier = verificationStrategy.begin(
+            subjectCell = map2Cell,
+        )
+
+        verifier.verifyUpdates(
+            doTrigger = doTrigger,
+            expectedUpdatedValue = "10:B",
+        )
+    }
+
+    private fun test_source1Freeze(
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        FreezingCellFactory.values.forEach { source1CellFactory ->
+            test_source1Freeze(
+                source1CellFactory = source1CellFactory,
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
+    @Test
+    fun test_source1Freeze_passive() {
+        test_source1Freeze(
+            verificationStrategy = CellVerificationStrategy.Passive,
+        )
+    }
+
+    @Test
+    fun test_source1Freeze_active() {
+        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
+            test_source1Freeze(
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
+    private fun test_source2Freeze(
+        source2CellFactory: FreezingCellFactory,
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        val doFreeze = EmitterEventStream<Unit>()
+
+        val doTrigger = EmitterEventStream<Unit>()
+
+        val sourceCell1 = MomentContext.execute {
+            Cell.define(
+                initialValue = 10,
+                newValues = doTrigger.map { 11 },
+            )
+        }
+
+        val sourceCell2 = MomentContext.execute {
+            source2CellFactory.create(
+                value = 'A',
+                doFreeze = doFreeze,
+            )
+        }
+
+        val map2Cell = Cell.map2(
+            sourceCell1,
+            sourceCell2,
+        ) { value1, value2 ->
+            "$value1:$value2"
+        }
+
+        val verifier = verificationStrategy.begin(
+            subjectCell = map2Cell,
+        )
+
+        verifier.verifyUpdates(
+            doTrigger = doTrigger,
+            expectedUpdatedValue = "11:A",
+        )
+    }
+
+    private fun test_source2Freeze(
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        FreezingCellFactory.values.forEach { source2CellFactory ->
+            test_source2Freeze(
+                source2CellFactory = source2CellFactory,
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
+    @Test
+    fun test_source2Freeze_passive() {
+        test_source2Freeze(
+            verificationStrategy = CellVerificationStrategy.Passive,
+        )
+    }
+
+    @Test
+    fun test_source2Freeze_active() {
+        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
+            test_source2Freeze(
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
+    private fun test_simultaneousFreeze(
+        source1CellFactory: FreezingCellFactory,
+        source2CellFactory: FreezingCellFactory,
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        val doFreeze = EmitterEventStream<Unit>()
+
+        val sourceCell1 = MomentContext.execute {
+            source1CellFactory.create(
+                value = 10,
+                doFreeze = doFreeze,
+            )
+        }
+
+        val sourceCell2 = MomentContext.execute {
+            source2CellFactory.create(
+                value = 'A',
+                doFreeze = doFreeze,
+            )
+        }
+
+        val map2Cell = Cell.map2(
+            sourceCell1,
+            sourceCell2,
+        ) { value1, value2 ->
+            "$value1:$value2"
+        }
+
+        verificationStrategy.verifyCompleteFreeze(
+            subjectCell = map2Cell,
+            doFreeze = doFreeze,
+            expectedFrozenValue = "10:A",
+        )
+    }
+
+    private fun test_simultaneousFreeze(
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        FreezingCellFactory.values.forEach { source1CellFactory ->
+            FreezingCellFactory.values.forEach { source2CellFactory ->
+                test_simultaneousFreeze(
+                    source1CellFactory = source1CellFactory,
+                    source2CellFactory = source2CellFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
+        }
+    }
+
+    @Test
+    fun test_simultaneousFreeze_passive() {
+        test_simultaneousFreeze(
+            verificationStrategy = CellVerificationStrategy.Passive,
+        )
+    }
+
+    @Test
+    fun test_simultaneousFreeze_active() {
+        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
+            test_simultaneousFreeze(
+                verificationStrategy = verificationStrategy,
+            )
+        }
     }
 
     private fun test_deactivation(
