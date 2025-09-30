@@ -1,10 +1,9 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
-import dev.toolkt.reactive.cell.test_utils.CellSamplingStrategy
-import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
-import dev.toolkt.reactive.cell.test_utils.CellVerifier
 import dev.toolkt.reactive.cell.test_utils.CellVerificationStrategy
+import dev.toolkt.reactive.cell.test_utils.CellVerifier
+import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.filter
 import dev.toolkt.reactive.event_stream.hold
@@ -19,7 +18,7 @@ class Cell_map3_combo_tests {
         source1ConstCellFactory: ConstCellFactory,
         source2ConstCellFactory: ConstCellFactory,
         source3ConstCellFactory: ConstCellFactory,
-        samplingStrategy: CellSamplingStrategy,
+        verificationStrategy: CellVerificationStrategy.Total,
     ) {
         val sourceCell1 = MomentContext.execute {
             source1ConstCellFactory.create(10)
@@ -41,13 +40,15 @@ class Cell_map3_combo_tests {
             "$value1:$value2:$value3"
         }
 
-        samplingStrategy.perceive(map3Cell).assertCurrentValueEquals(
+        verificationStrategy.begin(
+            subjectCell = map3Cell,
+        ).verifyCurrentValue(
             expectedCurrentValue = "10:A:true",
         )
     }
 
     private fun test_initial(
-        samplingStrategy: CellSamplingStrategy,
+        verificationStrategy: CellVerificationStrategy.Total,
     ) {
         ConstCellFactory.values.forEach { source1ConstCellFactory ->
             ConstCellFactory.values.forEach { source2ConstCellFactory ->
@@ -56,7 +57,7 @@ class Cell_map3_combo_tests {
                         source1ConstCellFactory = source1ConstCellFactory,
                         source2ConstCellFactory = source2ConstCellFactory,
                         source3ConstCellFactory = source3ConstCellFactory,
-                        samplingStrategy = samplingStrategy,
+                        verificationStrategy = verificationStrategy,
                     )
                 }
             }
@@ -66,15 +67,17 @@ class Cell_map3_combo_tests {
     @Test
     fun test_initial_passive() {
         test_initial(
-            samplingStrategy = CellSamplingStrategy.Passive,
+            verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_initial_active() {
-        test_initial(
-            samplingStrategy = CellSamplingStrategy.Active,
-        )
+        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
+            test_sameSource(
+                verificationStrategy = verificationStrategy,
+            )
+        }
     }
 
     private fun test_sameSource(
