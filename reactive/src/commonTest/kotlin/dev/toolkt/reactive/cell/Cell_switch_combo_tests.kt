@@ -1,9 +1,8 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
-import dev.toolkt.reactive.cell.test_utils.CellSamplingStrategy
-import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
 import dev.toolkt.reactive.cell.test_utils.CellVerificationStrategy
+import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.emit
@@ -16,7 +15,7 @@ class Cell_switch_combo_tests {
     private fun test_initial(
         outerConstCellFactory: ConstCellFactory,
         innerConstCellFactory: ConstCellFactory,
-        samplingStrategy: CellSamplingStrategy,
+        verificationStrategy: CellVerificationStrategy.Total,
     ) {
         val outerCell = MomentContext.execute {
             outerConstCellFactory.create(
@@ -26,20 +25,22 @@ class Cell_switch_combo_tests {
 
         val switchCell = Cell.switch(outerCell)
 
-        samplingStrategy.perceive(switchCell).assertCurrentValueEquals(
+        verificationStrategy.begin(
+            subjectCell = switchCell,
+        ).verifyCurrentValue(
             expectedCurrentValue = 10,
         )
     }
 
     private fun test_initial(
-        samplingStrategy: CellSamplingStrategy,
+        verificationStrategy: CellVerificationStrategy.Total,
     ) {
         ConstCellFactory.values.forEach { outerConstCellFactory ->
             ConstCellFactory.values.forEach { innerConstCellFactory ->
                 test_initial(
                     outerConstCellFactory = outerConstCellFactory,
                     innerConstCellFactory = innerConstCellFactory,
-                    samplingStrategy = samplingStrategy,
+                    verificationStrategy = verificationStrategy,
                 )
             }
         }
@@ -48,15 +49,17 @@ class Cell_switch_combo_tests {
     @Test
     fun test_initial_passive() {
         test_initial(
-            samplingStrategy = CellSamplingStrategy.Passive,
+            verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_initial_active() {
-        test_initial(
-            samplingStrategy = CellSamplingStrategy.Active,
-        )
+        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
+            test_initial(
+                verificationStrategy = verificationStrategy,
+            )
+        }
     }
 
     private fun test_initialInnerUpdate(
