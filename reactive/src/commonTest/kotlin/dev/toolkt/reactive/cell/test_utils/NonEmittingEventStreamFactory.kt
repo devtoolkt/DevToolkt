@@ -10,27 +10,34 @@ sealed interface NonEmittingEventStreamFactory {
     companion object {
         val values = listOf(
             Never,
+            TransformedNever,
             Dynamic,
             TransformedDynamic,
         )
     }
 
     data object Never : NonEmittingEventStreamFactory {
-        context(momentContext: MomentContext) override fun <EventT> create(
-        ): EventStream<EventT> = NeverEventStream
+        context(momentContext: MomentContext) override fun <EventT> create(): EventStream<EventT> = NeverEventStream
+    }
+
+    data object TransformedNever : NonEmittingEventStreamFactory {
+        context(momentContext: MomentContext) override fun <EventT> create(): EventStream<EventT> =
+            NeverEventStream.map {
+                // This code path should never be entered
+                it
+            }
     }
 
     data object Dynamic : NonEmittingEventStreamFactory {
-        context(momentContext: MomentContext) override fun <EventT> create(
-        ): EventStream<EventT> = EmitterEventStream()
+        context(momentContext: MomentContext) override fun <EventT> create(): EventStream<EventT> = EmitterEventStream()
     }
 
     data object TransformedDynamic : NonEmittingEventStreamFactory {
-        context(momentContext: MomentContext) override fun <EventT> create(
-        ): EventStream<EventT> = EmitterEventStream<EventT>().map {
-            // This code path should never be entered
-            throw UnsupportedOperationException()
-        }
+        context(momentContext: MomentContext) override fun <EventT> create(): EventStream<EventT> =
+            Dynamic.create<EventT>().map {
+                // This code path should never be entered
+                it
+            }
     }
 
     context(momentContext: MomentContext) fun <EventT> create(): EventStream<EventT>
