@@ -9,9 +9,9 @@ class EventStream_merge2_combo_tests {
     private fun test_sameSource(
         occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
     ) {
-        val doOccur = EmitterEventStream<Unit>()
+        val doTrigger = EmitterEventStream<Unit>()
 
-        val sourceEventStream = doOccur.map { 11 }
+        val sourceEventStream = doTrigger.map { 11 }
 
         val merge2EventStream = EventStream.merge2(
             sourceEventStream,
@@ -23,7 +23,7 @@ class EventStream_merge2_combo_tests {
         )
 
         updateVerifier.verifyOccurrencePropagated(
-            doOccur = doOccur,
+            doTrigger = doTrigger,
             expectedPropagatedEvent = 11,
         )
     }
@@ -41,9 +41,9 @@ class EventStream_merge2_combo_tests {
     private fun test_source1Occurrence(
         occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
     ) {
-        val doOccur = EmitterEventStream<Unit>()
+        val doTrigger = EmitterEventStream<Unit>()
 
-        val sourceEventStream1 = doOccur.map { 11 }
+        val sourceEventStream1 = doTrigger.map { 11 }
 
         val sourceEventStream2 = EmitterEventStream<Int>()
 
@@ -57,7 +57,7 @@ class EventStream_merge2_combo_tests {
         )
 
         updateVerifier.verifyOccurrencePropagated(
-            doOccur = doOccur,
+            doTrigger = doTrigger,
             expectedPropagatedEvent = 11,
         )
     }
@@ -74,11 +74,11 @@ class EventStream_merge2_combo_tests {
     private fun test_source2Occurrence(
         occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
     ) {
-        val doOccur = EmitterEventStream<Unit>()
+        val doTrigger = EmitterEventStream<Unit>()
 
         val sourceEventStream1 = EmitterEventStream<Int>()
 
-        val sourceEventStream2 = doOccur.map { 21 }
+        val sourceEventStream2 = doTrigger.map { 21 }
 
         val merge2EventStream = EventStream.merge2(
             sourceEventStream1,
@@ -90,7 +90,7 @@ class EventStream_merge2_combo_tests {
         )
 
         updateVerifier.verifyOccurrencePropagated(
-            doOccur = doOccur,
+            doTrigger = doTrigger,
             expectedPropagatedEvent = 21,
         )
     }
@@ -107,11 +107,11 @@ class EventStream_merge2_combo_tests {
     private fun test_simultaneousOccurrences(
         occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
     ) {
-        val doOccur = EmitterEventStream<Unit>()
+        val doTrigger = EmitterEventStream<Unit>()
 
-        val sourceEventStream1 = doOccur.map { 11 }
+        val sourceEventStream1 = doTrigger.map { 11 }
 
-        val sourceEventStream2 = doOccur.map { 21 }
+        val sourceEventStream2 = doTrigger.map { 21 }
 
         val merge2EventStream = EventStream.merge2(
             sourceEventStream1,
@@ -123,7 +123,7 @@ class EventStream_merge2_combo_tests {
         )
 
         updateVerifier.verifyOccurrencePropagated(
-            doOccur = doOccur,
+            doTrigger = doTrigger,
             expectedPropagatedEvent = 11,
         )
     }

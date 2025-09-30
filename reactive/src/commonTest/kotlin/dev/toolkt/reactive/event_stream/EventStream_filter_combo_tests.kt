@@ -8,9 +8,9 @@ class EventStream_filter_combo_tests {
     private fun test_sourceOccurrence_passed(
         occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
     ) {
-        val doOccur = EmitterEventStream<Unit>()
+        val doTrigger = EmitterEventStream<Unit>()
 
-        val sourceEventStream = doOccur.map { 10 }
+        val sourceEventStream = doTrigger.map { 10 }
 
         val filterEventStream = sourceEventStream.filter { true }
 
@@ -19,7 +19,7 @@ class EventStream_filter_combo_tests {
         )
 
         occurrenceVerifier.verifyOccurrencePropagated(
-            doOccur = doOccur,
+            doTrigger = doTrigger,
             expectedPropagatedEvent = 10,
         )
     }

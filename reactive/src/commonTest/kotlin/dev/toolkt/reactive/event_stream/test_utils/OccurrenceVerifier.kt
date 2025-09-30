@@ -29,12 +29,12 @@ abstract class OccurrenceVerifier<EventT> {
                 }
 
                 override fun verifyOccurrencePropagated(
-                    doOccur: EmitterEventStream<Unit>,
+                    doTrigger: EmitterEventStream<Unit>,
                     expectedPropagatedEvent: EventT,
                 ) {
                     val previousReceivedOccurrenceCount = receivedOccurrenceCount
 
-                    doOccur.emit()
+                    doTrigger.emit()
 
                     val deltaReceivedOccurrenceCount = receivedOccurrenceCount - previousReceivedOccurrenceCount
 
@@ -90,11 +90,11 @@ abstract class OccurrenceVerifier<EventT> {
                 }
 
                 override fun verifyOccurrencePropagated(
-                    doOccur: EmitterEventStream<Unit>,
+                    doTrigger: EmitterEventStream<Unit>,
                     expectedPropagatedEvent: EventT,
                 ) {
                     helperOccurrenceVerifier.verifyOccurrencePropagated(
-                        doOccur = doOccur,
+                        doTrigger = doTrigger,
                         expectedPropagatedEvent = expectedPropagatedEvent,
                     )
                 }
@@ -111,7 +111,7 @@ abstract class OccurrenceVerifier<EventT> {
     }
 
     abstract fun verifyOccurrencePropagated(
-        doOccur: EmitterEventStream<Unit>,
+        doTrigger: EmitterEventStream<Unit>,
         expectedPropagatedEvent: EventT,
     )
 

@@ -71,7 +71,7 @@ class Cell_map_combo_tests {
         )
 
         updateVerifier.verifyUpdates(
-            doUpdate = doUpdate,
+            doTrigger = doUpdate,
             expectedUpdatedValue = "20",
         )
     }

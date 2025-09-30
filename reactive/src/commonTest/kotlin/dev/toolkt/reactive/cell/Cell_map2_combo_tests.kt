@@ -88,7 +88,7 @@ class Cell_map2_combo_tests {
         )
 
         updateVerifier.verifyUpdates(
-            doUpdate = doUpdate,
+            doTrigger = doUpdate,
             expectedUpdatedValue = "20:20",
         )
     }
@@ -198,7 +198,7 @@ class Cell_map2_combo_tests {
         )
 
         updateVerifier.verifyUpdates(
-            doUpdate = doUpdate,
+            doTrigger = doUpdate,
             expectedUpdatedValue = "20:A",
         )
     }
@@ -265,7 +265,7 @@ class Cell_map2_combo_tests {
         )
 
         updateVerifier.verifyUpdates(
-            doUpdate = doUpdate,
+            doTrigger = doUpdate,
             expectedUpdatedValue = "10:B",
         )
     }
@@ -335,7 +335,7 @@ class Cell_map2_combo_tests {
         )
 
         updateVerifier.verifyUpdates(
-            doUpdate = doUpdate,
+            doTrigger = doUpdate,
             expectedUpdatedValue = "11:B",
         )
     }

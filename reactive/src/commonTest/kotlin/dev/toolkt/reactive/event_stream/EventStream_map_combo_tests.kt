@@ -22,9 +22,9 @@ class EventStream_map_combo_tests {
     private fun test_sourceOccurrence(
         occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
     ) {
-        val doOccur = EmitterEventStream<Unit>()
+        val doTrigger = EmitterEventStream<Unit>()
 
-        val sourceEventStream = doOccur.map { 10 }
+        val sourceEventStream = doTrigger.map { 10 }
 
         val mapEventStream = sourceEventStream.map { it.toString() }
 
@@ -33,7 +33,7 @@ class EventStream_map_combo_tests {
         )
 
         occurrenceVerifier.verifyOccurrencePropagated(
-            doOccur = doOccur,
+            doTrigger = doTrigger,
             expectedPropagatedEvent = "10",
         )
     }
