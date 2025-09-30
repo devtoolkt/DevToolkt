@@ -3,7 +3,7 @@ package dev.toolkt.reactive.cell
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.CellVerificationStrategy
 import dev.toolkt.reactive.cell.test_utils.CellVerifier
-import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
+import dev.toolkt.reactive.cell.test_utils.NonChangingCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.filter
 import dev.toolkt.reactive.event_stream.hold
@@ -15,21 +15,21 @@ import kotlin.test.Test
 @Suppress("ClassName")
 class Cell_map3_combo_tests {
     private fun test_initial(
-        source1ConstCellFactory: ConstCellFactory,
-        source2ConstCellFactory: ConstCellFactory,
-        source3ConstCellFactory: ConstCellFactory,
+        source1CellFactory: NonChangingCellFactory,
+        source2CellFactory: NonChangingCellFactory,
+        source3CellFactory: NonChangingCellFactory,
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
         val sourceCell1 = MomentContext.execute {
-            source1ConstCellFactory.create(10)
+            source1CellFactory.create(10)
         }
 
         val sourceCell2 = MomentContext.execute {
-            source2ConstCellFactory.create('A')
+            source2CellFactory.create('A')
         }
 
         val sourceCell3 = MomentContext.execute {
-            source3ConstCellFactory.create(true)
+            source3CellFactory.create(true)
         }
 
         val map3Cell = Cell.map3(
@@ -50,13 +50,13 @@ class Cell_map3_combo_tests {
     private fun test_initial(
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
-        ConstCellFactory.values.forEach { source1ConstCellFactory ->
-            ConstCellFactory.values.forEach { source2ConstCellFactory ->
-                ConstCellFactory.values.forEach { source3ConstCellFactory ->
+        NonChangingCellFactory.values.forEach { source1CellFactory ->
+            NonChangingCellFactory.values.forEach { source2CellFactory ->
+                NonChangingCellFactory.values.forEach { source3CellFactory ->
                     test_initial(
-                        source1ConstCellFactory = source1ConstCellFactory,
-                        source2ConstCellFactory = source2ConstCellFactory,
-                        source3ConstCellFactory = source3ConstCellFactory,
+                        source1CellFactory = source1CellFactory,
+                        source2CellFactory = source2CellFactory,
+                        source3CellFactory = source3CellFactory,
                         verificationStrategy = verificationStrategy,
                     )
                 }
@@ -196,8 +196,8 @@ class Cell_map3_combo_tests {
     }
 
     private fun test_source1Update(
-        source2ConstCellFactory: ConstCellFactory,
-        source3ConstCellFactory: ConstCellFactory,
+        source2CellFactory: NonChangingCellFactory,
+        source3CellFactory: NonChangingCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
         val doUpdate = EmitterEventStream<Unit>()
@@ -207,11 +207,11 @@ class Cell_map3_combo_tests {
         }
 
         val sourceCell2 = MomentContext.execute {
-            source2ConstCellFactory.create('A')
+            source2CellFactory.create('A')
         }
 
         val sourceCell3 = MomentContext.execute {
-            source3ConstCellFactory.create(true)
+            source3CellFactory.create(true)
         }
 
         val map3Cell = Cell.map3(
@@ -235,11 +235,11 @@ class Cell_map3_combo_tests {
     private fun test_source1Update(
         verificationStrategy: CellVerificationStrategy,
     ) {
-        ConstCellFactory.values.forEach { source2ConstCellFactory ->
-            ConstCellFactory.values.forEach { source3ConstCellFactory ->
+        NonChangingCellFactory.values.forEach { source2CellFactory ->
+            NonChangingCellFactory.values.forEach { source3CellFactory ->
                 test_source1Update(
-                    source2ConstCellFactory = source2ConstCellFactory,
-                    source3ConstCellFactory = source3ConstCellFactory,
+                    source2CellFactory = source2CellFactory,
+                    source3CellFactory = source3CellFactory,
                     verificationStrategy = verificationStrategy,
                 )
             }
@@ -270,14 +270,14 @@ class Cell_map3_combo_tests {
     }
 
     private fun test_source2Update(
-        source1ConstCellFactory: ConstCellFactory,
-        source3ConstCellFactory: ConstCellFactory,
+        source1CellFactory: NonChangingCellFactory,
+        source3CellFactory: NonChangingCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
         val sourceCell1 = MomentContext.execute {
-            source1ConstCellFactory.create(10)
+            source1CellFactory.create(10)
         }
 
         val sourceCell2 = MomentContext.execute {
@@ -285,7 +285,7 @@ class Cell_map3_combo_tests {
         }
 
         val sourceCell3 = MomentContext.execute {
-            source3ConstCellFactory.create(true)
+            source3CellFactory.create(true)
         }
 
         val map3Cell = Cell.map3(
@@ -309,11 +309,11 @@ class Cell_map3_combo_tests {
     private fun test_source2Update(
         verificationStrategy: CellVerificationStrategy,
     ) {
-        ConstCellFactory.values.forEach { source1ConstCellFactory ->
-            ConstCellFactory.values.forEach { source3ConstCellFactory ->
+        NonChangingCellFactory.values.forEach { source1CellFactory ->
+            NonChangingCellFactory.values.forEach { source3CellFactory ->
                 test_source2Update(
-                    source1ConstCellFactory = source1ConstCellFactory,
-                    source3ConstCellFactory = source3ConstCellFactory,
+                    source1CellFactory = source1CellFactory,
+                    source3CellFactory = source3CellFactory,
                     verificationStrategy = verificationStrategy,
                 )
             }
@@ -344,18 +344,18 @@ class Cell_map3_combo_tests {
     }
 
     private fun test_source3Update(
-        source1ConstCellFactory: ConstCellFactory,
-        source2ConstCellFactory: ConstCellFactory,
+        source1CellFactory: NonChangingCellFactory,
+        source2CellFactory: NonChangingCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
         val sourceCell1 = MomentContext.execute {
-            source1ConstCellFactory.create(10)
+            source1CellFactory.create(10)
         }
 
         val sourceCell2 = MomentContext.execute {
-            source2ConstCellFactory.create('A')
+            source2CellFactory.create('A')
         }
 
         val sourceCell3 = MomentContext.execute {
@@ -383,11 +383,11 @@ class Cell_map3_combo_tests {
     private fun test_source3Update(
         verificationStrategy: CellVerificationStrategy,
     ) {
-        ConstCellFactory.values.forEach { source1ConstCellFactory ->
-            ConstCellFactory.values.forEach { source2ConstCellFactory ->
+        NonChangingCellFactory.values.forEach { source1CellFactory ->
+            NonChangingCellFactory.values.forEach { source2CellFactory ->
                 test_source3Update(
-                    source1ConstCellFactory = source1ConstCellFactory,
-                    source2ConstCellFactory = source2ConstCellFactory,
+                    source1CellFactory = source1CellFactory,
+                    source2CellFactory = source2CellFactory,
                     verificationStrategy = verificationStrategy,
                 )
             }

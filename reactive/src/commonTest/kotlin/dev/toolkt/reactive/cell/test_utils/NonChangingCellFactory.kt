@@ -4,18 +4,24 @@ import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.MutableCell
 
-sealed interface ConstCellFactory {
+sealed interface NonChangingCellFactory {
     companion object {
-        val values = listOf(Inert, Dynamic)
+        val values = listOf(Const, Dynamic)
     }
 
-    data object Inert : ConstCellFactory {
+    data object Const : NonChangingCellFactory {
         context(momentContext: MomentContext) override fun <ValueT> create(
             value: ValueT,
         ): Cell<ValueT> = MutableCell(value)
     }
 
-    data object Dynamic : ConstCellFactory {
+    data object TransformedInert : NonChangingCellFactory {
+        context(momentContext: MomentContext) override fun <ValueT> create(
+            value: ValueT,
+        ): Cell<ValueT> = MutableCell(value)
+    }
+
+    data object Dynamic : NonChangingCellFactory {
         context(momentContext: MomentContext) override fun <ValueT> create(
             value: ValueT,
         ): Cell<ValueT> = Cell.of(value)
