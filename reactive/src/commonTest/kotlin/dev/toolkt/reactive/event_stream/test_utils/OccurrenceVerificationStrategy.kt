@@ -39,7 +39,7 @@ sealed class OccurrenceVerificationStrategy {
 
         occurrenceVerifier.end()
 
-        occurrenceVerifier.verifyOccurrenceDidNotPropagate(
+        occurrenceVerifier.verifyOccurrenceDoesNotPropagate(
             doTrigger = doTrigger,
         )
     }

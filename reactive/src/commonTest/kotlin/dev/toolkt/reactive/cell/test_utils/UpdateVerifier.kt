@@ -30,7 +30,7 @@ sealed class UpdateVerifier<ValueT> {
             doTrigger: EmitterEventStream<Unit>,
             expectedUpdatedValue: ValueT,
         ) {
-            verifyUpdatePropagated(
+            verifyUpdatePropagates(
                 doTrigger = doTrigger,
                 expectedPropagatedUpdatedValue = expectedUpdatedValue,
             )
@@ -43,7 +43,7 @@ sealed class UpdateVerifier<ValueT> {
             )
         }
 
-        fun verifyUpdatePropagated(
+        fun verifyUpdatePropagates(
             doTrigger: EmitterEventStream<Unit>,
             expectedPropagatedUpdatedValue: ValueT,
         ) {
@@ -72,7 +72,7 @@ sealed class UpdateVerifier<ValueT> {
             doTrigger: EmitterEventStream<Unit>,
             expectedNonUpdatedValue: ValueT,
         ) {
-            verifyUpdateDidNotPropagate(
+            verifyUpdateDoesNotPropagate(
                 doTrigger = doTrigger,
             )
 
@@ -84,7 +84,7 @@ sealed class UpdateVerifier<ValueT> {
             )
         }
 
-        fun verifyUpdateDidNotPropagate(
+        fun verifyUpdateDoesNotPropagate(
             doTrigger: EmitterEventStream<Unit>,
         ) {
             val previousReceivedUpdateCount = receivedUpdateCount

@@ -47,7 +47,7 @@ sealed class UpdateVerificationStrategy {
 
             updateVerifier.end()
 
-            updateVerifier.verifyUpdateDidNotPropagate(
+            updateVerifier.verifyUpdateDoesNotPropagate(
                 doTrigger = doTrigger,
             )
         }

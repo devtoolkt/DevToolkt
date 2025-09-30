@@ -32,7 +32,7 @@ class EventStream_map_combo_tests {
             subjectEventStream = mapEventStream,
         )
 
-        occurrenceVerifier.verifyOccurrencePropagated(
+        occurrenceVerifier.verifyOccurrencePropagates(
             doTrigger = doTrigger,
             expectedPropagatedEvent = "10",
         )
