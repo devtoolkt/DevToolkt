@@ -47,7 +47,7 @@ class EventStream_map_combo_tests {
         }
     }
 
-    private fun test_deactivation(
+    private fun test_pausing(
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
@@ -56,16 +56,16 @@ class EventStream_map_combo_tests {
 
         val mapEventStream = sourceEventStream.map { it.toString() }
 
-        verificationStrategy.verifyDeactivation(
+        verificationStrategy.verifyPausing(
             subjectEventStream = mapEventStream,
             doTrigger = doTrigger,
         )
     }
 
     @Test
-    fun test_deactivation() {
+    fun test_pausing() {
         EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
-            test_deactivation(
+            test_pausing(
                 verificationStrategy = verificationStrategy,
             )
         }

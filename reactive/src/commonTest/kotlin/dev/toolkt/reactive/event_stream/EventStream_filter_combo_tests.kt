@@ -60,7 +60,7 @@ class EventStream_filter_combo_tests {
         }
     }
 
-    private fun test_deactivation(
+    private fun test_pausing(
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
@@ -69,16 +69,16 @@ class EventStream_filter_combo_tests {
 
         val filterEventStream = sourceEventStream.filter { true }
 
-        verificationStrategy.verifyDeactivation(
+        verificationStrategy.verifyPausing(
             subjectEventStream = filterEventStream,
             doTrigger = doTrigger,
         )
     }
 
     @Test
-    fun test_deactivation() {
+    fun test_pausing() {
         EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
-            test_deactivation(
+            test_pausing(
                 verificationStrategy = verificationStrategy,
             )
         }
