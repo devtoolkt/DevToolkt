@@ -2,7 +2,9 @@ package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.ConstCellFactory
+import dev.toolkt.reactive.cell.test_utils.NonEmittingEventStreamFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
+import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.emit
 import dev.toolkt.reactive.event_stream.map
 import dev.toolkt.reactive.event_stream.test_utils.EventStreamVerificationStrategy
@@ -56,13 +58,19 @@ class Cell_divert_combo_tests {
     }
 
     private fun test_outerUpdate(
+        initialInnerEventStreamFactory: NonEmittingEventStreamFactory,
+        newInnerEventStreamFactory: NonEmittingEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
-        val initialInnerEventStream = EmitterEventStream<Int>()
+        val initialInnerEventStream = MomentContext.execute {
+            initialInnerEventStreamFactory.create<Int>()
+        }
 
-        val newInnerEventStream = EmitterEventStream<Int>()
+        val newInnerEventStream = MomentContext.execute {
+            newInnerEventStreamFactory.create<Int>()
+        }
 
         val outerCell = MomentContext.execute {
             Cell.define(
@@ -82,6 +90,20 @@ class Cell_divert_combo_tests {
         )
     }
 
+    private fun test_outerUpdate(
+        verificationStrategy: EventStreamVerificationStrategy,
+    ) {
+        NonEmittingEventStreamFactory.values.forEach { initialInnerEventStreamFactory ->
+            NonEmittingEventStreamFactory.values.forEach { newInnerEventStreamFactory ->
+                test_outerUpdate(
+                    initialInnerEventStreamFactory = initialInnerEventStreamFactory,
+                    newInnerEventStreamFactory = newInnerEventStreamFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
+        }
+    }
+
     @Test
     fun test_outerUpdate() {
         EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
@@ -92,11 +114,14 @@ class Cell_divert_combo_tests {
     }
 
     private fun test_outerUpdate_sameEventStream(
+        innerEventStreamFactory: NonEmittingEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
-        val innerEventStream = EmitterEventStream<Int>()
+        val innerEventStream = MomentContext.execute {
+            innerEventStreamFactory.create<Int>()
+        }
 
         val outerCell = MomentContext.execute {
             Cell.define(
@@ -116,6 +141,17 @@ class Cell_divert_combo_tests {
         )
     }
 
+    private fun test_outerUpdate_sameEventStream(
+        verificationStrategy: EventStreamVerificationStrategy,
+    ) {
+        NonEmittingEventStreamFactory.values.forEach { innerEventStreamFactory ->
+            test_outerUpdate_sameEventStream(
+                innerEventStreamFactory = innerEventStreamFactory,
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
     @Test
     fun test_outerUpdate_sameEventStream() {
         EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
@@ -126,15 +162,18 @@ class Cell_divert_combo_tests {
     }
 
     private fun test_outerUpdate_thenInitialInnerOccurrence(
+        newInnerEventStreamFactory: NonEmittingEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
         val doUpdateInitialInner = EmitterEventStream<Unit>()
 
-        val initialInnerEventStream = EmitterEventStream<Int>()
+        val initialInnerEventStream = doUpdateInitialInner.map { 11 }
 
-        val newInnerEventStream = EmitterEventStream<Int>()
+        val newInnerEventStream = MomentContext.execute {
+            newInnerEventStreamFactory.create<Int>()
+        }
 
         val outerCell = MomentContext.execute {
             Cell.define(
@@ -156,6 +195,17 @@ class Cell_divert_combo_tests {
         )
     }
 
+    private fun test_outerUpdate_thenInitialInnerOccurrence(
+        verificationStrategy: EventStreamVerificationStrategy,
+    ) {
+        NonEmittingEventStreamFactory.values.forEach { newInnerEventStreamFactory ->
+            test_outerUpdate_thenInitialInnerOccurrence(
+                newInnerEventStreamFactory = newInnerEventStreamFactory,
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
     @Test
     fun test_outerUpdate_thenInitialInnerOccurrence_active() {
         EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
@@ -166,13 +216,16 @@ class Cell_divert_combo_tests {
     }
 
     private fun test_outerUpdate_thenNewInnerUpdate(
+        initialInnerEventStreamFactory: NonEmittingEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
         val doTriggerNewInner = EmitterEventStream<Unit>()
 
-        val initialInnerEventStream = EmitterEventStream<Int>()
+        val initialInnerEventStream = MomentContext.execute {
+            initialInnerEventStreamFactory.create<Int>()
+        }
 
         val newInnerEventStream = doTriggerNewInner.map { 21 }
 
@@ -197,6 +250,17 @@ class Cell_divert_combo_tests {
         )
     }
 
+    private fun test_outerUpdate_thenNewInnerUpdate(
+        verificationStrategy: EventStreamVerificationStrategy,
+    ) {
+        NonEmittingEventStreamFactory.values.forEach { initialInnerEventStreamFactory ->
+            test_outerUpdate_thenNewInnerUpdate(
+                initialInnerEventStreamFactory = initialInnerEventStreamFactory,
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
     @Test
     fun test_outerUpdate_thenNewInnerUpdate() {
         EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
@@ -207,6 +271,7 @@ class Cell_divert_combo_tests {
     }
 
     private fun test_outerUpdate_simultaneousInitialInnerOccurrence(
+        newInnerEventStreamFactory: NonEmittingEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doDivert = EmitterEventStream<Unit>()
@@ -214,7 +279,7 @@ class Cell_divert_combo_tests {
         val divertCell = MomentContext.execute {
             val initialInnerEventStream = doDivert.map { 11 }
 
-            val newInnerEventStream = EmitterEventStream<Int>()
+            val newInnerEventStream = newInnerEventStreamFactory.create<Int>()
 
             val outerCell = Cell.define(
                 initialValue = initialInnerEventStream,
@@ -234,6 +299,17 @@ class Cell_divert_combo_tests {
         )
     }
 
+    private fun test_outerUpdate_simultaneousInitialInnerOccurrence(
+        verificationStrategy: EventStreamVerificationStrategy,
+    ) {
+        NonEmittingEventStreamFactory.values.forEach { newInnerEventStreamFactory ->
+            test_outerUpdate_simultaneousInitialInnerOccurrence(
+                newInnerEventStreamFactory = newInnerEventStreamFactory,
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
     @Test
     fun test_outerUpdate_simultaneousInitialInnerOccurrence_active() {
         EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
@@ -244,12 +320,13 @@ class Cell_divert_combo_tests {
     }
 
     private fun test_outerUpdate_simultaneousNewInnerUpdate(
+        initialInnerEventStreamFactory: NonEmittingEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doDivert = EmitterEventStream<Unit>()
 
         val divertCell = MomentContext.execute {
-            val initialInnerEventStream = EmitterEventStream<Int>()
+            val initialInnerEventStream = initialInnerEventStreamFactory.create<Int>()
 
             val newInnerEventStream = doDivert.map { 21 }
 
@@ -268,6 +345,17 @@ class Cell_divert_combo_tests {
         verifier.verifyOccurrenceDoesNotPropagate(
             doTrigger = doDivert,
         )
+    }
+
+    private fun test_outerUpdate_simultaneousNewInnerUpdate(
+        verificationStrategy: EventStreamVerificationStrategy,
+    ) {
+        NonEmittingEventStreamFactory.values.forEach { initialInnerEventStreamFactory ->
+            test_outerUpdate_simultaneousNewInnerUpdate(
+                initialInnerEventStreamFactory = initialInnerEventStreamFactory,
+                verificationStrategy = verificationStrategy,
+            )
+        }
     }
 
     @Test
@@ -317,6 +405,7 @@ class Cell_divert_combo_tests {
     }
 
     private fun test_pausing_initial(
+        newOuterCellsEventStreamFactory: NonEmittingEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
@@ -324,9 +413,11 @@ class Cell_divert_combo_tests {
         val divertCell = MomentContext.execute {
             val initialInnerEventStream = doTrigger.map { 21 }
 
+            val newInnerEventStreams = newOuterCellsEventStreamFactory.create<EventStream<Int>>()
+
             val outerCell = Cell.define(
                 initialValue = initialInnerEventStream,
-                newValues = EmitterEventStream(),
+                newValues = newInnerEventStreams,
             )
 
             Cell.divert(outerCell)
@@ -336,6 +427,17 @@ class Cell_divert_combo_tests {
             subjectEventStream = divertCell,
             doTrigger = doTrigger,
         )
+    }
+
+    private fun test_pausing_initial(
+        verificationStrategy: EventStreamVerificationStrategy,
+    ) {
+        NonEmittingEventStreamFactory.values.forEach { newOuterCellsEventStreamFactory ->
+            test_pausing_initial(
+                newOuterCellsEventStreamFactory = newOuterCellsEventStreamFactory,
+                verificationStrategy = verificationStrategy,
+            )
+        }
     }
 
     @Ignore // FIXME: Flaky test
@@ -349,6 +451,7 @@ class Cell_divert_combo_tests {
     }
 
     private fun test_pausing_afterOuterUpdate(
+        innerEventStreamFactory: NonEmittingEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doPrepare = EmitterEventStream<Unit>()
@@ -356,7 +459,7 @@ class Cell_divert_combo_tests {
         val doTrigger = EmitterEventStream<Unit>()
 
         val divertCell = MomentContext.execute {
-            val initialInnerEventStream = EmitterEventStream<Int>()
+            val initialInnerEventStream = innerEventStreamFactory.create<Int>()
 
             val newInnerEventStream = doTrigger.map { 21 }
 
@@ -374,6 +477,17 @@ class Cell_divert_combo_tests {
             subjectEventStream = divertCell,
             doTrigger = doTrigger,
         )
+    }
+
+    private fun test_pausing_afterOuterUpdate(
+        verificationStrategy: EventStreamVerificationStrategy,
+    ) {
+        NonEmittingEventStreamFactory.values.forEach { innerEventStreamFactory ->
+            test_pausing_afterOuterUpdate(
+                innerEventStreamFactory = innerEventStreamFactory,
+                verificationStrategy = verificationStrategy,
+            )
+        }
     }
 
     @Ignore // FIXME: Flaky test
