@@ -1,15 +1,9 @@
 package dev.toolkt.reactive.cell.test_utils
 
-import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.newValues
-import dev.toolkt.reactive.cell.sample
 import dev.toolkt.reactive.cell.updatedValues
 import dev.toolkt.reactive.event_stream.EmitterEventStream
-import dev.toolkt.reactive.event_stream.EventStream
-import dev.toolkt.reactive.event_stream.emit
-import dev.toolkt.reactive.event_stream.map
-import dev.toolkt.reactive.event_stream.mapAt
 
 sealed class UpdateVerificationStrategy {
     abstract class Total : UpdateVerificationStrategy() {
@@ -89,44 +83,12 @@ sealed class UpdateVerificationStrategy {
         ): UpdateVerifier.Partial<ValueT>
     }
 
-    /**
-     * A tricky update verifier that triggers a corner case path, where the subject cell might be activated and pulled
-     * at the same time.
-     */
     data object Quick : Partial() {
         override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): UpdateVerifier.Partial<ValueT> = object : UpdateVerifier.Partial<ValueT>() {
-            override fun verifyUpdates(
-                doTrigger: EmitterEventStream<Unit>,
-                expectedUpdatedValue: ValueT,
-            ) {
-                val doReset = EmitterEventStream<Unit>()
-
-                val helperOuterCell = MomentContext.execute {
-                    Cell.define(
-                        initialValue = Cell.of(subjectCell.sample()),
-                        newValues = EventStream.merge2(
-                            doTrigger.map { subjectCell },
-                            doReset.mapAt { Cell.of(subjectCell.sampleExternally()) },
-                        ),
-                    )
-                }
-
-                val helperSwitchCell = Cell.switch(helperOuterCell)
-
-                val helperUpdateVerifier = UpdateVerifier.observeActively(
-                    subjectCell = helperSwitchCell,
-                )
-
-                helperUpdateVerifier.verifyUpdates(
-                    doTrigger = doTrigger,
-                    expectedUpdatedValue = expectedUpdatedValue,
-                )
-
-                doReset.emit()
-            }
-        }
+        ): UpdateVerifier.Partial<ValueT> = UpdateVerifier.observeQuick(
+            subjectCell = subjectCell,
+        )
     }
 
     abstract fun <ValueT> begin(
