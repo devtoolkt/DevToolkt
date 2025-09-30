@@ -5,7 +5,7 @@ import dev.toolkt.reactive.event_stream.subscribe
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-// TODO: Rework like UpdateVerificationStrategy?
+// TODO: Rework like CellVerificationStrategy?
 object EventStreamSubscriptionUtils {
     interface Asserter<EventT> {
         fun assertNoOccurrence()

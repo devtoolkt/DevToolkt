@@ -13,8 +13,8 @@ import dev.toolkt.reactive.event_stream.mapAt
 import dev.toolkt.reactive.event_stream.subscribe
 import kotlin.test.assertEquals
 
-sealed class UpdateVerifier<ValueT> {
-    abstract class Total<ValueT>() : UpdateVerifier<ValueT>() {
+sealed class CellVerifier<ValueT> {
+    abstract class Total<ValueT>() : CellVerifier<ValueT>() {
         abstract fun verifyCurrentValue(
             expectedCurrentValue: ValueT,
         )
@@ -124,7 +124,7 @@ sealed class UpdateVerifier<ValueT> {
         abstract fun end()
     }
 
-    abstract class Partial<ValueT> : UpdateVerifier<ValueT>()
+    abstract class Partial<ValueT> : CellVerifier<ValueT>()
 
     companion object {
         fun <ValueT> observePassively(
@@ -258,7 +258,7 @@ sealed class UpdateVerifier<ValueT> {
          */
         fun <ValueT> observeQuick(
             subjectCell: Cell<ValueT>,
-        ): Partial<ValueT> = object : UpdateVerifier.Partial<ValueT>() {
+        ): Partial<ValueT> = object : CellVerifier.Partial<ValueT>() {
             override fun verifyUpdates(
                 doTrigger: EmitterEventStream<Unit>,
                 expectedUpdatedValue: ValueT,
@@ -277,7 +277,7 @@ sealed class UpdateVerifier<ValueT> {
 
                 val helperSwitchCell = Cell.switch(helperOuterCell)
 
-                val helperUpdateVerifier = UpdateVerifier.observeActively(
+                val helperUpdateVerifier = CellVerifier.observeActively(
                     subjectCell = helperSwitchCell,
                 )
 

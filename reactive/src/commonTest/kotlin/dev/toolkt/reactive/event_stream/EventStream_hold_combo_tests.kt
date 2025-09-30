@@ -2,7 +2,7 @@ package dev.toolkt.reactive.event_stream
 
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.CellSamplingStrategy
-import dev.toolkt.reactive.cell.test_utils.UpdateVerificationStrategy
+import dev.toolkt.reactive.cell.test_utils.CellVerificationStrategy
 import kotlin.test.Test
 
 @Suppress("ClassName")
@@ -36,7 +36,7 @@ class EventStream_hold_combo_tests {
     }
 
     private fun test_sourceOccurrence(
-        updateVerificationStrategy: UpdateVerificationStrategy,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
@@ -46,11 +46,11 @@ class EventStream_hold_combo_tests {
             sourceEventStream.hold(initialValue = 10)
         }
 
-        val updateVerifier = updateVerificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectCell = holdCell,
         )
 
-        updateVerifier.verifyUpdates(
+        verifier.verifyUpdates(
             doTrigger = doTrigger,
             expectedUpdatedValue = 11,
         )
@@ -59,15 +59,15 @@ class EventStream_hold_combo_tests {
     @Test
     fun test_sourceOccurrence_passive() {
         test_sourceOccurrence(
-            updateVerificationStrategy = UpdateVerificationStrategy.Passive,
+            verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
     fun test_sourceOccurrence_active() {
-        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
+        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
             test_sourceOccurrence(
-                updateVerificationStrategy = updateVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }
@@ -75,12 +75,12 @@ class EventStream_hold_combo_tests {
     @Test
     fun test_sourceOccurrence_quick() {
         test_sourceOccurrence(
-            updateVerificationStrategy = UpdateVerificationStrategy.Quick,
+            verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
 
     private fun test_deactivation(
-        updateVerificationStrategy: UpdateVerificationStrategy.Active,
+        verificationStrategy: CellVerificationStrategy.Active,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
@@ -90,7 +90,7 @@ class EventStream_hold_combo_tests {
             sourceEventStream.hold(initialValue = 10)
         }
 
-        updateVerificationStrategy.verifyDeactivation(
+        verificationStrategy.verifyDeactivation(
             subjectCell = holdCell,
             doTrigger = doTrigger,
         )
@@ -98,9 +98,9 @@ class EventStream_hold_combo_tests {
 
     @Test
     fun test_deactivation() {
-        UpdateVerificationStrategy.Active.values.forEach { updateVerificationStrategy ->
+        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
             test_deactivation(
-                updateVerificationStrategy = updateVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }

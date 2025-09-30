@@ -18,11 +18,11 @@ class EventStream_merge2_combo_tests {
             sourceEventStream,
         )
 
-        val updateVerifier = occurrenceVerificationStrategy.begin(
+        val verifier = occurrenceVerificationStrategy.begin(
             subjectEventStream = merge2EventStream,
         )
 
-        updateVerifier.verifyOccurrencePropagates(
+        verifier.verifyOccurrencePropagates(
             doTrigger = doTrigger,
             expectedPropagatedEvent = 11,
         )
@@ -52,11 +52,11 @@ class EventStream_merge2_combo_tests {
             sourceEventStream2,
         )
 
-        val updateVerifier = occurrenceVerificationStrategy.begin(
+        val verifier = occurrenceVerificationStrategy.begin(
             subjectEventStream = merge2EventStream,
         )
 
-        updateVerifier.verifyOccurrencePropagates(
+        verifier.verifyOccurrencePropagates(
             doTrigger = doTrigger,
             expectedPropagatedEvent = 11,
         )
@@ -85,11 +85,11 @@ class EventStream_merge2_combo_tests {
             sourceEventStream2,
         )
 
-        val updateVerifier = occurrenceVerificationStrategy.begin(
+        val verifier = occurrenceVerificationStrategy.begin(
             subjectEventStream = merge2EventStream,
         )
 
-        updateVerifier.verifyOccurrencePropagates(
+        verifier.verifyOccurrencePropagates(
             doTrigger = doTrigger,
             expectedPropagatedEvent = 21,
         )
@@ -118,11 +118,11 @@ class EventStream_merge2_combo_tests {
             sourceEventStream2,
         )
 
-        val updateVerifier = occurrenceVerificationStrategy.begin(
+        val verifier = occurrenceVerificationStrategy.begin(
             subjectEventStream = merge2EventStream,
         )
 
-        updateVerifier.verifyOccurrencePropagates(
+        verifier.verifyOccurrencePropagates(
             doTrigger = doTrigger,
             expectedPropagatedEvent = 11,
         )

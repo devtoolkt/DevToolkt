@@ -5,17 +5,17 @@ import dev.toolkt.reactive.cell.newValues
 import dev.toolkt.reactive.cell.updatedValues
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 
-sealed class UpdateVerificationStrategy {
-    abstract class Total : UpdateVerificationStrategy() {
+sealed class CellVerificationStrategy {
+    abstract class Total : CellVerificationStrategy() {
         abstract override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): UpdateVerifier.Total<ValueT>
+        ): CellVerifier.Total<ValueT>
     }
 
     data object Passive : Total() {
         override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): UpdateVerifier.Passive<ValueT> = UpdateVerifier.observePassively(
+        ): CellVerifier.Passive<ValueT> = CellVerifier.observePassively(
             subjectCell = subjectCell,
         )
     }
@@ -35,26 +35,26 @@ sealed class UpdateVerificationStrategy {
             subjectCell: Cell<ValueT>,
             doTrigger: EmitterEventStream<Unit>,
         ) {
-            val updateVerifier = begin(
+            val verifier = begin(
                 subjectCell = subjectCell,
             )
 
-            updateVerifier.end()
+            verifier.end()
 
-            updateVerifier.verifyUpdateDoesNotPropagate(
+            verifier.verifyUpdateDoesNotPropagate(
                 doTrigger = doTrigger,
             )
         }
 
         abstract override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): UpdateVerifier.Active<ValueT>
+        ): CellVerifier.Active<ValueT>
     }
 
     data object ViaUpdatedValues : Active() {
         override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): UpdateVerifier.Active<ValueT> = UpdateVerifier.observeActivelyViaEventStream(
+        ): CellVerifier.Active<ValueT> = CellVerifier.observeActivelyViaEventStream(
             subjectCell = subjectCell,
             extract = Cell<ValueT>::updatedValues,
         )
@@ -63,7 +63,7 @@ sealed class UpdateVerificationStrategy {
     data object ViaNewValues : Active() {
         override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): UpdateVerifier.Active<ValueT> = UpdateVerifier.observeActivelyViaEventStream(
+        ): CellVerifier.Active<ValueT> = CellVerifier.observeActivelyViaEventStream(
             subjectCell = subjectCell,
             extract = Cell<ValueT>::newValues,
         )
@@ -72,26 +72,26 @@ sealed class UpdateVerificationStrategy {
     data object ViaSwitch : Active() {
         override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): UpdateVerifier.Active<ValueT> = UpdateVerifier.observeActivelyViaSwitch(
+        ): CellVerifier.Active<ValueT> = CellVerifier.observeActivelyViaSwitch(
             subjectCell = subjectCell,
         )
     }
 
-    abstract class Partial : UpdateVerificationStrategy() {
+    abstract class Partial : CellVerificationStrategy() {
         abstract override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): UpdateVerifier.Partial<ValueT>
+        ): CellVerifier.Partial<ValueT>
     }
 
     data object Quick : Partial() {
         override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): UpdateVerifier.Partial<ValueT> = UpdateVerifier.observeQuick(
+        ): CellVerifier.Partial<ValueT> = CellVerifier.observeQuick(
             subjectCell = subjectCell,
         )
     }
 
     abstract fun <ValueT> begin(
         subjectCell: Cell<ValueT>,
-    ): UpdateVerifier<ValueT>
+    ): CellVerifier<ValueT>
 }
