@@ -15,6 +15,10 @@ import kotlin.test.assertEquals
 
 sealed class UpdateVerifier<ValueT> {
     abstract class Total<ValueT>() : UpdateVerifier<ValueT>() {
+        abstract fun verifyCurrentValue(
+            expectedCurrentValue: ValueT,
+        )
+
         abstract fun verifyDoesNotUpdate(
             doTrigger: EmitterEventStream<Unit>,
             expectedNonUpdatedValue: ValueT,
@@ -30,6 +34,14 @@ sealed class UpdateVerifier<ValueT> {
         private val receivedUpdateCount: Int
             get() = receivedUpdatedValues.size
 
+        override fun verifyCurrentValue(
+            expectedCurrentValue: ValueT,
+        ) {
+            verifyCurrentValueActively(
+                expectedCurrentValue = expectedCurrentValue,
+            )
+        }
+
         final override fun verifyUpdates(
             doTrigger: EmitterEventStream<Unit>,
             expectedUpdatedValue: ValueT,
@@ -39,11 +51,8 @@ sealed class UpdateVerifier<ValueT> {
                 expectedPropagatedUpdatedValue = expectedUpdatedValue,
             )
 
-            val activelySampledValue = subjectCell.sampleExternally()
-
-            assertEquals(
-                expected = expectedUpdatedValue,
-                actual = activelySampledValue,
+            verifyCurrentValueActively(
+                expectedCurrentValue = expectedUpdatedValue,
             )
         }
 
@@ -80,11 +89,8 @@ sealed class UpdateVerifier<ValueT> {
                 doTrigger = doTrigger,
             )
 
-            val activelySampledValue = subjectCell.sampleExternally()
-
-            assertEquals(
-                expected = expectedNonUpdatedValue,
-                actual = activelySampledValue,
+            verifyCurrentValueActively(
+                expectedCurrentValue = expectedNonUpdatedValue,
             )
         }
 
@@ -104,6 +110,17 @@ sealed class UpdateVerifier<ValueT> {
             )
         }
 
+        private fun verifyCurrentValueActively(
+            expectedCurrentValue: ValueT,
+        ) {
+            val activelySampledValue = subjectCell.sampleExternally()
+
+            assertEquals(
+                expected = expectedCurrentValue,
+                actual = activelySampledValue,
+            )
+        }
+
         abstract fun end()
     }
 
@@ -119,11 +136,16 @@ sealed class UpdateVerifier<ValueT> {
             ) {
                 doTrigger.emit()
 
-                val passivelySampledValue = subjectCell.sampleExternally()
+                verifyCurrentValuePassively(
+                    expectedCurrentValue = expectedUpdatedValue,
+                )
+            }
 
-                assertEquals(
-                    expected = expectedUpdatedValue,
-                    actual = passivelySampledValue,
+            override fun verifyCurrentValue(
+                expectedCurrentValue: ValueT,
+            ) {
+                verifyCurrentValuePassively(
+                    expectedCurrentValue = expectedCurrentValue,
                 )
             }
 
@@ -133,10 +155,18 @@ sealed class UpdateVerifier<ValueT> {
             ) {
                 doTrigger.emit()
 
+                verifyCurrentValuePassively(
+                    expectedCurrentValue = expectedNonUpdatedValue,
+                )
+            }
+
+            private fun verifyCurrentValuePassively(
+                expectedCurrentValue: ValueT,
+            ) {
                 val passivelySampledValue = subjectCell.sampleExternally()
 
                 assertEquals(
-                    expected = expectedNonUpdatedValue,
+                    expected = expectedCurrentValue,
                     actual = passivelySampledValue,
                 )
             }
@@ -163,6 +193,17 @@ sealed class UpdateVerifier<ValueT> {
                 subjectCell = subjectCell,
                 receivedUpdatedValues = receivedUpdatedValues,
             ) {
+                override fun verifyCurrentValue(
+                    expectedCurrentValue: ValueT,
+                ) {
+                    val sampledValue = subjectCell.sampleExternally()
+
+                    assertEquals(
+                        expected = expectedCurrentValue,
+                        actual = sampledValue,
+                    )
+                }
+
                 override fun end() {
                     subscription.cancel()
                 }
@@ -188,6 +229,17 @@ sealed class UpdateVerifier<ValueT> {
                 subjectCell = subjectCell,
                 receivedUpdatedValues = receivedUpdatedValues,
             ) {
+                override fun verifyCurrentValue(
+                    expectedCurrentValue: ValueT,
+                ) {
+                    val sampledValue = helperSwitchCell.sampleExternally()
+
+                    assertEquals(
+                        expected = expectedCurrentValue,
+                        actual = sampledValue,
+                    )
+                }
+
                 override fun end() {
                     helperOuterCell.set(
                         Cell.of(subjectCell.sampleExternally()),
