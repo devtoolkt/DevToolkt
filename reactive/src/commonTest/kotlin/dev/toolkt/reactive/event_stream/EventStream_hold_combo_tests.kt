@@ -2,14 +2,18 @@ package dev.toolkt.reactive.event_stream
 
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.CellVerificationStrategy
+import dev.toolkt.reactive.cell.test_utils.NonEmittingEventStreamFactory
 import kotlin.test.Test
 
 @Suppress("ClassName")
 class EventStream_hold_combo_tests {
     private fun test_initial(
+        sourceEventStreamFactory: NonEmittingEventStreamFactory,
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
-        val sourceEventStream = EmitterEventStream<Int>()
+        val sourceEventStream = MomentContext.execute {
+            sourceEventStreamFactory.create<Int>()
+        }
 
         val holdCell = MomentContext.execute {
             sourceEventStream.hold(initialValue = 10)
@@ -20,6 +24,17 @@ class EventStream_hold_combo_tests {
         ).verifyCurrentValue(
             expectedCurrentValue = 10,
         )
+    }
+
+    private fun test_initial(
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        NonEmittingEventStreamFactory.values.forEach { sourceEventStreamFactory ->
+            test_initial(
+                sourceEventStreamFactory = sourceEventStreamFactory,
+                verificationStrategy = verificationStrategy,
+            )
+        }
     }
 
     @Test
