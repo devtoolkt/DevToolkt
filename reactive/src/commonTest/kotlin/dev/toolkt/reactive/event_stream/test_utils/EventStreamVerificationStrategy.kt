@@ -29,7 +29,7 @@ sealed class EventStreamVerificationStrategy {
         }
     }
 
-    fun <EventT> verifyDeactivation(
+    fun <EventT> verifyPausing(
         subjectEventStream: EventStream<EventT>,
         doTrigger: EmitterEventStream<Unit>,
     ) {

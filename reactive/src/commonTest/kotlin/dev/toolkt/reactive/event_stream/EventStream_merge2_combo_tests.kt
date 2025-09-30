@@ -137,7 +137,7 @@ class EventStream_merge2_combo_tests {
         }
     }
 
-    private fun test_deactivation(
+    private fun test_pausing(
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
@@ -151,16 +151,16 @@ class EventStream_merge2_combo_tests {
             sourceEventStream2,
         )
 
-        verificationStrategy.verifyDeactivation(
+        verificationStrategy.verifyPausing(
             subjectEventStream = merge2EventStream,
             doTrigger = doTrigger,
         )
     }
 
     @Test
-    fun test_deactivation() {
+    fun test_pausing() {
         EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
-            test_deactivation(
+            test_pausing(
                 verificationStrategy = verificationStrategy,
             )
         }

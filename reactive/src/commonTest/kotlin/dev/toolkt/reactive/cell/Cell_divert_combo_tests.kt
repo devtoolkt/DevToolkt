@@ -316,7 +316,7 @@ class Cell_divert_combo_tests {
         }
     }
 
-    private fun test_deactivation_initial(
+    private fun test_pausing_initial(
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
@@ -332,7 +332,7 @@ class Cell_divert_combo_tests {
             Cell.divert(outerCell)
         }
 
-        verificationStrategy.verifyDeactivation(
+        verificationStrategy.verifyPausing(
             subjectEventStream = divertCell,
             doTrigger = doTrigger,
         )
@@ -340,15 +340,15 @@ class Cell_divert_combo_tests {
 
     @Ignore // FIXME: Flaky test
     @Test
-    fun test_deactivation_initial() {
+    fun test_pausing_initial() {
         EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
-            test_deactivation_initial(
+            test_pausing_initial(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
-    private fun test_deactivation_afterOuterUpdate(
+    private fun test_pausing_afterOuterUpdate(
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doPrepare = EmitterEventStream<Unit>()
@@ -370,7 +370,7 @@ class Cell_divert_combo_tests {
 
         doPrepare.emit()
 
-        verificationStrategy.verifyDeactivation(
+        verificationStrategy.verifyPausing(
             subjectEventStream = divertCell,
             doTrigger = doTrigger,
         )
@@ -378,9 +378,9 @@ class Cell_divert_combo_tests {
 
     @Ignore // FIXME: Flaky test
     @Test
-    fun test_deactivation_afterOuterUpdate() {
+    fun test_pausing_afterOuterUpdate() {
         EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
-            test_deactivation_afterOuterUpdate(
+            test_pausing_afterOuterUpdate(
                 verificationStrategy = verificationStrategy,
             )
         }
