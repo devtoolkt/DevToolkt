@@ -3,19 +3,19 @@ package dev.toolkt.reactive.event_stream.test_utils
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
 
-sealed class OccurrenceVerificationStrategy {
-    data object Direct : OccurrenceVerificationStrategy() {
+sealed class EventStreamVerificationStrategy {
+    data object Direct : EventStreamVerificationStrategy() {
         override fun <EventT> begin(
             subjectEventStream: EventStream<EventT>,
-        ): OccurrenceVerifier<EventT> = OccurrenceVerifier.observeDirectly(
+        ): EventStreamVerifier<EventT> = EventStreamVerifier.observeDirectly(
             subjectEventStream = subjectEventStream,
         )
     }
 
-    data object ViaDivert : OccurrenceVerificationStrategy() {
+    data object ViaDivert : EventStreamVerificationStrategy() {
         override fun <EventT> begin(
             subjectEventStream: EventStream<EventT>,
-        ): OccurrenceVerifier<EventT> = OccurrenceVerifier.observeViaDivert(
+        ): EventStreamVerifier<EventT> = EventStreamVerifier.observeViaDivert(
             subjectEventStream = subjectEventStream,
         )
     }
@@ -33,18 +33,18 @@ sealed class OccurrenceVerificationStrategy {
         subjectEventStream: EventStream<EventT>,
         doTrigger: EmitterEventStream<Unit>,
     ) {
-        val occurrenceVerifier = begin(
+        val verifier = begin(
             subjectEventStream = subjectEventStream,
         )
 
-        occurrenceVerifier.end()
+        verifier.end()
 
-        occurrenceVerifier.verifyOccurrenceDoesNotPropagate(
+        verifier.verifyOccurrenceDoesNotPropagate(
             doTrigger = doTrigger,
         )
     }
 
     abstract fun <EventT> begin(
         subjectEventStream: EventStream<EventT>,
-    ): OccurrenceVerifier<EventT>
+    ): EventStreamVerifier<EventT>
 }

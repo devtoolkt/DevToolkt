@@ -1,6 +1,6 @@
 package dev.toolkt.reactive.event_stream
 
-import dev.toolkt.reactive.event_stream.test_utils.OccurrenceVerificationStrategy
+import dev.toolkt.reactive.event_stream.test_utils.EventStreamVerificationStrategy
 import kotlin.test.Test
 import kotlin.test.assertNull
 
@@ -20,7 +20,7 @@ class EventStream_map_combo_tests {
     }
 
     private fun test_sourceOccurrence(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
@@ -28,11 +28,11 @@ class EventStream_map_combo_tests {
 
         val mapEventStream = sourceEventStream.map { it.toString() }
 
-        val occurrenceVerifier = occurrenceVerificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectEventStream = mapEventStream,
         )
 
-        occurrenceVerifier.verifyOccurrencePropagates(
+        verifier.verifyOccurrencePropagates(
             doTrigger = doTrigger,
             expectedPropagatedEvent = "10",
         )
@@ -40,15 +40,15 @@ class EventStream_map_combo_tests {
 
     @Test
     fun test_sourceOccurrence() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_sourceOccurrence(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }
 
     private fun test_deactivation(
-        occurrenceVerificationStrategy: OccurrenceVerificationStrategy,
+        verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
@@ -56,7 +56,7 @@ class EventStream_map_combo_tests {
 
         val mapEventStream = sourceEventStream.map { it.toString() }
 
-        occurrenceVerificationStrategy.verifyDeactivation(
+        verificationStrategy.verifyDeactivation(
             subjectEventStream = mapEventStream,
             doTrigger = doTrigger,
         )
@@ -64,9 +64,9 @@ class EventStream_map_combo_tests {
 
     @Test
     fun test_deactivation() {
-        OccurrenceVerificationStrategy.values.forEach { occurrenceVerificationStrategy ->
+        EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_deactivation(
-                occurrenceVerificationStrategy = occurrenceVerificationStrategy,
+                verificationStrategy = verificationStrategy,
             )
         }
     }
