@@ -40,10 +40,15 @@ sealed interface StaticCellFactory {
     data object PotentiallyDynamic : StaticCellFactory {
         override fun <ValueT> createExternally(
             value: ValueT,
-        ): Cell<ValueT> = MomentContext.execute {
-            QuietEventStreamFactory.PotentiallyVocal.createExternally<ValueT>().hold(
-                initialValue = value,
-            )
+        ): Cell<ValueT> {
+            val newValues = QuietEventStreamFactory.PotentiallyVocal.createExternally<ValueT>()
+
+            return MomentContext.execute {
+                Cell.define(
+                    initialValue = value,
+                    newValues = newValues,
+                )
+            }
         }
     }
 
