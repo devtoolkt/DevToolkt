@@ -15,9 +15,7 @@ class Cell_map_combo_tests {
         sourceCellFactory: NonChangingCellFactory,
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
-        val sourceCell = MomentContext.execute {
-            sourceCellFactory.create(10)
-        }
+        val sourceCell = sourceCellFactory.createExternally(10)
 
         val mapCell = sourceCell.map {
             it.toString()

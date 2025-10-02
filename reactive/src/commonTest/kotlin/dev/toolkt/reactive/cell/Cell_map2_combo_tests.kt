@@ -17,13 +17,9 @@ class Cell_map2_combo_tests {
         source2CellFactory: NonChangingCellFactory,
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
-        val sourceCell1 = MomentContext.execute {
-            source1CellFactory.create(10)
-        }
+        val sourceCell1 = source1CellFactory.createExternally(10)
 
-        val sourceCell2 = MomentContext.execute {
-            source2CellFactory.create('A')
-        }
+        val sourceCell2 = source2CellFactory.createExternally('A')
 
         val map2Cell = Cell.map2(
             sourceCell1,
@@ -189,9 +185,7 @@ class Cell_map2_combo_tests {
             )
         }
 
-        val sourceCell2 = MomentContext.execute {
-            source2CellFactory.create('A')
-        }
+        val sourceCell2 = source2CellFactory.createExternally('A')
 
         val map2Cell = Cell.map2(
             sourceCell1,
@@ -250,9 +244,7 @@ class Cell_map2_combo_tests {
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
-        val sourceCell1 = MomentContext.execute {
-            source1CellFactory.create(10)
-        }
+        val sourceCell1 = source1CellFactory.createExternally(10)
 
         val sourceCell2 = MomentContext.execute {
             Cell.define(

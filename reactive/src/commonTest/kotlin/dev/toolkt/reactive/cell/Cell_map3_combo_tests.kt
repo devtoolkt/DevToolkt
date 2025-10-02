@@ -20,17 +20,11 @@ class Cell_map3_combo_tests {
         source3CellFactory: NonChangingCellFactory,
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
-        val sourceCell1 = MomentContext.execute {
-            source1CellFactory.create(10)
-        }
+        val sourceCell1 = source1CellFactory.createExternally(10)
 
-        val sourceCell2 = MomentContext.execute {
-            source2CellFactory.create('A')
-        }
+        val sourceCell2 = source2CellFactory.createExternally('A')
 
-        val sourceCell3 = MomentContext.execute {
-            source3CellFactory.create(true)
-        }
+        val sourceCell3 = source3CellFactory.createExternally(true)
 
         val map3Cell = Cell.map3(
             sourceCell1,
@@ -206,13 +200,9 @@ class Cell_map3_combo_tests {
             doUpdate.map { 20 }.hold(initialValue = 10)
         }
 
-        val sourceCell2 = MomentContext.execute {
-            source2CellFactory.create('A')
-        }
+        val sourceCell2 = source2CellFactory.createExternally('A')
 
-        val sourceCell3 = MomentContext.execute {
-            source3CellFactory.create(true)
-        }
+        val sourceCell3 = source3CellFactory.createExternally(true)
 
         val map3Cell = Cell.map3(
             sourceCell1,
@@ -276,17 +266,13 @@ class Cell_map3_combo_tests {
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
-        val sourceCell1 = MomentContext.execute {
-            source1CellFactory.create(10)
-        }
+        val sourceCell1 = source1CellFactory.createExternally(10)
 
         val sourceCell2 = MomentContext.execute {
             doUpdate.map { 'B' }.hold(initialValue = 'A')
         }
 
-        val sourceCell3 = MomentContext.execute {
-            source3CellFactory.create(true)
-        }
+        val sourceCell3 = source3CellFactory.createExternally(true)
 
         val map3Cell = Cell.map3(
             sourceCell1,
@@ -350,13 +336,9 @@ class Cell_map3_combo_tests {
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
-        val sourceCell1 = MomentContext.execute {
-            source1CellFactory.create(10)
-        }
+        val sourceCell1 = source1CellFactory.createExternally(10)
 
-        val sourceCell2 = MomentContext.execute {
-            source2CellFactory.create('A')
-        }
+        val sourceCell2 = source2CellFactory.createExternally('A')
 
         val sourceCell3 = MomentContext.execute {
             doUpdate.map { false }.hold(initialValue = true)

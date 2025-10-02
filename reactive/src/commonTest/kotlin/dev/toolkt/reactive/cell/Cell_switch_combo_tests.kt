@@ -19,11 +19,9 @@ class Cell_switch_combo_tests {
         innerCellFactory: NonChangingCellFactory,
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
-        val outerCell = MomentContext.execute {
-            outerCellFactory.create(
-                innerCellFactory.create(10),
-            )
-        }
+        val outerCell = outerCellFactory.createExternally(
+            innerCellFactory.createExternally(10),
+        )
 
         val switchCell = Cell.switch(outerCell)
 
@@ -77,7 +75,7 @@ class Cell_switch_combo_tests {
                 newValues = doUpdateInner.map { 20 },
             )
 
-            outerCellFactory.create(initialInnerCell)
+            outerCellFactory.createExternally(initialInnerCell)
         }
 
         val switchCell = Cell.switch(outerCell)
@@ -134,9 +132,7 @@ class Cell_switch_combo_tests {
 
         val initialInnerCell = Cell.of(10)
 
-        val newInnerCell = MomentContext.execute {
-            newInnerCellFactory.create(20)
-        }
+        val newInnerCell = newInnerCellFactory.createExternally(20)
 
         val outerCell = MomentContext.execute {
             doUpdateOuter.map { newInnerCell }.hold(
@@ -196,9 +192,7 @@ class Cell_switch_combo_tests {
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
-        val innerCell = MomentContext.execute {
-            innerCellFactory.create(20)
-        }
+        val innerCell = innerCellFactory.createExternally(20)
 
         val outerCell = MomentContext.execute {
             Cell.define(
@@ -268,9 +262,7 @@ class Cell_switch_combo_tests {
             )
         }
 
-        val newInnerCell = MomentContext.execute {
-            newInnerCellFactory.create(20)
-        }
+        val newInnerCell = newInnerCellFactory.createExternally(20)
 
         val outerCell = MomentContext.execute {
             Cell.define(
@@ -328,9 +320,7 @@ class Cell_switch_combo_tests {
 
         val doUpdateNewInner = EmitterEventStream<Unit>()
 
-        val initialInnerCell = MomentContext.execute {
-            initialInnerCellFactory.create(10)
-        }
+        val initialInnerCell = initialInnerCellFactory.createExternally(10)
 
         val newInnerCell = MomentContext.execute {
             doUpdateNewInner.map { 21 }.hold(
@@ -404,7 +394,7 @@ class Cell_switch_combo_tests {
                 newValues = doSwitch.map { 11 },
             )
 
-            val newInnerCell = newInnerCellFactory.create(20)
+            val newInnerCell = newInnerCellFactory.createExternally(20)
 
             val outerCell = Cell.define(
                 initialValue = initialInnerCell,
@@ -465,7 +455,7 @@ class Cell_switch_combo_tests {
         val doSwitch = EmitterEventStream<Unit>()
 
         val switchCell = MomentContext.execute {
-            val initialInnerCell = initialInnerCellFactory.create(10)
+            val initialInnerCell = initialInnerCellFactory.createExternally(10)
 
             val newInnerCell = Cell.define(
                 initialValue = 20,
@@ -588,9 +578,7 @@ class Cell_switch_combo_tests {
     ) {
         val doFreeze = EmitterEventStream<Unit>()
 
-        val initialInnerCell = MomentContext.execute {
-            innerCellFactory.create(10)
-        }
+        val initialInnerCell = innerCellFactory.createExternally(10)
 
         val outerCell = MomentContext.execute {
             outerCellFactory.create(
