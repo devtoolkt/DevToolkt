@@ -3,7 +3,7 @@ package dev.toolkt.reactive.cell
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.CellVerificationStrategy
 import dev.toolkt.reactive.cell.test_utils.FreezingCellFactory
-import dev.toolkt.reactive.cell.test_utils.NonChangingCellFactory
+import dev.toolkt.reactive.cell.test_utils.StaticCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.map
 import kotlin.test.Ignore
@@ -12,7 +12,7 @@ import kotlin.test.Test
 @Suppress("ClassName")
 class Cell_map_combo_tests {
     private fun test_initial(
-        sourceCellFactory: NonChangingCellFactory,
+        sourceCellFactory: StaticCellFactory,
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
         val sourceCell = sourceCellFactory.createExternally(10)
@@ -31,7 +31,7 @@ class Cell_map_combo_tests {
     private fun test_initial(
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
-        NonChangingCellFactory.values.forEach { sourceCellFactory ->
+        StaticCellFactory.values.forEach { sourceCellFactory ->
             test_initial(
                 sourceCellFactory = sourceCellFactory,
                 verificationStrategy = verificationStrategy,

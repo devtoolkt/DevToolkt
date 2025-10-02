@@ -5,7 +5,7 @@ import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.map
 import dev.toolkt.reactive.event_stream.hold
 
-sealed interface NonChangingCellFactory {
+sealed interface StaticCellFactory {
     companion object {
         val values = listOf(
             Const,
@@ -16,19 +16,19 @@ sealed interface NonChangingCellFactory {
         )
     }
 
-    data object Const : NonChangingCellFactory {
+    data object Const : StaticCellFactory {
         override fun <ValueT> createExternally(
             value: ValueT,
         ): Cell<ValueT> = Cell.of(value)
     }
 
-    data object TransformedConst : NonChangingCellFactory {
+    data object TransformedConst : StaticCellFactory {
         override fun <ValueT> createExternally(
             value: ValueT,
         ): Cell<ValueT> = Cell.of(value).map { it }
     }
 
-    data object Dynamic : NonChangingCellFactory {
+    data object Dynamic : StaticCellFactory {
         override fun <ValueT> createExternally(
             value: ValueT,
         ): Cell<ValueT> = MomentContext.execute {
@@ -38,13 +38,13 @@ sealed interface NonChangingCellFactory {
         }
     }
 
-    data object TransformedDynamic : NonChangingCellFactory {
+    data object TransformedDynamic : StaticCellFactory {
         override fun <ValueT> createExternally(
             value: ValueT,
         ): Cell<ValueT> = Dynamic.createExternally(value).map { it }
     }
 
-    data object FreezingDynamic : NonChangingCellFactory {
+    data object FreezingDynamic : StaticCellFactory {
         override fun <ValueT> createExternally(value: ValueT): Cell<ValueT> {
             TODO("Not yet implemented")
         }
