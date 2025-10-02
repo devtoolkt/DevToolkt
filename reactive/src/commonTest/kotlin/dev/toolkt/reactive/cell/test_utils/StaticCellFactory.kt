@@ -41,7 +41,7 @@ sealed interface StaticCellFactory {
         override fun <ValueT> createExternally(
             value: ValueT,
         ): Cell<ValueT> = MomentContext.execute {
-            QuietEventStreamFactory.PotentiallyVocal.create<ValueT>().hold(
+            QuietEventStreamFactory.PotentiallyVocal.createExternally<ValueT>().hold(
                 initialValue = value,
             )
         }

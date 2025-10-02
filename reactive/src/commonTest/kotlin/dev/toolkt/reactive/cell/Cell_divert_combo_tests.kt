@@ -63,11 +63,11 @@ class Cell_divert_combo_tests {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
         val initialInnerEventStream = MomentContext.execute {
-            initialInnerEventStreamFactory.create<Int>()
+            initialInnerEventStreamFactory.createExternally<Int>()
         }
 
         val newInnerEventStream = MomentContext.execute {
-            newInnerEventStreamFactory.create<Int>()
+            newInnerEventStreamFactory.createExternally<Int>()
         }
 
         val outerCell = MomentContext.execute {
@@ -118,7 +118,7 @@ class Cell_divert_combo_tests {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
         val innerEventStream = MomentContext.execute {
-            innerEventStreamFactory.create<Int>()
+            innerEventStreamFactory.createExternally<Int>()
         }
 
         val outerCell = MomentContext.execute {
@@ -170,7 +170,7 @@ class Cell_divert_combo_tests {
         val initialInnerEventStream = doUpdateInitialInner.map { 11 }
 
         val newInnerEventStream = MomentContext.execute {
-            newInnerEventStreamFactory.create<Int>()
+            newInnerEventStreamFactory.createExternally<Int>()
         }
 
         val outerCell = MomentContext.execute {
@@ -222,7 +222,7 @@ class Cell_divert_combo_tests {
         val doTriggerNewInner = EmitterEventStream<Unit>()
 
         val initialInnerEventStream = MomentContext.execute {
-            initialInnerEventStreamFactory.create<Int>()
+            initialInnerEventStreamFactory.createExternally<Int>()
         }
 
         val newInnerEventStream = doTriggerNewInner.map { 21 }
@@ -277,7 +277,7 @@ class Cell_divert_combo_tests {
         val divertCell = MomentContext.execute {
             val initialInnerEventStream = doDivert.map { 11 }
 
-            val newInnerEventStream = newInnerEventStreamFactory.create<Int>()
+            val newInnerEventStream = newInnerEventStreamFactory.createExternally<Int>()
 
             val outerCell = Cell.define(
                 initialValue = initialInnerEventStream,
@@ -324,7 +324,7 @@ class Cell_divert_combo_tests {
         val doDivert = EmitterEventStream<Unit>()
 
         val divertCell = MomentContext.execute {
-            val initialInnerEventStream = initialInnerEventStreamFactory.create<Int>()
+            val initialInnerEventStream = initialInnerEventStreamFactory.createExternally<Int>()
 
             val newInnerEventStream = doDivert.map { 21 }
 
@@ -411,7 +411,7 @@ class Cell_divert_combo_tests {
         val divertCell = MomentContext.execute {
             val initialInnerEventStream = doTrigger.map { 21 }
 
-            val newInnerEventStreams = newOuterCellsEventStreamFactory.create<EventStream<Int>>()
+            val newInnerEventStreams = newOuterCellsEventStreamFactory.createExternally<EventStream<Int>>()
 
             val outerCell = Cell.define(
                 initialValue = initialInnerEventStream,
@@ -457,7 +457,7 @@ class Cell_divert_combo_tests {
         val doTrigger = EmitterEventStream<Unit>()
 
         val divertCell = MomentContext.execute {
-            val initialInnerEventStream = innerEventStreamFactory.create<Int>()
+            val initialInnerEventStream = innerEventStreamFactory.createExternally<Int>()
 
             val newInnerEventStream = doTrigger.map { 21 }
 
