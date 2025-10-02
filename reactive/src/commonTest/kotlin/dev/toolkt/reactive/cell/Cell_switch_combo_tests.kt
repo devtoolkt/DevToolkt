@@ -1,13 +1,11 @@
 package dev.toolkt.reactive.cell
 
-import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.CellVerificationStrategy
-import dev.toolkt.reactive.cell.test_utils.FreezingCellFactory
+import dev.toolkt.reactive.cell.test_utils.DynamicCellFactory
 import dev.toolkt.reactive.cell.test_utils.StaticCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.emit
-import dev.toolkt.reactive.event_stream.hold
 import dev.toolkt.reactive.event_stream.map
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -65,18 +63,17 @@ class Cell_switch_combo_tests {
 
     private fun test_initialInnerUpdate(
         outerCellFactory: StaticCellFactory,
+        initialInnerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
         val doUpdateInner = EmitterEventStream<Unit>()
 
-        val outerCell = MomentContext.execute {
-            val initialInnerCell = Cell.define(
-                initialValue = 10,
-                newValues = doUpdateInner.map { 20 },
-            )
+        val initialInnerCell = initialInnerCellFactory.createExternally(
+            initialValue = 10,
+            doUpdate = doUpdateInner.map { 20 },
+        )
 
-            outerCellFactory.createExternally(initialInnerCell)
-        }
+        val outerCell = outerCellFactory.createExternally(initialInnerCell)
 
         val switchCell = Cell.switch(outerCell)
 
@@ -93,11 +90,14 @@ class Cell_switch_combo_tests {
     private fun test_initialInnerUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
-        StaticCellFactory.values.forEach { outerCellFactory ->
-            test_initialInnerUpdate(
-                outerCellFactory = outerCellFactory,
-                verificationStrategy = verificationStrategy,
-            )
+        DynamicCellFactory.values.forEach { initialInnerCellFactory ->
+            StaticCellFactory.values.forEach { outerCellFactory ->
+                test_initialInnerUpdate(
+                    outerCellFactory = outerCellFactory,
+                    initialInnerCellFactory = initialInnerCellFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
         }
     }
 
@@ -125,6 +125,7 @@ class Cell_switch_combo_tests {
     }
 
     private fun test_outerUpdate(
+        outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: StaticCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
@@ -134,11 +135,10 @@ class Cell_switch_combo_tests {
 
         val newInnerCell = newInnerCellFactory.createExternally(20)
 
-        val outerCell = MomentContext.execute {
-            doUpdateOuter.map { newInnerCell }.hold(
-                initialValue = initialInnerCell,
-            )
-        }
+        val outerCell = outerCellFactory.createExternally(
+            initialValue = initialInnerCell,
+            doUpdate = doUpdateOuter.map { newInnerCell },
+        )
 
         val switchCell = Cell.switch(outerCell)
 
@@ -155,11 +155,14 @@ class Cell_switch_combo_tests {
     private fun test_outerUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
-        StaticCellFactory.values.forEach { newInnerCellFactory ->
-            test_outerUpdate(
-                newInnerCellFactory = newInnerCellFactory,
-                verificationStrategy = verificationStrategy,
-            )
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            StaticCellFactory.values.forEach { innerCellFactory ->
+                test_outerUpdate(
+                    outerCellFactory = outerCellFactory,
+                    newInnerCellFactory = innerCellFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
         }
     }
 
@@ -187,6 +190,7 @@ class Cell_switch_combo_tests {
     }
 
     private fun test_outerUpdate_sameCell(
+        outerCellFactory: DynamicCellFactory,
         innerCellFactory: StaticCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
@@ -194,12 +198,10 @@ class Cell_switch_combo_tests {
 
         val innerCell = innerCellFactory.createExternally(20)
 
-        val outerCell = MomentContext.execute {
-            Cell.define(
-                initialValue = innerCell,
-                newValues = doUpdateOuter.map { innerCell },
-            )
-        }
+        val outerCell = outerCellFactory.createExternally(
+            initialValue = innerCell,
+            doUpdate = doUpdateOuter.map { innerCell },
+        )
 
         val switchCell = Cell.switch(outerCell)
 
@@ -216,11 +218,14 @@ class Cell_switch_combo_tests {
     private fun test_outerUpdate_sameCell(
         verificationStrategy: CellVerificationStrategy,
     ) {
-        StaticCellFactory.values.forEach { innerCellFactory ->
-            test_outerUpdate_sameCell(
-                innerCellFactory = innerCellFactory,
-                verificationStrategy = verificationStrategy,
-            )
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            StaticCellFactory.values.forEach { innerCellFactory ->
+                test_outerUpdate_sameCell(
+                    outerCellFactory = outerCellFactory,
+                    innerCellFactory = innerCellFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
         }
     }
 
@@ -248,6 +253,8 @@ class Cell_switch_combo_tests {
     }
 
     private fun test_outerUpdate_thenInitialInnerUpdate(
+        outerCellFactory: DynamicCellFactory,
+        initialInnerCellFactory: DynamicCellFactory,
         newInnerCellFactory: StaticCellFactory,
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
@@ -255,21 +262,17 @@ class Cell_switch_combo_tests {
 
         val doUpdateInitialInner = EmitterEventStream<Unit>()
 
-        val initialInnerCell = MomentContext.execute {
-            Cell.define(
-                initialValue = 10,
-                newValues = doUpdateInitialInner.map { 11 },
-            )
-        }
+        val initialInnerCell = initialInnerCellFactory.createExternally(
+            initialValue = 10,
+            doUpdate = doUpdateInitialInner.map { 11 },
+        )
 
         val newInnerCell = newInnerCellFactory.createExternally(20)
 
-        val outerCell = MomentContext.execute {
-            Cell.define(
-                initialValue = initialInnerCell,
-                newValues = doUpdateOuter.map { newInnerCell },
-            )
-        }
+        val outerCell = outerCellFactory.createExternally(
+            initialValue = initialInnerCell,
+            doUpdate = doUpdateOuter.map { newInnerCell },
+        )
 
         val switchCell = Cell.switch(outerCell)
 
@@ -288,11 +291,17 @@ class Cell_switch_combo_tests {
     private fun test_outerUpdate_thenInitialInnerUpdate(
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
-        StaticCellFactory.values.forEach { newInnerCellFactory ->
-            test_outerUpdate_thenInitialInnerUpdate(
-                newInnerCellFactory = newInnerCellFactory,
-                verificationStrategy = verificationStrategy,
-            )
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            DynamicCellFactory.values.forEach { initialInnerCellFactory ->
+                StaticCellFactory.values.forEach { newInnerCellFactory ->
+                    test_outerUpdate_thenInitialInnerUpdate(
+                        outerCellFactory = outerCellFactory,
+                        initialInnerCellFactory = initialInnerCellFactory,
+                        newInnerCellFactory = newInnerCellFactory,
+                        verificationStrategy = verificationStrategy,
+                    )
+                }
+            }
         }
     }
 
@@ -313,7 +322,9 @@ class Cell_switch_combo_tests {
     }
 
     private fun test_outerUpdate_thenNewInnerUpdate(
+        outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: StaticCellFactory,
+        newInnerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
@@ -322,17 +333,15 @@ class Cell_switch_combo_tests {
 
         val initialInnerCell = initialInnerCellFactory.createExternally(10)
 
-        val newInnerCell = MomentContext.execute {
-            doUpdateNewInner.map { 21 }.hold(
-                initialValue = 20,
-            )
-        }
+        val newInnerCell = newInnerCellFactory.createExternally(
+            initialValue = 20,
+            doUpdate = doUpdateNewInner.map { 21 },
+        )
 
-        val outerCell = MomentContext.execute {
-            doUpdateOuter.map { newInnerCell }.hold(
-                initialValue = initialInnerCell,
-            )
-        }
+        val outerCell = outerCellFactory.createExternally(
+            initialValue = initialInnerCell,
+            doUpdate = doUpdateOuter.map { newInnerCell },
+        )
 
         val switchCell = Cell.switch(outerCell)
 
@@ -351,11 +360,17 @@ class Cell_switch_combo_tests {
     private fun test_outerUpdate_thenNewInnerUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
-        StaticCellFactory.values.forEach { initialInnerCellFactory ->
-            test_outerUpdate_thenNewInnerUpdate(
-                initialInnerCellFactory = initialInnerCellFactory,
-                verificationStrategy = verificationStrategy,
-            )
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            StaticCellFactory.values.forEach { initialInnerCellFactory ->
+                DynamicCellFactory.values.forEach { newInnerCellFactory ->
+                    test_outerUpdate_thenNewInnerUpdate(
+                        outerCellFactory = outerCellFactory,
+                        initialInnerCellFactory = initialInnerCellFactory,
+                        newInnerCellFactory = newInnerCellFactory,
+                        verificationStrategy = verificationStrategy,
+                    )
+                }
+            }
         }
     }
 
@@ -383,26 +398,26 @@ class Cell_switch_combo_tests {
     }
 
     private fun test_outerUpdate_simultaneousInitialInnerUpdate(
+        outerCellFactory: DynamicCellFactory,
+        initialInnerCellFactory: DynamicCellFactory,
         newInnerCellFactory: StaticCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
         val doSwitch = EmitterEventStream<Unit>()
 
-        val switchCell = MomentContext.execute {
-            val initialInnerCell = Cell.define(
-                initialValue = 10,
-                newValues = doSwitch.map { 11 },
-            )
+        val initialInnerCell = initialInnerCellFactory.createExternally(
+            initialValue = 10,
+            doUpdate = doSwitch.map { 11 },
+        )
 
-            val newInnerCell = newInnerCellFactory.createExternally(20)
+        val newInnerCell = newInnerCellFactory.createExternally(20)
 
-            val outerCell = Cell.define(
-                initialValue = initialInnerCell,
-                newValues = doSwitch.map { newInnerCell },
-            )
+        val outerCell = outerCellFactory.createExternally(
+            initialValue = initialInnerCell,
+            doUpdate = doSwitch.map { newInnerCell },
+        )
 
-            Cell.switch(outerCell)
-        }
+        val switchCell = Cell.switch(outerCell)
 
         val verifier = verificationStrategy.begin(
             subjectCell = switchCell,
@@ -417,11 +432,17 @@ class Cell_switch_combo_tests {
     private fun test_outerUpdate_simultaneousInitialInnerUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
-        StaticCellFactory.values.forEach { newInnerCellFactory ->
-            test_outerUpdate_simultaneousInitialInnerUpdate(
-                newInnerCellFactory = newInnerCellFactory,
-                verificationStrategy = verificationStrategy,
-            )
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            DynamicCellFactory.values.forEach { initialInnerCellFactory ->
+                StaticCellFactory.values.forEach { newInnerCellFactory ->
+                    test_outerUpdate_simultaneousInitialInnerUpdate(
+                        outerCellFactory = outerCellFactory,
+                        initialInnerCellFactory = initialInnerCellFactory,
+                        newInnerCellFactory = newInnerCellFactory,
+                        verificationStrategy = verificationStrategy,
+                    )
+                }
+            }
         }
     }
 
@@ -449,26 +470,26 @@ class Cell_switch_combo_tests {
     }
 
     private fun test_outerUpdate_simultaneousNewInnerUpdate(
+        outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: StaticCellFactory,
+        newInnerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
         val doSwitch = EmitterEventStream<Unit>()
 
-        val switchCell = MomentContext.execute {
-            val initialInnerCell = initialInnerCellFactory.createExternally(10)
+        val initialInnerCell = initialInnerCellFactory.createExternally(10)
 
-            val newInnerCell = Cell.define(
-                initialValue = 20,
-                newValues = doSwitch.map { 21 },
-            )
+        val newInnerCell = newInnerCellFactory.createExternally(
+            initialValue = 20,
+            doUpdate = doSwitch.map { 21 },
+        )
 
-            val outerCell = Cell.define(
-                initialValue = initialInnerCell,
-                newValues = doSwitch.map { newInnerCell },
-            )
+        val outerCell = outerCellFactory.createExternally(
+            initialValue = initialInnerCell,
+            doUpdate = doSwitch.map { newInnerCell },
+        )
 
-            Cell.switch(outerCell)
-        }
+        val switchCell = Cell.switch(outerCell)
 
         val verifier = verificationStrategy.begin(
             subjectCell = switchCell,
@@ -483,11 +504,17 @@ class Cell_switch_combo_tests {
     private fun test_outerUpdate_simultaneousNewInnerUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
-        StaticCellFactory.values.forEach { initialInnerCellFactory ->
-            test_outerUpdate_simultaneousNewInnerUpdate(
-                initialInnerCellFactory = initialInnerCellFactory,
-                verificationStrategy = verificationStrategy,
-            )
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            StaticCellFactory.values.forEach { initialInnerCellFactory ->
+                DynamicCellFactory.values.forEach { newInnerCellFactory ->
+                    test_outerUpdate_simultaneousNewInnerUpdate(
+                        outerCellFactory = outerCellFactory,
+                        initialInnerCellFactory = initialInnerCellFactory,
+                        newInnerCellFactory = newInnerCellFactory,
+                        verificationStrategy = verificationStrategy,
+                    )
+                }
+            }
         }
     }
 
@@ -515,28 +542,29 @@ class Cell_switch_combo_tests {
     }
 
     private fun test_outerUpdate_simultaneousBothInnerUpdates(
+        outerCellFactory: DynamicCellFactory,
+        initialInnerCellFactory: DynamicCellFactory,
+        newInnerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
         val doSwitch = EmitterEventStream<Unit>()
 
-        val switchCell = MomentContext.execute {
-            val initialInnerCell = Cell.define(
-                initialValue = 10,
-                newValues = doSwitch.map { 11 },
-            )
+        val initialInnerCell = initialInnerCellFactory.createExternally(
+            initialValue = 10,
+            doUpdate = doSwitch.map { 11 },
+        )
 
-            val newInnerCell = Cell.define(
-                initialValue = 20,
-                newValues = doSwitch.map { 21 },
-            )
+        val newInnerCell = newInnerCellFactory.createExternally(
+            initialValue = 20,
+            doUpdate = doSwitch.map { 21 },
+        )
 
-            val outerCell = Cell.define(
-                initialValue = initialInnerCell,
-                newValues = doSwitch.map { newInnerCell },
-            )
+        val outerCell = outerCellFactory.createExternally(
+            initialValue = initialInnerCell,
+            doUpdate = doSwitch.map { newInnerCell },
+        )
 
-            Cell.switch(outerCell)
-        }
+        val switchCell = Cell.switch(outerCell)
 
         val verifier = verificationStrategy.begin(
             subjectCell = switchCell,
@@ -546,6 +574,23 @@ class Cell_switch_combo_tests {
             doTrigger = doSwitch,
             expectedUpdatedValue = 21,
         )
+    }
+
+    private fun test_outerUpdate_simultaneousBothInnerUpdates(
+        verificationStrategy: CellVerificationStrategy,
+    ) {
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            DynamicCellFactory.values.forEach { initialInnerCellFactory ->
+                DynamicCellFactory.values.forEach { newInnerCellFactory ->
+                    test_outerUpdate_simultaneousBothInnerUpdates(
+                        outerCellFactory = outerCellFactory,
+                        initialInnerCellFactory = initialInnerCellFactory,
+                        newInnerCellFactory = newInnerCellFactory,
+                        verificationStrategy = verificationStrategy,
+                    )
+                }
+            }
+        }
     }
 
     @Test
@@ -571,341 +616,30 @@ class Cell_switch_combo_tests {
         )
     }
 
-    private fun test_outerFreeze_innerNonChanging(
-        outerCellFactory: FreezingCellFactory,
-        innerCellFactory: StaticCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
-    ) {
-        val doFreeze = EmitterEventStream<Unit>()
-
-        val initialInnerCell = innerCellFactory.createExternally(10)
-
-        val outerCell = MomentContext.execute {
-            outerCellFactory.create(
-                value = initialInnerCell,
-                doFreeze = doFreeze,
-            )
-        }
-
-        val switchCell = Cell.switch(outerCell)
-
-        verificationStrategy.verifyCompleteFreeze(
-            subjectCell = switchCell,
-            doFreeze = doFreeze,
-            expectedFrozenValue = 10,
-        )
-    }
-
-    private fun test_outerFreeze_innerNonChanging(
-        verificationStrategy: CellVerificationStrategy.Total,
-    ) {
-        FreezingCellFactory.values.forEach { outerCellFactory ->
-            StaticCellFactory.values.forEach { innerCellFactory ->
-                test_outerFreeze_innerNonChanging(
-                    outerCellFactory = outerCellFactory,
-                    innerCellFactory = innerCellFactory,
-                    verificationStrategy = verificationStrategy,
-                )
-            }
-        }
-    }
-
-    @Test
-    fun test_outerFreeze_innerNonChanging_passive() {
-        test_outerFreeze_innerNonChanging(
-            verificationStrategy = CellVerificationStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_outerFreeze_innerNonChanging_active() {
-        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerFreeze_innerNonChanging(
-                verificationStrategy = verificationStrategy,
-            )
-        }
-    }
-
-    private fun test_outerFreeze_thenInnerUpdate(
-        outerCellFactory: FreezingCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
-    ) {
-        val doFreeze = EmitterEventStream<Unit>()
-
-        val doTrigger = EmitterEventStream<Unit>()
-
-        val innerCell = MomentContext.execute {
-            Cell.define(
-                initialValue = 10,
-                newValues = doTrigger.map { 11 },
-            )
-        }
-
-        val outerCell = MomentContext.execute {
-            outerCellFactory.create(
-                value = innerCell,
-                doFreeze = doFreeze,
-            )
-        }
-
-        val switchCell = Cell.switch(outerCell)
-
-        val verifier = verificationStrategy.begin(
-            subjectCell = switchCell,
-        )
-
-        verifier.verifyUpdates(
-            doTrigger = doTrigger,
-            expectedUpdatedValue = 11,
-        )
-    }
-
-    private fun test_outerFreeze_thenInnerUpdate(
-        verificationStrategy: CellVerificationStrategy.Total,
-    ) {
-        FreezingCellFactory.values.forEach { outerCellFactory ->
-            test_outerFreeze_thenInnerUpdate(
-                outerCellFactory = outerCellFactory,
-                verificationStrategy = verificationStrategy,
-            )
-        }
-    }
-
-    @Test
-    fun test_outerFreeze_thenInnerUpdate_passive() {
-        test_outerFreeze_thenInnerUpdate(
-            verificationStrategy = CellVerificationStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_outerFreeze_thenInnerUpdate_active() {
-        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerFreeze_thenInnerUpdate(
-                verificationStrategy = verificationStrategy,
-            )
-        }
-    }
-
-    private fun test_outerFreeze_simultaneousInnerUpdate(
-        outerCellFactory: FreezingCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
-    ) {
-        val doFreeze = EmitterEventStream<Unit>()
-
-        val innerCell = MomentContext.execute {
-            Cell.define(
-                initialValue = 10,
-                newValues = doFreeze.map { 11 },
-            )
-        }
-
-        val outerCell = MomentContext.execute {
-            outerCellFactory.create(
-                value = innerCell,
-                doFreeze = doFreeze,
-            )
-        }
-
-        val switchCell = Cell.switch(outerCell)
-
-        val verifier = verificationStrategy.begin(
-            subjectCell = switchCell,
-        )
-
-        verifier.verifyUpdates(
-            doTrigger = doFreeze,
-            expectedUpdatedValue = 11,
-        )
-    }
-
-    private fun test_outerFreeze_simultaneousInnerUpdate(
-        verificationStrategy: CellVerificationStrategy.Total,
-    ) {
-        FreezingCellFactory.values.forEach { outerCellFactory ->
-            test_outerFreeze_simultaneousInnerUpdate(
-                outerCellFactory = outerCellFactory,
-                verificationStrategy = verificationStrategy,
-            )
-        }
-    }
-
-    @Test
-    fun test_outerFreeze_simultaneousInnerUpdate_passive() {
-        test_outerFreeze_simultaneousInnerUpdate(
-            verificationStrategy = CellVerificationStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_outerFreeze_simultaneousInnerUpdate_active() {
-        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerFreeze_simultaneousInnerUpdate(
-                verificationStrategy = verificationStrategy,
-            )
-        }
-    }
-
-    private fun test_outerFreeze_simultaneousInnerFreeze(
-        outerCellFactory: FreezingCellFactory,
-        innerCellFactory: FreezingCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
-    ) {
-        val doFreeze = EmitterEventStream<Unit>()
-
-        val innerCell = MomentContext.execute {
-            innerCellFactory.create(
-                value = 10,
-                doFreeze = doFreeze,
-            )
-        }
-
-        val outerCell = MomentContext.execute {
-            outerCellFactory.create(
-                value = innerCell,
-                doFreeze = doFreeze,
-            )
-        }
-
-        val switchCell = Cell.switch(outerCell)
-
-        verificationStrategy.verifyCompleteFreeze(
-            subjectCell = switchCell,
-            doFreeze = doFreeze,
-            expectedFrozenValue = 10,
-        )
-    }
-
-    private fun test_outerFreeze_simultaneousInnerFreeze(
-        verificationStrategy: CellVerificationStrategy.Total,
-    ) {
-        FreezingCellFactory.values.forEach { outerCellFactory ->
-            FreezingCellFactory.values.forEach { innerCellFactory ->
-                test_outerFreeze_simultaneousInnerFreeze(
-                    outerCellFactory = outerCellFactory,
-                    innerCellFactory = innerCellFactory,
-                    verificationStrategy = verificationStrategy,
-                )
-            }
-        }
-    }
-
-    @Test
-    fun test_outerFreeze_simultaneousInnerFreeze_passive() {
-        test_outerFreeze_simultaneousInnerFreeze(
-            verificationStrategy = CellVerificationStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_outerFreeze_simultaneousInnerFreeze_active() {
-        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerFreeze_simultaneousInnerFreeze(
-                verificationStrategy = verificationStrategy,
-            )
-        }
-    }
-
-    private fun test_initialInnerFreeze_thenOuterUpdate_thenNewInnerUpdate(
-        initialInnerCellFactory: FreezingCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
-    ) {
-        val doFreezeInitialInner = EmitterEventStream<Unit>()
-
-        val doTriggerOuter = EmitterEventStream<Unit>()
-
-        val doTriggerNewInner = EmitterEventStream<Unit>()
-
-        val initialInnerCell = MomentContext.execute {
-            initialInnerCellFactory.create(
-                value = 10,
-                doFreeze = doFreezeInitialInner,
-            )
-        }
-
-        val newInnerCell = MomentContext.execute {
-            Cell.define(
-                initialValue = 20,
-                newValues = doTriggerNewInner.map { 21 },
-            )
-        }
-
-        val outerCell = MomentContext.execute {
-            Cell.define(
-                initialValue = initialInnerCell,
-                newValues = doTriggerOuter.map { newInnerCell },
-            )
-        }
-
-        val switchCell = Cell.switch(outerCell)
-
-        val verifier = verificationStrategy.begin(
-            subjectCell = switchCell,
-        )
-
-        doFreezeInitialInner.emit()
-
-        verifier.verifyUpdates(
-            doTrigger = doTriggerOuter,
-            expectedUpdatedValue = 20,
-        )
-
-        verifier.verifyUpdates(
-            doTrigger = doTriggerNewInner,
-            expectedUpdatedValue = 21,
-        )
-    }
-
-    private fun test_initialInnerFreeze_thenOuterUpdate_thenNewInnerUpdate(
-        verificationStrategy: CellVerificationStrategy.Total,
-    ) {
-        FreezingCellFactory.values.forEach { initialInnerCellFactory ->
-            test_initialInnerFreeze_thenOuterUpdate_thenNewInnerUpdate(
-                initialInnerCellFactory = initialInnerCellFactory,
-                verificationStrategy = verificationStrategy,
-            )
-        }
-    }
-
-    @Test
-    fun test_initialInnerFreeze_thenOuterUpdate_thenNewInnerUpdate_passive() {
-        test_initialInnerFreeze_thenOuterUpdate_thenNewInnerUpdate(
-            verificationStrategy = CellVerificationStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_initialInnerFreeze_thenOuterUpdate_thenNewInnerUpdate_active() {
-        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_initialInnerFreeze_thenOuterUpdate_thenNewInnerUpdate(
-                verificationStrategy = verificationStrategy,
-            )
-        }
-    }
-
     private fun test_deactivation_initial(
+        outerCellFactory: DynamicCellFactory,
+        initialInnerCellFactory: DynamicCellFactory,
+        newInnerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy.Active,
     ) {
         val doSwitch = EmitterEventStream<Unit>()
 
-        val switchCell = MomentContext.execute {
-            val initialInnerCell = Cell.define(
-                initialValue = 10,
-                newValues = doSwitch.map { 11 },
-            )
+        val initialInnerCell = initialInnerCellFactory.createExternally(
+            initialValue = 10,
+            doUpdate = doSwitch.map { 11 },
+        )
 
-            val newInnerCell = Cell.define(
-                initialValue = 20,
-                newValues = doSwitch.map { 21 },
-            )
+        val newInnerCell = newInnerCellFactory.createExternally(
+            initialValue = 20,
+            doUpdate = doSwitch.map { 21 },
+        )
 
-            val outerCell = Cell.define(
-                initialValue = initialInnerCell,
-                newValues = doSwitch.map { newInnerCell },
-            )
+        val outerCell = outerCellFactory.createExternally(
+            initialValue = initialInnerCell,
+            doUpdate = doSwitch.map { newInnerCell },
+        )
 
-            Cell.switch(outerCell)
-        }
+        val switchCell = Cell.switch(outerCell)
 
         verificationStrategy.verifyDeactivation(
             subjectCell = switchCell,
@@ -915,46 +649,57 @@ class Cell_switch_combo_tests {
 
     @Test
     fun test_deactivation_initial() {
-        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_deactivation_initial(
-                verificationStrategy = verificationStrategy,
-            )
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            DynamicCellFactory.values.forEach { initialInnerCellFactory ->
+                DynamicCellFactory.values.forEach { newInnerCellFactory ->
+                    CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
+                        test_deactivation_initial(
+                            outerCellFactory = outerCellFactory,
+                            initialInnerCellFactory = initialInnerCellFactory,
+                            newInnerCellFactory = newInnerCellFactory,
+                            verificationStrategy = verificationStrategy,
+                        )
+                    }
+                }
+            }
         }
     }
 
     private fun test_deactivation_afterOuterUpdate(
+        overCellFactory: DynamicCellFactory,
+        initialInnerCellFactory: DynamicCellFactory,
+        newInnerCellFactory: DynamicCellFactory,
+        newerInnerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy.Active,
     ) {
         val doPrepare = EmitterEventStream<Unit>()
 
         val doTrigger = EmitterEventStream<Unit>()
 
-        val switchCell = MomentContext.execute {
-            val initialInnerCell = Cell.define(
-                initialValue = 10,
-                newValues = doTrigger.map { 11 },
-            )
+        val initialInnerCell = initialInnerCellFactory.createExternally(
+            initialValue = 10,
+            doUpdate = doTrigger.map { 11 },
+        )
 
-            val newInnerCell = Cell.define(
-                initialValue = 20,
-                newValues = doTrigger.map { 21 },
-            )
+        val newInnerCell = newInnerCellFactory.createExternally(
+            initialValue = 20,
+            doUpdate = doTrigger.map { 21 },
+        )
 
-            val newerInnerCell = Cell.define(
-                initialValue = 30,
-                newValues = doTrigger.map { 31 },
-            )
+        val newerInnerCell = newerInnerCellFactory.createExternally(
+            initialValue = 30,
+            doUpdate = doTrigger.map { 31 },
+        )
 
-            val outerCell = Cell.define(
-                initialValue = initialInnerCell,
-                newValues = EventStream.merge2(
-                    doPrepare.map { newInnerCell },
-                    doTrigger.map { newerInnerCell },
-                ),
-            )
+        val outerCell = overCellFactory.createExternally(
+            initialValue = initialInnerCell,
+            doUpdate = EventStream.merge2(
+                doPrepare.map { newInnerCell },
+                doTrigger.map { newerInnerCell },
+            ),
+        )
 
-            Cell.switch(outerCell)
-        }
+        val switchCell = Cell.switch(outerCell)
 
         doPrepare.emit()
 
@@ -966,10 +711,22 @@ class Cell_switch_combo_tests {
 
     @Test
     fun test_deactivation_afterOuterUpdate() {
-        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_deactivation_afterOuterUpdate(
-                verificationStrategy = verificationStrategy,
-            )
+        DynamicCellFactory.values.forEach { overCellFactory ->
+            DynamicCellFactory.values.forEach { initialInnerCellFactory ->
+                DynamicCellFactory.values.forEach { newInnerCellFactory ->
+                    DynamicCellFactory.values.forEach { newerInnerCellFactory ->
+                        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
+                            test_deactivation_afterOuterUpdate(
+                                overCellFactory = overCellFactory,
+                                initialInnerCellFactory = initialInnerCellFactory,
+                                newInnerCellFactory = newInnerCellFactory,
+                                newerInnerCellFactory = newerInnerCellFactory,
+                                verificationStrategy = verificationStrategy,
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }

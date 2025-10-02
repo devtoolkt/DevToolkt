@@ -1,6 +1,7 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
+import dev.toolkt.reactive.cell.test_utils.DynamicCellFactory
 import dev.toolkt.reactive.cell.test_utils.QuietEventStreamFactory
 import dev.toolkt.reactive.cell.test_utils.StaticCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
@@ -56,6 +57,7 @@ class Cell_divert_combo_tests {
     }
 
     private fun test_outerUpdate(
+        outerCellFactory: DynamicCellFactory,
         initialInnerEventStreamFactory: QuietEventStreamFactory,
         newInnerEventStreamFactory: QuietEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
@@ -66,12 +68,10 @@ class Cell_divert_combo_tests {
 
         val newInnerEventStream = newInnerEventStreamFactory.createExternally<Int>()
 
-        val outerCell = MomentContext.execute {
-            Cell.define(
-                initialInnerEventStream,
-                doUpdateOuter.map { newInnerEventStream },
-            )
-        }
+        val outerCell = outerCellFactory.createExternally(
+            initialValue = initialInnerEventStream,
+            doUpdate = doUpdateOuter.map { newInnerEventStream },
+        )
 
         val divertCell = Cell.divert(outerCell)
 
@@ -87,13 +87,16 @@ class Cell_divert_combo_tests {
     private fun test_outerUpdate(
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
-        QuietEventStreamFactory.values.forEach { initialInnerEventStreamFactory ->
-            QuietEventStreamFactory.values.forEach { newInnerEventStreamFactory ->
-                test_outerUpdate(
-                    initialInnerEventStreamFactory = initialInnerEventStreamFactory,
-                    newInnerEventStreamFactory = newInnerEventStreamFactory,
-                    verificationStrategy = verificationStrategy,
-                )
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            QuietEventStreamFactory.values.forEach { initialInnerEventStreamFactory ->
+                QuietEventStreamFactory.values.forEach { newInnerEventStreamFactory ->
+                    test_outerUpdate(
+                        outerCellFactory = outerCellFactory,
+                        initialInnerEventStreamFactory = initialInnerEventStreamFactory,
+                        newInnerEventStreamFactory = newInnerEventStreamFactory,
+                        verificationStrategy = verificationStrategy,
+                    )
+                }
             }
         }
     }
@@ -108,6 +111,7 @@ class Cell_divert_combo_tests {
     }
 
     private fun test_outerUpdate_sameEventStream(
+        outerCellFactory: DynamicCellFactory,
         innerEventStreamFactory: QuietEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
@@ -115,12 +119,11 @@ class Cell_divert_combo_tests {
 
         val innerEventStream = innerEventStreamFactory.createExternally<Int>()
 
-        val outerCell = MomentContext.execute {
-            Cell.define(
-                innerEventStream,
-                doUpdateOuter.map { innerEventStream },
-            )
-        }
+        // Replaced Cell.define with outerCellFactory
+        val outerCell = outerCellFactory.createExternally(
+            initialValue = innerEventStream,
+            doUpdate = doUpdateOuter.map { innerEventStream },
+        )
 
         val divertCell = Cell.divert(outerCell)
 
@@ -136,11 +139,14 @@ class Cell_divert_combo_tests {
     private fun test_outerUpdate_sameEventStream(
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
-        QuietEventStreamFactory.values.forEach { innerEventStreamFactory ->
-            test_outerUpdate_sameEventStream(
-                innerEventStreamFactory = innerEventStreamFactory,
-                verificationStrategy = verificationStrategy,
-            )
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            QuietEventStreamFactory.values.forEach { innerEventStreamFactory ->
+                test_outerUpdate_sameEventStream(
+                    outerCellFactory = outerCellFactory,
+                    innerEventStreamFactory = innerEventStreamFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
         }
     }
 
@@ -154,6 +160,7 @@ class Cell_divert_combo_tests {
     }
 
     private fun test_outerUpdate_thenInitialInnerOccurrence(
+        outerCellFactory: DynamicCellFactory,
         newInnerEventStreamFactory: QuietEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
@@ -165,12 +172,10 @@ class Cell_divert_combo_tests {
 
         val newInnerEventStream = newInnerEventStreamFactory.createExternally<Int>()
 
-        val outerCell = MomentContext.execute {
-            Cell.define(
-                initialValue = initialInnerEventStream,
-                newValues = doUpdateOuter.map { newInnerEventStream },
-            )
-        }
+        val outerCell = outerCellFactory.createExternally(
+            initialValue = initialInnerEventStream,
+            doUpdate = doUpdateOuter.map { newInnerEventStream },
+        )
 
         val divertCell = Cell.divert(outerCell)
 
@@ -188,11 +193,14 @@ class Cell_divert_combo_tests {
     private fun test_outerUpdate_thenInitialInnerOccurrence(
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
-        QuietEventStreamFactory.values.forEach { newInnerEventStreamFactory ->
-            test_outerUpdate_thenInitialInnerOccurrence(
-                newInnerEventStreamFactory = newInnerEventStreamFactory,
-                verificationStrategy = verificationStrategy,
-            )
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            QuietEventStreamFactory.values.forEach { newInnerEventStreamFactory ->
+                test_outerUpdate_thenInitialInnerOccurrence(
+                    outerCellFactory = outerCellFactory,
+                    newInnerEventStreamFactory = newInnerEventStreamFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
         }
     }
 
@@ -206,6 +214,7 @@ class Cell_divert_combo_tests {
     }
 
     private fun test_outerUpdate_thenNewInnerUpdate(
+        outerCellFactory: DynamicCellFactory,
         initialInnerEventStreamFactory: QuietEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
@@ -217,12 +226,10 @@ class Cell_divert_combo_tests {
 
         val newInnerEventStream = doTriggerNewInner.map { 21 }
 
-        val outerCell = MomentContext.execute {
-            Cell.define(
-                initialInnerEventStream,
-                doUpdateOuter.map { newInnerEventStream },
-            )
-        }
+        val outerCell = outerCellFactory.createExternally(
+            initialValue = initialInnerEventStream,
+            doUpdate = doUpdateOuter.map { newInnerEventStream },
+        )
 
         val divertCell = Cell.divert(outerCell)
 
@@ -241,11 +248,14 @@ class Cell_divert_combo_tests {
     private fun test_outerUpdate_thenNewInnerUpdate(
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
-        QuietEventStreamFactory.values.forEach { initialInnerEventStreamFactory ->
-            test_outerUpdate_thenNewInnerUpdate(
-                initialInnerEventStreamFactory = initialInnerEventStreamFactory,
-                verificationStrategy = verificationStrategy,
-            )
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            QuietEventStreamFactory.values.forEach { initialInnerEventStreamFactory ->
+                test_outerUpdate_thenNewInnerUpdate(
+                    outerCellFactory = outerCellFactory,
+                    initialInnerEventStreamFactory = initialInnerEventStreamFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
         }
     }
 
@@ -259,6 +269,7 @@ class Cell_divert_combo_tests {
     }
 
     private fun test_outerUpdate_simultaneousInitialInnerOccurrence(
+        outerCellFactory: DynamicCellFactory,
         newInnerEventStreamFactory: QuietEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
@@ -268,12 +279,10 @@ class Cell_divert_combo_tests {
 
         val newInnerEventStream = newInnerEventStreamFactory.createExternally<Int>()
 
-        val outerCell = MomentContext.execute {
-            Cell.define(
-                initialValue = initialInnerEventStream,
-                newValues = doDivert.map { newInnerEventStream },
-            )
-        }
+        val outerCell = outerCellFactory.createExternally(
+            initialValue = initialInnerEventStream,
+            doUpdate = doDivert.map { newInnerEventStream },
+        )
 
         val divertCell = Cell.divert(outerCell)
 
@@ -290,11 +299,14 @@ class Cell_divert_combo_tests {
     private fun test_outerUpdate_simultaneousInitialInnerOccurrence(
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
-        QuietEventStreamFactory.values.forEach { newInnerEventStreamFactory ->
-            test_outerUpdate_simultaneousInitialInnerOccurrence(
-                newInnerEventStreamFactory = newInnerEventStreamFactory,
-                verificationStrategy = verificationStrategy,
-            )
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            QuietEventStreamFactory.values.forEach { newInnerEventStreamFactory ->
+                test_outerUpdate_simultaneousInitialInnerOccurrence(
+                    outerCellFactory = outerCellFactory,
+                    newInnerEventStreamFactory = newInnerEventStreamFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
         }
     }
 
@@ -308,6 +320,7 @@ class Cell_divert_combo_tests {
     }
 
     private fun test_outerUpdate_simultaneousNewInnerUpdate(
+        outerCellFactory: DynamicCellFactory,
         initialInnerEventStreamFactory: QuietEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
@@ -317,12 +330,10 @@ class Cell_divert_combo_tests {
 
         val newInnerEventStream = doDivert.map { 21 }
 
-        val outerCell = MomentContext.execute {
-            Cell.define(
-                initialValue = initialInnerEventStream,
-                newValues = doDivert.map { newInnerEventStream },
-            )
-        }
+        val outerCell = outerCellFactory.createExternally(
+            initialValue = initialInnerEventStream,
+            doUpdate = doDivert.map { newInnerEventStream },
+        )
 
         val divertCell = Cell.divert(outerCell)
 
@@ -338,16 +349,19 @@ class Cell_divert_combo_tests {
     private fun test_outerUpdate_simultaneousNewInnerUpdate(
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
-        QuietEventStreamFactory.values.forEach { initialInnerEventStreamFactory ->
-            test_outerUpdate_simultaneousNewInnerUpdate(
-                initialInnerEventStreamFactory = initialInnerEventStreamFactory,
-                verificationStrategy = verificationStrategy,
-            )
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            QuietEventStreamFactory.values.forEach { initialInnerEventStreamFactory ->
+                test_outerUpdate_simultaneousNewInnerUpdate(
+                    outerCellFactory = outerCellFactory,
+                    initialInnerEventStreamFactory = initialInnerEventStreamFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
         }
     }
 
     @Test
-    fun test_outerUpdate_simultaneousNewInnerUpdate_active() {
+    fun test_outerUpdate_simultaneousNewInnerUpdate() {
         EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_outerUpdate_simultaneousNewInnerUpdate(
                 verificationStrategy = verificationStrategy,
@@ -356,22 +370,21 @@ class Cell_divert_combo_tests {
     }
 
     private fun test_outerUpdate_simultaneousBothInnerUpdates(
+        outerCellFactory: DynamicCellFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doDivert = EmitterEventStream<Unit>()
 
-        val divertCell = MomentContext.execute {
-            val initialInnerEventStream = doDivert.map { 11 }
+        val initialInnerEventStream = doDivert.map { 11 }
 
-            val newInnerEventStream = doDivert.map { 21 }
+        val newInnerEventStream = doDivert.map { 21 }
 
-            val outerCell = Cell.define(
-                initialValue = initialInnerEventStream,
-                newValues = doDivert.map { newInnerEventStream },
-            )
+        val outerCell = outerCellFactory.createExternally(
+            initialValue = initialInnerEventStream,
+            doUpdate = doDivert.map { newInnerEventStream },
+        )
 
-            Cell.divert(outerCell)
-        }
+        val divertCell = Cell.divert(outerCell)
 
         val verifier = verificationStrategy.begin(
             subjectEventStream = divertCell,
@@ -383,8 +396,19 @@ class Cell_divert_combo_tests {
         )
     }
 
+    private fun test_outerUpdate_simultaneousBothInnerUpdates(
+        verificationStrategy: EventStreamVerificationStrategy,
+    ) {
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            test_outerUpdate_simultaneousBothInnerUpdates(
+                outerCellFactory = outerCellFactory,
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
     @Test
-    fun test_outerUpdate_simultaneousBothInnerUpdates_active() {
+    fun test_outerUpdate_simultaneousBothInnerUpdates() {
         EventStreamVerificationStrategy.values.forEach { verificationStrategy ->
             test_outerUpdate_simultaneousBothInnerUpdates(
                 verificationStrategy = verificationStrategy,
@@ -393,6 +417,8 @@ class Cell_divert_combo_tests {
     }
 
     private fun test_pausing_initial(
+        // Added
+        outerCellFactory: DynamicCellFactory,
         newOuterCellsEventStreamFactory: QuietEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
@@ -402,12 +428,11 @@ class Cell_divert_combo_tests {
 
         val newInnerEventStreams = newOuterCellsEventStreamFactory.createExternally<EventStream<Int>>()
 
-        val outerCell = MomentContext.execute {
-            Cell.define(
-                initialValue = initialInnerEventStream,
-                newValues = newInnerEventStreams,
-            )
-        }
+        // Replaced Cell.define with outerCellFactory
+        val outerCell = outerCellFactory.createExternally(
+            initialValue = initialInnerEventStream,
+            doUpdate = newInnerEventStreams,
+        )
 
         val divertCell = Cell.divert(outerCell)
 
@@ -420,11 +445,14 @@ class Cell_divert_combo_tests {
     private fun test_pausing_initial(
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
-        QuietEventStreamFactory.values.forEach { newOuterCellsEventStreamFactory ->
-            test_pausing_initial(
-                newOuterCellsEventStreamFactory = newOuterCellsEventStreamFactory,
-                verificationStrategy = verificationStrategy,
-            )
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            QuietEventStreamFactory.values.forEach { newOuterCellsEventStreamFactory ->
+                test_pausing_initial(
+                    outerCellFactory = outerCellFactory,
+                    newOuterCellsEventStreamFactory = newOuterCellsEventStreamFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
         }
     }
 
@@ -439,6 +467,7 @@ class Cell_divert_combo_tests {
     }
 
     private fun test_pausing_afterOuterUpdate(
+        outerCellFactory: DynamicCellFactory,
         innerEventStreamFactory: QuietEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
@@ -450,12 +479,10 @@ class Cell_divert_combo_tests {
 
         val newInnerEventStream = doTrigger.map { 21 }
 
-        val outerCell = MomentContext.execute {
-            Cell.define(
-                initialValue = initialInnerEventStream,
-                newValues = doPrepare.map { newInnerEventStream },
-            )
-        }
+        val outerCell = outerCellFactory.createExternally(
+            initialValue = initialInnerEventStream,
+            doUpdate = doPrepare.map { newInnerEventStream },
+        )
 
         val divertCell = Cell.divert(outerCell)
 
@@ -470,11 +497,14 @@ class Cell_divert_combo_tests {
     private fun test_pausing_afterOuterUpdate(
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
-        QuietEventStreamFactory.values.forEach { innerEventStreamFactory ->
-            test_pausing_afterOuterUpdate(
-                innerEventStreamFactory = innerEventStreamFactory,
-                verificationStrategy = verificationStrategy,
-            )
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            QuietEventStreamFactory.values.forEach { innerEventStreamFactory ->
+                test_pausing_afterOuterUpdate(
+                    outerCellFactory = outerCellFactory,
+                    innerEventStreamFactory = innerEventStreamFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
         }
     }
 
