@@ -1,8 +1,8 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
-import dev.toolkt.reactive.cell.test_utils.StaticCellFactory
 import dev.toolkt.reactive.cell.test_utils.QuietEventStreamFactory
+import dev.toolkt.reactive.cell.test_utils.StaticCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.emit
@@ -62,13 +62,9 @@ class Cell_divert_combo_tests {
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
-        val initialInnerEventStream = MomentContext.execute {
-            initialInnerEventStreamFactory.createExternally<Int>()
-        }
+        val initialInnerEventStream = initialInnerEventStreamFactory.createExternally<Int>()
 
-        val newInnerEventStream = MomentContext.execute {
-            newInnerEventStreamFactory.createExternally<Int>()
-        }
+        val newInnerEventStream = newInnerEventStreamFactory.createExternally<Int>()
 
         val outerCell = MomentContext.execute {
             Cell.define(
@@ -117,9 +113,7 @@ class Cell_divert_combo_tests {
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
-        val innerEventStream = MomentContext.execute {
-            innerEventStreamFactory.createExternally<Int>()
-        }
+        val innerEventStream = innerEventStreamFactory.createExternally<Int>()
 
         val outerCell = MomentContext.execute {
             Cell.define(
@@ -169,9 +163,7 @@ class Cell_divert_combo_tests {
 
         val initialInnerEventStream = doUpdateInitialInner.map { 11 }
 
-        val newInnerEventStream = MomentContext.execute {
-            newInnerEventStreamFactory.createExternally<Int>()
-        }
+        val newInnerEventStream = newInnerEventStreamFactory.createExternally<Int>()
 
         val outerCell = MomentContext.execute {
             Cell.define(
@@ -221,9 +213,7 @@ class Cell_divert_combo_tests {
 
         val doTriggerNewInner = EmitterEventStream<Unit>()
 
-        val initialInnerEventStream = MomentContext.execute {
-            initialInnerEventStreamFactory.createExternally<Int>()
-        }
+        val initialInnerEventStream = initialInnerEventStreamFactory.createExternally<Int>()
 
         val newInnerEventStream = doTriggerNewInner.map { 21 }
 
@@ -274,18 +264,18 @@ class Cell_divert_combo_tests {
     ) {
         val doDivert = EmitterEventStream<Unit>()
 
-        val divertCell = MomentContext.execute {
-            val initialInnerEventStream = doDivert.map { 11 }
+        val initialInnerEventStream = doDivert.map { 11 }
 
-            val newInnerEventStream = newInnerEventStreamFactory.createExternally<Int>()
+        val newInnerEventStream = newInnerEventStreamFactory.createExternally<Int>()
 
-            val outerCell = Cell.define(
+        val outerCell = MomentContext.execute {
+            Cell.define(
                 initialValue = initialInnerEventStream,
                 newValues = doDivert.map { newInnerEventStream },
             )
-
-            Cell.divert(outerCell)
         }
+
+        val divertCell = Cell.divert(outerCell)
 
         val verifier = verificationStrategy.begin(
             subjectEventStream = divertCell,
@@ -323,18 +313,18 @@ class Cell_divert_combo_tests {
     ) {
         val doDivert = EmitterEventStream<Unit>()
 
-        val divertCell = MomentContext.execute {
-            val initialInnerEventStream = initialInnerEventStreamFactory.createExternally<Int>()
+        val initialInnerEventStream = initialInnerEventStreamFactory.createExternally<Int>()
 
-            val newInnerEventStream = doDivert.map { 21 }
+        val newInnerEventStream = doDivert.map { 21 }
 
-            val outerCell = Cell.define(
+        val outerCell = MomentContext.execute {
+            Cell.define(
                 initialValue = initialInnerEventStream,
                 newValues = doDivert.map { newInnerEventStream },
             )
-
-            Cell.divert(outerCell)
         }
+
+        val divertCell = Cell.divert(outerCell)
 
         val verifier = verificationStrategy.begin(
             subjectEventStream = divertCell,
@@ -408,18 +398,18 @@ class Cell_divert_combo_tests {
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
-        val divertCell = MomentContext.execute {
-            val initialInnerEventStream = doTrigger.map { 21 }
+        val initialInnerEventStream = doTrigger.map { 21 }
 
-            val newInnerEventStreams = newOuterCellsEventStreamFactory.createExternally<EventStream<Int>>()
+        val newInnerEventStreams = newOuterCellsEventStreamFactory.createExternally<EventStream<Int>>()
 
-            val outerCell = Cell.define(
+        val outerCell = MomentContext.execute {
+            Cell.define(
                 initialValue = initialInnerEventStream,
                 newValues = newInnerEventStreams,
             )
-
-            Cell.divert(outerCell)
         }
+
+        val divertCell = Cell.divert(outerCell)
 
         verificationStrategy.verifyPausing(
             subjectEventStream = divertCell,
@@ -456,18 +446,18 @@ class Cell_divert_combo_tests {
 
         val doTrigger = EmitterEventStream<Unit>()
 
-        val divertCell = MomentContext.execute {
-            val initialInnerEventStream = innerEventStreamFactory.createExternally<Int>()
+        val initialInnerEventStream = innerEventStreamFactory.createExternally<Int>()
 
-            val newInnerEventStream = doTrigger.map { 21 }
+        val newInnerEventStream = doTrigger.map { 21 }
 
-            val outerCell = Cell.define(
+        val outerCell = MomentContext.execute {
+            Cell.define(
                 initialValue = initialInnerEventStream,
                 newValues = doPrepare.map { newInnerEventStream },
             )
-
-            Cell.divert(outerCell)
         }
+
+        val divertCell = Cell.divert(outerCell)
 
         doPrepare.emit()
 
