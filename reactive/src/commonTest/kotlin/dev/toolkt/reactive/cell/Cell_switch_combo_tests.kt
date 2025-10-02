@@ -3,7 +3,7 @@ package dev.toolkt.reactive.cell
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.CellVerificationStrategy
 import dev.toolkt.reactive.cell.test_utils.FreezingCellFactory
-import dev.toolkt.reactive.cell.test_utils.NonChangingCellFactory
+import dev.toolkt.reactive.cell.test_utils.StaticCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.emit
@@ -15,8 +15,8 @@ import kotlin.test.Test
 @Suppress("ClassName")
 class Cell_switch_combo_tests {
     private fun test_initial(
-        outerCellFactory: NonChangingCellFactory,
-        innerCellFactory: NonChangingCellFactory,
+        outerCellFactory: StaticCellFactory,
+        innerCellFactory: StaticCellFactory,
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
         val outerCell = outerCellFactory.createExternally(
@@ -35,8 +35,8 @@ class Cell_switch_combo_tests {
     private fun test_initial(
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
-        NonChangingCellFactory.values.forEach { outerCellFactory ->
-            NonChangingCellFactory.values.forEach { innerCellFactory ->
+        StaticCellFactory.values.forEach { outerCellFactory ->
+            StaticCellFactory.values.forEach { innerCellFactory ->
                 test_initial(
                     outerCellFactory = outerCellFactory,
                     innerCellFactory = innerCellFactory,
@@ -64,7 +64,7 @@ class Cell_switch_combo_tests {
     }
 
     private fun test_initialInnerUpdate(
-        outerCellFactory: NonChangingCellFactory,
+        outerCellFactory: StaticCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
         val doUpdateInner = EmitterEventStream<Unit>()
@@ -93,7 +93,7 @@ class Cell_switch_combo_tests {
     private fun test_initialInnerUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
-        NonChangingCellFactory.values.forEach { outerCellFactory ->
+        StaticCellFactory.values.forEach { outerCellFactory ->
             test_initialInnerUpdate(
                 outerCellFactory = outerCellFactory,
                 verificationStrategy = verificationStrategy,
@@ -125,7 +125,7 @@ class Cell_switch_combo_tests {
     }
 
     private fun test_outerUpdate(
-        newInnerCellFactory: NonChangingCellFactory,
+        newInnerCellFactory: StaticCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
@@ -155,7 +155,7 @@ class Cell_switch_combo_tests {
     private fun test_outerUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
-        NonChangingCellFactory.values.forEach { newInnerCellFactory ->
+        StaticCellFactory.values.forEach { newInnerCellFactory ->
             test_outerUpdate(
                 newInnerCellFactory = newInnerCellFactory,
                 verificationStrategy = verificationStrategy,
@@ -187,7 +187,7 @@ class Cell_switch_combo_tests {
     }
 
     private fun test_outerUpdate_sameCell(
-        innerCellFactory: NonChangingCellFactory,
+        innerCellFactory: StaticCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
@@ -216,7 +216,7 @@ class Cell_switch_combo_tests {
     private fun test_outerUpdate_sameCell(
         verificationStrategy: CellVerificationStrategy,
     ) {
-        NonChangingCellFactory.values.forEach { innerCellFactory ->
+        StaticCellFactory.values.forEach { innerCellFactory ->
             test_outerUpdate_sameCell(
                 innerCellFactory = innerCellFactory,
                 verificationStrategy = verificationStrategy,
@@ -248,7 +248,7 @@ class Cell_switch_combo_tests {
     }
 
     private fun test_outerUpdate_thenInitialInnerUpdate(
-        newInnerCellFactory: NonChangingCellFactory,
+        newInnerCellFactory: StaticCellFactory,
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
@@ -288,7 +288,7 @@ class Cell_switch_combo_tests {
     private fun test_outerUpdate_thenInitialInnerUpdate(
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
-        NonChangingCellFactory.values.forEach { newInnerCellFactory ->
+        StaticCellFactory.values.forEach { newInnerCellFactory ->
             test_outerUpdate_thenInitialInnerUpdate(
                 newInnerCellFactory = newInnerCellFactory,
                 verificationStrategy = verificationStrategy,
@@ -313,7 +313,7 @@ class Cell_switch_combo_tests {
     }
 
     private fun test_outerUpdate_thenNewInnerUpdate(
-        initialInnerCellFactory: NonChangingCellFactory,
+        initialInnerCellFactory: StaticCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
@@ -351,7 +351,7 @@ class Cell_switch_combo_tests {
     private fun test_outerUpdate_thenNewInnerUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
-        NonChangingCellFactory.values.forEach { initialInnerCellFactory ->
+        StaticCellFactory.values.forEach { initialInnerCellFactory ->
             test_outerUpdate_thenNewInnerUpdate(
                 initialInnerCellFactory = initialInnerCellFactory,
                 verificationStrategy = verificationStrategy,
@@ -383,7 +383,7 @@ class Cell_switch_combo_tests {
     }
 
     private fun test_outerUpdate_simultaneousInitialInnerUpdate(
-        newInnerCellFactory: NonChangingCellFactory,
+        newInnerCellFactory: StaticCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
         val doSwitch = EmitterEventStream<Unit>()
@@ -417,7 +417,7 @@ class Cell_switch_combo_tests {
     private fun test_outerUpdate_simultaneousInitialInnerUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
-        NonChangingCellFactory.values.forEach { newInnerCellFactory ->
+        StaticCellFactory.values.forEach { newInnerCellFactory ->
             test_outerUpdate_simultaneousInitialInnerUpdate(
                 newInnerCellFactory = newInnerCellFactory,
                 verificationStrategy = verificationStrategy,
@@ -449,7 +449,7 @@ class Cell_switch_combo_tests {
     }
 
     private fun test_outerUpdate_simultaneousNewInnerUpdate(
-        initialInnerCellFactory: NonChangingCellFactory,
+        initialInnerCellFactory: StaticCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
         val doSwitch = EmitterEventStream<Unit>()
@@ -483,7 +483,7 @@ class Cell_switch_combo_tests {
     private fun test_outerUpdate_simultaneousNewInnerUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
-        NonChangingCellFactory.values.forEach { initialInnerCellFactory ->
+        StaticCellFactory.values.forEach { initialInnerCellFactory ->
             test_outerUpdate_simultaneousNewInnerUpdate(
                 initialInnerCellFactory = initialInnerCellFactory,
                 verificationStrategy = verificationStrategy,
@@ -573,7 +573,7 @@ class Cell_switch_combo_tests {
 
     private fun test_outerFreeze_innerNonChanging(
         outerCellFactory: FreezingCellFactory,
-        innerCellFactory: NonChangingCellFactory,
+        innerCellFactory: StaticCellFactory,
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
         val doFreeze = EmitterEventStream<Unit>()
@@ -600,7 +600,7 @@ class Cell_switch_combo_tests {
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
         FreezingCellFactory.values.forEach { outerCellFactory ->
-            NonChangingCellFactory.values.forEach { innerCellFactory ->
+            StaticCellFactory.values.forEach { innerCellFactory ->
                 test_outerFreeze_innerNonChanging(
                     outerCellFactory = outerCellFactory,
                     innerCellFactory = innerCellFactory,
