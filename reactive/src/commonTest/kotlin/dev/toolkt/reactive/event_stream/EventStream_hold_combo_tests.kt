@@ -13,7 +13,7 @@ class EventStream_hold_combo_tests {
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
         val sourceEventStream = MomentContext.execute {
-            sourceEventStreamFactory.create<Int>()
+            sourceEventStreamFactory.createExternally<Int>()
         }
 
         val holdCell = MomentContext.execute {
