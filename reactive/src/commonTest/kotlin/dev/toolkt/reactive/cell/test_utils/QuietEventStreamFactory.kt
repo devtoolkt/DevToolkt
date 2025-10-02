@@ -6,21 +6,21 @@ import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.NeverEventStream
 import dev.toolkt.reactive.event_stream.map
 
-sealed interface NonEmittingEventStreamFactory {
+sealed interface QuietEventStreamFactory {
     companion object {
         val values = listOf(
             Never,
             TransformedNever,
-            Dynamic,
-            TransformedDynamic,
+            PotentiallyVocal,
+            TransformedPotentiallyVocal,
         )
     }
 
-    data object Never : NonEmittingEventStreamFactory {
+    data object Never : QuietEventStreamFactory {
         context(momentContext: MomentContext) override fun <EventT> create(): EventStream<EventT> = NeverEventStream
     }
 
-    data object TransformedNever : NonEmittingEventStreamFactory {
+    data object TransformedNever : QuietEventStreamFactory {
         context(momentContext: MomentContext) override fun <EventT> create(): EventStream<EventT> =
             NeverEventStream.map {
                 // This code path should never be entered
@@ -28,13 +28,13 @@ sealed interface NonEmittingEventStreamFactory {
             }
     }
 
-    data object Dynamic : NonEmittingEventStreamFactory {
+    data object PotentiallyVocal : QuietEventStreamFactory {
         context(momentContext: MomentContext) override fun <EventT> create(): EventStream<EventT> = EmitterEventStream()
     }
 
-    data object TransformedDynamic : NonEmittingEventStreamFactory {
+    data object TransformedPotentiallyVocal : QuietEventStreamFactory {
         context(momentContext: MomentContext) override fun <EventT> create(): EventStream<EventT> =
-            Dynamic.create<EventT>().map {
+            PotentiallyVocal.create<EventT>().map {
                 // This code path should never be entered
                 it
             }
