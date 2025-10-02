@@ -12,6 +12,7 @@ sealed interface NonChangingCellFactory {
             TransformedConst,
             Dynamic,
             TransformedDynamic,
+            FreezingDynamic,
         )
     }
 
@@ -40,6 +41,14 @@ sealed interface NonChangingCellFactory {
             value: ValueT,
         ): Cell<ValueT> = Dynamic.create(value).map {
             it
+        }
+    }
+
+    data object FreezingDynamic : NonChangingCellFactory {
+        context(momentContext: MomentContext) override fun <ValueT> create(
+            value: ValueT,
+        ): Cell<ValueT> {
+            TODO()
         }
     }
 
