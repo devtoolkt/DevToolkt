@@ -12,47 +12,45 @@ sealed interface NonChangingCellFactory {
             TransformedConst,
             Dynamic,
             TransformedDynamic,
-            FreezingDynamic,
+//            FreezingDynamic,
         )
     }
 
     data object Const : NonChangingCellFactory {
-        context(momentContext: MomentContext) override fun <ValueT> create(
+        override fun <ValueT> createExternally(
             value: ValueT,
         ): Cell<ValueT> = Cell.of(value)
     }
 
     data object TransformedConst : NonChangingCellFactory {
-        context(momentContext: MomentContext) override fun <ValueT> create(
+        override fun <ValueT> createExternally(
             value: ValueT,
         ): Cell<ValueT> = Cell.of(value).map { it }
     }
 
     data object Dynamic : NonChangingCellFactory {
-        context(momentContext: MomentContext) override fun <ValueT> create(
+        override fun <ValueT> createExternally(
             value: ValueT,
-        ): Cell<ValueT> = NonEmittingEventStreamFactory.Dynamic.create<ValueT>().hold(
-            initialValue = value,
-        )
+        ): Cell<ValueT> = MomentContext.execute {
+            NonEmittingEventStreamFactory.Dynamic.create<ValueT>().hold(
+                initialValue = value,
+            )
+        }
     }
 
     data object TransformedDynamic : NonChangingCellFactory {
-        context(momentContext: MomentContext) override fun <ValueT> create(
+        override fun <ValueT> createExternally(
             value: ValueT,
-        ): Cell<ValueT> = Dynamic.create(value).map {
-            it
-        }
+        ): Cell<ValueT> = Dynamic.createExternally(value).map { it }
     }
 
     data object FreezingDynamic : NonChangingCellFactory {
-        context(momentContext: MomentContext) override fun <ValueT> create(
-            value: ValueT,
-        ): Cell<ValueT> {
-            TODO()
+        override fun <ValueT> createExternally(value: ValueT): Cell<ValueT> {
+            TODO("Not yet implemented")
         }
     }
 
-    context(momentContext: MomentContext) fun <ValueT> create(
+    fun <ValueT> createExternally(
         value: ValueT,
     ): Cell<ValueT>
 }
