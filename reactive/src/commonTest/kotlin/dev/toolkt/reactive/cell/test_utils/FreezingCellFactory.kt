@@ -9,6 +9,7 @@ import dev.toolkt.reactive.event_stream.hold
 import dev.toolkt.reactive.event_stream.mapNotNull
 import dev.toolkt.reactive.event_stream.single
 
+// TODO: Nuke in favor of other factories?
 sealed interface FreezingCellFactory {
     companion object {
         val values = listOf(

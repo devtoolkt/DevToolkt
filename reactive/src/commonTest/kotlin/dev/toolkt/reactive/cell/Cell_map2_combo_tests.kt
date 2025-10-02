@@ -2,11 +2,12 @@ package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.CellVerificationStrategy
+import dev.toolkt.reactive.cell.test_utils.DynamicCellFactory
 import dev.toolkt.reactive.cell.test_utils.FreezingCellFactory
 import dev.toolkt.reactive.cell.test_utils.StaticCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
-import dev.toolkt.reactive.event_stream.filter
 import dev.toolkt.reactive.event_stream.map
+import dev.toolkt.reactive.event_stream.mapNotNull
 import kotlin.test.Ignore
 import kotlin.test.Test
 
@@ -67,16 +68,15 @@ class Cell_map2_combo_tests {
     }
 
     private fun test_sameSource(
+        sourceCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
-        val sourceCell = MomentContext.execute {
-            Cell.define(
-                initialValue = 10,
-                newValues = doUpdate.map { 20 },
-            )
-        }
+        val sourceCell = sourceCellFactory.createExternally(
+            initialValue = 10,
+            doUpdate = doUpdate.map { 20 },
+        )
 
         val map2Cell = Cell.map2(
             sourceCell,
@@ -93,6 +93,17 @@ class Cell_map2_combo_tests {
             doTrigger = doUpdate,
             expectedUpdatedValue = "20:20",
         )
+    }
+
+    private fun test_sameSource(
+        verificationStrategy: CellVerificationStrategy,
+    ) {
+        DynamicCellFactory.values.forEach { sourceCellFactory ->
+            test_sameSource(
+                sourceCellFactory = sourceCellFactory,
+                verificationStrategy = verificationStrategy,
+            )
+        }
     }
 
     @Test
@@ -121,23 +132,21 @@ class Cell_map2_combo_tests {
     }
 
     private fun test_allFilteredOut(
+        sourceCell1Factory: DynamicCellFactory,
+        sourceCell2Factory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
-        val sourceCell1 = MomentContext.execute {
-            Cell.define(
-                initialValue = 10,
-                newValues = doTrigger.filter { false },
-            )
-        }
+        val sourceCell1 = sourceCell1Factory.createExternally(
+            initialValue = 10,
+            doUpdate = doTrigger.mapNotNull { null },
+        )
 
-        val sourceCell2 = MomentContext.execute {
-            Cell.define(
-                initialValue = 'A',
-                newValues = doTrigger.filter { false },
-            )
-        }
+        val sourceCell2 = sourceCell2Factory.createExternally(
+            initialValue = 'A',
+            doUpdate = doTrigger.mapNotNull { null },
+        )
 
         val map2Cell = Cell.map2(
             sourceCell1,
@@ -154,6 +163,20 @@ class Cell_map2_combo_tests {
             doTrigger = doTrigger,
             expectedNonUpdatedValue = "10:A",
         )
+    }
+
+    private fun test_allFilteredOut(
+        verificationStrategy: CellVerificationStrategy.Total,
+    ) {
+        DynamicCellFactory.values.forEach { sourceCell1Factory ->
+            DynamicCellFactory.values.forEach { sourceCell2Factory ->
+                test_allFilteredOut(
+                    sourceCell1Factory = sourceCell1Factory,
+                    sourceCell2Factory = sourceCell2Factory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
+        }
     }
 
     @Test
@@ -173,17 +196,16 @@ class Cell_map2_combo_tests {
     }
 
     private fun test_source1Update(
+        source1CellFactory: DynamicCellFactory,
         source2CellFactory: StaticCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
-        val doUpdate = EmitterEventStream<Unit>()
+        val doTrigger = EmitterEventStream<Unit>()
 
-        val sourceCell1 = MomentContext.execute {
-            Cell.define(
-                initialValue = 10,
-                newValues = doUpdate.map { 20 },
-            )
-        }
+        val sourceCell1 = source1CellFactory.createExternally(
+            initialValue = 10,
+            doUpdate = doTrigger.map { 20 },
+        )
 
         val sourceCell2 = source2CellFactory.createExternally('A')
 
@@ -199,7 +221,7 @@ class Cell_map2_combo_tests {
         )
 
         verifier.verifyUpdates(
-            doTrigger = doUpdate,
+            doTrigger = doTrigger,
             expectedUpdatedValue = "20:A",
         )
     }
@@ -207,11 +229,14 @@ class Cell_map2_combo_tests {
     private fun test_source1Update(
         verificationStrategy: CellVerificationStrategy,
     ) {
-        StaticCellFactory.values.forEach { source2CellFactory ->
-            test_source1Update(
-                source2CellFactory = source2CellFactory,
-                verificationStrategy = verificationStrategy,
-            )
+        DynamicCellFactory.values.forEach { source1CellFactory ->
+            StaticCellFactory.values.forEach { source2CellFactory ->
+                test_source1Update(
+                    source1CellFactory = source1CellFactory,
+                    source2CellFactory = source2CellFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
         }
     }
 
@@ -240,18 +265,17 @@ class Cell_map2_combo_tests {
 
     private fun test_source2Update(
         source1CellFactory: StaticCellFactory,
+        source2CellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
-        val doUpdate = EmitterEventStream<Unit>()
+        val doTrigger = EmitterEventStream<Unit>()
 
         val sourceCell1 = source1CellFactory.createExternally(10)
 
-        val sourceCell2 = MomentContext.execute {
-            Cell.define(
-                initialValue = 'A',
-                newValues = doUpdate.map { 'B' },
-            )
-        }
+        val sourceCell2 = source2CellFactory.createExternally(
+            initialValue = 'A',
+            doUpdate = doTrigger.map { 'B' },
+        )
 
         val map2Cell = Cell.map2(
             sourceCell1,
@@ -265,7 +289,7 @@ class Cell_map2_combo_tests {
         )
 
         verifier.verifyUpdates(
-            doTrigger = doUpdate,
+            doTrigger = doTrigger,
             expectedUpdatedValue = "10:B",
         )
     }
@@ -274,10 +298,13 @@ class Cell_map2_combo_tests {
         verificationStrategy: CellVerificationStrategy,
     ) {
         StaticCellFactory.values.forEach { source1CellFactory ->
-            test_source2Update(
-                source1CellFactory = source1CellFactory,
-                verificationStrategy = verificationStrategy,
-            )
+            DynamicCellFactory.values.forEach { source2CellFactory ->
+                test_source2Update(
+                    source1CellFactory = source1CellFactory,
+                    source2CellFactory = source2CellFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
         }
     }
 
@@ -305,23 +332,21 @@ class Cell_map2_combo_tests {
     }
 
     private fun test_simultaneousUpdates(
+        source1CellFactory: DynamicCellFactory,
+        source2CellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
-        val sourceCell1 = MomentContext.execute {
-            Cell.define(
-                initialValue = 10,
-                newValues = doUpdate.map { 11 },
-            )
-        }
+        val sourceCell1 = source1CellFactory.createExternally(
+            initialValue = 10,
+            doUpdate = doUpdate.map { 11 },
+        )
 
-        val sourceCell2 = MomentContext.execute {
-            Cell.define(
-                initialValue = 'A',
-                newValues = doUpdate.map { 'B' },
-            )
-        }
+        val sourceCell2 = source2CellFactory.createExternally(
+            initialValue = 'A',
+            doUpdate = doUpdate.map { 'B' },
+        )
 
         val map2Cell = Cell.map2(
             sourceCell1,
@@ -338,6 +363,20 @@ class Cell_map2_combo_tests {
             doTrigger = doUpdate,
             expectedUpdatedValue = "11:B",
         )
+    }
+
+    private fun test_simultaneousUpdates(
+        verificationStrategy: CellVerificationStrategy,
+    ) {
+        DynamicCellFactory.values.forEach { source1CellFactory ->
+            DynamicCellFactory.values.forEach { source2CellFactory ->
+                test_simultaneousUpdates(
+                    source1CellFactory = source1CellFactory,
+                    source2CellFactory = source2CellFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
+        }
     }
 
     @Test
@@ -365,10 +404,10 @@ class Cell_map2_combo_tests {
 
     private fun test_source1Freeze(
         source1CellFactory: FreezingCellFactory,
+        source2CellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
         val doFreeze = EmitterEventStream<Unit>()
-
         val doTrigger = EmitterEventStream<Unit>()
 
         val sourceCell1 = MomentContext.execute {
@@ -378,12 +417,10 @@ class Cell_map2_combo_tests {
             )
         }
 
-        val sourceCell2 = MomentContext.execute {
-            Cell.define(
-                initialValue = 'A',
-                newValues = doTrigger.map { 'B' },
-            )
-        }
+        val sourceCell2 = source2CellFactory.createExternally(
+            initialValue = 'A',
+            doUpdate = doTrigger.map { 'B' },
+        )
 
         val map2Cell = Cell.map2(
             sourceCell1,
@@ -406,10 +443,13 @@ class Cell_map2_combo_tests {
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
         FreezingCellFactory.values.forEach { source1CellFactory ->
-            test_source1Freeze(
-                source1CellFactory = source1CellFactory,
-                verificationStrategy = verificationStrategy,
-            )
+            DynamicCellFactory.values.forEach { source2CellFactory ->
+                test_source1Freeze(
+                    source1CellFactory = source1CellFactory,
+                    source2CellFactory = source2CellFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
         }
     }
 
@@ -430,19 +470,17 @@ class Cell_map2_combo_tests {
     }
 
     private fun test_source2Freeze(
+        source1CellFactory: DynamicCellFactory,
         source2CellFactory: FreezingCellFactory,
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
         val doFreeze = EmitterEventStream<Unit>()
-
         val doTrigger = EmitterEventStream<Unit>()
 
-        val sourceCell1 = MomentContext.execute {
-            Cell.define(
-                initialValue = 10,
-                newValues = doTrigger.map { 11 },
-            )
-        }
+        val sourceCell1 = source1CellFactory.createExternally(
+            initialValue = 10,
+            doUpdate = doTrigger.map { 11 },
+        )
 
         val sourceCell2 = MomentContext.execute {
             source2CellFactory.create(
@@ -471,11 +509,14 @@ class Cell_map2_combo_tests {
     private fun test_source2Freeze(
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
-        FreezingCellFactory.values.forEach { source2CellFactory ->
-            test_source2Freeze(
-                source2CellFactory = source2CellFactory,
-                verificationStrategy = verificationStrategy,
-            )
+        DynamicCellFactory.values.forEach { source1CellFactory ->
+            FreezingCellFactory.values.forEach { source2CellFactory ->
+                test_source2Freeze(
+                    source1CellFactory = source1CellFactory,
+                    source2CellFactory = source2CellFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
         }
     }
 
@@ -561,23 +602,21 @@ class Cell_map2_combo_tests {
     }
 
     private fun test_deactivation(
+        source1CellFactory: DynamicCellFactory,
+        source2CellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy.Active,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
-        val sourceCell1 = MomentContext.execute {
-            Cell.define(
-                initialValue = 10,
-                newValues = doTrigger.map { 11 },
-            )
-        }
+        val sourceCell1 = source1CellFactory.createExternally(
+            initialValue = 10,
+            doUpdate = doTrigger.map { 11 },
+        )
 
-        val sourceCell2 = MomentContext.execute {
-            Cell.define(
-                initialValue = 'A',
-                newValues = doTrigger.map { 'B' },
-            )
-        }
+        val sourceCell2 = source2CellFactory.createExternally(
+            initialValue = 'A',
+            doUpdate = doTrigger.map { 'B' },
+        )
 
         val map2Cell = Cell.map2(
             sourceCell1,
@@ -595,9 +634,15 @@ class Cell_map2_combo_tests {
     @Test
     fun test_deactivation() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_deactivation(
-                verificationStrategy = verificationStrategy,
-            )
+            DynamicCellFactory.values.forEach { source1CellFactory ->
+                DynamicCellFactory.values.forEach { source2CellFactory ->
+                    test_deactivation(
+                        source1CellFactory = source1CellFactory,
+                        source2CellFactory = source2CellFactory,
+                        verificationStrategy = verificationStrategy,
+                    )
+                }
+            }
         }
     }
 }
