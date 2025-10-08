@@ -165,7 +165,7 @@ class Cell_switch_misc_tests {
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: DynamicCellFactory,
         newInnerCellFactory: InertCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
@@ -198,7 +198,7 @@ class Cell_switch_misc_tests {
     }
 
     private fun test_outerUpdateDynamic_initialInnerUpdate(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { initialInnerCellFactory ->

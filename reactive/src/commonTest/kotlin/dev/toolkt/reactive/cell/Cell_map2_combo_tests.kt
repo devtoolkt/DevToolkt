@@ -16,7 +16,7 @@ class Cell_map2_combo_tests {
     private fun test_initial(
         source1CellFactory: InertCellFactory,
         source2CellFactory: InertCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val sourceCell1 = source1CellFactory.createExternally(10)
 
@@ -39,7 +39,7 @@ class Cell_map2_combo_tests {
     }
 
     private fun test_initial(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         InertCellFactory.values.forEach { source1CellFactory ->
             InertCellFactory.values.forEach { source2CellFactory ->
@@ -136,7 +136,7 @@ class Cell_map2_combo_tests {
     private fun test_allFilteredOut(
         sourceCell1Factory: DynamicCellFactory,
         sourceCell2Factory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
@@ -168,7 +168,7 @@ class Cell_map2_combo_tests {
     }
 
     private fun test_allFilteredOut(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { sourceCell1Factory ->
             DynamicCellFactory.values.forEach { sourceCell2Factory ->
@@ -407,7 +407,7 @@ class Cell_map2_combo_tests {
     private fun test_source1Freeze(
         source1CellFactory: FreezingCellFactory,
         source2CellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doFreeze = EmitterEventStream<Unit>()
         val doTrigger = EmitterEventStream<Unit>()
@@ -442,7 +442,7 @@ class Cell_map2_combo_tests {
     }
 
     private fun test_source1Freeze(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         FreezingCellFactory.values.forEach { source1CellFactory ->
             DynamicCellFactory.values.forEach { source2CellFactory ->
@@ -474,7 +474,7 @@ class Cell_map2_combo_tests {
     private fun test_source2Freeze(
         source1CellFactory: DynamicCellFactory,
         source2CellFactory: FreezingCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doFreeze = EmitterEventStream<Unit>()
         val doTrigger = EmitterEventStream<Unit>()
@@ -509,7 +509,7 @@ class Cell_map2_combo_tests {
     }
 
     private fun test_source2Freeze(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { source1CellFactory ->
             FreezingCellFactory.values.forEach { source2CellFactory ->
@@ -541,7 +541,7 @@ class Cell_map2_combo_tests {
     private fun test_simultaneousFreeze(
         source1CellFactory: FreezingCellFactory,
         source2CellFactory: FreezingCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doFreeze = EmitterEventStream<Unit>()
 
@@ -574,7 +574,7 @@ class Cell_map2_combo_tests {
     }
 
     private fun test_simultaneousFreeze(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         FreezingCellFactory.values.forEach { source1CellFactory ->
             FreezingCellFactory.values.forEach { source2CellFactory ->

@@ -10,7 +10,7 @@ import kotlin.test.Test
 class EventStream_hold_combo_tests {
     private fun test_initial(
         sourceEventStreamFactory: QuietEventStreamFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val sourceEventStream = sourceEventStreamFactory.createExternally<Int>()
 
@@ -28,7 +28,7 @@ class EventStream_hold_combo_tests {
     }
 
     private fun test_initial(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         QuietEventStreamFactory.values.forEach { sourceEventStreamFactory ->
             test_initial(

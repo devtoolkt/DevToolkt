@@ -7,29 +7,8 @@ import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.emit
 
 sealed class CellVerificationStrategy {
-    abstract class Total : CellVerificationStrategy() {
-        fun <ValueT> verifyCompleteFreeze(
-            subjectCell: Cell<ValueT>,
-            doFreeze: EmitterEventStream<Unit>,
-            expectedFrozenValue: ValueT,
-        ) {
-            val verifier = begin(
-                subjectCell = subjectCell,
-            )
 
-            doFreeze.emit()
-
-            verifier.verifyCurrentValue(
-                expectedCurrentValue = expectedFrozenValue,
-            )
-        }
-
-        abstract override fun <ValueT> begin(
-            subjectCell: Cell<ValueT>,
-        ): CellVerifier.Total<ValueT>
-    }
-
-    data object Passive : Total() {
+    data object Passive : CellVerificationStrategy() {
         override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
         ): CellVerifier.Passive<ValueT> = CellVerifier.observePassively(
@@ -37,7 +16,7 @@ sealed class CellVerificationStrategy {
         )
     }
 
-    abstract class Active : Total() {
+    abstract class Active : CellVerificationStrategy() {
         companion object {
             val values by lazy {
                 listOf(
@@ -94,7 +73,7 @@ sealed class CellVerificationStrategy {
         )
     }
 
-    data object Quick : Total() {
+    data object Quick : CellVerificationStrategy() {
         override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
         ): CellVerifier.Total<ValueT> = CellVerifier.observeQuick(
@@ -102,7 +81,23 @@ sealed class CellVerificationStrategy {
         )
     }
 
+    fun <ValueT> verifyCompleteFreeze(
+        subjectCell: Cell<ValueT>,
+        doFreeze: EmitterEventStream<Unit>,
+        expectedFrozenValue: ValueT,
+    ) {
+        val verifier = begin(
+            subjectCell = subjectCell,
+        )
+
+        doFreeze.emit()
+
+        verifier.verifyCurrentValue(
+            expectedCurrentValue = expectedFrozenValue,
+        )
+    }
+
     abstract fun <ValueT> begin(
         subjectCell: Cell<ValueT>,
-    ): CellVerifier<ValueT>
+    ): CellVerifier.Total<ValueT>
 }
