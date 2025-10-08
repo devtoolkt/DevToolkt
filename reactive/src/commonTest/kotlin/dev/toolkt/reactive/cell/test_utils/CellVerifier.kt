@@ -12,20 +12,13 @@ import dev.toolkt.reactive.event_stream.mapAt
 import dev.toolkt.reactive.event_stream.subscribe
 import kotlin.test.assertEquals
 
-sealed class CellVerifier<ValueT> {
-    abstract class Total<ValueT>() : CellVerifier<ValueT>() {
-        abstract fun verifyDoesNotUpdate(
-            doTriggerPotentialUpdate: EmitterEventStream<Unit>,
-            expectedNonUpdatedValue: ValueT,
-        )
-    }
-
-    abstract class Passive<ValueT> : Total<ValueT>()
+abstract class CellVerifier<ValueT> {
+    abstract class Passive<ValueT> : CellVerifier<ValueT>()
 
     abstract class Active<ValueT>(
         private val subjectCell: Cell<ValueT>,
         private val receivedUpdatedValues: List<ValueT>,
-    ) : Total<ValueT>() {
+    ) : CellVerifier<ValueT>() {
         private val receivedUpdateCount: Int
             get() = receivedUpdatedValues.size
 
@@ -118,8 +111,6 @@ sealed class CellVerifier<ValueT> {
 
         abstract fun deactivate()
     }
-
-    abstract class Partial<ValueT> : CellVerifier<ValueT>()
 
     companion object {
         fun <ValueT> observePassively(
@@ -257,7 +248,7 @@ sealed class CellVerifier<ValueT> {
          */
         fun <ValueT> observeQuick(
             subjectCell: Cell<ValueT>,
-        ): Total<ValueT> = object : CellVerifier.Total<ValueT>() {
+        ): CellVerifier<ValueT> = object : CellVerifier<ValueT>() {
             private fun verifyQuick(
                 doTriggerUpdate: EmitterEventStream<Unit>,
                 verifyHelper: (CellVerifier.Active<ValueWrapper<ValueT>>) -> Unit,
@@ -332,27 +323,15 @@ sealed class CellVerifier<ValueT> {
             }
         }
     }
-//    /*
-//          abstract fun verifyDoesNotUpdate(
-//            doTriggerPotentialUpdate: EmitterEventStream<Unit>,
-//            expectedNonUpdatedValue: ValueT,
-//        )
-//     */
-//
-//    fun verifyDoesNotUpdate(
-//        doTriggerPotentialUpdate: EmitterEventStream<Unit>,
-//        expectedNonUpdatedValue: ValueT,
-//    ) {
-//        doTriggerPotentialUpdate.emit()
-//
-//        verifyCurrentValue(
-//            expectedCurrentValue = expectedNonUpdatedValue,
-//        )
-//    }
 
     abstract fun verifyUpdates(
         doTriggerUpdate: EmitterEventStream<Unit>,
         expectedUpdatedValue: ValueT,
+    )
+
+    abstract fun verifyDoesNotUpdate(
+        doTriggerPotentialUpdate: EmitterEventStream<Unit>,
+        expectedNonUpdatedValue: ValueT,
     )
 
     abstract fun verifyCurrentValue(
