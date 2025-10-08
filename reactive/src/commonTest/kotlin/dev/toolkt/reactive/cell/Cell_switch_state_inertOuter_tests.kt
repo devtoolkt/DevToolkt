@@ -20,7 +20,7 @@ class Cell_switch_state_inertOuter_tests {
     private fun test_inertInner(
         outerCellFactory: InertCellFactory,
         innerCellFactory: InertCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val (outerCellWeakRef, switchCell) = run {
             val outerCell = outerCellFactory.createExternally(
@@ -47,7 +47,7 @@ class Cell_switch_state_inertOuter_tests {
     }
 
     private fun test_inertInner(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         InertCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { innerCellFactory ->
@@ -80,7 +80,7 @@ class Cell_switch_state_inertOuter_tests {
     private fun test_innerWarmUpdate_innerFreeze(
         outerCellFactory: InertCellFactory,
         innerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerInnerUpdate = EmitterEventStream<Unit>()
         val doFreezeInner = EmitterEventStream<Unit>()
@@ -121,7 +121,7 @@ class Cell_switch_state_inertOuter_tests {
     }
 
     private fun test_innerWarmUpdate_innerFreeze(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { innerCellFactory ->
             InertCellFactory.values.forEach { outerCellFactory ->
@@ -153,7 +153,7 @@ class Cell_switch_state_inertOuter_tests {
     private fun test_innerFrozenUpdate(
         outerCellFactory: InertCellFactory,
         innerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerInnerFrozenUpdate = EmitterEventStream<Unit>()
 
@@ -187,7 +187,7 @@ class Cell_switch_state_inertOuter_tests {
     }
 
     private fun test_innerFrozenUpdate(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { innerCellFactory ->
             InertCellFactory.values.forEach { outerCellFactory ->

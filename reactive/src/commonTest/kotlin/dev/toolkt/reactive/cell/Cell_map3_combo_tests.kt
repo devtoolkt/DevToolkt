@@ -16,7 +16,7 @@ class Cell_map3_combo_tests {
         source1CellFactory: InertCellFactory,
         source2CellFactory: InertCellFactory,
         source3CellFactory: InertCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val sourceCell1 = source1CellFactory.createExternally(10)
 
@@ -42,7 +42,7 @@ class Cell_map3_combo_tests {
     }
 
     private fun test_initial(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         InertCellFactory.values.forEach { source1CellFactory ->
             InertCellFactory.values.forEach { source2CellFactory ->
@@ -144,7 +144,7 @@ class Cell_map3_combo_tests {
         sourceCell1Factory: DynamicCellFactory,
         sourceCell2Factory: DynamicCellFactory,
         sourceCell3Factory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
@@ -182,7 +182,7 @@ class Cell_map3_combo_tests {
     }
 
     private fun test_allFilteredOut(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { sourceCell1Factory ->
             DynamicCellFactory.values.forEach { sourceCell2Factory ->

@@ -14,7 +14,7 @@ import kotlin.test.Test
 class Cell_map_combo_tests {
     private fun test_initial(
         sourceCellFactory: InertCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val sourceCell = sourceCellFactory.createExternally(10)
 
@@ -32,7 +32,7 @@ class Cell_map_combo_tests {
     }
 
     private fun test_initial(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         InertCellFactory.values.forEach { sourceCellFactory ->
             test_initial(
@@ -118,7 +118,7 @@ class Cell_map_combo_tests {
 
     private fun test_sourceFreeze(
         sourceCellFactory: FreezingCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doFreeze = EmitterEventStream<Unit>()
 
@@ -139,7 +139,7 @@ class Cell_map_combo_tests {
     }
 
     private fun test_sourceFreeze(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         FreezingCellFactory.values.forEach { sourceCellFactory ->
             test_sourceFreeze(

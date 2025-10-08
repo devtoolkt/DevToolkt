@@ -23,7 +23,7 @@ class Cell_switch_state_dynamicOuter_tests {
     private fun test_outerFrozenUpdateDynamicNewInnerFrozenUpdate(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterInnerUpdate = EmitterEventStream<Unit>()
 
@@ -60,7 +60,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerFrozenUpdateDynamicNewInnerFrozenUpdate(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
@@ -102,7 +102,7 @@ class Cell_switch_state_dynamicOuter_tests {
     private fun test_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterInnerUpdate = EmitterEventStream<Unit>()
         val doFreezeInner = EmitterEventStream<Unit>()
@@ -146,7 +146,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
@@ -188,7 +188,7 @@ class Cell_switch_state_dynamicOuter_tests {
     private fun test_outerWarmUpdateDynamicNewInnerWarmUpdate(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterInnerUpdate = EmitterEventStream<Unit>()
 
@@ -217,7 +217,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerWarmUpdateDynamicNewInnerWarmUpdate(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
@@ -259,7 +259,7 @@ class Cell_switch_state_dynamicOuter_tests {
     private fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterInnerUpdate = EmitterEventStream<Unit>()
         val doFreezeOuterInner = EmitterEventStream<Unit>()
@@ -301,7 +301,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
@@ -343,7 +343,7 @@ class Cell_switch_state_dynamicOuter_tests {
     private fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterInnerUpdate = EmitterEventStream<Unit>()
         val doFreezeOuter = EmitterEventStream<Unit>()
@@ -391,7 +391,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
@@ -433,7 +433,7 @@ class Cell_switch_state_dynamicOuter_tests {
     private fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterInnerUpdate = EmitterEventStream<Unit>()
         val doFreezeInner = EmitterEventStream<Unit>()
@@ -481,7 +481,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
@@ -523,7 +523,7 @@ class Cell_switch_state_dynamicOuter_tests {
     private fun test_outerFrozenUpdateInert(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: InertCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterFrozenUpdate = EmitterEventStream<Unit>()
 
@@ -551,7 +551,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerFrozenUpdateInert(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { newInnerCellFactory ->
@@ -593,7 +593,7 @@ class Cell_switch_state_dynamicOuter_tests {
     private fun test_outerFrozenUpdateDynamic(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterFrozenUpdate = EmitterEventStream<Unit>()
 
@@ -622,7 +622,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerFrozenUpdateDynamic(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
@@ -664,7 +664,7 @@ class Cell_switch_state_dynamicOuter_tests {
     private fun test_outerFrozenUpdateDynamic_newInnerFrozenUpdate(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterFrozenUpdate = EmitterEventStream<Unit>()
         val doTriggerInnerFrozenUpdate = EmitterEventStream<Unit>()
@@ -704,7 +704,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerFrozenUpdateDynamic_newInnerFrozenUpdate(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
@@ -746,7 +746,7 @@ class Cell_switch_state_dynamicOuter_tests {
     private fun test_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterFrozenUpdate = EmitterEventStream<Unit>()
         val doTriggerInnerUpdate = EmitterEventStream<Unit>()
@@ -788,7 +788,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
@@ -975,7 +975,7 @@ class Cell_switch_state_dynamicOuter_tests {
     private fun test_outerWarmUpdateInert_outerFreeze(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: InertCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterUpdate = EmitterEventStream<Unit>()
         val doFreezeOuter = EmitterEventStream<Unit>()
@@ -1007,7 +1007,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerWarmUpdateInert_outerFreeze(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { innerCellFactory ->
@@ -1049,7 +1049,7 @@ class Cell_switch_state_dynamicOuter_tests {
     private fun test_outerWarmUpdateDynamic_outerFreeze(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterUpdate = EmitterEventStream<Unit>()
         val doFreezeOuter = EmitterEventStream<Unit>()
@@ -1082,7 +1082,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerWarmUpdateDynamic_outerFreeze(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
@@ -1125,7 +1125,7 @@ class Cell_switch_state_dynamicOuter_tests {
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: InertCellFactory,
         newInnerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterUpdate = EmitterEventStream<Unit>()
         val doFreezeOuter = EmitterEventStream<Unit>()
@@ -1170,7 +1170,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { initialInnerCellFactory ->
@@ -1216,7 +1216,7 @@ class Cell_switch_state_dynamicOuter_tests {
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: InertCellFactory,
         newInnerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterUpdate = EmitterEventStream<Unit>()
         val doFreezeOuter = EmitterEventStream<Unit>()
@@ -1268,7 +1268,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { initialInnerCellFactory ->
@@ -1393,7 +1393,7 @@ class Cell_switch_state_dynamicOuter_tests {
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: InertCellFactory,
         newInnerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterUpdate = EmitterEventStream<Unit>()
         val doTriggerInnerUpdate = EmitterEventStream<Unit>()
@@ -1431,7 +1431,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { initialInnerCellFactory ->
@@ -1477,7 +1477,7 @@ class Cell_switch_state_dynamicOuter_tests {
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: InertCellFactory,
         newInnerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterUpdate = EmitterEventStream<Unit>()
         val doTriggerInnerUpdate = EmitterEventStream<Unit>()
@@ -1521,7 +1521,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { initialInnerCellFactory ->
@@ -1567,7 +1567,7 @@ class Cell_switch_state_dynamicOuter_tests {
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: InertCellFactory,
         newInnerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterUpdate = EmitterEventStream<Unit>()
         val doTriggerInnerUpdate = EmitterEventStream<Unit>()
@@ -1611,7 +1611,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { initialInnerCellFactory ->
@@ -1657,7 +1657,7 @@ class Cell_switch_state_dynamicOuter_tests {
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: InertCellFactory,
         newInnerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterUpdate = EmitterEventStream<Unit>()
         val doFreezeOuterTriggerInnerFrozenUpdate = EmitterEventStream<Unit>()
@@ -1692,7 +1692,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { initialInnerCellFactory ->
@@ -1738,7 +1738,7 @@ class Cell_switch_state_dynamicOuter_tests {
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: InertCellFactory,
         newInnerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterUpdate = EmitterEventStream<Unit>()
         val doFreezeOuterTriggerInnerUpdate = EmitterEventStream<Unit>()
@@ -1780,7 +1780,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { initialInnerCellFactory ->
@@ -1826,7 +1826,7 @@ class Cell_switch_state_dynamicOuter_tests {
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: InertCellFactory,
         newInnerCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doTriggerOuterUpdate = EmitterEventStream<Unit>()
         val doTriggerInnerFrozenUpdate = EmitterEventStream<Unit>()
@@ -1867,7 +1867,7 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     private fun test_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { initialInnerCellFactory ->

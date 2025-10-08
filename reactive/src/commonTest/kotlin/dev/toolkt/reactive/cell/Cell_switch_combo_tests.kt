@@ -15,7 +15,7 @@ class Cell_switch_combo_tests {
     private fun test_initial(
         outerCellFactory: InertCellFactory,
         innerCellFactory: InertCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val outerCell = outerCellFactory.createExternally(
             innerCellFactory.createExternally(10),
@@ -33,7 +33,7 @@ class Cell_switch_combo_tests {
     }
 
     private fun test_initial(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         InertCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { innerCellFactory ->
@@ -258,7 +258,7 @@ class Cell_switch_combo_tests {
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: DynamicCellFactory,
         newInnerCellFactory: InertCellFactory,
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
@@ -291,7 +291,7 @@ class Cell_switch_combo_tests {
     }
 
     private fun test_outerUpdate_thenInitialInnerUpdate(
-        verificationStrategy: CellVerificationStrategy.Total,
+        verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { initialInnerCellFactory ->
