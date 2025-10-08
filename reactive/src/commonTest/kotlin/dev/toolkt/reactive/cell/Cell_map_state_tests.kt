@@ -11,8 +11,8 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 @Suppress("ClassName")
-class Cell_map_combo_tests {
-    private fun test_initial(
+class Cell_map_state_tests {
+    private fun test_state_initial(
         sourceCellFactory: InertCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
@@ -31,11 +31,11 @@ class Cell_map_combo_tests {
         )
     }
 
-    private fun test_initial(
+    private fun test_state_initial(
         verificationStrategy: CellVerificationStrategy,
     ) {
         InertCellFactory.values.forEach { sourceCellFactory ->
-            test_initial(
+            test_state_initial(
                 sourceCellFactory = sourceCellFactory,
                 verificationStrategy = verificationStrategy,
             )
@@ -43,23 +43,23 @@ class Cell_map_combo_tests {
     }
 
     @Test
-    fun test_initial_passive() {
-        test_initial(
+    fun test_state_initial_passive() {
+        test_state_initial(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Ignore // FIXME: Subscription should not be null.
     @Test
-    fun test_initial_active() {
+    fun test_state_initial_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_initial(
+            test_state_initial(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
-    private fun test_sourceUpdate(
+    private fun test_state_sourceUpdate(
         sourceCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
@@ -82,11 +82,11 @@ class Cell_map_combo_tests {
         )
     }
 
-    private fun test_sourceUpdate(
+    private fun test_state_sourceUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { sourceCellFactory ->
-            test_sourceUpdate(
+            test_state_sourceUpdate(
                 sourceCellFactory = sourceCellFactory,
                 verificationStrategy = verificationStrategy,
             )
@@ -94,29 +94,29 @@ class Cell_map_combo_tests {
     }
 
     @Test
-    fun test_sourceUpdate_passive() {
-        test_sourceUpdate(
+    fun test_state_sourceUpdate_passive() {
+        test_state_sourceUpdate(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_sourceUpdate_active() {
+    fun test_state_sourceUpdate_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_sourceUpdate(
+            test_state_sourceUpdate(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_sourceUpdate_quick() {
-        test_sourceUpdate(
+    fun test_state_sourceUpdate_quick() {
+        test_state_sourceUpdate(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
 
-    private fun test_sourceFreeze(
+    private fun test_state_sourceFreeze(
         sourceCellFactory: FreezingCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
@@ -138,11 +138,11 @@ class Cell_map_combo_tests {
         )
     }
 
-    private fun test_sourceFreeze(
+    private fun test_state_sourceFreeze(
         verificationStrategy: CellVerificationStrategy,
     ) {
         FreezingCellFactory.values.forEach { sourceCellFactory ->
-            test_sourceFreeze(
+            test_state_sourceFreeze(
                 sourceCellFactory = sourceCellFactory,
                 verificationStrategy = verificationStrategy,
             )
@@ -150,16 +150,16 @@ class Cell_map_combo_tests {
     }
 
     @Test
-    fun test_sourceFreeze_passive() {
-        test_sourceFreeze(
+    fun test_state_sourceFreeze_passive() {
+        test_state_sourceFreeze(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_sourceFreeze_active() {
+    fun test_state_sourceFreeze_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_sourceFreeze(
+            test_state_sourceFreeze(
                 verificationStrategy = verificationStrategy,
             )
         }
