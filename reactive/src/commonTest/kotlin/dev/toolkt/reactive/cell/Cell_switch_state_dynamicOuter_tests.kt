@@ -7,6 +7,7 @@ import dev.toolkt.reactive.cell.test_utils.InertCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.emit
 import dev.toolkt.reactive.event_stream.map
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 @Suppress("ClassName")
@@ -16,6 +17,112 @@ class Cell_switch_state_dynamicOuter_tests {
         val outerCellWeakRef: PlatformWeakReference<Cell<Cell<ValueT>>>,
         val switchCell: Cell<ValueT>,
     )
+
+    private fun test_inertInner(
+        outerCellFactory: DynamicCellFactory,
+        innerCellFactory: InertCellFactory,
+        verificationStrategy: CellVerificationStrategy,
+    ) {
+        val outerCell = outerCellFactory.createDynamicExternally(
+            initialValue = innerCellFactory.createInertExternally(
+                inertValue = 10,
+            ),
+        )
+
+        val switchCell = Cell.switch(outerCell)
+
+        val verifier = verificationStrategy.begin(
+            subjectCell = switchCell,
+        )
+
+        verifier.verifyCurrentValue(
+            expectedCurrentValue = 10,
+        )
+    }
+
+    private fun test_inertInner(
+        verificationStrategy: CellVerificationStrategy,
+    ) {
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            InertCellFactory.values.forEach { innerCellFactory ->
+                test_inertInner(
+                    outerCellFactory = outerCellFactory,
+                    innerCellFactory = innerCellFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
+        }
+    }
+
+    @Test
+    fun test_inertInner_passive() {
+        test_inertInner(
+            verificationStrategy = CellVerificationStrategy.Passive,
+        )
+    }
+
+    @Ignore // FIXME: Subscription should not be null.
+    @Test
+    fun test_inertInner_active() {
+        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
+            test_inertInner(
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
+    private fun test_dynamicInner(
+        outerCellFactory: DynamicCellFactory,
+        innerCellFactory: DynamicCellFactory,
+        verificationStrategy: CellVerificationStrategy,
+    ) {
+        val outerCell = outerCellFactory.createDynamicExternally(
+            initialValue = innerCellFactory.createDynamicExternally(
+                initialValue = 10,
+            ),
+        )
+
+        val switchCell = Cell.switch(outerCell)
+
+        val verifier = verificationStrategy.begin(
+            subjectCell = switchCell,
+        )
+
+        verifier.verifyCurrentValue(
+            expectedCurrentValue = 10,
+        )
+    }
+
+    private fun test_dynamicInner(
+        verificationStrategy: CellVerificationStrategy,
+    ) {
+        DynamicCellFactory.values.forEach { outerCellFactory ->
+            DynamicCellFactory.values.forEach { innerCellFactory ->
+                test_dynamicInner(
+                    outerCellFactory = outerCellFactory,
+                    innerCellFactory = innerCellFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
+        }
+    }
+
+    @Test
+    fun test_dynamicInner_passive() {
+        test_dynamicInner(
+            verificationStrategy = CellVerificationStrategy.Passive,
+        )
+    }
+
+    @Ignore // FIXME: Subscription should not be null.
+    @Test
+    fun test_dynamicInner_active() {
+        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
+            test_dynamicInner(
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
 
     /**
      * Case 5)
@@ -194,12 +301,12 @@ class Cell_switch_state_dynamicOuter_tests {
 
         val initialInnerCell = Cell.of(10)
 
-        val newInnerCell = newInnerCellFactory.createExternally(
+        val newInnerCell = newInnerCellFactory.createDynamicExternally(
             initialValue = 20,
             doUpdate = doTriggerOuterInnerUpdate.map { 21 },
         )
 
-        val outerCell = outerCellFactory.createExternally(
+        val outerCell = outerCellFactory.createDynamicExternally(
             initialValue = initialInnerCell,
             doUpdate = doTriggerOuterInnerUpdate.map { newInnerCell },
         )
@@ -599,7 +706,7 @@ class Cell_switch_state_dynamicOuter_tests {
 
         val initialInnerCell = Cell.of(10)
 
-        val newInnerCell = newInnerCellFactory.createExternally(
+        val newInnerCell = newInnerCellFactory.createDynamicExternally(
             initialValue = 20,
             doUpdate = EmitterEventStream(),
         )
@@ -840,7 +947,7 @@ class Cell_switch_state_dynamicOuter_tests {
             inertValue = 20,
         )
 
-        val outerCell = outerCellFactory.createExternally(
+        val outerCell = outerCellFactory.createDynamicExternally(
             initialValue = initialInnerCell,
             doUpdate = doTriggerOuterUpdate.map { newInnerCell },
         )
@@ -907,12 +1014,12 @@ class Cell_switch_state_dynamicOuter_tests {
 
         val initialInnerCell = initialInnerCellFactory.createInertExternally(10)
 
-        val newInnerCell = newInnerCellFactory.createExternally(
+        val newInnerCell = newInnerCellFactory.createDynamicExternally(
             initialValue = 20,
             doUpdate = EmitterEventStream<Unit>(),
         )
 
-        val outerCell = outerCellFactory.createExternally(
+        val outerCell = outerCellFactory.createDynamicExternally(
             initialValue = initialInnerCell,
             doUpdate = doUpdateOuter.map { newInnerCell },
         )
@@ -1056,7 +1163,7 @@ class Cell_switch_state_dynamicOuter_tests {
 
         val initialInnerCell = Cell.of(10)
 
-        val newInnerCell = newInnerCellFactory.createExternally(
+        val newInnerCell = newInnerCellFactory.createDynamicExternally(
             initialValue = 20,
             doUpdate = EmitterEventStream(),
         )
@@ -1322,12 +1429,12 @@ class Cell_switch_state_dynamicOuter_tests {
 
         val initialInnerCell = initialInnerCellFactory.createInertExternally(10)
 
-        val newInnerCell = newInnerCellFactory.createExternally(
+        val newInnerCell = newInnerCellFactory.createDynamicExternally(
             initialValue = 20,
             doUpdate = doUpdateNewInner.map { 21 },
         )
 
-        val outerCell = outerCellFactory.createExternally(
+        val outerCell = outerCellFactory.createDynamicExternally(
             initialValue = initialInnerCell,
             doUpdate = doUpdateOuter.map { newInnerCell },
         )

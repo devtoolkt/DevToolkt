@@ -44,6 +44,8 @@ class Cell_switch_state_inertOuter_tests {
         verifier.verifyCurrentValue(
             expectedCurrentValue = 10,
         )
+
+        // TODO: Verify collectibility
     }
 
     private fun test_inertInner(
@@ -72,6 +74,59 @@ class Cell_switch_state_inertOuter_tests {
     fun test_inertInner_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
             test_inertInner(
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
+    private fun test_dynamicInner(
+        outerCellFactory: InertCellFactory,
+        innerCellFactory: DynamicCellFactory,
+        verificationStrategy: CellVerificationStrategy,
+    ) {
+        val outerCell = outerCellFactory.createInertExternally(
+            inertValue = innerCellFactory.createDynamicExternally(
+                initialValue = 10,
+            ),
+        )
+
+        val switchCell = Cell.switch(outerCell)
+
+        val verifier = verificationStrategy.begin(
+            subjectCell = switchCell,
+        )
+
+        verifier.verifyCurrentValue(
+            expectedCurrentValue = 10,
+        )
+    }
+
+    private fun test_dynamicInner(
+        verificationStrategy: CellVerificationStrategy,
+    ) {
+        InertCellFactory.values.forEach { outerCellFactory ->
+            DynamicCellFactory.values.forEach { innerCellFactory ->
+                test_dynamicInner(
+                    outerCellFactory = outerCellFactory,
+                    innerCellFactory = innerCellFactory,
+                    verificationStrategy = verificationStrategy,
+                )
+            }
+        }
+    }
+
+    @Test
+    fun test_dynamicInner_passive() {
+        test_dynamicInner(
+            verificationStrategy = CellVerificationStrategy.Passive,
+        )
+    }
+
+    @Ignore // FIXME: Subscription should not be null.
+    @Test
+    fun test_dynamicInner_active() {
+        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
+            test_dynamicInner(
                 verificationStrategy = verificationStrategy,
             )
         }

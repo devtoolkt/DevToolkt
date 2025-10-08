@@ -65,7 +65,7 @@ class Cell_map_combo_tests {
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
-        val sourceCell = sourceCellFactory.createExternally(
+        val sourceCell = sourceCellFactory.createDynamicExternally(
             initialValue = 10,
             doUpdate = doUpdate.map { 20 },
         )
@@ -171,7 +171,7 @@ class Cell_map_combo_tests {
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
-        val sourceCell = sourceCellFactory.createExternally(
+        val sourceCell = sourceCellFactory.createDynamicExternally(
             initialValue = 10,
             doUpdate = doTrigger.map { 11 },
         )

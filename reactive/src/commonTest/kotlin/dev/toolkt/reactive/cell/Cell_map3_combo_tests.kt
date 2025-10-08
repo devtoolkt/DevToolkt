@@ -81,7 +81,7 @@ class Cell_map3_combo_tests {
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
-        val sourceCell = sourceCellFactory.createExternally(
+        val sourceCell = sourceCellFactory.createDynamicExternally(
             initialValue = 10,
             doUpdate = doUpdate.map { 20 },
         )
@@ -222,7 +222,7 @@ class Cell_map3_combo_tests {
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
-        val sourceCell1 = source1CellFactory.createExternally(
+        val sourceCell1 = source1CellFactory.createDynamicExternally(
             initialValue = 10,
             doUpdate = doUpdate.map { 20 },
         )
@@ -299,7 +299,7 @@ class Cell_map3_combo_tests {
 
         val sourceCell1 = source1CellFactory.createInertExternally(10)
 
-        val sourceCell2 = source2CellFactory.createExternally(
+        val sourceCell2 = source2CellFactory.createDynamicExternally(
             initialValue = 'A',
             doUpdate = doUpdate.map { 'B' },
         )
@@ -376,7 +376,7 @@ class Cell_map3_combo_tests {
 
         val sourceCell2 = source2CellFactory.createInertExternally('A')
 
-        val sourceCell3 = source3CellFactory.createExternally(
+        val sourceCell3 = source3CellFactory.createDynamicExternally(
             initialValue = true,
             doUpdate = doUpdate.map { false },
         )
@@ -453,17 +453,17 @@ class Cell_map3_combo_tests {
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
-        val sourceCell1 = source1CellFactory.createExternally(
+        val sourceCell1 = source1CellFactory.createDynamicExternally(
             initialValue = initialSource1Value,
             doUpdate = doUpdate.mapNotNull { newSource1Value },
         )
 
-        val sourceCell2 = source2CellFactory.createExternally(
+        val sourceCell2 = source2CellFactory.createDynamicExternally(
             initialValue = initialSource2Value,
             doUpdate = doUpdate.mapNotNull { newSource2Value },
         )
 
-        val sourceCell3 = source3CellFactory.createExternally(
+        val sourceCell3 = source3CellFactory.createDynamicExternally(
             initialValue = initialSource3Value,
             doUpdate = doUpdate.mapNotNull { newSource3Value },
         )
@@ -552,17 +552,17 @@ class Cell_map3_combo_tests {
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
-        val sourceCell1 = source1CellFactory.createExternally(
+        val sourceCell1 = source1CellFactory.createDynamicExternally(
             initialValue = 10,
             doUpdate = doTrigger.map { 11 },
         )
 
-        val sourceCell2 = source2CellFactory.createExternally(
+        val sourceCell2 = source2CellFactory.createDynamicExternally(
             initialValue = 'A',
             doUpdate = doTrigger.map { 'B' },
         )
 
-        val sourceCell3 = source3CellFactory.createExternally(
+        val sourceCell3 = source3CellFactory.createDynamicExternally(
             initialValue = true,
             doUpdate = doTrigger.map { false },
         )

@@ -3,6 +3,7 @@ package dev.toolkt.reactive.cell.test_utils
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.map
+import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.map
 import dev.toolkt.reactive.event_stream.mapNotNull
@@ -19,7 +20,7 @@ sealed class DynamicCellFactory {
     }
 
     data object Basic : DynamicCellFactory() {
-        override fun <ValueT> createExternally(
+        override fun <ValueT> createDynamicExternally(
             initialValue: ValueT,
             doUpdate: EventStream<ValueT>,
         ): Cell<ValueT> = MomentContext.execute {
@@ -31,10 +32,10 @@ sealed class DynamicCellFactory {
     }
 
     data object TransformedBasic : DynamicCellFactory() {
-        override fun <ValueT> createExternally(
+        override fun <ValueT> createDynamicExternally(
             initialValue: ValueT,
             doUpdate: EventStream<ValueT>,
-        ): Cell<ValueT> = Basic.createExternally(
+        ): Cell<ValueT> = Basic.createDynamicExternally(
             initialValue = initialValue,
             doUpdate = doUpdate,
         ).map { it }
@@ -43,12 +44,19 @@ sealed class DynamicCellFactory {
     fun <ValueT> createFilteredOutExternally(
         initialValue: ValueT,
         doTrigger: EventStream<Unit>,
-    ): Cell<ValueT> = createExternally(
+    ): Cell<ValueT> = createDynamicExternally(
         initialValue = initialValue,
         doUpdate = doTrigger.mapNotNull { null },
     )
 
-    abstract fun <ValueT> createExternally(
+    fun <ValueT> createDynamicExternally(
+        initialValue: ValueT,
+    ): Cell<ValueT> = createDynamicExternally(
+        initialValue = initialValue,
+        doUpdate = EmitterEventStream(),
+    )
+
+    abstract fun <ValueT> createDynamicExternally(
         initialValue: ValueT,
         doUpdate: EventStream<ValueT>,
     ): Cell<ValueT>
@@ -61,7 +69,7 @@ sealed class DynamicCellFactory {
             doUpdateFreezing.single()
         }
 
-        return createExternally(
+        return createDynamicExternally(
             initialValue = initialValue,
             doUpdate = newValues,
         )
@@ -79,7 +87,7 @@ sealed class DynamicCellFactory {
             ).take(2).mapNotNullAt { it }
         }
 
-        return createExternally(
+        return createDynamicExternally(
             initialValue = initialValue,
             doUpdate = doUpdateEffectively,
         )

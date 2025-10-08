@@ -67,7 +67,7 @@ class Cell_divert_combo_tests {
 
         val newInnerEventStream = newInnerEventStreamFactory.createExternally<Int>()
 
-        val outerCell = outerCellFactory.createExternally(
+        val outerCell = outerCellFactory.createDynamicExternally(
             initialValue = initialInnerEventStream,
             doUpdate = doUpdateOuter.map { newInnerEventStream },
         )
@@ -119,7 +119,7 @@ class Cell_divert_combo_tests {
         val innerEventStream = innerEventStreamFactory.createExternally<Int>()
 
         // Replaced Cell.define with outerCellFactory
-        val outerCell = outerCellFactory.createExternally(
+        val outerCell = outerCellFactory.createDynamicExternally(
             initialValue = innerEventStream,
             doUpdate = doUpdateOuter.map { innerEventStream },
         )
@@ -171,7 +171,7 @@ class Cell_divert_combo_tests {
 
         val newInnerEventStream = newInnerEventStreamFactory.createExternally<Int>()
 
-        val outerCell = outerCellFactory.createExternally(
+        val outerCell = outerCellFactory.createDynamicExternally(
             initialValue = initialInnerEventStream,
             doUpdate = doUpdateOuter.map { newInnerEventStream },
         )
@@ -225,7 +225,7 @@ class Cell_divert_combo_tests {
 
         val newInnerEventStream = doTriggerNewInner.map { 21 }
 
-        val outerCell = outerCellFactory.createExternally(
+        val outerCell = outerCellFactory.createDynamicExternally(
             initialValue = initialInnerEventStream,
             doUpdate = doUpdateOuter.map { newInnerEventStream },
         )
@@ -278,7 +278,7 @@ class Cell_divert_combo_tests {
 
         val newInnerEventStream = newInnerEventStreamFactory.createExternally<Int>()
 
-        val outerCell = outerCellFactory.createExternally(
+        val outerCell = outerCellFactory.createDynamicExternally(
             initialValue = initialInnerEventStream,
             doUpdate = doDivert.map { newInnerEventStream },
         )
@@ -329,7 +329,7 @@ class Cell_divert_combo_tests {
 
         val newInnerEventStream = doDivert.map { 21 }
 
-        val outerCell = outerCellFactory.createExternally(
+        val outerCell = outerCellFactory.createDynamicExternally(
             initialValue = initialInnerEventStream,
             doUpdate = doDivert.map { newInnerEventStream },
         )
@@ -378,7 +378,7 @@ class Cell_divert_combo_tests {
 
         val newInnerEventStream = doDivert.map { 21 }
 
-        val outerCell = outerCellFactory.createExternally(
+        val outerCell = outerCellFactory.createDynamicExternally(
             initialValue = initialInnerEventStream,
             doUpdate = doDivert.map { newInnerEventStream },
         )
@@ -428,7 +428,7 @@ class Cell_divert_combo_tests {
         val newInnerEventStreams = newOuterCellsEventStreamFactory.createExternally<EventStream<Int>>()
 
         // Replaced Cell.define with outerCellFactory
-        val outerCell = outerCellFactory.createExternally(
+        val outerCell = outerCellFactory.createDynamicExternally(
             initialValue = initialInnerEventStream,
             doUpdate = newInnerEventStreams,
         )
@@ -478,7 +478,7 @@ class Cell_divert_combo_tests {
 
         val newInnerEventStream = doTrigger.map { 21 }
 
-        val outerCell = outerCellFactory.createExternally(
+        val outerCell = outerCellFactory.createDynamicExternally(
             initialValue = initialInnerEventStream,
             doUpdate = doPrepare.map { newInnerEventStream },
         )
