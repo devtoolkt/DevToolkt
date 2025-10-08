@@ -76,7 +76,7 @@ sealed class CellVerificationStrategy {
     data object Quick : CellVerificationStrategy() {
         override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): CellVerifier.Total<ValueT> = CellVerifier.observeQuick(
+        ): CellVerifier<ValueT> = CellVerifier.observeQuick(
             subjectCell = subjectCell,
         )
     }
@@ -99,5 +99,5 @@ sealed class CellVerificationStrategy {
 
     abstract fun <ValueT> begin(
         subjectCell: Cell<ValueT>,
-    ): CellVerifier.Total<ValueT>
+    ): CellVerifier<ValueT>
 }
