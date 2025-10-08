@@ -100,7 +100,7 @@ class Cell_switch_misc_tests {
             doUpdate = doSwitch.map { 11 },
         )
 
-        val newInnerCell = newInnerCellFactory.createExternally(
+        val newInnerCell = newInnerCellFactory.createInertExternally(
             inertValue = 20,
         )
 
@@ -176,7 +176,7 @@ class Cell_switch_misc_tests {
             doUpdate = doUpdateInitialInner.map { 11 },
         )
 
-        val newInnerCell = newInnerCellFactory.createExternally(20)
+        val newInnerCell = newInnerCellFactory.createInertExternally(20)
 
         val outerCell = outerCellFactory.createExternally(
             initialValue = initialInnerCell,
@@ -244,7 +244,7 @@ class Cell_switch_misc_tests {
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
-        val innerCell = innerCellFactory.createExternally(20)
+        val innerCell = innerCellFactory.createInertExternally(20)
 
         val outerCell = outerCellFactory.createExternally(
             initialValue = innerCell,
