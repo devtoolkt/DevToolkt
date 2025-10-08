@@ -11,8 +11,8 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 @Suppress("ClassName")
-class Cell_map3_combo_tests {
-    private fun test_initial(
+class Cell_map3_state_tests {
+    private fun test_state_initial(
         source1CellFactory: InertCellFactory,
         source2CellFactory: InertCellFactory,
         source3CellFactory: InertCellFactory,
@@ -41,13 +41,13 @@ class Cell_map3_combo_tests {
         )
     }
 
-    private fun test_initial(
+    private fun test_state_initial(
         verificationStrategy: CellVerificationStrategy,
     ) {
         InertCellFactory.values.forEach { source1CellFactory ->
             InertCellFactory.values.forEach { source2CellFactory ->
                 InertCellFactory.values.forEach { source3CellFactory ->
-                    test_initial(
+                    test_state_initial(
                         source1CellFactory = source1CellFactory,
                         source2CellFactory = source2CellFactory,
                         source3CellFactory = source3CellFactory,
@@ -59,23 +59,23 @@ class Cell_map3_combo_tests {
     }
 
     @Test
-    fun test_initial_passive() {
-        test_initial(
+    fun test_state_initial_passive() {
+        test_state_initial(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Ignore // FIXME: ... is already a dependent ...
     @Test
-    fun test_initial_active() {
+    fun test_state_initial_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_initial(
+            test_state_initial(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
-    private fun test_sameSource(
+    private fun test_state_sameSource(
         sourceCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
@@ -104,11 +104,11 @@ class Cell_map3_combo_tests {
         )
     }
 
-    private fun test_sameSource(
+    private fun test_state_sameSource(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { sourceCellFactory ->
-            test_sameSource(
+            test_state_sameSource(
                 sourceCellFactory = sourceCellFactory,
                 verificationStrategy = verificationStrategy,
             )
@@ -116,17 +116,17 @@ class Cell_map3_combo_tests {
     }
 
     @Test
-    fun test_sameSource_passive() {
-        test_sameSource(
+    fun test_state_sameSource_passive() {
+        test_state_sameSource(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Ignore // FIXME: Flaky test
     @Test
-    fun test_sameSource_active() {
+    fun test_state_sameSource_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_sameSource(
+            test_state_sameSource(
                 verificationStrategy = verificationStrategy,
             )
         }
@@ -134,87 +134,13 @@ class Cell_map3_combo_tests {
 
     @Ignore // FIXME: Flaky test
     @Test
-    fun test_sameSource_quick() {
-        test_sameSource(
+    fun test_state_sameSource_quick() {
+        test_state_sameSource(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
 
-    private fun test_allFilteredOut(
-        sourceCell1Factory: DynamicCellFactory,
-        sourceCell2Factory: DynamicCellFactory,
-        sourceCell3Factory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy,
-    ) {
-        val doTrigger = EmitterEventStream<Unit>()
-
-        val sourceCell1 = sourceCell1Factory.createFilteredOutExternally(
-            initialValue = 10,
-            doTrigger = doTrigger,
-        )
-
-        val sourceCell2 = sourceCell2Factory.createFilteredOutExternally(
-            initialValue = 'A',
-            doTrigger = doTrigger,
-        )
-
-        val sourceCell3 = sourceCell3Factory.createFilteredOutExternally(
-            initialValue = true,
-            doTrigger = doTrigger,
-        )
-
-        val map3Cell = Cell.map3(
-            sourceCell1,
-            sourceCell2,
-            sourceCell3,
-        ) { value1, value2, value3 ->
-            "$value1:$value2:$value3"
-        }
-
-        val verifier = verificationStrategy.begin(
-            subjectCell = map3Cell,
-        )
-
-        verifier.verifyDoesNotUpdate(
-            doTriggerPotentialUpdate = doTrigger,
-            expectedNonUpdatedValue = "10:A:true",
-        )
-    }
-
-    private fun test_allFilteredOut(
-        verificationStrategy: CellVerificationStrategy,
-    ) {
-        DynamicCellFactory.values.forEach { sourceCell1Factory ->
-            DynamicCellFactory.values.forEach { sourceCell2Factory ->
-                DynamicCellFactory.values.forEach { sourceCell3Factory ->
-                    test_allFilteredOut(
-                        sourceCell1Factory = sourceCell1Factory,
-                        sourceCell2Factory = sourceCell2Factory,
-                        sourceCell3Factory = sourceCell3Factory,
-                        verificationStrategy = verificationStrategy,
-                    )
-                }
-            }
-        }
-    }
-
-    @Test
-    fun test_allFilteredOut_passive() {
-        test_allFilteredOut(
-            verificationStrategy = CellVerificationStrategy.Passive,
-        )
-    }
-
-    @Test
-    fun test_allFilteredOut_active() {
-        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_allFilteredOut(
-                verificationStrategy = verificationStrategy,
-            )
-        }
-    }
-
-    private fun test_source1Update(
+    private fun test_state_source1Update(
         source1CellFactory: DynamicCellFactory,
         source2CellFactory: InertCellFactory,
         source3CellFactory: InertCellFactory,
@@ -249,13 +175,13 @@ class Cell_map3_combo_tests {
         )
     }
 
-    private fun test_source1Update(
+    private fun test_state_source1Update(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { source1CellFactory ->
             InertCellFactory.values.forEach { source2CellFactory ->
                 InertCellFactory.values.forEach { source3CellFactory ->
-                    test_source1Update(
+                    test_state_source1Update(
                         source1CellFactory = source1CellFactory,
                         source2CellFactory = source2CellFactory,
                         source3CellFactory = source3CellFactory,
@@ -267,29 +193,29 @@ class Cell_map3_combo_tests {
     }
 
     @Test
-    fun test_source1Update_passive() {
-        test_source1Update(
+    fun test_state_source1Update_passive() {
+        test_state_source1Update(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_source1Update_active() {
+    fun test_state_source1Update_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_source1Update(
+            test_state_source1Update(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_source1Update_quick() {
-        test_source1Update(
+    fun test_state_source1Update_quick() {
+        test_state_source1Update(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
 
-    private fun test_source2Update(
+    private fun test_state_source2Update(
         source1CellFactory: InertCellFactory,
         source2CellFactory: DynamicCellFactory,
         source3CellFactory: InertCellFactory,
@@ -324,13 +250,13 @@ class Cell_map3_combo_tests {
         )
     }
 
-    private fun test_source2Update(
+    private fun test_state_source2Update(
         verificationStrategy: CellVerificationStrategy,
     ) {
         InertCellFactory.values.forEach { source1CellFactory ->
             DynamicCellFactory.values.forEach { source2CellFactory ->
                 InertCellFactory.values.forEach { source3CellFactory ->
-                    test_source2Update(
+                    test_state_source2Update(
                         source1CellFactory = source1CellFactory,
                         source2CellFactory = source2CellFactory,
                         source3CellFactory = source3CellFactory,
@@ -342,29 +268,29 @@ class Cell_map3_combo_tests {
     }
 
     @Test
-    fun test_source2Update_passive() {
-        test_source2Update(
+    fun test_state_source2Update_passive() {
+        test_state_source2Update(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_source2Update_active() {
+    fun test_state_source2Update_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_source2Update(
+            test_state_source2Update(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_source2Update_quick() {
-        test_source2Update(
+    fun test_state_source2Update_quick() {
+        test_state_source2Update(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
 
-    private fun test_source3Update(
+    private fun test_state_source3Update(
         source1CellFactory: InertCellFactory,
         source2CellFactory: InertCellFactory,
         source3CellFactory: DynamicCellFactory,
@@ -399,13 +325,13 @@ class Cell_map3_combo_tests {
         )
     }
 
-    private fun test_source3Update(
+    private fun test_state_source3Update(
         verificationStrategy: CellVerificationStrategy,
     ) {
         InertCellFactory.values.forEach { source1CellFactory ->
             InertCellFactory.values.forEach { source2CellFactory ->
                 DynamicCellFactory.values.forEach { source3CellFactory ->
-                    test_source3Update(
+                    test_state_source3Update(
                         source1CellFactory = source1CellFactory,
                         source2CellFactory = source2CellFactory,
                         source3CellFactory = source3CellFactory,
@@ -417,30 +343,30 @@ class Cell_map3_combo_tests {
     }
 
     @Test
-    fun test_source3Update_passive() {
-        test_source3Update(
+    fun test_state_source3Update_passive() {
+        test_state_source3Update(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_source3Update_active() {
+    fun test_state_source3Update_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_source3Update(
+            test_state_source3Update(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_source3Update_quick() {
-        test_source3Update(
+    fun test_state_source3Update_quick() {
+        test_state_source3Update(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
 
     @Suppress("SameParameterValue")
-    private fun test_mixedUpdates(
+    private fun test_state_mixedUpdates(
         source1CellFactory: DynamicCellFactory,
         source2CellFactory: DynamicCellFactory,
         source3CellFactory: DynamicCellFactory,
@@ -491,7 +417,7 @@ class Cell_map3_combo_tests {
     }
 
     @Suppress("SameParameterValue")
-    private fun test_mixedUpdates(
+    private fun test_state_mixedUpdates(
         initialSource1Value: Int,
         newSource1Value: Int?,
         initialSource2Value: Char,
@@ -502,7 +428,7 @@ class Cell_map3_combo_tests {
         DynamicCellFactory.values.forEach { source1CellFactory ->
             DynamicCellFactory.values.forEach { source2CellFactory ->
                 DynamicCellFactory.values.forEach { source3CellFactory ->
-                    test_mixedUpdates(
+                    test_state_mixedUpdates(
                         source1CellFactory = source1CellFactory,
                         source2CellFactory = source2CellFactory,
                         source3CellFactory = source3CellFactory,
@@ -519,7 +445,7 @@ class Cell_map3_combo_tests {
     }
 
     @Test
-    fun test_mixedUpdates() {
+    fun test_state_mixedUpdates() {
         val initialSource1Value = 10
         val initialSource2Value = 'A'
         val initialSource3Value = true
@@ -530,7 +456,7 @@ class Cell_map3_combo_tests {
                     if (newSource1Value != null || newSource2Value != null || newSource3Value != null) {
                         // At least one source must update
 
-                        test_mixedUpdates(
+                        test_state_mixedUpdates(
                             initialSource1Value = initialSource1Value,
                             newSource1Value = newSource1Value,
                             initialSource2Value = initialSource2Value,
@@ -541,69 +467,6 @@ class Cell_map3_combo_tests {
                     }
                 }
             }
-        }
-    }
-
-    private fun test_deactivation(
-        source1CellFactory: DynamicCellFactory,
-        source2CellFactory: DynamicCellFactory,
-        source3CellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy.Active,
-    ) {
-        val doTrigger = EmitterEventStream<Unit>()
-
-        val sourceCell1 = source1CellFactory.createDynamicExternally(
-            initialValue = 10,
-            doUpdate = doTrigger.map { 11 },
-        )
-
-        val sourceCell2 = source2CellFactory.createDynamicExternally(
-            initialValue = 'A',
-            doUpdate = doTrigger.map { 'B' },
-        )
-
-        val sourceCell3 = source3CellFactory.createDynamicExternally(
-            initialValue = true,
-            doUpdate = doTrigger.map { false },
-        )
-
-        val map3Cell = Cell.map3(
-            sourceCell1,
-            sourceCell2,
-            sourceCell3,
-        ) { value1, value2, value3 ->
-            "$value1:$value2:$value3"
-        }
-
-        verificationStrategy.verifyDeactivation(
-            subjectCell = map3Cell,
-            doTrigger = doTrigger,
-        )
-    }
-
-    private fun test_deactivation(
-        verificationStrategy: CellVerificationStrategy.Active,
-    ) {
-        DynamicCellFactory.values.forEach { source1CellFactory ->
-            DynamicCellFactory.values.forEach { source2CellFactory ->
-                DynamicCellFactory.values.forEach { source3CellFactory ->
-                    test_deactivation(
-                        source1CellFactory = source1CellFactory,
-                        source2CellFactory = source2CellFactory,
-                        source3CellFactory = source3CellFactory,
-                        verificationStrategy = verificationStrategy,
-                    )
-                }
-            }
-        }
-    }
-
-    @Test
-    fun test_deactivation() {
-        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_deactivation(
-                verificationStrategy = verificationStrategy,
-            )
         }
     }
 }
