@@ -16,7 +16,7 @@ class Cell_map_combo_tests {
         sourceCellFactory: InertCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
-        val sourceCell = sourceCellFactory.createExternally(10)
+        val sourceCell = sourceCellFactory.createInertExternally(10)
 
         val mapCell = sourceCell.map {
             it.toString()

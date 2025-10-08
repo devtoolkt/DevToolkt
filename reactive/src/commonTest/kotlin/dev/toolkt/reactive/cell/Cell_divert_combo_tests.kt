@@ -21,7 +21,7 @@ class Cell_divert_combo_tests {
 
         val initialInnerEventStream = doTriggerInner.map { 20 }
 
-        val outerCell = outerCellFactory.createExternally(initialInnerEventStream)
+        val outerCell = outerCellFactory.createInertExternally(initialInnerEventStream)
 
         val divertCell = Cell.divert(outerCell)
 

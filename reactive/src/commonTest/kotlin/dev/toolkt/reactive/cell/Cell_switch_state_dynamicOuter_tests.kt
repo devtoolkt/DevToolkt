@@ -529,7 +529,7 @@ class Cell_switch_state_dynamicOuter_tests {
 
         val initialInnerCell = Cell.of(10)
 
-        val newInnerCell = newInnerCellFactory.createExternally(
+        val newInnerCell = newInnerCellFactory.createInertExternally(
             inertValue = 20,
         )
 
@@ -836,7 +836,7 @@ class Cell_switch_state_dynamicOuter_tests {
 
         val initialInnerCell = Cell.of(10)
 
-        val newInnerCell = newInnerCellFactory.createExternally(
+        val newInnerCell = newInnerCellFactory.createInertExternally(
             inertValue = 20,
         )
 
@@ -905,7 +905,7 @@ class Cell_switch_state_dynamicOuter_tests {
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
 
-        val initialInnerCell = initialInnerCellFactory.createExternally(10)
+        val initialInnerCell = initialInnerCellFactory.createInertExternally(10)
 
         val newInnerCell = newInnerCellFactory.createExternally(
             initialValue = 20,
@@ -982,7 +982,7 @@ class Cell_switch_state_dynamicOuter_tests {
 
         val initialInnerCell = Cell.of(10)
 
-        val newInnerCell = newInnerCellFactory.createExternally(
+        val newInnerCell = newInnerCellFactory.createInertExternally(
             inertValue = 20,
         )
 
@@ -1131,7 +1131,7 @@ class Cell_switch_state_dynamicOuter_tests {
         val doFreezeOuter = EmitterEventStream<Unit>()
         val doTriggerInnerFrozenUpdate = EmitterEventStream<Unit>()
 
-        val initialInnerCell = initialInnerCellFactory.createExternally(
+        val initialInnerCell = initialInnerCellFactory.createInertExternally(
             inertValue = "aA",
         )
 
@@ -1223,7 +1223,7 @@ class Cell_switch_state_dynamicOuter_tests {
         val doTriggerInnerUpdate = EmitterEventStream<Unit>()
         val doFreezeInner = EmitterEventStream<Unit>()
 
-        val initialInnerCell = initialInnerCellFactory.createExternally(
+        val initialInnerCell = initialInnerCellFactory.createInertExternally(
             inertValue = "aA",
         )
 
@@ -1320,7 +1320,7 @@ class Cell_switch_state_dynamicOuter_tests {
 
         val doUpdateNewInner = EmitterEventStream<Unit>()
 
-        val initialInnerCell = initialInnerCellFactory.createExternally(10)
+        val initialInnerCell = initialInnerCellFactory.createInertExternally(10)
 
         val newInnerCell = newInnerCellFactory.createExternally(
             initialValue = 20,
@@ -1399,7 +1399,7 @@ class Cell_switch_state_dynamicOuter_tests {
         val doTriggerInnerUpdate = EmitterEventStream<Unit>()
         val doFreezeOuterInner = EmitterEventStream<Unit>()
 
-        val initialInnerCell = initialInnerCellFactory.createExternally(
+        val initialInnerCell = initialInnerCellFactory.createInertExternally(
             inertValue = "A",
         )
 
@@ -1484,7 +1484,7 @@ class Cell_switch_state_dynamicOuter_tests {
         val doFreezeOuter = EmitterEventStream<Unit>()
         val doFreezeInner = EmitterEventStream<Unit>()
 
-        val initialInnerCell = initialInnerCellFactory.createExternally(
+        val initialInnerCell = initialInnerCellFactory.createInertExternally(
             inertValue = "A",
         )
 
@@ -1574,7 +1574,7 @@ class Cell_switch_state_dynamicOuter_tests {
         val doFreezeInner = EmitterEventStream<Unit>()
         val doFreezeOuter = EmitterEventStream<Unit>()
 
-        val initialInnerCell = initialInnerCellFactory.createExternally(
+        val initialInnerCell = initialInnerCellFactory.createInertExternally(
             inertValue = "a",
         )
 
@@ -1662,7 +1662,7 @@ class Cell_switch_state_dynamicOuter_tests {
         val doTriggerOuterUpdate = EmitterEventStream<Unit>()
         val doFreezeOuterTriggerInnerFrozenUpdate = EmitterEventStream<Unit>()
 
-        val initialInnerCell = initialInnerCellFactory.createExternally(
+        val initialInnerCell = initialInnerCellFactory.createInertExternally(
             inertValue = "aA",
         )
 
@@ -1744,7 +1744,7 @@ class Cell_switch_state_dynamicOuter_tests {
         val doFreezeOuterTriggerInnerUpdate = EmitterEventStream<Unit>()
         val doFreezeInner = EmitterEventStream<Unit>()
 
-        val initialInnerCell = initialInnerCellFactory.createExternally(
+        val initialInnerCell = initialInnerCellFactory.createInertExternally(
             inertValue = "aA",
         )
 
@@ -1832,7 +1832,7 @@ class Cell_switch_state_dynamicOuter_tests {
         val doTriggerInnerFrozenUpdate = EmitterEventStream<Unit>()
         val doFreezeOuter = EmitterEventStream<Unit>()
 
-        val initialInnerCell = initialInnerCellFactory.createExternally(
+        val initialInnerCell = initialInnerCellFactory.createInertExternally(
             inertValue = "aA",
         )
 

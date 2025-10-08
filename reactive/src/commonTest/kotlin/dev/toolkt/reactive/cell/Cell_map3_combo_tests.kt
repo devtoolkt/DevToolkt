@@ -18,11 +18,11 @@ class Cell_map3_combo_tests {
         source3CellFactory: InertCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
-        val sourceCell1 = source1CellFactory.createExternally(10)
+        val sourceCell1 = source1CellFactory.createInertExternally(10)
 
-        val sourceCell2 = source2CellFactory.createExternally('A')
+        val sourceCell2 = source2CellFactory.createInertExternally('A')
 
-        val sourceCell3 = source3CellFactory.createExternally(true)
+        val sourceCell3 = source3CellFactory.createInertExternally(true)
 
         val map3Cell = Cell.map3(
             sourceCell1,
@@ -227,9 +227,9 @@ class Cell_map3_combo_tests {
             doUpdate = doUpdate.map { 20 },
         )
 
-        val sourceCell2 = source2CellFactory.createExternally('A')
+        val sourceCell2 = source2CellFactory.createInertExternally('A')
 
-        val sourceCell3 = source3CellFactory.createExternally(true)
+        val sourceCell3 = source3CellFactory.createInertExternally(true)
 
         val map3Cell = Cell.map3(
             sourceCell1,
@@ -297,14 +297,14 @@ class Cell_map3_combo_tests {
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
-        val sourceCell1 = source1CellFactory.createExternally(10)
+        val sourceCell1 = source1CellFactory.createInertExternally(10)
 
         val sourceCell2 = source2CellFactory.createExternally(
             initialValue = 'A',
             doUpdate = doUpdate.map { 'B' },
         )
 
-        val sourceCell3 = source3CellFactory.createExternally(true)
+        val sourceCell3 = source3CellFactory.createInertExternally(true)
 
         val map3Cell = Cell.map3(
             sourceCell1,
@@ -372,9 +372,9 @@ class Cell_map3_combo_tests {
     ) {
         val doUpdate = EmitterEventStream<Unit>()
 
-        val sourceCell1 = source1CellFactory.createExternally(10)
+        val sourceCell1 = source1CellFactory.createInertExternally(10)
 
-        val sourceCell2 = source2CellFactory.createExternally('A')
+        val sourceCell2 = source2CellFactory.createInertExternally('A')
 
         val sourceCell3 = source3CellFactory.createExternally(
             initialValue = true,

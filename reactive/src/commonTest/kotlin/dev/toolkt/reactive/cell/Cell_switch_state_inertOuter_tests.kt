@@ -23,8 +23,8 @@ class Cell_switch_state_inertOuter_tests {
         verificationStrategy: CellVerificationStrategy,
     ) {
         val (outerCellWeakRef, switchCell) = run {
-            val outerCell = outerCellFactory.createExternally(
-                inertValue = innerCellFactory.createExternally(
+            val outerCell = outerCellFactory.createInertExternally(
+                inertValue = innerCellFactory.createInertExternally(
                     inertValue = 10,
                 ),
             )
@@ -92,7 +92,7 @@ class Cell_switch_state_inertOuter_tests {
                 doFreezeLater = doFreezeInner,
             )
 
-            val outerCell = outerCellFactory.createExternally(
+            val outerCell = outerCellFactory.createInertExternally(
                 inertValue = innerCell,
             )
 
@@ -163,7 +163,7 @@ class Cell_switch_state_inertOuter_tests {
                 doUpdateFreezing = doTriggerInnerFrozenUpdate.map { 20 },
             )
 
-            val outerCell = outerCellFactory.createExternally(
+            val outerCell = outerCellFactory.createInertExternally(
                 inertValue = innerCell,
             )
 

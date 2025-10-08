@@ -18,9 +18,9 @@ class Cell_map2_combo_tests {
         source2CellFactory: InertCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
-        val sourceCell1 = source1CellFactory.createExternally(10)
+        val sourceCell1 = source1CellFactory.createInertExternally(10)
 
-        val sourceCell2 = source2CellFactory.createExternally('A')
+        val sourceCell2 = source2CellFactory.createInertExternally('A')
 
         val map2Cell = Cell.map2(
             sourceCell1,
@@ -209,7 +209,7 @@ class Cell_map2_combo_tests {
             doUpdate = doTrigger.map { 20 },
         )
 
-        val sourceCell2 = source2CellFactory.createExternally('A')
+        val sourceCell2 = source2CellFactory.createInertExternally('A')
 
         val map2Cell = Cell.map2(
             sourceCell1,
@@ -272,7 +272,7 @@ class Cell_map2_combo_tests {
     ) {
         val doTrigger = EmitterEventStream<Unit>()
 
-        val sourceCell1 = source1CellFactory.createExternally(10)
+        val sourceCell1 = source1CellFactory.createInertExternally(10)
 
         val sourceCell2 = source2CellFactory.createExternally(
             initialValue = 'A',

@@ -8,7 +8,7 @@ import dev.toolkt.reactive.event_stream.emit
 import dev.toolkt.reactive.event_stream.mapNotNull
 import dev.toolkt.reactive.event_stream.single
 
-sealed interface InertCellFactory {
+sealed class InertCellFactory : StaticCellFactory() {
     companion object {
         val values = listOf(
             Const,
@@ -21,8 +21,8 @@ sealed interface InertCellFactory {
     /**
      * A factory that creates a constant cell that is guaranteed to never change.
      */
-    data object Const : InertCellFactory {
-        override fun <ValueT> createExternally(
+    data object Const : InertCellFactory() {
+        override fun <ValueT> createInertExternally(
             inertValue: ValueT,
         ): Cell<ValueT> = Cell.of(inertValue)
     }
@@ -30,8 +30,8 @@ sealed interface InertCellFactory {
     /**
      * A factory that creates a transformed constant cell that is guaranteed to never change.
      */
-    data object TransformedConst : InertCellFactory {
-        override fun <ValueT> createExternally(
+    data object TransformedConst : InertCellFactory() {
+        override fun <ValueT> createInertExternally(
             inertValue: ValueT,
         ): Cell<ValueT> = Cell.of(inertValue).map { it }
     }
@@ -39,8 +39,8 @@ sealed interface InertCellFactory {
     /**
      * A factory that creates a cell freezing right after its construction.
      */
-    data object Frozen : InertCellFactory {
-        override fun <ValueT> createExternally(
+    data object Frozen : InertCellFactory() {
+        override fun <ValueT> createInertExternally(
             inertValue: ValueT,
         ): Cell<ValueT> {
             val doFreeze = EmitterEventStream<Unit>()
@@ -56,15 +56,21 @@ sealed interface InertCellFactory {
         }
     }
 
-    data object TransformedFrozen : InertCellFactory {
-        override fun <ValueT> createExternally(
+    data object TransformedFrozen : InertCellFactory() {
+        override fun <ValueT> createInertExternally(
             inertValue: ValueT,
-        ): Cell<ValueT> = Frozen.createExternally(
+        ): Cell<ValueT> = Frozen.createInertExternally(
             inertValue = inertValue,
         ).map { it }
     }
 
-    fun <ValueT> createExternally(
+    final override fun <ValueT> createStaticExternally(
+        staticValue: ValueT,
+    ): Cell<ValueT> = createInertExternally(
+        inertValue = staticValue,
+    )
+
+    abstract fun <ValueT> createInertExternally(
         inertValue: ValueT,
     ): Cell<ValueT>
 }
