@@ -18,7 +18,7 @@ class Cell_switch_state_dynamicOuter_tests {
         val switchCell: Cell<ValueT>,
     )
 
-    private fun test_inertInner(
+    private fun test_state_inertInner_initial(
         outerCellFactory: DynamicCellFactory,
         innerCellFactory: InertCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -40,12 +40,12 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_inertInner(
+    private fun test_state_inertInner_initial(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { innerCellFactory ->
-                test_inertInner(
+                test_state_inertInner_initial(
                     outerCellFactory = outerCellFactory,
                     innerCellFactory = innerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -55,23 +55,23 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_inertInner_passive() {
-        test_inertInner(
+    fun test_state_inertInner_initial_passive() {
+        test_state_inertInner_initial(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Ignore // FIXME: Subscription should not be null.
     @Test
-    fun test_inertInner_active() {
+    fun test_state_inertInner_initial_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_inertInner(
+            test_state_inertInner_initial(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
-    private fun test_dynamicInner(
+    private fun test_state_dynamicInner(
         outerCellFactory: DynamicCellFactory,
         innerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -93,12 +93,12 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_dynamicInner(
+    private fun test_state_dynamicInner(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { innerCellFactory ->
-                test_dynamicInner(
+                test_state_dynamicInner(
                     outerCellFactory = outerCellFactory,
                     innerCellFactory = innerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -108,17 +108,17 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_dynamicInner_passive() {
-        test_dynamicInner(
+    fun test_state_dynamicInner_passive() {
+        test_state_dynamicInner(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Ignore // FIXME: Subscription should not be null.
     @Test
-    fun test_dynamicInner_active() {
+    fun test_state_dynamicInner_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_dynamicInner(
+            test_state_dynamicInner(
                 verificationStrategy = verificationStrategy,
             )
         }
@@ -127,7 +127,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 5)
      */
-    private fun test_outerFrozenUpdateDynamicNewInnerFrozenUpdate(
+    private fun test_state_outerFrozenUpdateDynamicNewInnerFrozenUpdate(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -166,12 +166,12 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerFrozenUpdateDynamicNewInnerFrozenUpdate(
+    private fun test_state_outerFrozenUpdateDynamicNewInnerFrozenUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                test_outerFrozenUpdateDynamicNewInnerFrozenUpdate(
+                test_state_outerFrozenUpdateDynamicNewInnerFrozenUpdate(
                     outerCellFactory = outerCellFactory,
                     newInnerCellFactory = newInnerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -181,24 +181,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerFrozenUpdateDynamicNewInnerFrozenUpdate_passive() {
-        test_outerFrozenUpdateDynamicNewInnerFrozenUpdate(
+    fun test_state_outerFrozenUpdateDynamicNewInnerFrozenUpdate_passive() {
+        test_state_outerFrozenUpdateDynamicNewInnerFrozenUpdate(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerFrozenUpdateDynamicNewInnerFrozenUpdate_active() {
+    fun test_state_outerFrozenUpdateDynamicNewInnerFrozenUpdate_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerFrozenUpdateDynamicNewInnerFrozenUpdate(
+            test_state_outerFrozenUpdateDynamicNewInnerFrozenUpdate(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerFrozenUpdateDynamicNewInnerFrozenUpdate_quick() {
-        test_outerFrozenUpdateDynamicNewInnerFrozenUpdate(
+    fun test_state_outerFrozenUpdateDynamicNewInnerFrozenUpdate_quick() {
+        test_state_outerFrozenUpdateDynamicNewInnerFrozenUpdate(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -206,7 +206,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 4)
      */
-    private fun test_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze(
+    private fun test_state_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -252,12 +252,12 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze(
+    private fun test_state_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                test_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze(
+                test_state_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze(
                     outerCellFactory = outerCellFactory,
                     newInnerCellFactory = newInnerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -267,24 +267,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze_passive() {
-        test_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze(
+    fun test_state_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze_passive() {
+        test_state_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze_active() {
+    fun test_state_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze(
+            test_state_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze_quick() {
-        test_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze(
+    fun test_state_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze_quick() {
+        test_state_outerFrozenUpdateDynamicNewInnerWarmUpdate_newInnerFreeze(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -292,7 +292,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 3)
      */
-    private fun test_outerWarmUpdateDynamicNewInnerWarmUpdate(
+    private fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -323,12 +323,12 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerWarmUpdateDynamicNewInnerWarmUpdate(
+    private fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                test_outerWarmUpdateDynamicNewInnerWarmUpdate(
+                test_state_outerWarmUpdateDynamicNewInnerWarmUpdate(
                     outerCellFactory = outerCellFactory,
                     newInnerCellFactory = newInnerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -338,24 +338,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_passive() {
-        test_outerWarmUpdateDynamicNewInnerWarmUpdate(
+    fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_passive() {
+        test_state_outerWarmUpdateDynamicNewInnerWarmUpdate(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_active() {
+    fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerWarmUpdateDynamicNewInnerWarmUpdate(
+            test_state_outerWarmUpdateDynamicNewInnerWarmUpdate(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_quick() {
-        test_outerWarmUpdateDynamicNewInnerWarmUpdate(
+    fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_quick() {
+        test_state_outerWarmUpdateDynamicNewInnerWarmUpdate(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -363,7 +363,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 3) c)
      */
-    private fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze(
+    private fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -407,12 +407,12 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze(
+    private fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze(
+                test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze(
                     outerCellFactory = outerCellFactory,
                     newInnerCellFactory = newInnerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -422,24 +422,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze_passive() {
-        test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze(
+    fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze_passive() {
+        test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze_active() {
+    fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze(
+            test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze_quick() {
-        test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze(
+    fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze_quick() {
+        test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreezeInnerFreeze(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -447,7 +447,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 3) a)
      */
-    private fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze(
+    private fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -497,12 +497,12 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze(
+    private fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze(
+                test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze(
                     outerCellFactory = outerCellFactory,
                     newInnerCellFactory = newInnerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -512,24 +512,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze_passive() {
-        test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze(
+    fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze_passive() {
+        test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze_active() {
+    fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze(
+            test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze_quick() {
-        test_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze(
+    fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze_quick() {
+        test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_outerFreeze_innerFreeze(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -537,7 +537,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 3) b)
      */
-    private fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze(
+    private fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -587,12 +587,12 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze(
+    private fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                test_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze(
+                test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze(
                     outerCellFactory = outerCellFactory,
                     newInnerCellFactory = newInnerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -602,24 +602,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze_passive() {
-        test_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze(
+    fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze_passive() {
+        test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze_active() {
+    fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze(
+            test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze_quick() {
-        test_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze(
+    fun test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze_quick() {
+        test_state_outerWarmUpdateDynamicNewInnerWarmUpdate_innerFreeze_outerFreeze(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -627,7 +627,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 2) (inert)
      */
-    private fun test_outerFrozenUpdateInert(
+    private fun test_state_outerFrozenUpdateInert(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: InertCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -657,12 +657,12 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerFrozenUpdateInert(
+    private fun test_state_outerFrozenUpdateInert(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { newInnerCellFactory ->
-                test_outerFrozenUpdateInert(
+                test_state_outerFrozenUpdateInert(
                     outerCellFactory = outerCellFactory,
                     newInnerCellFactory = newInnerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -672,24 +672,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerFrozenUpdateInert_passive() {
-        test_outerFrozenUpdateInert(
+    fun test_state_outerFrozenUpdateInert_passive() {
+        test_state_outerFrozenUpdateInert(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerFrozenUpdateInert_active() {
+    fun test_state_outerFrozenUpdateInert_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerFrozenUpdateInert(
+            test_state_outerFrozenUpdateInert(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerFrozenUpdateInert_quick() {
-        test_outerFrozenUpdateInert(
+    fun test_state_outerFrozenUpdateInert_quick() {
+        test_state_outerFrozenUpdateInert(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -697,7 +697,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 2) (dynamic)
      */
-    private fun test_outerFrozenUpdateDynamic(
+    private fun test_state_outerFrozenUpdateDynamic(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -728,12 +728,12 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerFrozenUpdateDynamic(
+    private fun test_state_outerFrozenUpdateDynamic(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                test_outerFrozenUpdateDynamic(
+                test_state_outerFrozenUpdateDynamic(
                     outerCellFactory = outerCellFactory,
                     newInnerCellFactory = newInnerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -743,24 +743,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerFrozenUpdateDynamic_passive() {
-        test_outerFrozenUpdateDynamic(
+    fun test_state_outerFrozenUpdateDynamic_passive() {
+        test_state_outerFrozenUpdateDynamic(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerFrozenUpdateDynamic_active() {
+    fun test_state_outerFrozenUpdateDynamic_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerFrozenUpdateDynamic(
+            test_state_outerFrozenUpdateDynamic(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerFrozenUpdateDynamic_quick() {
-        test_outerFrozenUpdateDynamic(
+    fun test_state_outerFrozenUpdateDynamic_quick() {
+        test_state_outerFrozenUpdateDynamic(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -768,7 +768,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 2) b)
      */
-    private fun test_outerFrozenUpdateDynamic_newInnerFrozenUpdate(
+    private fun test_state_outerFrozenUpdateDynamic_newInnerFrozenUpdate(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -810,12 +810,12 @@ class Cell_switch_state_dynamicOuter_tests {
         // TODO: Verify collectibility
     }
 
-    private fun test_outerFrozenUpdateDynamic_newInnerFrozenUpdate(
+    private fun test_state_outerFrozenUpdateDynamic_newInnerFrozenUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                test_outerFrozenUpdateDynamic_newInnerFrozenUpdate(
+                test_state_outerFrozenUpdateDynamic_newInnerFrozenUpdate(
                     outerCellFactory = outerCellFactory,
                     newInnerCellFactory = newInnerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -825,24 +825,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerFrozenUpdateDynamic_newInnerFrozenUpdate_passive() {
-        test_outerFrozenUpdateDynamic_newInnerFrozenUpdate(
+    fun test_state_outerFrozenUpdateDynamic_newInnerFrozenUpdate_passive() {
+        test_state_outerFrozenUpdateDynamic_newInnerFrozenUpdate(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerFrozenUpdateDynamic_newInnerFrozenUpdate_active() {
+    fun test_state_outerFrozenUpdateDynamic_newInnerFrozenUpdate_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerFrozenUpdateDynamic_newInnerFrozenUpdate(
+            test_state_outerFrozenUpdateDynamic_newInnerFrozenUpdate(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerFrozenUpdateDynamic_newInnerFrozenUpdate_quick() {
-        test_outerFrozenUpdateDynamic_newInnerFrozenUpdate(
+    fun test_state_outerFrozenUpdateDynamic_newInnerFrozenUpdate_quick() {
+        test_state_outerFrozenUpdateDynamic_newInnerFrozenUpdate(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -850,7 +850,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 2) a)
      */
-    private fun test_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze(
+    private fun test_state_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -894,12 +894,12 @@ class Cell_switch_state_dynamicOuter_tests {
         // TODO: Verify collectibility
     }
 
-    private fun test_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze(
+    private fun test_state_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                test_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze(
+                test_state_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze(
                     outerCellFactory = outerCellFactory,
                     newInnerCellFactory = newInnerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -909,24 +909,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze_passive() {
-        test_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze(
+    fun test_state_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze_passive() {
+        test_state_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze_active() {
+    fun test_state_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze(
+            test_state_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze_quick() {
-        test_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze(
+    fun test_state_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze_quick() {
+        test_state_outerFrozenUpdateDynamic_newInnerWarmUpdate_newInnerFreeze(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -934,7 +934,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 1) (inert)
      */
-    private fun test_outerWarmUpdateInert(
+    private fun test_state_outerWarmUpdateInert(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: InertCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -964,12 +964,12 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerWarmUpdateInert(
+    private fun test_state_outerWarmUpdateInert(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { innerCellFactory ->
-                test_outerWarmUpdateInert(
+                test_state_outerWarmUpdateInert(
                     outerCellFactory = outerCellFactory,
                     newInnerCellFactory = innerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -979,24 +979,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerWarmUpdateInert_passive() {
-        test_outerWarmUpdateInert(
+    fun test_state_outerWarmUpdateInert_passive() {
+        test_state_outerWarmUpdateInert(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerWarmUpdateInert_active() {
+    fun test_state_outerWarmUpdateInert_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerWarmUpdateInert(
+            test_state_outerWarmUpdateInert(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerWarmUpdateInert_quick() {
-        test_outerWarmUpdateInert(
+    fun test_state_outerWarmUpdateInert_quick() {
+        test_state_outerWarmUpdateInert(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -1004,7 +1004,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 1) (dynamic)
      */
-    private fun test_outerWarmUpdateDynamic(
+    private fun test_state_outerWarmUpdateDynamic(
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: InertCellFactory,
         newInnerCellFactory: DynamicCellFactory,
@@ -1036,13 +1036,13 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerWarmUpdateDynamic(
+    private fun test_state_outerWarmUpdateDynamic(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { initialInnerCellFactory ->
                 DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                    test_outerWarmUpdateDynamic(
+                    test_state_outerWarmUpdateDynamic(
                         outerCellFactory = outerCellFactory,
                         initialInnerCellFactory = initialInnerCellFactory,
                         newInnerCellFactory = newInnerCellFactory,
@@ -1054,24 +1054,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_passive() {
-        test_outerWarmUpdateDynamic(
+    fun test_state_outerWarmUpdateDynamic_passive() {
+        test_state_outerWarmUpdateDynamic(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_active() {
+    fun test_state_outerWarmUpdateDynamic_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerWarmUpdateDynamic(
+            test_state_outerWarmUpdateDynamic(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_quick() {
-        test_outerWarmUpdateDynamic(
+    fun test_state_outerWarmUpdateDynamic_quick() {
+        test_state_outerWarmUpdateDynamic(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -1079,7 +1079,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 1) b) (inert)
      */
-    private fun test_outerWarmUpdateInert_outerFreeze(
+    private fun test_state_outerWarmUpdateInert_outerFreeze(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: InertCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -1113,12 +1113,12 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerWarmUpdateInert_outerFreeze(
+    private fun test_state_outerWarmUpdateInert_outerFreeze(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { innerCellFactory ->
-                test_outerWarmUpdateInert_outerFreeze(
+                test_state_outerWarmUpdateInert_outerFreeze(
                     outerCellFactory = outerCellFactory,
                     newInnerCellFactory = innerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -1128,24 +1128,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerWarmUpdateInert_outerFreeze_passive() {
-        test_outerWarmUpdateInert_outerFreeze(
+    fun test_state_outerWarmUpdateInert_outerFreeze_passive() {
+        test_state_outerWarmUpdateInert_outerFreeze(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerWarmUpdateInert_outerFreeze_active() {
+    fun test_state_outerWarmUpdateInert_outerFreeze_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerWarmUpdateInert_outerFreeze(
+            test_state_outerWarmUpdateInert_outerFreeze(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerWarmUpdateInert_outerFreeze_quick() {
-        test_outerWarmUpdateInert_outerFreeze(
+    fun test_state_outerWarmUpdateInert_outerFreeze_quick() {
+        test_state_outerWarmUpdateInert_outerFreeze(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -1153,7 +1153,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 1) b) (dynamic)
      */
-    private fun test_outerWarmUpdateDynamic_outerFreeze(
+    private fun test_state_outerWarmUpdateDynamic_outerFreeze(
         outerCellFactory: DynamicCellFactory,
         newInnerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -1188,12 +1188,12 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerWarmUpdateDynamic_outerFreeze(
+    private fun test_state_outerWarmUpdateDynamic_outerFreeze(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                test_outerWarmUpdateDynamic_outerFreeze(
+                test_state_outerWarmUpdateDynamic_outerFreeze(
                     outerCellFactory = outerCellFactory,
                     newInnerCellFactory = newInnerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -1203,24 +1203,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_outerFreeze_passive() {
-        test_outerWarmUpdateDynamic_outerFreeze(
+    fun test_state_outerWarmUpdateDynamic_outerFreeze_passive() {
+        test_state_outerWarmUpdateDynamic_outerFreeze(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_outerFreeze_active() {
+    fun test_state_outerWarmUpdateDynamic_outerFreeze_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerWarmUpdateDynamic_outerFreeze(
+            test_state_outerWarmUpdateDynamic_outerFreeze(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_outerFreeze_quick() {
-        test_outerWarmUpdateDynamic_outerFreeze(
+    fun test_state_outerWarmUpdateDynamic_outerFreeze_quick() {
+        test_state_outerWarmUpdateDynamic_outerFreeze(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -1228,7 +1228,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 1) b) ii)
      */
-    private fun test_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate(
+    private fun test_state_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate(
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: InertCellFactory,
         newInnerCellFactory: DynamicCellFactory,
@@ -1276,13 +1276,13 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate(
+    private fun test_state_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { initialInnerCellFactory ->
                 DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                    test_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate(
+                    test_state_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate(
                         outerCellFactory = outerCellFactory,
                         initialInnerCellFactory = initialInnerCellFactory,
                         newInnerCellFactory = newInnerCellFactory,
@@ -1294,24 +1294,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate_passive() {
-        test_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate(
+    fun test_state_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate_passive() {
+        test_state_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate_active() {
+    fun test_state_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate(
+            test_state_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate_quick() {
-        test_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate(
+    fun test_state_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate_quick() {
+        test_state_outerWarmUpdateDynamic_outerFreeze_newInnerFrozenUpdate(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -1319,7 +1319,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 1) b) i)
      */
-    private fun test_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze(
+    private fun test_state_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze(
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: InertCellFactory,
         newInnerCellFactory: DynamicCellFactory,
@@ -1374,13 +1374,13 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze(
+    private fun test_state_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { initialInnerCellFactory ->
                 DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                    test_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze(
+                    test_state_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze(
                         outerCellFactory = outerCellFactory,
                         initialInnerCellFactory = initialInnerCellFactory,
                         newInnerCellFactory = newInnerCellFactory,
@@ -1392,24 +1392,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze_passive() {
-        test_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze(
+    fun test_state_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze_passive() {
+        test_state_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze_active() {
+    fun test_state_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze(
+            test_state_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze_quick() {
-        test_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze(
+    fun test_state_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze_quick() {
+        test_state_outerWarmUpdateDynamic_outerFreeze_newInnerWarmUpdate_innerFreeze(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -1417,7 +1417,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 1) a)
      */
-    private fun test_outerWarmUpdateDynamic_newInnerWarmUpdate(
+    private fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate(
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: InertCellFactory,
         newInnerCellFactory: DynamicCellFactory,
@@ -1453,13 +1453,13 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerWarmUpdateDynamic_newInnerWarmUpdate(
+    private fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { initialInnerCellFactory ->
                 DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                    test_outerWarmUpdateDynamic_newInnerWarmUpdate(
+                    test_state_outerWarmUpdateDynamic_newInnerWarmUpdate(
                         outerCellFactory = outerCellFactory,
                         initialInnerCellFactory = initialInnerCellFactory,
                         newInnerCellFactory = newInnerCellFactory,
@@ -1471,24 +1471,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_passive() {
-        test_outerWarmUpdateDynamic_newInnerWarmUpdate(
+    fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_passive() {
+        test_state_outerWarmUpdateDynamic_newInnerWarmUpdate(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_active() {
+    fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerWarmUpdateDynamic_newInnerWarmUpdate(
+            test_state_outerWarmUpdateDynamic_newInnerWarmUpdate(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_quick() {
-        test_outerWarmUpdateDynamic_newInnerWarmUpdate(
+    fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_quick() {
+        test_state_outerWarmUpdateDynamic_newInnerWarmUpdate(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -1496,7 +1496,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 1) a) iii)
      */
-    private fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze(
+    private fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze(
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: InertCellFactory,
         newInnerCellFactory: DynamicCellFactory,
@@ -1537,13 +1537,13 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze(
+    private fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { initialInnerCellFactory ->
                 DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                    test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze(
+                    test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze(
                         outerCellFactory = outerCellFactory,
                         initialInnerCellFactory = initialInnerCellFactory,
                         newInnerCellFactory = newInnerCellFactory,
@@ -1555,24 +1555,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze_passive() {
-        test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze(
+    fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze_passive() {
+        test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze_active() {
+    fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze(
+            test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze_quick() {
-        test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze(
+    fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze_quick() {
+        test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreezeInnerFreeze(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -1580,7 +1580,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 1) a) i)
      */
-    private fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze(
+    private fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze(
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: InertCellFactory,
         newInnerCellFactory: DynamicCellFactory,
@@ -1627,13 +1627,13 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze(
+    private fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { initialInnerCellFactory ->
                 DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                    test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze(
+                    test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze(
                         outerCellFactory = outerCellFactory,
                         initialInnerCellFactory = initialInnerCellFactory,
                         newInnerCellFactory = newInnerCellFactory,
@@ -1645,24 +1645,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze_passive() {
-        test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze(
+    fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze_passive() {
+        test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze_active() {
+    fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze(
+            test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze_quick() {
-        test_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze(
+    fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze_quick() {
+        test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_outerFreeze_innerFreeze(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -1670,7 +1670,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 1) a) ii)
      */
-    private fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze(
+    private fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze(
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: InertCellFactory,
         newInnerCellFactory: DynamicCellFactory,
@@ -1717,13 +1717,13 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze(
+    private fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { initialInnerCellFactory ->
                 DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                    test_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze(
+                    test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze(
                         outerCellFactory = outerCellFactory,
                         initialInnerCellFactory = initialInnerCellFactory,
                         newInnerCellFactory = newInnerCellFactory,
@@ -1735,24 +1735,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze_passive() {
-        test_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze(
+    fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze_passive() {
+        test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze_active() {
+    fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze(
+            test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze_quick() {
-        test_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze(
+    fun test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze_quick() {
+        test_state_outerWarmUpdateDynamic_newInnerWarmUpdate_innerFreeze_outerFreeze(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -1760,7 +1760,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 1) e)
      */
-    private fun test_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate(
+    private fun test_state_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate(
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: InertCellFactory,
         newInnerCellFactory: DynamicCellFactory,
@@ -1798,13 +1798,13 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate(
+    private fun test_state_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { initialInnerCellFactory ->
                 DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                    test_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate(
+                    test_state_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate(
                         outerCellFactory = outerCellFactory,
                         initialInnerCellFactory = initialInnerCellFactory,
                         newInnerCellFactory = newInnerCellFactory,
@@ -1816,24 +1816,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate_passive() {
-        test_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate(
+    fun test_state_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate_passive() {
+        test_state_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate_active() {
+    fun test_state_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate(
+            test_state_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate_quick() {
-        test_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate(
+    fun test_state_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate_quick() {
+        test_state_outerWarmUpdateDynamic_outerFreezeNewInnerFrozenUpdate(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -1841,7 +1841,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 1) c)
      */
-    private fun test_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze(
+    private fun test_state_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze(
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: InertCellFactory,
         newInnerCellFactory: DynamicCellFactory,
@@ -1886,13 +1886,13 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze(
+    private fun test_state_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { initialInnerCellFactory ->
                 DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                    test_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze(
+                    test_state_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze(
                         outerCellFactory = outerCellFactory,
                         initialInnerCellFactory = initialInnerCellFactory,
                         newInnerCellFactory = newInnerCellFactory,
@@ -1904,24 +1904,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze_passive() {
-        test_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze(
+    fun test_state_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze_passive() {
+        test_state_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze_active() {
+    fun test_state_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze(
+            test_state_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze_quick() {
-        test_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze(
+    fun test_state_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze_quick() {
+        test_state_outerWarmUpdateDynamic_outerFreezeNewInnerWarmUpdate_newInnerFreeze(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
@@ -1929,7 +1929,7 @@ class Cell_switch_state_dynamicOuter_tests {
     /**
      * Case 1) d)
      */
-    private fun test_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze(
+    private fun test_state_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze(
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: InertCellFactory,
         newInnerCellFactory: DynamicCellFactory,
@@ -1973,13 +1973,13 @@ class Cell_switch_state_dynamicOuter_tests {
         )
     }
 
-    private fun test_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze(
+    private fun test_state_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { initialInnerCellFactory ->
                 DynamicCellFactory.values.forEach { newInnerCellFactory ->
-                    test_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze(
+                    test_state_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze(
                         outerCellFactory = outerCellFactory,
                         initialInnerCellFactory = initialInnerCellFactory,
                         newInnerCellFactory = newInnerCellFactory,
@@ -1991,24 +1991,24 @@ class Cell_switch_state_dynamicOuter_tests {
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze_passive() {
-        test_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze(
+    fun test_state_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze_passive() {
+        test_state_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze_active() {
+    fun test_state_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze(
+            test_state_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
     @Test
-    fun test_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze_quick() {
-        test_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze(
+    fun test_state_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze_quick() {
+        test_state_outerWarmUpdateDynamic_newInnerFrozenUpdate_outerFreeze(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
