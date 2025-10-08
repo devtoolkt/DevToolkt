@@ -68,7 +68,59 @@ class Cell_map2_state_tests {
         }
     }
 
-    private fun test_state_sameSource(
+    private fun test_state_sameSource_initial(
+        sourceCellFactory: DynamicCellFactory,
+        verificationStrategy: CellVerificationStrategy,
+    ) {
+        val sourceCell = sourceCellFactory.createDynamicExternally(
+            initialValue = 10,
+        )
+
+        val map2Cell = Cell.map2(
+            sourceCell,
+            sourceCell,
+        ) { value1, value2 ->
+            "$value1:$value2"
+        }
+
+        val verifier = verificationStrategy.begin(
+            subjectCell = map2Cell,
+        )
+
+        verifier.verifyCurrentValue(
+            expectedCurrentValue = "10:10",
+        )
+    }
+
+    private fun test_state_sameSource_initial(
+        verificationStrategy: CellVerificationStrategy,
+    ) {
+        DynamicCellFactory.values.forEach { sourceCellFactory ->
+            test_state_sameSource_initial(
+                sourceCellFactory = sourceCellFactory,
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
+    @Test
+    fun test_state_sameSource_initial_passive() {
+        test_state_sameSource_initial(
+            verificationStrategy = CellVerificationStrategy.Passive,
+        )
+    }
+
+    @Ignore // FIXME
+    @Test
+    fun test_state_sameSource_initial_active() {
+        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
+            test_state_sameSource_initial(
+                verificationStrategy = verificationStrategy,
+            )
+        }
+    }
+
+    private fun test_state_sameSource_sourceUpdate(
         sourceCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
@@ -96,11 +148,11 @@ class Cell_map2_state_tests {
         )
     }
 
-    private fun test_state_sameSource(
+    private fun test_state_sameSource_sourceUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { sourceCellFactory ->
-            test_state_sameSource(
+            test_state_sameSource_sourceUpdate(
                 sourceCellFactory = sourceCellFactory,
                 verificationStrategy = verificationStrategy,
             )
@@ -108,17 +160,17 @@ class Cell_map2_state_tests {
     }
 
     @Test
-    fun test_state_sameSource_passive() {
-        test_state_sameSource(
+    fun test_state_sameSource_sourceUpdate_passive() {
+        test_state_sameSource_sourceUpdate(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Ignore // FIXME: Flaky test
     @Test
-    fun test_state_sameSource_active() {
+    fun test_state_sameSource_sourceUpdate_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_state_sameSource(
+            test_state_sameSource_sourceUpdate(
                 verificationStrategy = verificationStrategy,
             )
         }
@@ -126,8 +178,8 @@ class Cell_map2_state_tests {
 
     @Ignore // FIXME: Flaky test
     @Test
-    fun test_state_sameSource_quick() {
-        test_state_sameSource(
+    fun test_state_sameSource_sourceUpdate_quick() {
+        test_state_sameSource_sourceUpdate(
             verificationStrategy = CellVerificationStrategy.Quick,
         )
     }
