@@ -19,17 +19,17 @@ class Cell_switch_misc_tests {
     ) {
         val doSwitch = EmitterEventStream<Unit>()
 
-        val initialInnerCell = initialInnerCellFactory.createExternally(
+        val initialInnerCell = initialInnerCellFactory.createDynamicExternally(
             initialValue = 10,
             doUpdate = doSwitch.map { 11 },
         )
 
-        val newInnerCell = newInnerCellFactory.createExternally(
+        val newInnerCell = newInnerCellFactory.createDynamicExternally(
             initialValue = 20,
             doUpdate = doSwitch.map { 21 },
         )
 
-        val outerCell = outerCellFactory.createExternally(
+        val outerCell = outerCellFactory.createDynamicExternally(
             initialValue = initialInnerCell,
             doUpdate = doSwitch.map { newInnerCell },
         )
@@ -86,7 +86,6 @@ class Cell_switch_misc_tests {
         )
     }
 
-
     private fun test_outerUpdateInitialInnerUpdate(
         outerCellFactory: DynamicCellFactory,
         initialInnerCellFactory: DynamicCellFactory,
@@ -95,7 +94,7 @@ class Cell_switch_misc_tests {
     ) {
         val doSwitch = EmitterEventStream<Unit>()
 
-        val initialInnerCell = initialInnerCellFactory.createExternally(
+        val initialInnerCell = initialInnerCellFactory.createDynamicExternally(
             initialValue = 10,
             doUpdate = doSwitch.map { 11 },
         )
@@ -104,7 +103,7 @@ class Cell_switch_misc_tests {
             inertValue = 20,
         )
 
-        val outerCell = outerCellFactory.createExternally(
+        val outerCell = outerCellFactory.createDynamicExternally(
             initialValue = initialInnerCell,
             doUpdate = doSwitch.map { newInnerCell },
         )
@@ -171,14 +170,14 @@ class Cell_switch_misc_tests {
 
         val doUpdateInitialInner = EmitterEventStream<Unit>()
 
-        val initialInnerCell = initialInnerCellFactory.createExternally(
+        val initialInnerCell = initialInnerCellFactory.createDynamicExternally(
             initialValue = 10,
             doUpdate = doUpdateInitialInner.map { 11 },
         )
 
         val newInnerCell = newInnerCellFactory.createInertExternally(20)
 
-        val outerCell = outerCellFactory.createExternally(
+        val outerCell = outerCellFactory.createDynamicExternally(
             initialValue = initialInnerCell,
             doUpdate = doUpdateOuter.map { newInnerCell },
         )
@@ -246,7 +245,7 @@ class Cell_switch_misc_tests {
 
         val innerCell = innerCellFactory.createInertExternally(20)
 
-        val outerCell = outerCellFactory.createExternally(
+        val outerCell = outerCellFactory.createDynamicExternally(
             initialValue = innerCell,
             doUpdate = doUpdateOuter.map { innerCell },
         )
@@ -308,17 +307,17 @@ class Cell_switch_misc_tests {
     ) {
         val doSwitch = EmitterEventStream<Unit>()
 
-        val initialInnerCell = initialInnerCellFactory.createExternally(
+        val initialInnerCell = initialInnerCellFactory.createDynamicExternally(
             initialValue = 10,
             doUpdate = doSwitch.map { 11 },
         )
 
-        val newInnerCell = newInnerCellFactory.createExternally(
+        val newInnerCell = newInnerCellFactory.createDynamicExternally(
             initialValue = 20,
             doUpdate = doSwitch.map { 21 },
         )
 
-        val outerCell = outerCellFactory.createExternally(
+        val outerCell = outerCellFactory.createDynamicExternally(
             initialValue = initialInnerCell,
             doUpdate = doSwitch.map { newInnerCell },
         )
@@ -360,22 +359,22 @@ class Cell_switch_misc_tests {
 
         val doTrigger = EmitterEventStream<Unit>()
 
-        val initialInnerCell = initialInnerCellFactory.createExternally(
+        val initialInnerCell = initialInnerCellFactory.createDynamicExternally(
             initialValue = 10,
             doUpdate = doTrigger.map { 11 },
         )
 
-        val newInnerCell = newInnerCellFactory.createExternally(
+        val newInnerCell = newInnerCellFactory.createDynamicExternally(
             initialValue = 20,
             doUpdate = doTrigger.map { 21 },
         )
 
-        val newerInnerCell = newerInnerCellFactory.createExternally(
+        val newerInnerCell = newerInnerCellFactory.createDynamicExternally(
             initialValue = 30,
             doUpdate = doTrigger.map { 31 },
         )
 
-        val outerCell = overCellFactory.createExternally(
+        val outerCell = overCellFactory.createDynamicExternally(
             initialValue = initialInnerCell,
             doUpdate = EventStream.merge2(
                 doPrepare.map { newInnerCell },
