@@ -3,7 +3,7 @@ package dev.toolkt.reactive.cell.test_utils
 import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.map
 
-sealed interface LoudEventStreamFactory {
+abstract class LoudEventStreamFactory {
     companion object {
         val values = listOf(
             Basic,
@@ -11,13 +11,13 @@ sealed interface LoudEventStreamFactory {
         )
     }
 
-    data object Basic : LoudEventStreamFactory {
+    data object Basic : LoudEventStreamFactory() {
         override fun <EventT> createExternally(
             doEmit: EventStream<EventT>,
         ): EventStream<EventT> = doEmit
     }
 
-    data object TransformedBasic : LoudEventStreamFactory {
+    data object TransformedBasic : LoudEventStreamFactory() {
         override fun <EventT> createExternally(
             doEmit: EventStream<EventT>,
         ): EventStream<EventT> = Basic.createExternally(
@@ -25,7 +25,14 @@ sealed interface LoudEventStreamFactory {
         ).map { it }
     }
 
-    fun <EventT> createExternally(
+    abstract fun <EventT> createExternally(
         doEmit: EventStream<EventT>,
     ): EventStream<EventT>
+
+    fun <EventT> createExternally(
+        doEmit: EventStream<EventT>,
+        doTerminate: EventStream<Unit>,
+    ): EventStream<EventT> {
+        TODO()
+    }
 }

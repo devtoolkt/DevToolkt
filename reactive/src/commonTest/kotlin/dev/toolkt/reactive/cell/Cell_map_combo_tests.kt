@@ -4,7 +4,7 @@ import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.CellVerificationStrategy
 import dev.toolkt.reactive.cell.test_utils.DynamicCellFactory
 import dev.toolkt.reactive.cell.test_utils.FreezingCellFactory
-import dev.toolkt.reactive.cell.test_utils.StaticCellFactory
+import dev.toolkt.reactive.cell.test_utils.InertCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.map
 import kotlin.test.Ignore
@@ -13,7 +13,7 @@ import kotlin.test.Test
 @Suppress("ClassName")
 class Cell_map_combo_tests {
     private fun test_initial(
-        sourceCellFactory: StaticCellFactory,
+        sourceCellFactory: InertCellFactory,
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
         val sourceCell = sourceCellFactory.createExternally(10)
@@ -22,9 +22,11 @@ class Cell_map_combo_tests {
             it.toString()
         }
 
-        verificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectCell = mapCell,
-        ).verifyCurrentValue(
+        )
+
+        verifier.verifyCurrentValue(
             expectedCurrentValue = "10",
         )
     }
@@ -32,7 +34,7 @@ class Cell_map_combo_tests {
     private fun test_initial(
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
-        StaticCellFactory.values.forEach { sourceCellFactory ->
+        InertCellFactory.values.forEach { sourceCellFactory ->
             test_initial(
                 sourceCellFactory = sourceCellFactory,
                 verificationStrategy = verificationStrategy,
@@ -75,7 +77,7 @@ class Cell_map_combo_tests {
         )
 
         verifier.verifyUpdates(
-            doTrigger = doUpdate,
+            doTriggerUpdate = doUpdate,
             expectedUpdatedValue = "20",
         )
     }

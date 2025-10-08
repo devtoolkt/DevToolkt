@@ -94,16 +94,10 @@ sealed class CellVerificationStrategy {
         )
     }
 
-    abstract class Partial : CellVerificationStrategy() {
-        abstract override fun <ValueT> begin(
-            subjectCell: Cell<ValueT>,
-        ): CellVerifier.Partial<ValueT>
-    }
-
-    data object Quick : Partial() {
+    data object Quick : Total() {
         override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,
-        ): CellVerifier.Partial<ValueT> = CellVerifier.observeQuick(
+        ): CellVerifier.Total<ValueT> = CellVerifier.observeQuick(
             subjectCell = subjectCell,
         )
     }

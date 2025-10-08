@@ -4,17 +4,17 @@ import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.map
 import dev.toolkt.reactive.event_stream.EventStream
-import dev.toolkt.reactive.event_stream.hold
+import dev.toolkt.reactive.event_stream.map
 import dev.toolkt.reactive.event_stream.mapNotNull
+import dev.toolkt.reactive.event_stream.mapNotNullAt
 import dev.toolkt.reactive.event_stream.single
+import dev.toolkt.reactive.event_stream.take
 
 sealed class DynamicCellFactory {
     companion object {
         val values = listOf(
             Basic,
             TransformedBasic,
-            FreezingSimultaneously,
-//            FreezingLater,
         )
     }
 
@@ -40,26 +40,6 @@ sealed class DynamicCellFactory {
         ).map { it }
     }
 
-    data object FreezingSimultaneously : DynamicCellFactory() {
-        override fun <ValueT> createExternally(
-            initialValue: ValueT,
-            doUpdate: EventStream<ValueT>,
-        ): Cell<ValueT> = MomentContext.execute {
-            doUpdate.single().hold(
-                initialValue = initialValue,
-            )
-        }
-    }
-
-    data object FreezingLater : DynamicCellFactory() {
-        override fun <ValueT> createExternally(
-            initialValue: ValueT,
-            doUpdate: EventStream<ValueT>,
-        ): Cell<ValueT> {
-            TODO("Not yet implemented")
-        }
-    }
-
     fun <ValueT> createFilteredOutExternally(
         initialValue: ValueT,
         doTrigger: EventStream<Unit>,
@@ -72,4 +52,36 @@ sealed class DynamicCellFactory {
         initialValue: ValueT,
         doUpdate: EventStream<ValueT>,
     ): Cell<ValueT>
+
+    fun <ValueT> createFreezingExternally(
+        initialValue: ValueT,
+        doUpdateFreezing: EventStream<ValueT>,
+    ): Cell<ValueT> {
+        val newValues = MomentContext.execute {
+            doUpdateFreezing.single()
+        }
+
+        return createExternally(
+            initialValue = initialValue,
+            doUpdate = newValues,
+        )
+    }
+
+    fun <ValueT> createFreezingLaterExternally(
+        initialValue: ValueT,
+        doUpdate: EventStream<ValueT>,
+        doFreezeLater: EventStream<Unit>,
+    ): Cell<ValueT> {
+        val doUpdateEffectively = MomentContext.execute {
+            EventStream.merge2(
+                doUpdate,
+                doFreezeLater.map { null },
+            ).take(2).mapNotNullAt { it }
+        }
+
+        return createExternally(
+            initialValue = initialValue,
+            doUpdate = doUpdateEffectively,
+        )
+    }
 }
