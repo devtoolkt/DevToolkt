@@ -1,10 +1,11 @@
 package dev.toolkt.reactive.event_stream
 
+import dev.toolkt.core.utils.lazy.LazyUtils
 import dev.toolkt.reactive.MomentContext
-import dev.toolkt.reactive.PureContext
 import dev.toolkt.reactive.SubscriptionVertex
 import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.OperatedCell
+import dev.toolkt.reactive.cell.sample
 import dev.toolkt.reactive.cell.vertices.HoldCellVertex
 import dev.toolkt.reactive.cell.vertices.PureCellVertex
 import dev.toolkt.reactive.event_stream.vertices.DynamicEventStreamVertex
@@ -68,6 +69,16 @@ sealed interface EventStream<out EventT> {
     }
 
     companion object {
+        fun <EventT, ResultT> looped(
+            block: (EventStream<EventT>) -> Pair<ResultT, EventStream<EventT>>,
+        ): ResultT = LazyUtils.looped { loopedEventStreamLazy ->
+            block(
+                LazyEventStream(
+                    eventStreamLazy = loopedEventStreamLazy,
+                ),
+            )
+        }
+
         /**
          * Creates an event stream driven by an external event source.
          *
@@ -128,7 +139,9 @@ fun <EventT, TransformedEventT : Any> EventStream<EventT>.mapNotNull(
 
         is DynamicEventStreamVertex -> EventStreamMapNotNullVertex(
             sourceEventStreamVertex = vertex,
-            transform = transform,
+            transform = { _, event ->
+                transform(event)
+            },
         )
     }
 )
@@ -152,6 +165,25 @@ fun <EventT, TransformedEventT> EventStream<EventT>.mapAt(
     },
 )
 
+fun <EventT, TransformedEventT : Any> EventStream<EventT>.mapNotNullAt(
+    transform: context(MomentContext) (EventT) -> TransformedEventT?,
+): EventStream<TransformedEventT> =  OperatedEventStream(
+    vertex = when (val vertex = this.vertex) {
+        SilentEventStreamVertex -> SilentEventStreamVertex
+
+        is DynamicEventStreamVertex -> EventStreamMapNotNullVertex(
+            sourceEventStreamVertex = vertex,
+            transform = { context, event ->
+                MomentContext(
+                    context = context,
+                ).run {
+                    transform(event)
+                }
+            },
+        )
+    }
+)
+
 fun <EventT> EventStream<EventT>.filter(
     predicate: (EventT) -> Boolean,
 ): EventStream<EventT> = OperatedEventStream(
@@ -164,6 +196,10 @@ fun <EventT> EventStream<EventT>.filter(
         )
     },
 )
+
+fun <EventT> EventStream<EventT>.filterAt(
+    predicate: context(MomentContext) (EventT) -> Boolean,
+): EventStream<EventT> = TODO()
 
 context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.single(): EventStream<EventT> =
     OperatedEventStream(
@@ -216,6 +252,28 @@ context(momentContext: MomentContext) fun <ValueT> EventStream<ValueT>.hold(
         )
     }
 )
+
+context(momentContext: MomentContext) fun <EventT, AccT> EventStream<EventT>.accumulate(
+    initialAccValue: AccT,
+    transform: (accValue: AccT, newEvent: EventT) -> AccT,
+): Cell<AccT> = EventStream.looped<AccT, Cell<AccT>> { loopedNewAccValues ->
+    val accCell = Cell.define(
+        initialValue = initialAccValue,
+        newValues = loopedNewAccValues,
+    )
+
+    val newAccValues = this@accumulate.mapAt { newEvent ->
+        transform(
+            accCell.sample(),
+            newEvent,
+        )
+    }
+
+    Pair(
+        accCell,
+        newAccValues,
+    )
+}
 
 /**
  * Subscribe to this event stream.

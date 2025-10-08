@@ -4,7 +4,7 @@ import dev.toolkt.reactive.Transaction
 
 class EventStreamMapNotNullVertex<SourceEventT, TransformedEventT : Any>(
     private val sourceEventStreamVertex: EventStreamVertex<SourceEventT>,
-    private val transform: (SourceEventT) -> TransformedEventT?,
+    private val transform: (Transaction.ProcessingContext, SourceEventT) -> TransformedEventT?,
 ) : SimpleDerivedEventStreamVertex<TransformedEventT>() {
     override fun process(
         context: Transaction.ProcessingContext,
@@ -15,9 +15,9 @@ class EventStreamMapNotNullVertex<SourceEventT, TransformedEventT : Any>(
             processingMode = processingMode,
         )
 
-        return sourceOccurrence.mapNotNull(
-            transform = transform,
-        )
+        return sourceOccurrence.mapNotNull {
+            transform(context, it)
+        }
     }
 
     override fun resume() {

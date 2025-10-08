@@ -4,7 +4,7 @@ import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.CellVerificationStrategy
 import dev.toolkt.reactive.cell.test_utils.DynamicCellFactory
 import dev.toolkt.reactive.cell.test_utils.FreezingCellFactory
-import dev.toolkt.reactive.cell.test_utils.StaticCellFactory
+import dev.toolkt.reactive.cell.test_utils.InertCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.map
 import dev.toolkt.reactive.event_stream.mapNotNull
@@ -14,8 +14,8 @@ import kotlin.test.Test
 @Suppress("ClassName")
 class Cell_map2_combo_tests {
     private fun test_initial(
-        source1CellFactory: StaticCellFactory,
-        source2CellFactory: StaticCellFactory,
+        source1CellFactory: InertCellFactory,
+        source2CellFactory: InertCellFactory,
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
         val sourceCell1 = source1CellFactory.createExternally(10)
@@ -29,9 +29,11 @@ class Cell_map2_combo_tests {
             "$value1:$value2"
         }
 
-        verificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectCell = map2Cell,
-        ).verifyCurrentValue(
+        )
+
+        verifier.verifyCurrentValue(
             expectedCurrentValue = "10:A",
         )
     }
@@ -39,8 +41,8 @@ class Cell_map2_combo_tests {
     private fun test_initial(
         verificationStrategy: CellVerificationStrategy.Total,
     ) {
-        StaticCellFactory.values.forEach { source1CellFactory ->
-            StaticCellFactory.values.forEach { source2CellFactory ->
+        InertCellFactory.values.forEach { source1CellFactory ->
+            InertCellFactory.values.forEach { source2CellFactory ->
                 test_initial(
                     source1CellFactory = source1CellFactory,
                     source2CellFactory = source2CellFactory,
@@ -90,7 +92,7 @@ class Cell_map2_combo_tests {
         )
 
         verifier.verifyUpdates(
-            doTrigger = doUpdate,
+            doTriggerUpdate = doUpdate,
             expectedUpdatedValue = "20:20",
         )
     }
@@ -160,7 +162,7 @@ class Cell_map2_combo_tests {
         )
 
         verifier.verifyDoesNotUpdate(
-            doTrigger = doTrigger,
+            doTriggerPotentialUpdate = doTrigger,
             expectedNonUpdatedValue = "10:A",
         )
     }
@@ -197,7 +199,7 @@ class Cell_map2_combo_tests {
 
     private fun test_source1Update(
         source1CellFactory: DynamicCellFactory,
-        source2CellFactory: StaticCellFactory,
+        source2CellFactory: InertCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
@@ -221,7 +223,7 @@ class Cell_map2_combo_tests {
         )
 
         verifier.verifyUpdates(
-            doTrigger = doTrigger,
+            doTriggerUpdate = doTrigger,
             expectedUpdatedValue = "20:A",
         )
     }
@@ -230,7 +232,7 @@ class Cell_map2_combo_tests {
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { source1CellFactory ->
-            StaticCellFactory.values.forEach { source2CellFactory ->
+            InertCellFactory.values.forEach { source2CellFactory ->
                 test_source1Update(
                     source1CellFactory = source1CellFactory,
                     source2CellFactory = source2CellFactory,
@@ -264,7 +266,7 @@ class Cell_map2_combo_tests {
     }
 
     private fun test_source2Update(
-        source1CellFactory: StaticCellFactory,
+        source1CellFactory: InertCellFactory,
         source2CellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
@@ -289,7 +291,7 @@ class Cell_map2_combo_tests {
         )
 
         verifier.verifyUpdates(
-            doTrigger = doTrigger,
+            doTriggerUpdate = doTrigger,
             expectedUpdatedValue = "10:B",
         )
     }
@@ -297,7 +299,7 @@ class Cell_map2_combo_tests {
     private fun test_source2Update(
         verificationStrategy: CellVerificationStrategy,
     ) {
-        StaticCellFactory.values.forEach { source1CellFactory ->
+        InertCellFactory.values.forEach { source1CellFactory ->
             DynamicCellFactory.values.forEach { source2CellFactory ->
                 test_source2Update(
                     source1CellFactory = source1CellFactory,
@@ -360,7 +362,7 @@ class Cell_map2_combo_tests {
         )
 
         verifier.verifyUpdates(
-            doTrigger = doUpdate,
+            doTriggerUpdate = doUpdate,
             expectedUpdatedValue = "11:B",
         )
     }
@@ -434,7 +436,7 @@ class Cell_map2_combo_tests {
         )
 
         verifier.verifyUpdates(
-            doTrigger = doTrigger,
+            doTriggerUpdate = doTrigger,
             expectedUpdatedValue = "10:B",
         )
     }
@@ -501,7 +503,7 @@ class Cell_map2_combo_tests {
         )
 
         verifier.verifyUpdates(
-            doTrigger = doTrigger,
+            doTriggerUpdate = doTrigger,
             expectedUpdatedValue = "11:A",
         )
     }

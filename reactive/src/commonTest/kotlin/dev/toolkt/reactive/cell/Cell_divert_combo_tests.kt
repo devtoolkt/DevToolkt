@@ -1,9 +1,8 @@
 package dev.toolkt.reactive.cell
 
-import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.test_utils.DynamicCellFactory
 import dev.toolkt.reactive.cell.test_utils.QuietEventStreamFactory
-import dev.toolkt.reactive.cell.test_utils.StaticCellFactory
+import dev.toolkt.reactive.cell.test_utils.InertCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.emit
@@ -15,7 +14,7 @@ import kotlin.test.Test
 @Suppress("ClassName")
 class Cell_divert_combo_tests {
     private fun test_initialInnerOccurrence(
-        outerCellFactory: StaticCellFactory,
+        outerCellFactory: InertCellFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTriggerInner = EmitterEventStream<Unit>()
@@ -39,7 +38,7 @@ class Cell_divert_combo_tests {
     private fun test_initialInnerOccurrence(
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
-        StaticCellFactory.values.forEach { outerCellFactory ->
+        InertCellFactory.values.forEach { outerCellFactory ->
             test_initialInnerOccurrence(
                 outerCellFactory = outerCellFactory,
                 verificationStrategy = verificationStrategy,

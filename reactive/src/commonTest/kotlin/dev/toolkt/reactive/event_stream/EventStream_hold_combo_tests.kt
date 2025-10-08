@@ -18,9 +18,11 @@ class EventStream_hold_combo_tests {
             sourceEventStream.hold(initialValue = 10)
         }
 
-        verificationStrategy.begin(
+        val verifier = verificationStrategy.begin(
             subjectCell = holdCell,
-        ).verifyCurrentValue(
+        )
+
+        verifier.verifyCurrentValue(
             expectedCurrentValue = 10,
         )
     }
@@ -69,7 +71,7 @@ class EventStream_hold_combo_tests {
         )
 
         verifier.verifyUpdates(
-            doTrigger = doTrigger,
+            doTriggerUpdate = doTrigger,
             expectedUpdatedValue = 11,
         )
     }

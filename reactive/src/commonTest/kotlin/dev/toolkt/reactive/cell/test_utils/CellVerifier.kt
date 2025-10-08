@@ -3,7 +3,6 @@ package dev.toolkt.reactive.cell.test_utils
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.MutableCell
-import dev.toolkt.reactive.cell.sample
 import dev.toolkt.reactive.cell.updatedValues
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
@@ -15,12 +14,8 @@ import kotlin.test.assertEquals
 
 sealed class CellVerifier<ValueT> {
     abstract class Total<ValueT>() : CellVerifier<ValueT>() {
-        abstract fun verifyCurrentValue(
-            expectedCurrentValue: ValueT,
-        )
-
         abstract fun verifyDoesNotUpdate(
-            doTrigger: EmitterEventStream<Unit>,
+            doTriggerPotentialUpdate: EmitterEventStream<Unit>,
             expectedNonUpdatedValue: ValueT,
         )
     }
@@ -43,11 +38,11 @@ sealed class CellVerifier<ValueT> {
         }
 
         final override fun verifyUpdates(
-            doTrigger: EmitterEventStream<Unit>,
+            doTriggerUpdate: EmitterEventStream<Unit>,
             expectedUpdatedValue: ValueT,
         ) {
             verifyUpdatePropagates(
-                doTrigger = doTrigger,
+                doTrigger = doTriggerUpdate,
                 expectedPropagatedUpdatedValue = expectedUpdatedValue,
             )
 
@@ -82,11 +77,11 @@ sealed class CellVerifier<ValueT> {
         }
 
         final override fun verifyDoesNotUpdate(
-            doTrigger: EmitterEventStream<Unit>,
+            doTriggerPotentialUpdate: EmitterEventStream<Unit>,
             expectedNonUpdatedValue: ValueT,
         ) {
             verifyUpdateDoesNotPropagate(
-                doTrigger = doTrigger,
+                doTrigger = doTriggerPotentialUpdate,
             )
 
             verifyCurrentValueActively(
@@ -131,10 +126,10 @@ sealed class CellVerifier<ValueT> {
             subjectCell: Cell<ValueT>,
         ): Passive<ValueT> = object : Passive<ValueT>() {
             override fun verifyUpdates(
-                doTrigger: EmitterEventStream<Unit>,
+                doTriggerUpdate: EmitterEventStream<Unit>,
                 expectedUpdatedValue: ValueT,
             ) {
-                doTrigger.emit()
+                doTriggerUpdate.emit()
 
                 verifyCurrentValuePassively(
                     expectedCurrentValue = expectedUpdatedValue,
@@ -150,10 +145,10 @@ sealed class CellVerifier<ValueT> {
             }
 
             override fun verifyDoesNotUpdate(
-                doTrigger: EmitterEventStream<Unit>,
+                doTriggerPotentialUpdate: EmitterEventStream<Unit>,
                 expectedNonUpdatedValue: ValueT,
             ) {
-                doTrigger.emit()
+                doTriggerPotentialUpdate.emit()
 
                 verifyCurrentValuePassively(
                     expectedCurrentValue = expectedNonUpdatedValue,
@@ -248,29 +243,40 @@ sealed class CellVerifier<ValueT> {
             }
         }
 
+        private sealed class ValueWrapper<out ValueT> {
+            data object None : ValueWrapper<Nothing>()
+
+            data class Some<ValueT>(
+                val value: ValueT,
+            ) : ValueWrapper<ValueT>()
+        }
+
         /**
          * A tricky update verifier that triggers a corner case path, where the subject cell might be activated and pulled
          * at the same time by a dependent `switch` cell.
-         *
-         * This is a "partial" verifier, as it's not able to effectively detect a non-updated value, because the `switch`
-         * cell emits the current value of the new inner cell if the new inner cell doesn't update at the time of the
-         * switch.
          */
         fun <ValueT> observeQuick(
             subjectCell: Cell<ValueT>,
-        ): Partial<ValueT> = object : CellVerifier.Partial<ValueT>() {
-            override fun verifyUpdates(
-                doTrigger: EmitterEventStream<Unit>,
-                expectedUpdatedValue: ValueT,
+        ): Total<ValueT> = object : CellVerifier.Total<ValueT>() {
+            private fun verifyQuick(
+                doTriggerUpdate: EmitterEventStream<Unit>,
+                verifyHelper: (CellVerifier.Active<ValueWrapper<ValueT>>) -> Unit,
             ) {
                 val doReset = EmitterEventStream<Unit>()
 
                 val helperOuterCell = MomentContext.execute {
+                    val helperInnerCell = Cell.define(
+                        initialValue = ValueWrapper.None,
+                        newValues = subjectCell.updatedValues.map {
+                            ValueWrapper.Some(it)
+                        },
+                    )
+
                     Cell.define(
-                        initialValue = Cell.of(subjectCell.sample()),
+                        initialValue = Cell.of(ValueWrapper.None),
                         newValues = EventStream.merge2(
-                            doTrigger.map { subjectCell },
-                            doReset.mapAt { Cell.of(subjectCell.sampleExternally()) },
+                            doTriggerUpdate.map { helperInnerCell },
+                            doReset.mapAt { Cell.of(ValueWrapper.None) },
                         ),
                     )
                 }
@@ -281,18 +287,75 @@ sealed class CellVerifier<ValueT> {
                     subjectCell = helperSwitchCell,
                 )
 
-                helperUpdateVerifier.verifyUpdates(
-                    doTrigger = doTrigger,
-                    expectedUpdatedValue = expectedUpdatedValue,
-                )
+                verifyHelper(helperUpdateVerifier)
 
                 doReset.emit()
             }
+
+            override fun verifyUpdates(
+                doTriggerUpdate: EmitterEventStream<Unit>,
+                expectedUpdatedValue: ValueT,
+            ) {
+                verifyQuick(
+                    doTriggerUpdate = doTriggerUpdate,
+                ) { helperUpdateVerifier ->
+                    helperUpdateVerifier.verifyUpdates(
+                        doTriggerUpdate = doTriggerUpdate,
+                        expectedUpdatedValue = ValueWrapper.Some(expectedUpdatedValue),
+                    )
+                }
+            }
+
+            override fun verifyDoesNotUpdate(
+                doTriggerPotentialUpdate: EmitterEventStream<Unit>,
+                expectedNonUpdatedValue: ValueT,
+            ) {
+                verifyQuick(
+                    doTriggerUpdate = doTriggerPotentialUpdate,
+                ) { helperUpdateVerifier ->
+                    helperUpdateVerifier.verifyUpdates(
+                        doTriggerUpdate = doTriggerPotentialUpdate,
+                        expectedUpdatedValue = ValueWrapper.None,
+                    )
+                }
+            }
+
+            override fun verifyCurrentValue(
+                expectedCurrentValue: ValueT,
+            ) {
+                val sampledValue = subjectCell.sampleExternally()
+
+                assertEquals(
+                    expected = expectedCurrentValue,
+                    actual = sampledValue,
+                )
+            }
         }
     }
+//    /*
+//          abstract fun verifyDoesNotUpdate(
+//            doTriggerPotentialUpdate: EmitterEventStream<Unit>,
+//            expectedNonUpdatedValue: ValueT,
+//        )
+//     */
+//
+//    fun verifyDoesNotUpdate(
+//        doTriggerPotentialUpdate: EmitterEventStream<Unit>,
+//        expectedNonUpdatedValue: ValueT,
+//    ) {
+//        doTriggerPotentialUpdate.emit()
+//
+//        verifyCurrentValue(
+//            expectedCurrentValue = expectedNonUpdatedValue,
+//        )
+//    }
 
     abstract fun verifyUpdates(
-        doTrigger: EmitterEventStream<Unit>,
+        doTriggerUpdate: EmitterEventStream<Unit>,
         expectedUpdatedValue: ValueT,
+    )
+
+    abstract fun verifyCurrentValue(
+        expectedCurrentValue: ValueT,
     )
 }
