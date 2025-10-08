@@ -17,7 +17,7 @@ class Cell_switch_state_inertOuter_tests {
         val switchCell: Cell<Int>,
     )
 
-    private fun test_inertInner(
+    private fun test_state_inertInner_initial(
         outerCellFactory: InertCellFactory,
         innerCellFactory: InertCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -48,12 +48,12 @@ class Cell_switch_state_inertOuter_tests {
         // TODO: Verify collectibility
     }
 
-    private fun test_inertInner(
+    private fun test_state_inertInner_initial(
         verificationStrategy: CellVerificationStrategy,
     ) {
         InertCellFactory.values.forEach { outerCellFactory ->
             InertCellFactory.values.forEach { innerCellFactory ->
-                test_inertInner(
+                test_state_inertInner_initial(
                     outerCellFactory = outerCellFactory,
                     innerCellFactory = innerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -63,23 +63,23 @@ class Cell_switch_state_inertOuter_tests {
     }
 
     @Test
-    fun test_inertInner_passive() {
-        test_inertInner(
+    fun test_state_inertInner_initial_passive() {
+        test_state_inertInner_initial(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Ignore // FIXME: Subscription should not be null.
     @Test
-    fun test_inertInner_active() {
+    fun test_state_inertInner_initial_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_inertInner(
+            test_state_inertInner_initial(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
-    private fun test_dynamicInner(
+    private fun test_state_dynamicInner(
         outerCellFactory: InertCellFactory,
         innerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -101,12 +101,12 @@ class Cell_switch_state_inertOuter_tests {
         )
     }
 
-    private fun test_dynamicInner(
+    private fun test_state_dynamicInner(
         verificationStrategy: CellVerificationStrategy,
     ) {
         InertCellFactory.values.forEach { outerCellFactory ->
             DynamicCellFactory.values.forEach { innerCellFactory ->
-                test_dynamicInner(
+                test_state_dynamicInner(
                     outerCellFactory = outerCellFactory,
                     innerCellFactory = innerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -116,23 +116,23 @@ class Cell_switch_state_inertOuter_tests {
     }
 
     @Test
-    fun test_dynamicInner_passive() {
-        test_dynamicInner(
+    fun test_state_dynamicInner_passive() {
+        test_state_dynamicInner(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Ignore // FIXME: Subscription should not be null.
     @Test
-    fun test_dynamicInner_active() {
+    fun test_state_dynamicInner_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_dynamicInner(
+            test_state_dynamicInner(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
-    private fun test_innerWarmUpdate_innerFreeze(
+    private fun test_state_innerWarmUpdate_innerFreeze(
         outerCellFactory: InertCellFactory,
         innerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -175,12 +175,12 @@ class Cell_switch_state_inertOuter_tests {
         )
     }
 
-    private fun test_innerWarmUpdate_innerFreeze(
+    private fun test_state_innerWarmUpdate_innerFreeze(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { innerCellFactory ->
             InertCellFactory.values.forEach { outerCellFactory ->
-                test_innerWarmUpdate_innerFreeze(
+                test_state_innerWarmUpdate_innerFreeze(
                     outerCellFactory = outerCellFactory,
                     innerCellFactory = innerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -190,22 +190,22 @@ class Cell_switch_state_inertOuter_tests {
     }
 
     @Test
-    fun test_innerWarmUpdate_innerFreeze_passive() {
-        test_innerWarmUpdate_innerFreeze(
+    fun test_state_innerWarmUpdate_innerFreeze_passive() {
+        test_state_innerWarmUpdate_innerFreeze(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_innerWarmUpdate_innerFreeze_active() {
+    fun test_state_innerWarmUpdate_innerFreeze_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_innerWarmUpdate_innerFreeze(
+            test_state_innerWarmUpdate_innerFreeze(
                 verificationStrategy = verificationStrategy,
             )
         }
     }
 
-    private fun test_innerFrozenUpdate(
+    private fun test_state_innerFrozenUpdate(
         outerCellFactory: InertCellFactory,
         innerCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
@@ -241,12 +241,12 @@ class Cell_switch_state_inertOuter_tests {
         )
     }
 
-    private fun test_innerFrozenUpdate(
+    private fun test_state_innerFrozenUpdate(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { innerCellFactory ->
             InertCellFactory.values.forEach { outerCellFactory ->
-                test_innerFrozenUpdate(
+                test_state_innerFrozenUpdate(
                     outerCellFactory = outerCellFactory,
                     innerCellFactory = innerCellFactory,
                     verificationStrategy = verificationStrategy,
@@ -256,16 +256,16 @@ class Cell_switch_state_inertOuter_tests {
     }
 
     @Test
-    fun test_innerFrozenUpdate_passive() {
-        test_innerFrozenUpdate(
+    fun test_state_innerFrozenUpdate_passive() {
+        test_state_innerFrozenUpdate(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Test
-    fun test_innerFrozenUpdate_active() {
+    fun test_state_innerFrozenUpdate_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_innerFrozenUpdate(
+            test_state_innerFrozenUpdate(
                 verificationStrategy = verificationStrategy,
             )
         }
