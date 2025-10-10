@@ -13,6 +13,10 @@ import dev.toolkt.reactive.event_stream.subscribe
 import kotlin.test.assertEquals
 
 abstract class CellVerifier<ValueT> {
+    enum class UpdateTemperature {
+        Warm, Frozen,
+    }
+
     abstract class Passive<ValueT> : CellVerifier<ValueT>()
 
     abstract class Active<ValueT>(
@@ -37,6 +41,7 @@ abstract class CellVerifier<ValueT> {
             verifyUpdatePropagates(
                 doTrigger = doTriggerUpdate,
                 expectedPropagatedUpdatedValue = expectedUpdatedValue,
+                expectedUpdateTemperature = UpdateTemperature.Warm,
             )
 
             verifyCurrentValueActively(
@@ -44,9 +49,32 @@ abstract class CellVerifier<ValueT> {
             )
         }
 
+        final override fun verifyUpdatesFreezing(
+            doTriggerFrozenUpdate: EmitterEventStream<Unit>,
+            expectedUpdatedFrozenValue: ValueT,
+        ) {
+            verifyUpdatePropagates(
+                doTrigger = doTriggerFrozenUpdate,
+                expectedPropagatedUpdatedValue = expectedUpdatedFrozenValue,
+                expectedUpdateTemperature = UpdateTemperature.Frozen,
+            )
+
+            verifyCurrentValueActively(
+                expectedCurrentValue = expectedUpdatedFrozenValue,
+            )
+        }
+
+        final override fun verifyFreezes(
+            doFreeze: EmitterEventStream<Unit>,
+            expectedFrozenValue: ValueT,
+        ) {
+            TODO("Not yet implemented")
+        }
+
         fun verifyUpdatePropagates(
             doTrigger: EmitterEventStream<Unit>,
             expectedPropagatedUpdatedValue: ValueT,
+            expectedUpdateTemperature: UpdateTemperature,
         ) {
             val previousReceivedUpdateCount = receivedUpdateCount
 
@@ -127,6 +155,17 @@ abstract class CellVerifier<ValueT> {
                 )
             }
 
+            override fun verifyUpdatesFreezing(
+                doTriggerFrozenUpdate: EmitterEventStream<Unit>,
+                expectedUpdatedFrozenValue: ValueT,
+            ) {
+                doTriggerFrozenUpdate.emit()
+
+                verifyCurrentValuePassively(
+                    expectedCurrentValue = expectedUpdatedFrozenValue,
+                )
+            }
+
             override fun verifyCurrentValue(
                 expectedCurrentValue: ValueT,
             ) {
@@ -143,6 +182,17 @@ abstract class CellVerifier<ValueT> {
 
                 verifyCurrentValuePassively(
                     expectedCurrentValue = expectedNonUpdatedValue,
+                )
+            }
+
+            override fun verifyFreezes(
+                doFreeze: EmitterEventStream<Unit>,
+                expectedFrozenValue: ValueT,
+            ) {
+                doFreeze.emit()
+
+                verifyCurrentValuePassively(
+                    expectedCurrentValue = expectedFrozenValue,
                 )
             }
 
@@ -250,7 +300,7 @@ abstract class CellVerifier<ValueT> {
             subjectCell: Cell<ValueT>,
         ): CellVerifier<ValueT> = object : CellVerifier<ValueT>() {
             private fun verifyQuick(
-                doTriggerUpdate: EmitterEventStream<Unit>,
+                doTriggerUpdate: EventStream<Unit>,
                 verifyHelper: (CellVerifier.Active<ValueWrapper<ValueT>>) -> Unit,
             ) {
                 val doReset = EmitterEventStream<Unit>()
@@ -297,6 +347,34 @@ abstract class CellVerifier<ValueT> {
                 }
             }
 
+            override fun verifyUpdatesFreezing(
+                doTriggerFrozenUpdate: EmitterEventStream<Unit>,
+                expectedUpdatedFrozenValue: ValueT,
+            ) {
+                verifyQuick(
+                    doTriggerUpdate = doTriggerFrozenUpdate,
+                ) { helperUpdateVerifier ->
+                    helperUpdateVerifier.verifyUpdatesFreezing(
+                        doTriggerFrozenUpdate = doTriggerFrozenUpdate,
+                        expectedUpdatedFrozenValue = ValueWrapper.Some(expectedUpdatedFrozenValue),
+                    )
+                }
+            }
+
+            override fun verifyFreezes(
+                doFreeze: EmitterEventStream<Unit>,
+                expectedFrozenValue: ValueT,
+            ) {
+                verifyQuick(
+                    doTriggerUpdate = doFreeze,
+                ) { helperUpdateVerifier ->
+                    helperUpdateVerifier.verifyFreezes(
+                        doFreeze = doFreeze,
+                        expectedFrozenValue = ValueWrapper.None,
+                    )
+                }
+            }
+
             override fun verifyDoesNotUpdate(
                 doTriggerPotentialUpdate: EmitterEventStream<Unit>,
                 expectedNonUpdatedValue: ValueT,
@@ -329,9 +407,19 @@ abstract class CellVerifier<ValueT> {
         expectedUpdatedValue: ValueT,
     )
 
+    abstract fun verifyUpdatesFreezing(
+        doTriggerFrozenUpdate: EmitterEventStream<Unit>,
+        expectedUpdatedFrozenValue: ValueT,
+    )
+
     abstract fun verifyDoesNotUpdate(
         doTriggerPotentialUpdate: EmitterEventStream<Unit>,
         expectedNonUpdatedValue: ValueT,
+    )
+
+    abstract fun verifyFreezes(
+        doFreeze: EmitterEventStream<Unit>,
+        expectedFrozenValue: ValueT,
     )
 
     abstract fun verifyCurrentValue(

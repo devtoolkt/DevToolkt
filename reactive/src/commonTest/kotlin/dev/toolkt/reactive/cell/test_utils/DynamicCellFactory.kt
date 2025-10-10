@@ -77,6 +77,15 @@ sealed class DynamicCellFactory {
 
     fun <ValueT> createFreezingLaterExternally(
         initialValue: ValueT,
+        doFreezeLater: EventStream<Unit>,
+    ): Cell<ValueT> = createFreezingLaterExternally(
+        initialValue = initialValue,
+        doUpdate = EmitterEventStream(),
+        doFreezeLater = doFreezeLater,
+    )
+
+    fun <ValueT> createFreezingLaterExternally(
+        initialValue: ValueT,
         doUpdate: EventStream<ValueT>,
         doFreezeLater: EventStream<Unit>,
     ): Cell<ValueT> {

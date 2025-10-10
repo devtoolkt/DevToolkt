@@ -7,7 +7,6 @@ import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.emit
 
 sealed class CellVerificationStrategy {
-
     data object Passive : CellVerificationStrategy() {
         override fun <ValueT> begin(
             subjectCell: Cell<ValueT>,

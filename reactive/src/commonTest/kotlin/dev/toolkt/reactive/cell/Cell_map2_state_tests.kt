@@ -6,6 +6,7 @@ import dev.toolkt.reactive.cell.test_utils.DynamicCellFactory
 import dev.toolkt.reactive.cell.test_utils.FreezingCellFactory
 import dev.toolkt.reactive.cell.test_utils.InertCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
+import dev.toolkt.reactive.event_stream.emit
 import dev.toolkt.reactive.event_stream.map
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -120,7 +121,7 @@ class Cell_map2_state_tests {
         }
     }
 
-    private fun test_state_sameSource_sourceUpdate(
+    private fun test_state_sameSource_singleSourceUpdates(
         sourceCellFactory: DynamicCellFactory,
         verificationStrategy: CellVerificationStrategy,
     ) {
@@ -148,11 +149,11 @@ class Cell_map2_state_tests {
         )
     }
 
-    private fun test_state_sameSource_sourceUpdate(
+    private fun test_state_sameSource_singleSourceUpdates(
         verificationStrategy: CellVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { sourceCellFactory ->
-            test_state_sameSource_sourceUpdate(
+            test_state_sameSource_singleSourceUpdates(
                 sourceCellFactory = sourceCellFactory,
                 verificationStrategy = verificationStrategy,
             )
@@ -160,17 +161,17 @@ class Cell_map2_state_tests {
     }
 
     @Test
-    fun test_state_sameSource_sourceUpdate_passive() {
-        test_state_sameSource_sourceUpdate(
+    fun test_state_sameSource_singleSourceUpdates_passive() {
+        test_state_sameSource_singleSourceUpdates(
             verificationStrategy = CellVerificationStrategy.Passive,
         )
     }
 
     @Ignore // FIXME: Flaky test
     @Test
-    fun test_state_sameSource_sourceUpdate_active() {
+    fun test_state_sameSource_singleSourceUpdates_active() {
         CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_state_sameSource_sourceUpdate(
+            test_state_sameSource_singleSourceUpdates(
                 verificationStrategy = verificationStrategy,
             )
         }
@@ -178,9 +179,253 @@ class Cell_map2_state_tests {
 
     @Ignore // FIXME: Flaky test
     @Test
-    fun test_state_sameSource_sourceUpdate_quick() {
-        test_state_sameSource_sourceUpdate(
+    fun test_state_sameSource_singleSourceUpdates_quick() {
+        test_state_sameSource_singleSourceUpdates(
             verificationStrategy = CellVerificationStrategy.Quick,
+        )
+    }
+
+    private fun test_state_twoSourcesFreezeSeparately_initial(
+        source1CellFactory: DynamicCellFactory,
+        source2CellFactory: DynamicCellFactory,
+        verificationStrategy: CellVerificationStrategy,
+    ) {
+        val doFreezeFirst = EmitterEventStream<Unit>()
+        val doFreezeSecond = EmitterEventStream<Unit>()
+
+        val sourceCell1 = source1CellFactory.createFreezingLaterExternally(
+            initialValue = 10,
+            doFreezeLater = doFreezeFirst,
+        )
+
+        val sourceCell2 = source2CellFactory.createFreezingLaterExternally(
+            initialValue = 'A',
+            doFreezeLater = doFreezeFirst,
+        )
+
+        val map2Cell = Cell.map2(
+            sourceCell1,
+            sourceCell2,
+        ) { value1, value2 ->
+            "$value1:$value2"
+        }
+
+        val verifier = verificationStrategy.begin(
+            subjectCell = map2Cell,
+        )
+
+        verifier.verifyDoesNotUpdate(
+            doTriggerPotentialUpdate = doFreezeFirst,
+            expectedNonUpdatedValue = "10:A",
+        )
+
+        verifier.verifyFreezes(
+            doFreeze = doFreezeSecond,
+            expectedFrozenValue = "10:A",
+        )
+    }
+
+    private fun test_state_twoSourcesFreezeSeparately_nonInitial(
+        source1CellFactory: DynamicCellFactory,
+        source2CellFactory: DynamicCellFactory,
+        verificationStrategy: CellVerificationStrategy,
+    ) {
+        val doTriggerFirstUpdate = EmitterEventStream<Unit>()
+        val doTriggerSecondUpdate = EmitterEventStream<Unit>()
+        val doFreezeSecond = EmitterEventStream<Unit>()
+        val doFreezeFirst = EmitterEventStream<Unit>()
+
+        val sourceCell1 = source1CellFactory.createFreezingLaterExternally(
+            initialValue = 10,
+            doUpdate = doTriggerFirstUpdate.map { 20 },
+            doFreezeLater = doFreezeFirst,
+        )
+
+        val sourceCell2 = source2CellFactory.createFreezingLaterExternally(
+            initialValue = 'A',
+            doUpdate = doTriggerSecondUpdate.map { 'B' },
+            doFreezeLater = doFreezeFirst,
+        )
+
+        val map2Cell = Cell.map2(
+            sourceCell1,
+            sourceCell2,
+        ) { value1, value2 ->
+            "$value1:$value2"
+        }
+
+        val verifier = verificationStrategy.begin(
+            subjectCell = map2Cell,
+        )
+
+        // TODO: Ensure this is tested
+        doTriggerFirstUpdate.emit()
+        doTriggerSecondUpdate.emit()
+
+        verifier.verifyDoesNotUpdate(
+            doTriggerPotentialUpdate = doFreezeSecond,
+            expectedNonUpdatedValue = "20:A",
+        )
+
+        verifier.verifyFreezes(
+            doFreeze = doFreezeFirst,
+            expectedFrozenValue = "20:A",
+        )
+    }
+
+    private fun test_state_twoSourcesFreezeSeparately_nonInitial_withOverlap(
+        source1CellFactory: DynamicCellFactory,
+        source2CellFactory: DynamicCellFactory,
+        verificationStrategy: CellVerificationStrategy,
+    ) {
+        val doTriggerFirstUpdate = EmitterEventStream<Unit>()
+        val doTriggerSecondUpdateFreezeFirst = EmitterEventStream<Unit>()
+        val doFreezeSecond = EmitterEventStream<Unit>()
+
+        val sourceCell1 = source1CellFactory.createFreezingLaterExternally(
+            initialValue = 10,
+            doUpdate = doTriggerFirstUpdate.map { 20 },
+            doFreezeLater = doTriggerSecondUpdateFreezeFirst,
+        )
+
+        val sourceCell2 = source2CellFactory.createFreezingLaterExternally(
+            initialValue = 'A',
+            doUpdate = doTriggerSecondUpdateFreezeFirst.map { 'B' },
+            doFreezeLater = doFreezeSecond,
+        )
+
+        val map2Cell = Cell.map2(
+            sourceCell1,
+            sourceCell2,
+        ) { value1, value2 ->
+            "$value1:$value2"
+        }
+
+        val verifier = verificationStrategy.begin(
+            subjectCell = map2Cell,
+        )
+
+        verifier.verifyUpdates(
+            doTriggerUpdate = doTriggerFirstUpdate,
+            expectedUpdatedValue = "20:A",
+        )
+
+        verifier.verifyUpdates(
+            doTriggerUpdate = doTriggerSecondUpdateFreezeFirst,
+            expectedUpdatedValue = "20:B",
+        )
+
+        verifier.verifyFreezes(
+            doFreeze = doFreezeSecond,
+            expectedFrozenValue = "20:B",
+        )
+    }
+
+    private fun test_state_bothSourcesFreezeSimultaneously_initial(
+        source1CellFactory: DynamicCellFactory,
+        source2CellFactory: DynamicCellFactory,
+        verificationStrategy: CellVerificationStrategy,
+    ) {
+        val doFreezeBoth = EmitterEventStream<Unit>()
+
+        val sourceCell1 = source1CellFactory.createFreezingLaterExternally(
+            initialValue = 10,
+            doFreezeLater = doFreezeBoth,
+        )
+
+        val sourceCell2 = source2CellFactory.createFreezingLaterExternally(
+            initialValue = 'A',
+            doFreezeLater = doFreezeBoth,
+        )
+
+        val map2Cell = Cell.map2(
+            sourceCell1,
+            sourceCell2,
+        ) { value1, value2 ->
+            "$value1:$value2"
+        }
+
+        val verifier = verificationStrategy.begin(
+            subjectCell = map2Cell,
+        )
+
+        verifier.verifyFreezes(
+            doFreeze = doFreezeBoth,
+            expectedFrozenValue = "10:A",
+        )
+    }
+
+    private fun test_state_bothSourcesFreezeSimultaneously_nonInitial(
+        source1CellFactory: DynamicCellFactory,
+        source2CellFactory: DynamicCellFactory,
+        verificationStrategy: CellVerificationStrategy,
+    ) {
+        val doTriggerUpdateBoth = EmitterEventStream<Unit>()
+        val doFreezeBoth = EmitterEventStream<Unit>()
+
+        val sourceCell1 = source1CellFactory.createFreezingLaterExternally(
+            initialValue = 10,
+            doUpdate = doTriggerUpdateBoth.map { 20 },
+            doFreezeLater = doFreezeBoth,
+        )
+
+        val sourceCell2 = source2CellFactory.createFreezingLaterExternally(
+            initialValue = 'A',
+            doUpdate = doTriggerUpdateBoth.map { 'B' },
+            doFreezeLater = doFreezeBoth,
+        )
+
+        val map2Cell = Cell.map2(
+            sourceCell1,
+            sourceCell2,
+        ) { value1, value2 ->
+            "$value1:$value2"
+        }
+
+        val verifier = verificationStrategy.begin(
+            subjectCell = map2Cell,
+        )
+
+        // TODO: Ensure this is tested
+        doTriggerUpdateBoth.emit()
+
+        verifier.verifyFreezes(
+            doFreeze = doFreezeBoth,
+            expectedFrozenValue = "20:A",
+        )
+    }
+
+    private fun test_state_bothSourcesUpdateFreezingSimultaneously_initial(
+        source1CellFactory: DynamicCellFactory,
+        source2CellFactory: DynamicCellFactory,
+        verificationStrategy: CellVerificationStrategy,
+    ) {
+        val doTriggerFrozenUpdateBoth = EmitterEventStream<Unit>()
+
+        val sourceCell1 = source1CellFactory.createDynamicExternally(
+            initialValue = 10,
+            doUpdate = doTriggerFrozenUpdateBoth.map { 20 },
+        )
+
+        val sourceCell2 = source2CellFactory.createDynamicExternally(
+            initialValue = 'A',
+            doUpdate = doTriggerFrozenUpdateBoth.map { 'B' },
+        )
+
+        val map2Cell = Cell.map2(
+            sourceCell1,
+            sourceCell2,
+        ) { value1, value2 ->
+            "$value1:$value2"
+        }
+
+        val verifier = verificationStrategy.begin(
+            subjectCell = map2Cell,
+        )
+
+        verifier.verifyUpdatesFreezing(
+            doTriggerFrozenUpdate = doTriggerFrozenUpdateBoth,
+            expectedUpdatedFrozenValue = "20:A",
         )
     }
 
