@@ -15,3 +15,15 @@ fun <E> List<E>.indexOfOrNull(
         else -> index
     }
 }
+
+fun <E> List<E>.indexOfOrNull(
+    predicate: (E) -> Boolean,
+): Int? {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+
+    return null
+}

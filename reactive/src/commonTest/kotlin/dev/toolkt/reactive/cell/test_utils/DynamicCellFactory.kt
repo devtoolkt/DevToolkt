@@ -3,6 +3,7 @@ package dev.toolkt.reactive.cell.test_utils
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.map
+import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenNotification
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.map
