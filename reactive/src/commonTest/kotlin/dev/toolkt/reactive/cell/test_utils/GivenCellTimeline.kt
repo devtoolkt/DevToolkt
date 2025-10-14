@@ -15,13 +15,40 @@ data class GivenCellTimeline<ValueT : Any>(
      * A notification about an update in the cell's value.
      */
     sealed interface GivenUpdate<out ValueT : Any> : GivenNotification<ValueT> {
+        companion object {
+            fun <ValueT : Any> of(
+                givenUpdatedValue: ValueT,
+                shouldFreeze: Boolean,
+            ): GivenUpdate<ValueT> = when {
+                shouldFreeze -> GivenFreezingUpdate.of(
+                    givenUpdatedValue = givenUpdatedValue,
+                )
+
+                else -> GivenPlainUpdate.of(
+                    givenUpdatedValue = givenUpdatedValue,
+                )
+            }
+        }
+
         override val givenUpdatedValue: ValueT
     }
 
     /**
      * The last notification, after which the cell becomes frozen.
      */
-    sealed interface GivenFreezingNotification<out ValueT : Any> : GivenNotification<ValueT>
+    sealed interface GivenFreezingNotification<out ValueT : Any> : GivenNotification<ValueT> {
+        companion object {
+            fun <ValueT : Any> of(
+                givenUpdatedValue: ValueT?,
+            ): GivenFreezingNotification<ValueT> = when {
+                givenUpdatedValue != null -> GivenFreezingUpdate.of(
+                    givenUpdatedValue = givenUpdatedValue,
+                )
+
+                else -> GivenJustFreeze
+            }
+        }
+    }
 
     /**
      * A plain update in the cell's value (not final).
