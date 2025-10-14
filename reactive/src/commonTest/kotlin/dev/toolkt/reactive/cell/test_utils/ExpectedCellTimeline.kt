@@ -9,10 +9,37 @@ data class ExpectedCellTimeline<ValueT : Any>(
     }
 
     sealed interface ExpectedUpdate<out ValueT : Any> : ExpectedNotification<ValueT> {
+        companion object {
+            fun <ValueT : Any> of(
+                expectedUpdatedValue: ValueT,
+                shouldExpectFreeze: Boolean,
+            ): ExpectedUpdate<ValueT> = when {
+                shouldExpectFreeze -> ExpectedFreezingUpdate(
+                    expectedUpdatedValue = expectedUpdatedValue,
+                )
+
+                else -> ExpectedPlainUpdate(
+                    expectedUpdatedValue = expectedUpdatedValue,
+                )
+            }
+        }
+
         override val expectedUpdatedValue: ValueT
     }
 
-    sealed interface ExpectedFreezingNotification<out ValueT : Any> : ExpectedNotification<ValueT>
+    sealed interface ExpectedFreezingNotification<out ValueT : Any> : ExpectedNotification<ValueT> {
+        companion object {
+            fun <ValueT : Any> of(
+                expectedUpdatedValue: ValueT?,
+            ): ExpectedFreezingNotification<ValueT> = when {
+                expectedUpdatedValue != null -> ExpectedFreezingUpdate(
+                    expectedUpdatedValue = expectedUpdatedValue,
+                )
+
+                else -> ExpectedJustFreeze
+            }
+        }
+    }
 
     data class ExpectedPlainUpdate<out ValueT : Any>(
         override val expectedUpdatedValue: ValueT,
