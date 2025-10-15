@@ -1,10 +1,11 @@
 package dev.toolkt.reactive
 
+import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex
 
 class SubscriptionVertex<EventT>(
     private val sourceEventStreamVertex: EventStreamVertex<EventT>,
-    private val handle: (EventT) -> Unit,
+    private val subscriber: EventStream.Subscriber<EventT>,
 ) : DependentVertex {
     private var receivedEvent: EventStreamVertex.Occurrence<EventT>? = null
 
@@ -30,10 +31,14 @@ class SubscriptionVertex<EventT>(
     }
 
     override fun commit() {
+        // TODO: Support termination
         when (val receivedEvent = this.receivedEvent) {
             is EventStreamVertex.EffectiveOccurrence -> {
-
-                handle(receivedEvent.event)
+                subscriber.handleNotification(
+                    notification = EventStream.IntermediateEmissionNotification(
+                        emittedEvent = receivedEvent.event,
+                    )
+                )
             }
 
             else -> {}
