@@ -2,6 +2,7 @@ package dev.toolkt.reactive.event_stream
 
 import dev.toolkt.core.utils.iterable.copyAndClear
 import dev.toolkt.reactive.MomentContext
+import dev.toolkt.reactive.event_stream.test_utils.subscribeCollecting
 import dev.toolkt.reactive.test_utils.ReactiveTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

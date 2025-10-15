@@ -4,12 +4,11 @@ import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.observe
 import dev.toolkt.reactive.cell.sample
-import dev.toolkt.reactive.cell.updatedValues
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.mapNotNull
-import dev.toolkt.reactive.event_stream.subscribe
 import dev.toolkt.reactive.event_stream.take
+import dev.toolkt.reactive.test_utils.DynamicTestContext
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -18,11 +17,7 @@ fun <ValueT> Cell<ValueT>.sampleExternally(): ValueT = MomentContext.execute {
     sample()
 }
 
-interface CellDynamicTestContext {
-    val onTick: EventStream<Tick>
-}
-
-context(context: CellDynamicTestContext) fun <ValueT : Any> createDynamicCellExternally(
+context(context: DynamicTestContext) fun <ValueT : Any> createDynamicCellExternally(
     initialValue: ValueT,
     updatedValueByTick: Map<Tick, ValueT>,
     freezeTick: Tick?,
@@ -46,14 +41,14 @@ context(context: CellDynamicTestContext) fun <ValueT : Any> createDynamicCellExt
 }
 
 fun <ValueT : Any> testCell_initiallyDynamic(
-    setup: context(CellDynamicTestContext) () -> Cell<ValueT>,
+    setup: context(DynamicTestContext) () -> Cell<ValueT>,
     expectedInitialValue: ValueT,
     expectedNotificationByTick: Map<Tick, Cell.Notification<ValueT>>,
 ) {
     val doTick = EmitterEventStream<Tick>()
 
     val subjectCell = with(
-        object : CellDynamicTestContext {
+        object : DynamicTestContext {
             override val onTick: EventStream<Tick> = doTick
         },
     ) {

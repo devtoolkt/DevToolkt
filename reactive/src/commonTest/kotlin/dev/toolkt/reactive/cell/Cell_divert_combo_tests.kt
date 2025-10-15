@@ -1,7 +1,7 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.cell.test_utils.DynamicCellFactory
-import dev.toolkt.reactive.cell.test_utils.QuietEventStreamFactory
+import dev.toolkt.reactive.cell.test_utils.ExhaustedEventStreamFactory
 import dev.toolkt.reactive.cell.test_utils.InertCellFactory
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
@@ -57,8 +57,8 @@ class Cell_divert_combo_tests {
 
     private fun test_outerUpdate(
         outerCellFactory: DynamicCellFactory,
-        initialInnerEventStreamFactory: QuietEventStreamFactory,
-        newInnerEventStreamFactory: QuietEventStreamFactory,
+        initialInnerEventStreamFactory: ExhaustedEventStreamFactory,
+        newInnerEventStreamFactory: ExhaustedEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
@@ -87,8 +87,8 @@ class Cell_divert_combo_tests {
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
-            QuietEventStreamFactory.values.forEach { initialInnerEventStreamFactory ->
-                QuietEventStreamFactory.values.forEach { newInnerEventStreamFactory ->
+            ExhaustedEventStreamFactory.values.forEach { initialInnerEventStreamFactory ->
+                ExhaustedEventStreamFactory.values.forEach { newInnerEventStreamFactory ->
                     test_outerUpdate(
                         outerCellFactory = outerCellFactory,
                         initialInnerEventStreamFactory = initialInnerEventStreamFactory,
@@ -111,7 +111,7 @@ class Cell_divert_combo_tests {
 
     private fun test_outerUpdate_sameEventStream(
         outerCellFactory: DynamicCellFactory,
-        innerEventStreamFactory: QuietEventStreamFactory,
+        innerEventStreamFactory: ExhaustedEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
@@ -139,7 +139,7 @@ class Cell_divert_combo_tests {
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
-            QuietEventStreamFactory.values.forEach { innerEventStreamFactory ->
+            ExhaustedEventStreamFactory.values.forEach { innerEventStreamFactory ->
                 test_outerUpdate_sameEventStream(
                     outerCellFactory = outerCellFactory,
                     innerEventStreamFactory = innerEventStreamFactory,
@@ -160,7 +160,7 @@ class Cell_divert_combo_tests {
 
     private fun test_outerUpdate_thenInitialInnerOccurrence(
         outerCellFactory: DynamicCellFactory,
-        newInnerEventStreamFactory: QuietEventStreamFactory,
+        newInnerEventStreamFactory: ExhaustedEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
@@ -193,7 +193,7 @@ class Cell_divert_combo_tests {
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
-            QuietEventStreamFactory.values.forEach { newInnerEventStreamFactory ->
+            ExhaustedEventStreamFactory.values.forEach { newInnerEventStreamFactory ->
                 test_outerUpdate_thenInitialInnerOccurrence(
                     outerCellFactory = outerCellFactory,
                     newInnerEventStreamFactory = newInnerEventStreamFactory,
@@ -214,7 +214,7 @@ class Cell_divert_combo_tests {
 
     private fun test_outerUpdate_thenNewInnerUpdate(
         outerCellFactory: DynamicCellFactory,
-        initialInnerEventStreamFactory: QuietEventStreamFactory,
+        initialInnerEventStreamFactory: ExhaustedEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doUpdateOuter = EmitterEventStream<Unit>()
@@ -248,7 +248,7 @@ class Cell_divert_combo_tests {
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
-            QuietEventStreamFactory.values.forEach { initialInnerEventStreamFactory ->
+            ExhaustedEventStreamFactory.values.forEach { initialInnerEventStreamFactory ->
                 test_outerUpdate_thenNewInnerUpdate(
                     outerCellFactory = outerCellFactory,
                     initialInnerEventStreamFactory = initialInnerEventStreamFactory,
@@ -269,7 +269,7 @@ class Cell_divert_combo_tests {
 
     private fun test_outerUpdate_simultaneousInitialInnerOccurrence(
         outerCellFactory: DynamicCellFactory,
-        newInnerEventStreamFactory: QuietEventStreamFactory,
+        newInnerEventStreamFactory: ExhaustedEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doDivert = EmitterEventStream<Unit>()
@@ -299,7 +299,7 @@ class Cell_divert_combo_tests {
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
-            QuietEventStreamFactory.values.forEach { newInnerEventStreamFactory ->
+            ExhaustedEventStreamFactory.values.forEach { newInnerEventStreamFactory ->
                 test_outerUpdate_simultaneousInitialInnerOccurrence(
                     outerCellFactory = outerCellFactory,
                     newInnerEventStreamFactory = newInnerEventStreamFactory,
@@ -320,7 +320,7 @@ class Cell_divert_combo_tests {
 
     private fun test_outerUpdate_simultaneousNewInnerUpdate(
         outerCellFactory: DynamicCellFactory,
-        initialInnerEventStreamFactory: QuietEventStreamFactory,
+        initialInnerEventStreamFactory: ExhaustedEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doDivert = EmitterEventStream<Unit>()
@@ -349,7 +349,7 @@ class Cell_divert_combo_tests {
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
-            QuietEventStreamFactory.values.forEach { initialInnerEventStreamFactory ->
+            ExhaustedEventStreamFactory.values.forEach { initialInnerEventStreamFactory ->
                 test_outerUpdate_simultaneousNewInnerUpdate(
                     outerCellFactory = outerCellFactory,
                     initialInnerEventStreamFactory = initialInnerEventStreamFactory,
@@ -418,7 +418,7 @@ class Cell_divert_combo_tests {
     private fun test_pausing_initial(
         // Added
         outerCellFactory: DynamicCellFactory,
-        newOuterCellsEventStreamFactory: QuietEventStreamFactory,
+        newOuterCellsEventStreamFactory: ExhaustedEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doTrigger = EmitterEventStream<Unit>()
@@ -445,7 +445,7 @@ class Cell_divert_combo_tests {
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
-            QuietEventStreamFactory.values.forEach { newOuterCellsEventStreamFactory ->
+            ExhaustedEventStreamFactory.values.forEach { newOuterCellsEventStreamFactory ->
                 test_pausing_initial(
                     outerCellFactory = outerCellFactory,
                     newOuterCellsEventStreamFactory = newOuterCellsEventStreamFactory,
@@ -467,7 +467,7 @@ class Cell_divert_combo_tests {
 
     private fun test_pausing_afterOuterUpdate(
         outerCellFactory: DynamicCellFactory,
-        innerEventStreamFactory: QuietEventStreamFactory,
+        innerEventStreamFactory: ExhaustedEventStreamFactory,
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         val doPrepare = EmitterEventStream<Unit>()
@@ -497,7 +497,7 @@ class Cell_divert_combo_tests {
         verificationStrategy: EventStreamVerificationStrategy,
     ) {
         DynamicCellFactory.values.forEach { outerCellFactory ->
-            QuietEventStreamFactory.values.forEach { innerEventStreamFactory ->
+            ExhaustedEventStreamFactory.values.forEach { innerEventStreamFactory ->
                 test_pausing_afterOuterUpdate(
                     outerCellFactory = outerCellFactory,
                     innerEventStreamFactory = innerEventStreamFactory,

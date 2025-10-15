@@ -7,6 +7,7 @@ import dev.toolkt.reactive.cell.test_utils.UpdatedValuesExtractor
 import dev.toolkt.reactive.cell.test_utils.ValueEventStreamExtractor
 import dev.toolkt.reactive.cell.test_utils.energize
 import dev.toolkt.reactive.cell.test_utils.sampleExternally
+import dev.toolkt.reactive.event_stream.test_utils.subscribeCollecting
 import dev.toolkt.reactive.test_utils.ReactiveTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

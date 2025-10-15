@@ -6,7 +6,7 @@ import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.NeverEventStream
 import dev.toolkt.reactive.event_stream.emit
 import dev.toolkt.reactive.event_stream.map
-import dev.toolkt.reactive.event_stream.subscribeCollecting
+import dev.toolkt.reactive.event_stream.test_utils.subscribeCollecting
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
