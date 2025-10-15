@@ -20,7 +20,7 @@ data class GivenCellTimeline<ValueT : Any>(
                 givenUpdatedValue: ValueT,
                 shouldFreeze: Boolean,
             ): GivenUpdate<ValueT> = when {
-                shouldFreeze -> GivenFreezingUpdate.of(
+                shouldFreeze -> GivenFreezingUpdate_deprecated.of(
                     givenUpdatedValue = givenUpdatedValue,
                 )
 
@@ -41,11 +41,11 @@ data class GivenCellTimeline<ValueT : Any>(
             fun <ValueT : Any> of(
                 givenUpdatedValue: ValueT?,
             ): GivenFreezingNotification<ValueT> = when {
-                givenUpdatedValue != null -> GivenFreezingUpdate.of(
+                givenUpdatedValue != null -> GivenFreezingUpdate_deprecated.of(
                     givenUpdatedValue = givenUpdatedValue,
                 )
 
-                else -> GivenJustFreeze
+                else -> GivenJustFreeze_deprecated
             }
         }
     }
@@ -66,11 +66,11 @@ data class GivenCellTimeline<ValueT : Any>(
     /**
      * A final update in the cell's value, after which the cell becomes frozen.
      */
-    abstract class GivenFreezingUpdate<out ValueT : Any> : GivenFreezingNotification<ValueT>, GivenUpdate<ValueT> {
+    abstract class GivenFreezingUpdate_deprecated<out ValueT : Any> : GivenFreezingNotification<ValueT>, GivenUpdate<ValueT> {
         companion object {
             fun <ValueT : Any> of(
                 givenUpdatedValue: ValueT,
-            ): GivenFreezingUpdate<ValueT> = object : GivenFreezingUpdate<ValueT>() {
+            ): GivenFreezingUpdate_deprecated<ValueT> = object : GivenFreezingUpdate_deprecated<ValueT>() {
                 override val givenUpdatedValue: ValueT = givenUpdatedValue
             }
         }
@@ -79,7 +79,7 @@ data class GivenCellTimeline<ValueT : Any>(
     /**
      * A final notification that the cell has become frozen, without any update in its value.
      */
-    data object GivenJustFreeze : GivenFreezingNotification<Nothing> {
+    data object GivenJustFreeze_deprecated : GivenFreezingNotification<Nothing> {
         override val givenUpdatedValue: Nothing? = null
     }
 

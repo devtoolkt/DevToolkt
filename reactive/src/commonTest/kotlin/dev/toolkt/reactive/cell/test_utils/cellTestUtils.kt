@@ -56,6 +56,7 @@ context(context: CellDynamicTestContext) fun <ValueT : Any> createDynamicCellExt
 context(context: CellDynamicTestContext) fun <ValueT : Any> createDynamicCellExternally(
     givenInitialValue: ValueT,
     givenNotificationByTick: Map<Tick, GivenNotification<ValueT>>,
+    freezeTick: Tick?,
 ): Cell<ValueT> = createDynamicCellExternally(
     givenCellTimeline = GivenCellTimeline(
         givenInitialValue = givenInitialValue,
