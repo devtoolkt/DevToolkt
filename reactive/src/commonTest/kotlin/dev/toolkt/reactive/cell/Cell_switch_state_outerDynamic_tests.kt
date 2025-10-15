@@ -1,7 +1,6 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.core.utils.iterable.mapOfNotNull
-import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenPlainUpdate
 import dev.toolkt.reactive.cell.test_utils.InertCellFactory
 import dev.toolkt.reactive.cell.test_utils.Tick
 import dev.toolkt.reactive.cell.test_utils.createDynamicCellExternally
@@ -30,7 +29,7 @@ class Cell_switch_state_outerDynamic_tests {
 
                     val outerCell = createDynamicCellExternally(
                         givenInitialValue = innerCell,
-                        givenUpdateByTick = emptyMap(),
+                        givenUpdatedValueByTick = emptyMap(),
                         freezeTick = null,
                     )
 
@@ -56,13 +55,13 @@ class Cell_switch_state_outerDynamic_tests {
         setup = {
             val innerCell = createDynamicCellExternally(
                 givenInitialValue = 10,
-                givenUpdateByTick = emptyMap(),
+                givenUpdatedValueByTick = emptyMap(),
                 freezeTick = null,
             )
 
             val outerCell = createDynamicCellExternally(
                 givenInitialValue = innerCell,
-                givenUpdateByTick = emptyMap(),
+                givenUpdatedValueByTick = emptyMap(),
                 freezeTick = null,
             )
 
@@ -85,17 +84,15 @@ class Cell_switch_state_outerDynamic_tests {
             setup = {
                 val innerCell = createDynamicCellExternally(
                     givenInitialValue = 10,
-                    givenUpdateByTick = mapOf(
-                        Tick(1) to GivenPlainUpdate.of(
-                            givenUpdatedValue = 11,
-                        ),
+                    givenUpdatedValueByTick = mapOf(
+                        Tick(1) to 11,
                     ),
                     freezeTick = if (shouldInitialInnerFreezeSimultaneously) Tick(1) else null,
                 )
 
                 val outerCell = createDynamicCellExternally(
                     givenInitialValue = innerCell,
-                    givenUpdateByTick = emptyMap(),
+                    givenUpdatedValueByTick = emptyMap(),
                     freezeTick = null,
                 )
 
@@ -128,10 +125,8 @@ class Cell_switch_state_outerDynamic_tests {
             setup = {
                 val initialInnerCell = createDynamicCellExternally(
                     givenInitialValue = 10,
-                    givenUpdateByTick = mapOfNotNull(
-                        (Tick(1) to GivenPlainUpdate.of(
-                            givenUpdatedValue = 11,
-                        )).takeIf { shouldOldInnerUpdateSimultaneously },
+                    givenUpdatedValueByTick = mapOfNotNull(
+                        (Tick(1) to 11).takeIf { shouldOldInnerUpdateSimultaneously },
                     ),
                     freezeTick = null,
                 )
@@ -142,10 +137,8 @@ class Cell_switch_state_outerDynamic_tests {
 
                 val outerCell = createDynamicCellExternally(
                     givenInitialValue = initialInnerCell,
-                    givenUpdateByTick = mapOf(
-                        Tick(1) to GivenPlainUpdate.of(
-                            givenUpdatedValue = newInnerCell,
-                        ),
+                    givenUpdatedValueByTick = mapOf(
+                        Tick(1) to newInnerCell,
                     ),
                     freezeTick = if (shouldOuterFreezeSimultaneously) Tick(1) else null,
                 )
@@ -191,26 +184,22 @@ class Cell_switch_state_outerDynamic_tests {
             setup = {
                 val initialInnerCell = createDynamicCellExternally(
                     givenInitialValue = 10,
-                    givenUpdateByTick = mapOfNotNull(
-                        (Tick(1) to GivenPlainUpdate.of(
-                            givenUpdatedValue = 11,
-                        )).takeIf { shouldOldInnerUpdateSimultaneously },
+                    givenUpdatedValueByTick = mapOfNotNull(
+                        (Tick(1) to 11).takeIf { shouldOldInnerUpdateSimultaneously },
                     ),
                     freezeTick = null,
                 )
 
                 val newInnerCell = createDynamicCellExternally(
                     givenInitialValue = 20,
-                    givenUpdateByTick = emptyMap(),
+                    givenUpdatedValueByTick = emptyMap(),
                     freezeTick = if (shouldNewInnerFreezeSimultaneously) Tick(1) else null,
                 )
 
                 val outerCell = createDynamicCellExternally(
                     givenInitialValue = initialInnerCell,
-                    givenUpdateByTick = mapOf(
-                        Tick(1) to GivenPlainUpdate.of(
-                            givenUpdatedValue = newInnerCell,
-                        ),
+                    givenUpdatedValueByTick = mapOf(
+                        Tick(1) to newInnerCell,
                     ),
                     freezeTick = if (shouldOuterFreezeSimultaneously) Tick(1) else null,
                 )
@@ -258,26 +247,22 @@ class Cell_switch_state_outerDynamic_tests {
             setup = {
                 val initialInnerCell = createDynamicCellExternally(
                     givenInitialValue = 10,
-                    givenUpdateByTick = emptyMap(),
+                    givenUpdatedValueByTick = emptyMap(),
                     freezeTick = null,
                 )
 
                 val newInnerCell = createDynamicCellExternally(
                     givenInitialValue = 20,
-                    givenUpdateByTick = mapOf(
-                        Tick(1) to GivenPlainUpdate.of(
-                            givenUpdatedValue = 21,
-                        ),
+                    givenUpdatedValueByTick = mapOf(
+                        Tick(1) to 21,
                     ),
                     freezeTick = if (shouldInnerFreezeSimultaneously) Tick(1) else null,
                 )
 
                 val outerCell = createDynamicCellExternally(
                     givenInitialValue = initialInnerCell,
-                    givenUpdateByTick = mapOf(
-                        Tick(1) to GivenPlainUpdate.of(
-                            givenUpdatedValue = newInnerCell,
-                        ),
+                    givenUpdatedValueByTick = mapOf(
+                        Tick(1) to newInnerCell,
                     ),
                     freezeTick = if (shouldOuterFreezeSimultaneously) Tick(1) else null,
                 )
@@ -333,26 +318,22 @@ class Cell_switch_state_outerDynamic_tests {
             setup = {
                 val initialInnerCell = createDynamicCellExternally(
                     givenInitialValue = 10,
-                    givenUpdateByTick = emptyMap(),
+                    givenUpdatedValueByTick = emptyMap(),
                     freezeTick = null,
                 )
 
                 val subsequentInnerCell = createDynamicCellExternally(
                     givenInitialValue = 20,
-                    givenUpdateByTick = mapOf(
-                        Tick(2) to GivenPlainUpdate.of(
-                            givenUpdatedValue = 21,
-                        ),
+                    givenUpdatedValueByTick = mapOf(
+                        Tick(2) to 21,
                     ),
                     freezeTick = if (shouldSubsequentInnerFreezeSimultaneously) Tick(2) else null,
                 )
 
                 val outerCell = createDynamicCellExternally(
                     givenInitialValue = initialInnerCell,
-                    givenUpdateByTick = mapOf(
-                        Tick(1) to GivenPlainUpdate.of(
-                            givenUpdatedValue = subsequentInnerCell,
-                        ),
+                    givenUpdatedValueByTick = mapOf(
+                        Tick(1) to subsequentInnerCell,
                     ),
                     freezeTick = if (shouldOuterFreezeSimultaneously) Tick(1) else null,
                 )
@@ -410,7 +391,7 @@ class Cell_switch_state_outerDynamic_tests {
 
                     val outerCell = createDynamicCellExternally(
                         givenInitialValue = initialInnerCell,
-                        givenUpdateByTick = emptyMap(),
+                        givenUpdatedValueByTick = emptyMap(),
                         freezeTick = Tick(1),
                     )
 
@@ -451,13 +432,13 @@ class Cell_switch_state_outerDynamic_tests {
                 setup = {
                     val initialInnerCell = createDynamicCellExternally(
                         givenInitialValue = 10,
-                        givenUpdateByTick = emptyMap(),
+                        givenUpdatedValueByTick = emptyMap(),
                         freezeTick = Tick(2),
                     )
 
                     val outerCell = createDynamicCellExternally(
                         givenInitialValue = initialInnerCell,
-                        givenUpdateByTick = emptyMap(),
+                        givenUpdatedValueByTick = emptyMap(),
                         freezeTick = Tick(1),
                     )
 
@@ -501,11 +482,9 @@ class Cell_switch_state_outerDynamic_tests {
                 setup = {
                     val initialInnerCell = createDynamicCellExternally(
                         givenInitialValue = 10,
-                        givenUpdateByTick = mapOfNotNull(
+                        givenUpdatedValueByTick = mapOfNotNull(
                             finalUpdatedValue?.let {
-                                Tick(1) to GivenPlainUpdate.of(
-                                    givenUpdatedValue = it,
-                                )
+                                Tick(1) to it
                             },
                         ),
                         freezeTick = Tick(1),
@@ -513,7 +492,7 @@ class Cell_switch_state_outerDynamic_tests {
 
                     val outerCell = createDynamicCellExternally(
                         givenInitialValue = initialInnerCell,
-                        givenUpdateByTick = emptyMap(),
+                        givenUpdatedValueByTick = emptyMap(),
                         freezeTick = Tick(1),
                     )
 
@@ -550,7 +529,7 @@ class Cell_switch_state_outerDynamic_tests {
                 setup = {
                     val initialInnerCell = createDynamicCellExternally(
                         givenInitialValue = 10,
-                        givenUpdateByTick = emptyMap(),
+                        givenUpdatedValueByTick = emptyMap(),
                         freezeTick = null,
                     )
 
@@ -560,10 +539,8 @@ class Cell_switch_state_outerDynamic_tests {
 
                     val outerCell = createDynamicCellExternally(
                         givenInitialValue = initialInnerCell,
-                        givenUpdateByTick = mapOf(
-                            Tick(1) to GivenPlainUpdate.of(
-                                givenUpdatedValue = subsequentInnerCell,
-                            ),
+                        givenUpdatedValueByTick = mapOf(
+                            Tick(1) to subsequentInnerCell,
                         ),
                         freezeTick = Tick(2),
                     )
@@ -606,28 +583,23 @@ class Cell_switch_state_outerDynamic_tests {
                 setup = {
                     val initialInnerCell = createDynamicCellExternally(
                         givenInitialValue = 10,
-                        givenUpdateByTick = emptyMap(),
+                        givenUpdatedValueByTick = emptyMap(),
                         freezeTick = null,
                     )
 
                     val subsequentInnerCell = createDynamicCellExternally(
                         givenInitialValue = 20,
-                        givenUpdateByTick = mapOfNotNull(
+                        givenUpdatedValueByTick = mapOfNotNull(
                             finalUpdatedValue?.let {
-                                Tick(3) to GivenPlainUpdate.of(
-                                    givenUpdatedValue = it,
-                                )
-                            }
-                        ),
+                                Tick(3) to it
+                            }),
                         freezeTick = Tick(3),
                     )
 
                     val outerCell = createDynamicCellExternally(
                         givenInitialValue = initialInnerCell,
-                        givenUpdateByTick = mapOf(
-                            Tick(1) to GivenPlainUpdate.of(
-                                givenUpdatedValue = subsequentInnerCell,
-                            ),
+                        givenUpdatedValueByTick = mapOf(
+                            Tick(1) to subsequentInnerCell,
                         ),
                         freezeTick = Tick(2),
                     )
@@ -674,28 +646,23 @@ class Cell_switch_state_outerDynamic_tests {
                 setup = {
                     val initialInnerCell = createDynamicCellExternally(
                         givenInitialValue = 10,
-                        givenUpdateByTick = emptyMap(),
+                        givenUpdatedValueByTick = emptyMap(),
                         freezeTick = null,
                     )
 
                     val subsequentInnerCell = createDynamicCellExternally(
                         givenInitialValue = 20,
-                        givenUpdateByTick = mapOfNotNull(
+                        givenUpdatedValueByTick = mapOfNotNull(
                             finalUpdatedValue?.let {
-                                Tick(2) to GivenPlainUpdate.of(
-                                    givenUpdatedValue = it,
-                                )
-                            }
-                        ),
+                                Tick(2) to it
+                            }),
                         freezeTick = Tick(2),
                     )
 
                     val outerCell = createDynamicCellExternally(
                         givenInitialValue = initialInnerCell,
-                        givenUpdateByTick = mapOf(
-                            Tick(1) to GivenPlainUpdate.of(
-                                givenUpdatedValue = subsequentInnerCell,
-                            ),
+                        givenUpdatedValueByTick = mapOf(
+                            Tick(1) to subsequentInnerCell,
                         ),
                         freezeTick = Tick(2),
                     )
@@ -735,7 +702,7 @@ class Cell_switch_state_outerDynamic_tests {
                 setup = {
                     val initialInnerCell = createDynamicCellExternally(
                         givenInitialValue = 10,
-                        givenUpdateByTick = emptyMap(),
+                        givenUpdatedValueByTick = emptyMap(),
                         freezeTick = null,
                     )
 
@@ -745,10 +712,8 @@ class Cell_switch_state_outerDynamic_tests {
 
                     val outerCell = createDynamicCellExternally(
                         givenInitialValue = initialInnerCell,
-                        givenUpdateByTick = mapOf(
-                            Tick(1) to GivenPlainUpdate.of(
-                                givenUpdatedValue = newInnerCell,
-                            ),
+                        givenUpdatedValueByTick = mapOf(
+                            Tick(1) to newInnerCell,
                         ),
                         freezeTick = Tick(1),
                     )
@@ -790,22 +755,20 @@ class Cell_switch_state_outerDynamic_tests {
                 setup = {
                     val initialInnerCell = createDynamicCellExternally(
                         givenInitialValue = 10,
-                        givenUpdateByTick = emptyMap(),
+                        givenUpdatedValueByTick = emptyMap(),
                         freezeTick = null,
                     )
 
                     val newInnerCell = createDynamicCellExternally(
                         givenInitialValue = 20,
-                        givenUpdateByTick = emptyMap(),
+                        givenUpdatedValueByTick = emptyMap(),
                         freezeTick = Tick(2),
                     )
 
                     val outerCell = createDynamicCellExternally(
                         givenInitialValue = initialInnerCell,
-                        givenUpdateByTick = mapOf(
-                            Tick(1) to GivenPlainUpdate.of(
-                                givenUpdatedValue = newInnerCell,
-                            ),
+                        givenUpdatedValueByTick = mapOf(
+                            Tick(1) to newInnerCell,
                         ),
                         freezeTick = Tick(1),
                     )
@@ -851,28 +814,23 @@ class Cell_switch_state_outerDynamic_tests {
                 setup = {
                     val initialInnerCell = createDynamicCellExternally(
                         givenInitialValue = 10,
-                        givenUpdateByTick = emptyMap(),
+                        givenUpdatedValueByTick = emptyMap(),
                         freezeTick = null,
                     )
 
                     val newInnerCell = createDynamicCellExternally(
                         givenInitialValue = 20,
-                        givenUpdateByTick = mapOfNotNull(
+                        givenUpdatedValueByTick = mapOfNotNull(
                             finalUpdatedValue?.let {
-                                Tick(1) to GivenPlainUpdate.of(
-                                    givenUpdatedValue = it,
-                                )
-                            }
-                        ),
+                                Tick(1) to it
+                            }),
                         freezeTick = Tick(1),
                     )
 
                     val outerCell = createDynamicCellExternally(
                         givenInitialValue = initialInnerCell,
-                        givenUpdateByTick = mapOf(
-                            Tick(1) to GivenPlainUpdate.of(
-                                givenUpdatedValue = newInnerCell,
-                            ),
+                        givenUpdatedValueByTick = mapOf(
+                            Tick(1) to newInnerCell,
                         ),
                         freezeTick = Tick(1),
                     )

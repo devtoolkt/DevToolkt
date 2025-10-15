@@ -1,7 +1,6 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.core.utils.iterable.mapOfNotNull
-import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline
 import dev.toolkt.reactive.cell.test_utils.InertCellFactory
 import dev.toolkt.reactive.cell.test_utils.Tick
 import dev.toolkt.reactive.cell.test_utils.createDynamicCellExternally
@@ -61,7 +60,7 @@ class Cell_switch_state_outerInert_tests {
                 setup = {
                     val innerCell = createDynamicCellExternally(
                         givenInitialValue = 10,
-                        givenUpdateByTick = emptyMap(),
+                        givenUpdatedValueByTick = emptyMap(),
                         freezeTick = null,
                     )
 
@@ -98,10 +97,8 @@ class Cell_switch_state_outerInert_tests {
                 setup = {
                     val innerCell = createDynamicCellExternally(
                         givenInitialValue = 10,
-                        givenUpdateByTick = mapOf(
-                            Tick(1) to GivenCellTimeline.GivenPlainUpdate.of(
-                                givenUpdatedValue = 11,
-                            ),
+                        givenUpdatedValueByTick = mapOf(
+                            Tick(1) to 11,
                         ),
                         freezeTick = if (shouldInnerFreezeSimultaneously) Tick(1) else null,
                     )
@@ -155,11 +152,9 @@ class Cell_switch_state_outerInert_tests {
                 setup = {
                     val innerCell = createDynamicCellExternally(
                         givenInitialValue = 10,
-                        givenUpdateByTick = mapOfNotNull(
+                        givenUpdatedValueByTick = mapOfNotNull(
                             finalUpdatedValue?.let {
-                                Tick(1) to GivenCellTimeline.GivenPlainUpdate.of(
-                                    givenUpdatedValue = it,
-                                )
+                                Tick(1) to it
                             },
                         ),
                         freezeTick = Tick(1),
