@@ -8,14 +8,16 @@ import dev.toolkt.reactive.event_stream.emit
 import dev.toolkt.reactive.event_stream.mapNotNull
 import dev.toolkt.reactive.event_stream.single
 
-sealed class InertCellFactory : StaticCellFactory() {
+sealed class InertCellFactory : StillCellFactory() {
     companion object {
-        val values = listOf(
-            Const,
-            TransformedConst,
-            Frozen,
-            TransformedFrozen,
-        )
+        val values by lazy {
+            listOf(
+                Const,
+                TransformedConst,
+                Frozen,
+                TransformedFrozen,
+            )
+        }
     }
 
     /**
@@ -64,10 +66,10 @@ sealed class InertCellFactory : StaticCellFactory() {
         ).map { it }
     }
 
-    final override fun <ValueT> createStaticExternally(
-        staticValue: ValueT,
+    final override fun <ValueT> createStillExternally(
+        stillValue: ValueT,
     ): Cell<ValueT> = createInertExternally(
-        inertValue = staticValue,
+        inertValue = stillValue,
     )
 
     abstract fun <ValueT> createInertExternally(
