@@ -143,7 +143,14 @@ fun <ValueT : Any> testCell_immediatelyInert(
     )
 
     assertNull(
-        actual = subjectCell.updatedValues.subscribe {},
-        message = "Expected a null subscription for an inert cell",
+        actual = subjectCell.observe(
+            observer = object : Cell.Observer<ValueT> {
+                override fun handleNotification(
+                    notification: Cell.Notification<ValueT>,
+                ) {
+                }
+            },
+        ),
+        message = "Expected a null observation for an inert cell",
     )
 }

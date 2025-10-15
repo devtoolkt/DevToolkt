@@ -12,7 +12,6 @@ import kotlin.test.Test
 @Suppress("ClassName")
 class Cell_map_state_tests {
     @Test
-    @Ignore // FIXME: Expected a null subscription for an inert cell
     fun test_state_sourceInert() {
         fun test(
             sourceCellFactory: InertCellFactory,
