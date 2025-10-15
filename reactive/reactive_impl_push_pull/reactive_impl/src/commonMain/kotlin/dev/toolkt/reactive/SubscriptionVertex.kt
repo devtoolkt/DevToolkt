@@ -7,7 +7,7 @@ class SubscriptionVertex<EventT>(
     private val sourceEventStreamVertex: EventStreamVertex<EventT>,
     private val subscriber: EventStream.Subscriber<EventT>,
 ) : DependentVertex {
-    private var receivedEvent: EventStreamVertex.Occurrence<EventT>? = null
+    private var receivedOccurrence: EventStreamVertex.Occurrence<EventT>? = null
 
     override fun visit(
         context: Transaction.ProcessingContext,
@@ -26,17 +26,16 @@ class SubscriptionVertex<EventT>(
             }
         }
 
-        receivedEvent = sourceOccurrence
-
+        receivedOccurrence = sourceOccurrence
     }
 
     override fun commit() {
         // TODO: Support termination
-        when (val receivedEvent = this.receivedEvent) {
+        when (val receivedOccurrence = this.receivedOccurrence) {
             is EventStreamVertex.EffectiveOccurrence -> {
                 subscriber.handleNotification(
                     notification = EventStream.IntermediateEmissionNotification(
-                        emittedEvent = receivedEvent.event,
+                        emittedEvent = receivedOccurrence.event,
                     )
                 )
             }
@@ -46,6 +45,6 @@ class SubscriptionVertex<EventT>(
     }
 
     override fun reset() {
-        receivedEvent = null
+        receivedOccurrence = null
     }
 }

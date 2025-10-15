@@ -2,6 +2,7 @@ package dev.toolkt.reactive.cell.test_utils
 
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.Cell
+import dev.toolkt.reactive.cell.observe
 import dev.toolkt.reactive.cell.sample
 import dev.toolkt.reactive.cell.updatedValues
 import dev.toolkt.reactive.event_stream.EmitterEventStream
@@ -38,9 +39,7 @@ context(context: CellDynamicTestContext) fun <ValueT : Any> createDynamicCellExt
         Cell.define(
             initialValue = initialValue,
             newValues = onTickCropped.mapNotNull { tick ->
-                val givenUpdatedValue = updatedValueByTick[tick] ?: return@mapNotNull null
-
-                givenUpdatedValue
+                updatedValueByTick[tick]
             },
         )
     }
@@ -61,16 +60,21 @@ fun <ValueT : Any> testCell_initiallyDynamic(
         setup()
     }
 
-    val receivedUpdatedValues = mutableListOf<ValueT>()
+    val receivedNotifications = mutableListOf<Cell.Notification<ValueT>>()
 
     // TODO: Use different verification strategies
-    // TODO: Handle freezing
 
     assertNotNull(
-        actual = subjectCell.updatedValues.subscribe { updatedValue ->
-            receivedUpdatedValues.add(updatedValue)
-        },
-        message = "Expected a non-null subscription for a dynamic cell",
+        actual = subjectCell.observe(
+            observer = object : Cell.Observer<ValueT> {
+                override fun handleNotification(
+                    notification: Cell.Notification<ValueT>,
+                ) {
+                    receivedNotifications.add(notification)
+                }
+            },
+        ),
+        message = "Expected a non-null observation for a dynamic cell",
     )
 
     val sampledInitialValue = subjectCell.sampleExternally()
@@ -80,58 +84,42 @@ fun <ValueT : Any> testCell_initiallyDynamic(
         actual = sampledInitialValue,
     )
 
-    val maxTick = expectedNotificationByTick.keys.maxByOrNull { it.t } ?: return
+    val lastTick = expectedNotificationByTick.keys.maxByOrNull { it.t } ?: return
 
-    (1..maxTick.t).forEach { t ->
+    (1..lastTick.t).forEach { t ->
         val tick = Tick(t = t)
-        val expectedNotification = expectedNotificationByTick[tick]
 
-        receivedUpdatedValues.clear()
+        receivedNotifications.clear()
 
         doTick.emit(tick)
 
-        when (expectedNotification) {
-            null -> {
+        val expectedNotification = expectedNotificationByTick[tick]
+
+        when {
+            expectedNotification != null -> {
                 assertEquals(
-                    expected = 0,
-                    actual = receivedUpdatedValues.size,
-                    message = "At t=${tick.t}, no updates expected, but received: $receivedUpdatedValues",
+                    expected = 1,
+                    actual = receivedNotifications.size,
+                    message = "At t=${tick.t}, as single notification expected ($expectedNotification), but received: $receivedNotifications",
                 )
             }
 
             else -> {
-                when (expectedNotification) {
-                    is Cell.UpdateNotification -> {
-                        val expectedUpdatedValue = expectedNotification.updatedValue
-
-                        assertEquals(
-                            expected = 1,
-                            actual = receivedUpdatedValues.size,
-                            message = "At t=${tick.t}, as single update expected, but received: $receivedUpdatedValues",
-                        )
-
-                        val receivedUpdatedValue = receivedUpdatedValues.single()
-
-                        assertEquals(
-                            expected = expectedUpdatedValue,
-                            actual = receivedUpdatedValue,
-                            message = "At t=${tick.t}, expected updated value ${expectedNotification.updatedValue}, but received: $receivedUpdatedValue",
-                        )
-
-                        val sampledNewValue = subjectCell.sampleExternally()
-
-                        assertEquals(
-                            expected = expectedUpdatedValue,
-                            actual = sampledNewValue,
-                        )
-                    }
-
-                    else -> {
-                        // TODO
-                    }
-                }
+                assertEquals(
+                    expected = 0,
+                    actual = receivedNotifications.size,
+                    message = "At t=${tick.t}, no notifications expected, but received: $receivedNotifications",
+                )
             }
         }
+
+        val receivedNotification = receivedNotifications.single()
+
+        assertEquals(
+            expected = expectedNotification,
+            actual = receivedNotification,
+            message = "At t=${tick.t}, expected $expectedNotification, but received: $receivedNotification",
+        )
     }
 }
 

@@ -1,6 +1,7 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.MomentContext
+import dev.toolkt.reactive.ObservationVertex
 import dev.toolkt.reactive.cell.vertices.CellVertex
 import dev.toolkt.reactive.cell.vertices.DivertEventStreamVertex
 import dev.toolkt.reactive.cell.vertices.DynamicCellVertex
@@ -195,13 +196,32 @@ sealed interface Cell<out ValueT> {
 
 fun <ValueT> Cell<ValueT>.observe(
     observer: Cell.Observer<ValueT>,
-): Cell.Observation {
-    TODO()
+): Cell.Observation? = when (val vertex = this.vertex) {
+    is InertCellVertex -> null
+
+    is DynamicCellVertex -> {
+        val observationVertex = ObservationVertex(
+            sourceCellVertex = this.vertex,
+            observer = observer,
+        )
+
+        vertex.observe(
+            dependentVertex = observationVertex,
+        )
+
+        object : Cell.Observation {
+            override fun cancel() {
+                this@observe.vertex.unobserve(
+                    dependentVertex = observationVertex,
+                )
+            }
+        }
+    }
 }
 
 fun <ValueT> Cell<ValueT>.observe(
     observer: Cell.BasicObserver<ValueT>,
-): Cell.Observation = observe(
+): Cell.Observation? = observe(
     observer = object : Cell.Observer<ValueT> {
         override fun handleNotification(
             notification: Cell.Notification<ValueT>,
