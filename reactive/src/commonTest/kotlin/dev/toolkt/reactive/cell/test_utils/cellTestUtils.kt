@@ -3,8 +3,6 @@ package dev.toolkt.reactive.cell.test_utils
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.sample
-import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenNotification
-import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenUpdate
 import dev.toolkt.reactive.cell.updatedValues
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
@@ -24,12 +22,11 @@ interface CellDynamicTestContext {
 }
 
 context(context: CellDynamicTestContext) fun <ValueT : Any> createDynamicCellExternally(
-    givenCellTimeline: GivenCellTimeline<ValueT>,
+    givenInitialValue: ValueT,
+    givenUpdateByTick: Map<Tick, GivenCellTimeline.GivenPlainUpdate<ValueT>>,
+    freezeTick: Tick?,
 ): Cell<ValueT> {
-    val givenInitialValue = givenCellTimeline.givenInitialValue
-    val givenNotificationByTick = givenCellTimeline.givenNotificationByTick
-
-    val onTickCropped = when (val freezeTick = givenCellTimeline.freezeTick) {
+    val onTickCropped = when (freezeTick) {
         null -> context.onTick
 
         else -> MomentContext.execute {
@@ -41,28 +38,13 @@ context(context: CellDynamicTestContext) fun <ValueT : Any> createDynamicCellExt
         Cell.define(
             initialValue = givenInitialValue,
             newValues = onTickCropped.mapNotNull { tick ->
-                val givenNotification = givenNotificationByTick[tick] ?: return@mapNotNull null
+                val givenUpdate = givenUpdateByTick[tick] ?: return@mapNotNull null
 
-                when (givenNotification) {
-                    is GivenUpdate -> givenNotification.givenUpdatedValue
-
-                    else -> null
-                }
+                givenUpdate.givenUpdatedValue
             },
         )
     }
 }
-
-context(context: CellDynamicTestContext) fun <ValueT : Any> createDynamicCellExternally(
-    givenInitialValue: ValueT,
-    givenNotificationByTick: Map<Tick, GivenNotification<ValueT>>,
-    freezeTick: Tick?,
-): Cell<ValueT> = createDynamicCellExternally(
-    givenCellTimeline = GivenCellTimeline(
-        givenInitialValue = givenInitialValue,
-        givenNotificationByTick = givenNotificationByTick,
-    ),
-)
 
 fun <ValueT : Any> testCell_initiallyDynamic(
     setup: context(CellDynamicTestContext) () -> Cell<ValueT>,
