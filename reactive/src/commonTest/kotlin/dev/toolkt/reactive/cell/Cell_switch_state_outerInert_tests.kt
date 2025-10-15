@@ -1,8 +1,5 @@
 package dev.toolkt.reactive.cell
 
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedFreezingNotification
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedUpdate
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenFreezingNotification
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenUpdate
 import dev.toolkt.reactive.cell.test_utils.InertCellFactory
@@ -72,10 +69,8 @@ class Cell_switch_state_outerInert_tests {
 
                     Cell.switch(outerCell)
                 },
-                expectedTimeline = ExpectedCellTimeline(
-                    expectedInitialValue = 10,
-                    expectedNotificationByTick = emptyMap(),
-                ),
+                expectedInitialValue = 10,
+                expectedNotificationByTick = emptyMap(),
             )
         }
 
@@ -115,13 +110,11 @@ class Cell_switch_state_outerInert_tests {
 
                     Cell.switch(outerCell)
                 },
-                expectedTimeline = ExpectedCellTimeline(
-                    expectedInitialValue = 10,
-                    expectedNotificationByTick = mapOf(
-                        Tick(1) to ExpectedUpdate.of(
-                            expectedUpdatedValue = 11,
-                            shouldExpectFreeze = shouldInnerFreezeSimultaneously,
-                        ),
+                expectedInitialValue = 10,
+                expectedNotificationByTick = mapOf(
+                    Tick(1) to Cell.UpdateNotification.of(
+                        updatedValue = 11,
+                        isFreezing = shouldInnerFreezeSimultaneously,
                     ),
                 ),
             )
@@ -173,12 +166,10 @@ class Cell_switch_state_outerInert_tests {
 
                     Cell.switch(outerCell)
                 },
-                expectedTimeline = ExpectedCellTimeline(
-                    expectedInitialValue = 10,
-                    expectedNotificationByTick = mapOf(
-                        Tick(1) to ExpectedFreezingNotification.of(
-                            expectedUpdatedValue = finalUpdatedValue,
-                        ),
+                expectedInitialValue = 10,
+                expectedNotificationByTick = mapOf(
+                    Tick(1) to Cell.FreezeNotification.of(
+                        updatedValue = finalUpdatedValue,
                     ),
                 ),
             )

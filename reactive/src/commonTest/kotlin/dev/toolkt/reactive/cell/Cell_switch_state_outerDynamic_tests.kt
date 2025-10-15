@@ -1,12 +1,6 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.core.utils.iterable.mapOfNotNull
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedFreezingNotification
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedFreezingUpdate
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedJustFreeze
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedPlainUpdate
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedUpdate
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenFreezingNotification
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenFreezingUpdate
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenJustFreeze
@@ -18,6 +12,50 @@ import dev.toolkt.reactive.cell.test_utils.createDynamicCellExternally
 import dev.toolkt.reactive.cell.test_utils.testCell_initiallyDynamic
 import kotlin.test.Ignore
 import kotlin.test.Test
+
+/*
+
+TODO:
+
+Port all usages of expectedTimeline_deprecated to expectedInitialValue / expectedNotificationByTick
+
+Currently, null is passed as a placeholder.
+
+Note that the API is slightly different.
+
+For now, don't remove passed expectedTimeline_deprecated arguments
+
+Use this as an example:
+
+    expectedTimeline_deprecated = ExpectedCellTimeline(
+        expectedInitialValue = "10:A",
+        expectedNotificationByTick = mapOf(
+            Tick(1) to ExpectedPlainUpdate(
+                expectedUpdatedValue = "20:A",
+            ),
+            Tick(2) to ExpectedPlainUpdate(
+                expectedUpdatedValue = "20:B",
+            ),
+            Tick(3) to ExpectedFreezingUpdate(
+                expectedUpdatedValue = "30:C",
+            ),
+        ),
+    ),
+    expectedInitialValue = "10:A",
+    expectedNotificationByTick = mapOf(
+        Tick(1) to Cell.IntermediateUpdateNotification(
+            updatedValue = "20:A",
+        ),
+        Tick(2) to Cell.IntermediateUpdateNotification(
+            updatedValue = "20:B",
+        ),
+        Tick(3) to Cell.FreezingUpdateNotification(
+            updatedFrozenValue = "30:C",
+        ),
+    ),
+
+*/
+
 
 /**
  * Outer cell: initially dynamic
@@ -45,10 +83,8 @@ class Cell_switch_state_outerDynamic_tests {
 
                     Cell.switch(outerCell)
                 },
-                expectedTimeline = ExpectedCellTimeline(
-                    expectedInitialValue = 10,
-                    expectedNotificationByTick = emptyMap(),
-                ),
+                expectedInitialValue = 10,
+                expectedNotificationByTick = emptyMap(),
             )
         }
 
@@ -77,10 +113,8 @@ class Cell_switch_state_outerDynamic_tests {
 
             Cell.switch(outerCell)
         },
-        expectedTimeline = ExpectedCellTimeline(
-            expectedInitialValue = 10,
-            expectedNotificationByTick = emptyMap(),
-        ),
+        expectedInitialValue = 10,
+        expectedNotificationByTick = emptyMap(),
     )
 
     /**
@@ -111,12 +145,10 @@ class Cell_switch_state_outerDynamic_tests {
 
                 Cell.switch(outerCell)
             },
-            expectedTimeline = ExpectedCellTimeline(
-                expectedInitialValue = 10,
-                expectedNotificationByTick = mapOf(
-                    Tick(1) to ExpectedPlainUpdate(
-                        expectedUpdatedValue = 11,
-                    ),
+            expectedInitialValue = 10,
+            expectedNotificationByTick = mapOf(
+                Tick(1) to Cell.IntermediateUpdateNotification(
+                    updatedValue = 11,
                 ),
             ),
         )
@@ -163,14 +195,14 @@ class Cell_switch_state_outerDynamic_tests {
 
                 Cell.switch(outerCell)
             },
-            expectedTimeline = ExpectedCellTimeline(
-                expectedInitialValue = 10,
-                expectedNotificationByTick = mapOf(
-                    Tick(1) to ExpectedUpdate.of(
-                        expectedUpdatedValue = 20,
-                        shouldExpectFreeze = shouldOuterFreezeSimultaneously,
-                    ),
-                ),
+            expectedInitialValue = 10,
+            expectedNotificationByTick = mapOf(
+                Tick(1) to if (shouldOuterFreezeSimultaneously) Cell.FreezingUpdateNotification(
+                    updatedFrozenValue = 20,
+                )
+                else Cell.IntermediateUpdateNotification(
+                    updatedValue = 20,
+                )
             ),
         )
 
@@ -228,14 +260,17 @@ class Cell_switch_state_outerDynamic_tests {
 
                 Cell.switch(outerCell)
             },
-            expectedTimeline = ExpectedCellTimeline(
-                expectedInitialValue = 10,
-                expectedNotificationByTick = mapOf(
-                    Tick(1) to ExpectedUpdate.of(
-                        expectedUpdatedValue = 20,
-                        shouldExpectFreeze = shouldOuterFreezeSimultaneously && shouldNewInnerFreezeSimultaneously,
-                    ),
-                ),
+            expectedInitialValue = 10,
+            expectedNotificationByTick = mapOf(
+                Tick(1) to when {
+                    shouldOuterFreezeSimultaneously && shouldNewInnerFreezeSimultaneously -> Cell.FreezingUpdateNotification(
+                        updatedFrozenValue = 20,
+                    )
+
+                    else -> Cell.IntermediateUpdateNotification(
+                        updatedValue = 20,
+                    )
+                }
             ),
         )
 
@@ -296,14 +331,17 @@ class Cell_switch_state_outerDynamic_tests {
 
                 Cell.switch(outerCell)
             },
-            expectedTimeline = ExpectedCellTimeline(
-                expectedInitialValue = 10,
-                expectedNotificationByTick = mapOf(
-                    Tick(1) to ExpectedUpdate.of(
-                        expectedUpdatedValue = 21,
-                        shouldExpectFreeze = shouldOuterFreezeSimultaneously && shouldInnerFreezeSimultaneously,
-                    ),
-                ),
+            expectedInitialValue = 10,
+            expectedNotificationByTick = mapOf(
+                Tick(1) to when {
+                    shouldOuterFreezeSimultaneously && shouldInnerFreezeSimultaneously -> Cell.FreezingUpdateNotification(
+                        updatedFrozenValue = 21,
+                    )
+
+                    else -> Cell.IntermediateUpdateNotification(
+                        updatedValue = 21,
+                    )
+                }
             ),
         )
 
@@ -367,16 +405,14 @@ class Cell_switch_state_outerDynamic_tests {
 
                 Cell.switch(outerCell)
             },
-            expectedTimeline = ExpectedCellTimeline(
-                expectedInitialValue = 10,
-                expectedNotificationByTick = mapOf(
-                    Tick(1) to ExpectedPlainUpdate(
-                        expectedUpdatedValue = 20,
-                    ),
-                    Tick(2) to ExpectedUpdate.of(
-                        expectedUpdatedValue = 21,
-                        shouldExpectFreeze = shouldOuterFreezeSimultaneously && shouldSubsequentInnerFreezeSimultaneously,
-                    ),
+            expectedInitialValue = 10,
+            expectedNotificationByTick = mapOf(
+                Tick(1) to Cell.IntermediateUpdateNotification(
+                    updatedValue = 20,
+                ),
+                Tick(2) to Cell.UpdateNotification.of(
+                    updatedValue = 21,
+                    isFreezing = shouldOuterFreezeSimultaneously && shouldSubsequentInnerFreezeSimultaneously,
                 ),
             ),
         )
@@ -427,11 +463,9 @@ class Cell_switch_state_outerDynamic_tests {
 
                     Cell.switch(outerCell)
                 },
-                expectedTimeline = ExpectedCellTimeline(
-                    expectedInitialValue = 10,
-                    expectedNotificationByTick = mapOf(
-                        Tick(1) to ExpectedJustFreeze,
-                    ),
+                expectedInitialValue = 10,
+                expectedNotificationByTick = mapOf(
+                    Tick(1) to Cell.IsolatedFreezeNotification,
                 ),
             )
         }
@@ -480,12 +514,10 @@ class Cell_switch_state_outerDynamic_tests {
 
                     Cell.switch(outerCell)
                 },
-                expectedTimeline = ExpectedCellTimeline(
-                    expectedInitialValue = 10,
-                    expectedNotificationByTick = mapOf(
-                        Tick(2) to ExpectedFreezingNotification.of(
-                            expectedUpdatedValue = finalUpdatedValue,
-                        ),
+                expectedInitialValue = 10,
+                expectedNotificationByTick = mapOf(
+                    Tick(2) to Cell.FreezeNotification.of(
+                        updatedValue = finalUpdatedValue,
                     ),
                 ),
             )
@@ -536,12 +568,10 @@ class Cell_switch_state_outerDynamic_tests {
 
                     Cell.switch(outerCell)
                 },
-                expectedTimeline = ExpectedCellTimeline(
-                    expectedInitialValue = 10,
-                    expectedNotificationByTick = mapOf(
-                        Tick(1) to ExpectedFreezingNotification.of(
-                            expectedUpdatedValue = finalUpdatedValue,
-                        ),
+                expectedInitialValue = 10,
+                expectedNotificationByTick = mapOf(
+                    Tick(1) to Cell.FreezeNotification.of(
+                        updatedValue = finalUpdatedValue,
                     ),
                 ),
             )
@@ -588,14 +618,12 @@ class Cell_switch_state_outerDynamic_tests {
 
                     Cell.switch(outerCell)
                 },
-                expectedTimeline = ExpectedCellTimeline(
-                    expectedInitialValue = 10,
-                    expectedNotificationByTick = mapOf(
-                        Tick(1) to ExpectedPlainUpdate(
-                            expectedUpdatedValue = 20,
-                        ),
-                        Tick(2) to ExpectedJustFreeze,
+                expectedInitialValue = 10,
+                expectedNotificationByTick = mapOf(
+                    Tick(1) to Cell.IntermediateUpdateNotification(
+                        updatedValue = 20,
                     ),
+                    Tick(2) to Cell.IsolatedFreezeNotification,
                 ),
             )
         }
@@ -650,15 +678,13 @@ class Cell_switch_state_outerDynamic_tests {
 
                     Cell.switch(outerCell)
                 },
-                expectedTimeline = ExpectedCellTimeline(
-                    expectedInitialValue = 10,
-                    expectedNotificationByTick = mapOf(
-                        Tick(1) to ExpectedPlainUpdate(
-                            expectedUpdatedValue = 20,
-                        ),
-                        Tick(3) to ExpectedFreezingNotification.of(
-                            expectedUpdatedValue = finalUpdatedValue,
-                        ),
+                expectedInitialValue = 10,
+                expectedNotificationByTick = mapOf(
+                    Tick(1) to Cell.IntermediateUpdateNotification(
+                        updatedValue = 20,
+                    ),
+                    Tick(3) to Cell.FreezeNotification.of(
+                        updatedValue = finalUpdatedValue,
                     ),
                 ),
             )
@@ -716,15 +742,13 @@ class Cell_switch_state_outerDynamic_tests {
 
                     Cell.switch(outerCell)
                 },
-                expectedTimeline = ExpectedCellTimeline(
-                    expectedInitialValue = 10,
-                    expectedNotificationByTick = mapOf(
-                        Tick(1) to ExpectedPlainUpdate(
-                            expectedUpdatedValue = 20,
-                        ),
-                        Tick(2) to ExpectedFreezingNotification.of(
-                            expectedUpdatedValue = finalUpdatedValue,
-                        ),
+                expectedInitialValue = 10,
+                expectedNotificationByTick = mapOf(
+                    Tick(1) to Cell.IntermediateUpdateNotification(
+                        updatedValue = 20,
+                    ),
+                    Tick(2) to Cell.FreezeNotification.of(
+                        updatedValue = finalUpdatedValue,
                     ),
                 ),
             )
@@ -769,12 +793,10 @@ class Cell_switch_state_outerDynamic_tests {
 
                     Cell.switch(outerCell)
                 },
-                expectedTimeline = ExpectedCellTimeline(
-                    expectedInitialValue = 10,
-                    expectedNotificationByTick = mapOf(
-                        Tick(1) to ExpectedFreezingUpdate(
-                            expectedUpdatedValue = 20,
-                        ),
+                expectedInitialValue = 10,
+                expectedNotificationByTick = mapOf(
+                    Tick(1) to Cell.FreezingUpdateNotification(
+                        updatedFrozenValue = 20,
                     ),
                 ),
             )
@@ -829,15 +851,13 @@ class Cell_switch_state_outerDynamic_tests {
 
                     Cell.switch(outerCell)
                 },
-                expectedTimeline = ExpectedCellTimeline(
-                    expectedInitialValue = 10,
-                    expectedNotificationByTick = mapOf(
-                        Tick(1) to ExpectedPlainUpdate(
-                            expectedUpdatedValue = 20,
-                        ),
-                        Tick(2) to ExpectedFreezingNotification.of(
-                            expectedUpdatedValue = finalUpdatedValue,
-                        ),
+                expectedInitialValue = 10,
+                expectedNotificationByTick = mapOf(
+                    Tick(1) to Cell.IntermediateUpdateNotification(
+                        updatedValue = 20,
+                    ),
+                    Tick(2) to Cell.FreezeNotification.of(
+                        updatedValue = finalUpdatedValue,
                     ),
                 ),
             )
@@ -893,15 +913,13 @@ class Cell_switch_state_outerDynamic_tests {
 
                     Cell.switch(outerCell)
                 },
-                expectedTimeline = ExpectedCellTimeline(
-                    expectedInitialValue = 10,
-                    expectedNotificationByTick = mapOf(
-                        Tick(1) to ExpectedFreezingUpdate(
-                            expectedUpdatedValue = when {
-                                shouldNewInnerUpdateSimultaneously -> 21
-                                else -> 20
-                            }
-                        ),
+                expectedInitialValue = 10,
+                expectedNotificationByTick = mapOf(
+                    Tick(1) to Cell.FreezingUpdateNotification(
+                        updatedFrozenValue = when {
+                            shouldNewInnerUpdateSimultaneously -> 21
+                            else -> 20
+                        }
                     ),
                 ),
             )

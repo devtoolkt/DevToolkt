@@ -23,20 +23,47 @@ sealed interface Cell<out ValueT> {
     sealed interface Notification<out ValueT>
 
     sealed interface UpdateNotification<out ValueT> : Notification<ValueT> {
+        companion object {
+            fun <ValueT : Any> of(
+                updatedValue: ValueT,
+                isFreezing: Boolean,
+            ): UpdateNotification<ValueT> = when {
+                isFreezing -> FreezingUpdateNotification(
+                    updatedFrozenValue = updatedValue,
+                )
+
+                else -> IntermediateUpdateNotification(
+                    updatedValue = updatedValue,
+                )
+            }
+        }
+
         val updatedValue: ValueT
     }
 
-    sealed interface FreezeNotification<out ValueT> : Notification<ValueT>
+    sealed interface FreezeNotification<out ValueT> : Notification<ValueT> {
+        companion object {
+            fun <ValueT : Any> of(
+                updatedValue: ValueT?,
+            ): FreezeNotification<ValueT> = when {
+                updatedValue != null -> FreezingUpdateNotification(
+                    updatedValue,
+                )
+
+                else -> IsolatedFreezeNotification
+            }
+        }
+    }
 
     data class IntermediateUpdateNotification<out ValueT>(
         override val updatedValue: ValueT,
     ) : UpdateNotification<ValueT>, FreezeNotification<ValueT>
 
     data class FreezingUpdateNotification<out ValueT>(
-        val finalValue: ValueT,
+        val updatedFrozenValue: ValueT,
     ) : UpdateNotification<ValueT>, FreezeNotification<ValueT> {
         override val updatedValue: ValueT
-            get() = finalValue
+            get() = updatedFrozenValue
     }
 
     data object IsolatedFreezeNotification : FreezeNotification<Nothing>

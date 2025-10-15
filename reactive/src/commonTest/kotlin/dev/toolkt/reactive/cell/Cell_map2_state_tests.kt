@@ -1,9 +1,5 @@
 package dev.toolkt.reactive.cell
 
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedFreezingUpdate
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedJustFreeze
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedPlainUpdate
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenFreezingUpdate
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenJustFreeze
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenPlainUpdate
@@ -73,10 +69,8 @@ class Cell_map2_state_tests {
                 "$value1:$value2"
             }
         },
-        expectedTimeline = ExpectedCellTimeline(
-            expectedInitialValue = "10:A",
-            expectedNotificationByTick = emptyMap(),
-        ),
+        expectedInitialValue = "10:A",
+        expectedNotificationByTick = emptyMap(),
     )
 
     @Test
@@ -103,12 +97,10 @@ class Cell_map2_state_tests {
                 "$value1:$value2"
             }
         },
-        expectedTimeline = ExpectedCellTimeline(
-            expectedInitialValue = "10:A",
-            expectedNotificationByTick = mapOf(
-                Tick(1) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "20:A",
-                ),
+        expectedInitialValue = "10:A",
+        expectedNotificationByTick = mapOf(
+            Tick(1) to Cell.IntermediateUpdateNotification(
+                updatedValue = "20:A",
             ),
         ),
     )
@@ -135,12 +127,10 @@ class Cell_map2_state_tests {
                 "$value1:$value2"
             }
         },
-        expectedTimeline = ExpectedCellTimeline(
-            expectedInitialValue = "10:A",
-            expectedNotificationByTick = mapOf(
-                Tick(1) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "10:B",
-                ),
+        expectedInitialValue = "10:A",
+        expectedNotificationByTick = mapOf(
+            Tick(1) to Cell.IntermediateUpdateNotification(
+                updatedValue = "10:B",
             ),
         ),
     )
@@ -169,12 +159,10 @@ class Cell_map2_state_tests {
                 "$value1:$value2"
             }
         },
-        expectedTimeline = ExpectedCellTimeline(
-            expectedInitialValue = "10:A",
-            expectedNotificationByTick = mapOf(
-                Tick(1) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "20:B",
-                ),
+        expectedInitialValue = "10:A",
+        expectedNotificationByTick = mapOf(
+            Tick(1) to Cell.IntermediateUpdateNotification(
+                updatedValue = "20:B",
             ),
         ),
     )
@@ -206,14 +194,12 @@ class Cell_map2_state_tests {
                     "$value1:$value2"
                 }
             },
-            expectedTimeline = ExpectedCellTimeline(
-                expectedInitialValue = "10:A",
-                expectedNotificationByTick = mapOf(
-                    Tick(1) to ExpectedPlainUpdate(
-                        expectedUpdatedValue = "10:B",
-                    ),
-                    Tick(2) to ExpectedJustFreeze,
+            expectedInitialValue = "10:A",
+            expectedNotificationByTick = mapOf(
+                Tick(1) to Cell.IntermediateUpdateNotification(
+                    updatedValue = "10:B",
                 ),
+                Tick(2) to Cell.IsolatedFreezeNotification,
             ),
         )
 
@@ -253,15 +239,13 @@ class Cell_map2_state_tests {
                     "$value1:$value2"
                 }
             },
-            expectedTimeline = ExpectedCellTimeline(
-                expectedInitialValue = "10:A",
-                expectedNotificationByTick = mapOf(
-                    Tick(1) to ExpectedPlainUpdate(
-                        expectedUpdatedValue = "20:A",
-                    ),
-                    Tick(2) to ExpectedFreezingUpdate(
-                        expectedUpdatedValue = "30:A",
-                    ),
+            expectedInitialValue = "10:A",
+            expectedNotificationByTick = mapOf(
+                Tick(1) to Cell.IntermediateUpdateNotification(
+                    updatedValue = "20:A",
+                ),
+                Tick(2) to Cell.FreezingUpdateNotification(
+                    updatedFrozenValue = "30:A",
                 ),
             ),
         )
@@ -303,17 +287,15 @@ class Cell_map2_state_tests {
                 "$value1:$value2"
             }
         },
-        expectedTimeline = ExpectedCellTimeline(
-            expectedInitialValue = "10:A",
-            expectedNotificationByTick = mapOf(
-                Tick(1) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "10:B",
-                ),
-                Tick(2) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "20:B",
-                ),
-                Tick(3) to ExpectedJustFreeze,
+        expectedInitialValue = "10:A",
+        expectedNotificationByTick = mapOf(
+            Tick(1) to Cell.IntermediateUpdateNotification(
+                updatedValue = "10:B",
             ),
+            Tick(2) to Cell.IntermediateUpdateNotification(
+                updatedValue = "20:B",
+            ),
+            Tick(3) to Cell.IsolatedFreezeNotification,
         ),
     )
 
@@ -343,18 +325,16 @@ class Cell_map2_state_tests {
                 "$value1:$value2"
             }
         },
-        expectedTimeline = ExpectedCellTimeline(
-            expectedInitialValue = "10:A",
-            expectedNotificationByTick = mapOf(
-                Tick(1) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "10:B",
-                ),
-                Tick(2) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "20:B",
-                ),
-                Tick(3) to ExpectedFreezingUpdate(
-                    expectedUpdatedValue = "30:B",
-                ),
+        expectedInitialValue = "10:A",
+        expectedNotificationByTick = mapOf(
+            Tick(1) to Cell.IntermediateUpdateNotification(
+                updatedValue = "10:B",
+            ),
+            Tick(2) to Cell.IntermediateUpdateNotification(
+                updatedValue = "20:B",
+            ),
+            Tick(3) to Cell.FreezingUpdateNotification(
+                updatedFrozenValue = "30:B",
             ),
         ),
     )
@@ -385,17 +365,15 @@ class Cell_map2_state_tests {
                 "$value1:$value2"
             }
         },
-        expectedTimeline = ExpectedCellTimeline(
-            expectedInitialValue = "10:A",
-            expectedNotificationByTick = mapOf(
-                Tick(1) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "20:A",
-                ),
-                Tick(2) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "20:B",
-                ),
-                Tick(3) to ExpectedJustFreeze,
+        expectedInitialValue = "10:A",
+        expectedNotificationByTick = mapOf(
+            Tick(1) to Cell.IntermediateUpdateNotification(
+                updatedValue = "20:A",
             ),
+            Tick(2) to Cell.IntermediateUpdateNotification(
+                updatedValue = "20:B",
+            ),
+            Tick(3) to Cell.IsolatedFreezeNotification,
         ),
     )
 
@@ -425,18 +403,16 @@ class Cell_map2_state_tests {
                 "$value1:$value2"
             }
         },
-        expectedTimeline = ExpectedCellTimeline(
-            expectedInitialValue = "10:A",
-            expectedNotificationByTick = mapOf(
-                Tick(1) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "20:A",
-                ),
-                Tick(2) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "20:B",
-                ),
-                Tick(3) to ExpectedFreezingUpdate(
-                    expectedUpdatedValue = "20:C",
-                ),
+        expectedInitialValue = "10:A",
+        expectedNotificationByTick = mapOf(
+            Tick(1) to Cell.IntermediateUpdateNotification(
+                updatedValue = "20:A",
+            ),
+            Tick(2) to Cell.IntermediateUpdateNotification(
+                updatedValue = "20:B",
+            ),
+            Tick(3) to Cell.FreezingUpdateNotification(
+                updatedFrozenValue = "20:C",
             ),
         ),
     )
@@ -467,17 +443,15 @@ class Cell_map2_state_tests {
                 "$value1:$value2"
             }
         },
-        expectedTimeline = ExpectedCellTimeline(
-            expectedInitialValue = "10:A",
-            expectedNotificationByTick = mapOf(
-                Tick(1) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "20:A",
-                ),
-                Tick(2) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "20:B",
-                ),
-                Tick(3) to ExpectedJustFreeze,
+        expectedInitialValue = "10:A",
+        expectedNotificationByTick = mapOf(
+            Tick(1) to Cell.IntermediateUpdateNotification(
+                updatedValue = "20:A",
             ),
+            Tick(2) to Cell.IntermediateUpdateNotification(
+                updatedValue = "20:B",
+            ),
+            Tick(3) to Cell.IsolatedFreezeNotification,
         ),
     )
 
@@ -507,18 +481,17 @@ class Cell_map2_state_tests {
                 "$value1:$value2"
             }
         },
-        expectedTimeline = ExpectedCellTimeline(
-            expectedInitialValue = "10:A",
-            expectedNotificationByTick = mapOf(
-                Tick(1) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "20:A",
-                ),
-                Tick(2) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "20:B",
-                ),
-                Tick(3) to ExpectedFreezingUpdate(
-                    expectedUpdatedValue = "30:C",
-                ),
+        // USE THIS AS AN EXAMPLE
+        expectedInitialValue = "10:A",
+        expectedNotificationByTick = mapOf(
+            Tick(1) to Cell.IntermediateUpdateNotification(
+                updatedValue = "20:A",
+            ),
+            Tick(2) to Cell.IntermediateUpdateNotification(
+                updatedValue = "20:B",
+            ),
+            Tick(3) to Cell.FreezingUpdateNotification(
+                updatedFrozenValue = "30:C",
             ),
         ),
     )
@@ -550,18 +523,16 @@ class Cell_map2_state_tests {
                     "$value1:$value2"
                 }
             },
-            expectedTimeline = ExpectedCellTimeline(
-                expectedInitialValue = "10:A",
-                expectedNotificationByTick = mapOf(
-                    Tick(1) to ExpectedPlainUpdate(
-                        expectedUpdatedValue = "20:A",
-                    ),
-                    Tick(2) to ExpectedPlainUpdate(
-                        expectedUpdatedValue = "20:B",
-                    ),
-                    Tick(3) to ExpectedFreezingUpdate(
-                        expectedUpdatedValue = "30:B",
-                    ),
+            expectedInitialValue = "10:A",
+            expectedNotificationByTick = mapOf(
+                Tick(1) to Cell.IntermediateUpdateNotification(
+                    updatedValue = "20:A",
+                ),
+                Tick(2) to Cell.IntermediateUpdateNotification(
+                    updatedValue = "20:B",
+                ),
+                Tick(3) to Cell.FreezingUpdateNotification(
+                    updatedFrozenValue = "30:B",
                 ),
             ),
         )
@@ -599,18 +570,16 @@ class Cell_map2_state_tests {
                     "$value1:$value2"
                 }
             },
-            expectedTimeline = ExpectedCellTimeline(
-                expectedInitialValue = "10:A",
-                expectedNotificationByTick = mapOf(
-                    Tick(1) to ExpectedPlainUpdate(
-                        expectedUpdatedValue = "20:A",
-                    ),
-                    Tick(2) to ExpectedPlainUpdate(
-                        expectedUpdatedValue = "20:B",
-                    ),
-                    Tick(3) to ExpectedFreezingUpdate(
-                        expectedUpdatedValue = "20:C",
-                    ),
+            expectedInitialValue = "10:A",
+            expectedNotificationByTick = mapOf(
+                Tick(1) to Cell.IntermediateUpdateNotification(
+                    updatedValue = "20:A",
+                ),
+                Tick(2) to Cell.IntermediateUpdateNotification(
+                    updatedValue = "20:B",
+                ),
+                Tick(3) to Cell.FreezingUpdateNotification(
+                    updatedFrozenValue = "20:C",
                 ),
             ),
         )
@@ -661,17 +630,15 @@ class Cell_map2_state_tests {
                 sourceCell,
                 sourceCell,
             ) { value1, value2 ->
-                "$value1:$value2"
-            }
+                    "$value1:$value2"
+                }
         },
-        expectedTimeline = ExpectedCellTimeline(
-            expectedInitialValue = "10:10",
-            expectedNotificationByTick = mapOf(
-                Tick(1) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "20:20",
-                ),
-                Tick(2) to ExpectedJustFreeze,
+        expectedInitialValue = "10:10",
+        expectedNotificationByTick = mapOf(
+            Tick(1) to Cell.IntermediateUpdateNotification(
+                updatedValue = "20:20",
             ),
+            Tick(2) to Cell.IsolatedFreezeNotification,
         ),
     )
 }
