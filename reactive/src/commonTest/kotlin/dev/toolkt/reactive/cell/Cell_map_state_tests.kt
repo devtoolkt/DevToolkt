@@ -1,6 +1,6 @@
 package dev.toolkt.reactive.cell
 
-import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenPlainUpdate
+
 import dev.toolkt.reactive.cell.test_utils.InertCellFactory
 import dev.toolkt.reactive.cell.test_utils.Tick
 import dev.toolkt.reactive.cell.test_utils.createDynamicCellExternally
@@ -41,7 +41,7 @@ class Cell_map_state_tests {
         setup = {
             val sourceCell = createDynamicCellExternally(
                 givenInitialValue = 10,
-                givenUpdateByTick = emptyMap(),
+                givenUpdatedValueByTick = emptyMap(),
                 freezeTick = null,
             )
 
@@ -58,10 +58,8 @@ class Cell_map_state_tests {
         setup = {
             val sourceCell = createDynamicCellExternally(
                 givenInitialValue = 10,
-                givenUpdateByTick = mapOf(
-                    Tick(1) to GivenPlainUpdate.of(
-                        givenUpdatedValue = 20,
-                    ),
+                givenUpdatedValueByTick = mapOf(
+                    Tick(1) to 20,
                 ),
                 freezeTick = null,
             )
@@ -83,10 +81,8 @@ class Cell_map_state_tests {
         setup = {
             val sourceCell = createDynamicCellExternally(
                 givenInitialValue = 10,
-                givenUpdateByTick = mapOf(
-                    Tick(1) to GivenPlainUpdate.of(
-                        givenUpdatedValue = 20,
-                    ),
+                givenUpdatedValueByTick = mapOf(
+                    Tick(1) to 20,
                 ),
                 freezeTick = Tick(2),
             )
@@ -109,13 +105,9 @@ class Cell_map_state_tests {
         setup = {
             val sourceCell = createDynamicCellExternally(
                 givenInitialValue = 10,
-                givenUpdateByTick = mapOf(
-                    Tick(1) to GivenPlainUpdate.of(
-                        givenUpdatedValue = 20,
-                    ),
-                    Tick(2) to GivenPlainUpdate.of(
-                        givenUpdatedValue = 30,
-                    ),
+                givenUpdatedValueByTick = mapOf(
+                    Tick(1) to 20,
+                    Tick(2) to 30,
                 ),
                 freezeTick = Tick(2),
             )

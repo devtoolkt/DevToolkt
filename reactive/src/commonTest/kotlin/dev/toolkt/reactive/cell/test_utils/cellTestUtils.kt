@@ -23,7 +23,7 @@ interface CellDynamicTestContext {
 
 context(context: CellDynamicTestContext) fun <ValueT : Any> createDynamicCellExternally(
     givenInitialValue: ValueT,
-    givenUpdateByTick: Map<Tick, GivenCellTimeline.GivenPlainUpdate<ValueT>>,
+    givenUpdatedValueByTick: Map<Tick, ValueT>,
     freezeTick: Tick?,
 ): Cell<ValueT> {
     val onTickCropped = when (freezeTick) {
@@ -38,9 +38,9 @@ context(context: CellDynamicTestContext) fun <ValueT : Any> createDynamicCellExt
         Cell.define(
             initialValue = givenInitialValue,
             newValues = onTickCropped.mapNotNull { tick ->
-                val givenUpdate = givenUpdateByTick[tick] ?: return@mapNotNull null
+                val givenUpdatedValue = givenUpdatedValueByTick[tick] ?: return@mapNotNull null
 
-                givenUpdate.givenUpdatedValue
+                givenUpdatedValue
             },
         )
     }
