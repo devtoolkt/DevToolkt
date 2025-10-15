@@ -1,57 +1,73 @@
 package dev.toolkt.reactive.cell
 
-import dev.toolkt.reactive.cell.test_utils.CellVerificationStrategy
-import dev.toolkt.reactive.cell.test_utils.CellVerifier
-import dev.toolkt.reactive.cell.test_utils.DynamicCellFactory
+import dev.toolkt.core.utils.iterable.mapOfNotNull
+import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline
+import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedFreezingNotification
+import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedJustFreeze
+import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedPlainUpdate
+import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenFreezingNotification
+import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenFreezingUpdate
+import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenJustFreeze
+import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenPlainUpdate
 import dev.toolkt.reactive.cell.test_utils.InertCellFactory
-import dev.toolkt.reactive.event_stream.EmitterEventStream
-import dev.toolkt.reactive.event_stream.map
-import dev.toolkt.reactive.event_stream.mapNotNull
+import dev.toolkt.reactive.cell.test_utils.StillCellFactory
+import dev.toolkt.reactive.cell.test_utils.Tick
+import dev.toolkt.reactive.cell.test_utils.createDynamicCellExternally
+import dev.toolkt.reactive.cell.test_utils.testCell_immediatelyInert
+import dev.toolkt.reactive.cell.test_utils.testCell_initiallyDynamic
 import kotlin.test.Ignore
 import kotlin.test.Test
 
 @Suppress("ClassName")
 class Cell_map3_state_tests {
-    private fun test_state_initial(
-        source1CellFactory: InertCellFactory,
-        source2CellFactory: InertCellFactory,
-        source3CellFactory: InertCellFactory,
-        verificationStrategy: CellVerificationStrategy,
-    ) {
-        val sourceCell1 = source1CellFactory.createInertExternally(10)
+    private sealed class SourceKind {
+        data class Inert(
+            val inertCellFactory: InertCellFactory,
+        ) : SourceKind()
 
-        val sourceCell2 = source2CellFactory.createInertExternally('A')
-
-        val sourceCell3 = source3CellFactory.createInertExternally(true)
-
-        val map3Cell = Cell.map3(
-            sourceCell1,
-            sourceCell2,
-            sourceCell3,
-        ) { value1, value2, value3 ->
-            "$value1:$value2:$value3"
-        }
-
-        val verifier = verificationStrategy.begin(
-            subjectCell = map3Cell,
-        )
-
-        verifier.verifyCurrentValue(
-            expectedCurrentValue = "10:A:true",
-        )
+        data object Dynamic : SourceKind()
     }
 
-    private fun test_state_initial(
-        verificationStrategy: CellVerificationStrategy,
-    ) {
+    @Test
+    @Ignore // FIXME: Expected a null subscription for an inert cell
+    fun test_allSourcesInert() {
+        fun test(
+            source1CellFactory: InertCellFactory,
+            source2CellFactory: InertCellFactory,
+            source3CellFactory: InertCellFactory,
+        ) = testCell_immediatelyInert(
+            setup = {
+                val sourceCell1 = source1CellFactory.createInertExternally(
+                    inertValue = 10,
+                )
+
+                val sourceCell2 = source2CellFactory.createInertExternally(
+                    inertValue = 'A',
+                )
+
+                val sourceCell3 = source3CellFactory.createInertExternally(
+                    inertValue = true,
+                )
+
+                Cell.map3(
+                    sourceCell1,
+                    sourceCell2,
+                    sourceCell3,
+                ) { value1, value2, value3 ->
+                    "$value1:$value2:$value3"
+                }
+
+            },
+            expectedValue = "10:A:true",
+        )
+
         InertCellFactory.values.forEach { source1CellFactory ->
             InertCellFactory.values.forEach { source2CellFactory ->
                 InertCellFactory.values.forEach { source3CellFactory ->
-                    test_state_initial(
+                    test(
                         source1CellFactory = source1CellFactory,
                         source2CellFactory = source2CellFactory,
                         source3CellFactory = source3CellFactory,
-                        verificationStrategy = verificationStrategy,
                     )
                 }
             }
@@ -59,414 +75,888 @@ class Cell_map3_state_tests {
     }
 
     @Test
-    fun test_state_initial_passive() {
-        test_state_initial(
-            verificationStrategy = CellVerificationStrategy.Passive,
-        )
-    }
+    fun test_someSourcesDynamic() {
+        fun test(
+            source1CellFactory: StillCellFactory,
+            source2CellFactory: StillCellFactory,
+            source3CellFactory: StillCellFactory,
+        ) = testCell_initiallyDynamic(
+            setup = {
+                val sourceCell1 = source1CellFactory.createStillExternally(
+                    stillValue = 10,
+                )
 
-    @Ignore // FIXME: ... is already a dependent ...
-    @Test
-    fun test_state_initial_active() {
-        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_state_initial(
-                verificationStrategy = verificationStrategy,
-            )
-        }
-    }
+                val sourceCell2 = source2CellFactory.createStillExternally(
+                    stillValue = 'A',
+                )
 
-    private fun test_state_sameSource(
-        sourceCellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy,
-    ) {
-        val doUpdate = EmitterEventStream<Unit>()
+                val sourceCell3 = source3CellFactory.createStillExternally(
+                    stillValue = true,
+                )
 
-        val sourceCell = sourceCellFactory.createDynamicExternally(
-            initialValue = 10,
-            doUpdate = doUpdate.map { 20 },
-        )
-
-        val map3Cell = Cell.map3(
-            sourceCell,
-            sourceCell,
-            sourceCell,
-        ) { value1, value2, value3 ->
-            "$value1:$value2:$value3"
-        }
-
-        val verifier = verificationStrategy.begin(
-            subjectCell = map3Cell,
-        )
-
-        verifier.verifyUpdates(
-            doTriggerUpdate = doUpdate,
-            expectedUpdatedValue = "20:20:20",
-        )
-    }
-
-    private fun test_state_sameSource(
-        verificationStrategy: CellVerificationStrategy,
-    ) {
-        DynamicCellFactory.values.forEach { sourceCellFactory ->
-            test_state_sameSource(
-                sourceCellFactory = sourceCellFactory,
-                verificationStrategy = verificationStrategy,
-            )
-        }
-    }
-
-    @Test
-    fun test_state_sameSource_passive() {
-        test_state_sameSource(
-            verificationStrategy = CellVerificationStrategy.Passive,
-        )
-    }
-
-    @Ignore // FIXME: Flaky test
-    @Test
-    fun test_state_sameSource_active() {
-        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_state_sameSource(
-                verificationStrategy = verificationStrategy,
-            )
-        }
-    }
-
-    @Ignore // FIXME: Flaky test
-    @Test
-    fun test_state_sameSource_quick() {
-        test_state_sameSource(
-            verificationStrategy = CellVerificationStrategy.Quick,
-        )
-    }
-
-    private fun test_state_source1Update(
-        source1CellFactory: DynamicCellFactory,
-        source2CellFactory: InertCellFactory,
-        source3CellFactory: InertCellFactory,
-        verificationStrategy: CellVerificationStrategy,
-    ) {
-        val doUpdate = EmitterEventStream<Unit>()
-
-        val sourceCell1 = source1CellFactory.createDynamicExternally(
-            initialValue = 10,
-            doUpdate = doUpdate.map { 20 },
-        )
-
-        val sourceCell2 = source2CellFactory.createInertExternally('A')
-
-        val sourceCell3 = source3CellFactory.createInertExternally(true)
-
-        val map3Cell = Cell.map3(
-            sourceCell1,
-            sourceCell2,
-            sourceCell3,
-        ) { value1, value2, value3 ->
-            "$value1:$value2:$value3"
-        }
-
-        val verifier = verificationStrategy.begin(
-            subjectCell = map3Cell,
-        )
-
-        verifier.verifyUpdates(
-            doTriggerUpdate = doUpdate,
-            expectedUpdatedValue = "20:A:true",
-        )
-    }
-
-    private fun test_state_source1Update(
-        verificationStrategy: CellVerificationStrategy,
-    ) {
-        DynamicCellFactory.values.forEach { source1CellFactory ->
-            InertCellFactory.values.forEach { source2CellFactory ->
-                InertCellFactory.values.forEach { source3CellFactory ->
-                    test_state_source1Update(
-                        source1CellFactory = source1CellFactory,
-                        source2CellFactory = source2CellFactory,
-                        source3CellFactory = source3CellFactory,
-                        verificationStrategy = verificationStrategy,
-                    )
+                Cell.map3(
+                    sourceCell1,
+                    sourceCell2,
+                    sourceCell3,
+                ) { value1, value2, value3 ->
+                    "$value1:$value2:$value3"
                 }
-            }
-        }
-    }
 
-    @Test
-    fun test_state_source1Update_passive() {
-        test_state_source1Update(
-            verificationStrategy = CellVerificationStrategy.Passive,
+            },
+            expectedTimeline = ExpectedCellTimeline(
+                expectedInitialValue = "10:A:true",
+                expectedNotificationByTick = emptyMap(),
+            ),
+        )
+
+        // 1 dynamic
+
+        test(
+            source1CellFactory = StillCellFactory.Dynamic,
+            source2CellFactory = InertCellFactory.Const,
+            source3CellFactory = InertCellFactory.Frozen,
+        )
+
+        test(
+            source1CellFactory = InertCellFactory.Const,
+            source2CellFactory = StillCellFactory.Dynamic,
+            source3CellFactory = InertCellFactory.Frozen,
+        )
+
+        test(
+            source1CellFactory = InertCellFactory.Const,
+            source2CellFactory = InertCellFactory.TransformedFrozen,
+            source3CellFactory = StillCellFactory.Dynamic,
+        )
+
+        // 2 dynamic
+
+        test(
+            source1CellFactory = StillCellFactory.Dynamic,
+            source2CellFactory = StillCellFactory.Dynamic,
+            source3CellFactory = InertCellFactory.Const,
+        )
+
+        test(
+            source1CellFactory = StillCellFactory.Dynamic,
+            source2CellFactory = InertCellFactory.Const,
+            source3CellFactory = StillCellFactory.Dynamic,
+        )
+
+        test(
+            source1CellFactory = InertCellFactory.Const,
+            source2CellFactory = StillCellFactory.Dynamic,
+            source3CellFactory = StillCellFactory.Dynamic,
+        )
+
+        // 3 dynamic
+
+        test(
+            source1CellFactory = StillCellFactory.Dynamic,
+            source2CellFactory = StillCellFactory.Dynamic,
+            source3CellFactory = StillCellFactory.Dynamic,
         )
     }
 
     @Test
-    fun test_state_source1Update_active() {
-        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_state_source1Update(
-                verificationStrategy = verificationStrategy,
+    fun test_sameSourceInert() {
+        fun test(
+            sourceCellFactory: InertCellFactory,
+        ) {
+            testCell_immediatelyInert(
+                setup = {
+                    val sourceCell = sourceCellFactory.createInertExternally(
+                        inertValue = 10,
+                    )
+
+                    Cell.map3(
+                        sourceCell,
+                        sourceCell,
+                        sourceCell,
+                    ) { value1, value2, value3 ->
+                        "$value1:$value2:$value3"
+                    }
+
+                },
+                expectedValue = "10:10:10",
             )
         }
+
+        test(
+            sourceCellFactory = InertCellFactory.Const,
+        )
     }
 
     @Test
-    fun test_state_source1Update_quick() {
-        test_state_source1Update(
-            verificationStrategy = CellVerificationStrategy.Quick,
-        )
-    }
+    @Ignore // FIXME: Vertex (...) is already a dependent (...)
+    fun test_sameSourceDynamic() {
+        testCell_initiallyDynamic(
+            setup = {
+                val sourceCell = createDynamicCellExternally(
+                    givenInitialValue = 10,
+                    givenNotificationByTick = emptyMap(),
+                )
 
-    private fun test_state_source2Update(
-        source1CellFactory: InertCellFactory,
-        source2CellFactory: DynamicCellFactory,
-        source3CellFactory: InertCellFactory,
-        verificationStrategy: CellVerificationStrategy,
-    ) {
-        val doUpdate = EmitterEventStream<Unit>()
-
-        val sourceCell1 = source1CellFactory.createInertExternally(10)
-
-        val sourceCell2 = source2CellFactory.createDynamicExternally(
-            initialValue = 'A',
-            doUpdate = doUpdate.map { 'B' },
-        )
-
-        val sourceCell3 = source3CellFactory.createInertExternally(true)
-
-        val map3Cell = Cell.map3(
-            sourceCell1,
-            sourceCell2,
-            sourceCell3,
-        ) { value1, value2, value3 ->
-            "$value1:$value2:$value3"
-        }
-
-        val verifier = verificationStrategy.begin(
-            subjectCell = map3Cell,
-        )
-
-        verifier.verifyUpdates(
-            doTriggerUpdate = doUpdate,
-            expectedUpdatedValue = "10:B:true",
-        )
-    }
-
-    private fun test_state_source2Update(
-        verificationStrategy: CellVerificationStrategy,
-    ) {
-        InertCellFactory.values.forEach { source1CellFactory ->
-            DynamicCellFactory.values.forEach { source2CellFactory ->
-                InertCellFactory.values.forEach { source3CellFactory ->
-                    test_state_source2Update(
-                        source1CellFactory = source1CellFactory,
-                        source2CellFactory = source2CellFactory,
-                        source3CellFactory = source3CellFactory,
-                        verificationStrategy = verificationStrategy,
-                    )
+                Cell.map3(
+                    sourceCell,
+                    sourceCell,
+                    sourceCell,
+                ) { value1, value2, value3 ->
+                    "$value1:$value2:$value3"
                 }
-            }
-        }
-    }
 
-    @Test
-    fun test_state_source2Update_passive() {
-        test_state_source2Update(
-            verificationStrategy = CellVerificationStrategy.Passive,
+            },
+            expectedTimeline = ExpectedCellTimeline(
+                expectedInitialValue = "10:10:10",
+                expectedNotificationByTick = emptyMap(),
+            ),
         )
     }
 
     @Test
-    fun test_state_source2Update_active() {
-        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_state_source2Update(
-                verificationStrategy = verificationStrategy,
-            )
-        }
-    }
+    fun test_source1Dynamic_source1Updates() {
+        fun test(
+            source2CellFactory: StillCellFactory,
+            source3CellFactory: StillCellFactory,
+        ) = testCell_initiallyDynamic(
+            setup = {
+                val sourceCell1 = createDynamicCellExternally(
+                    givenInitialValue = 10,
+                    givenNotificationByTick = mapOf(
+                        Tick(1) to GivenPlainUpdate.of(
+                            givenUpdatedValue = 20,
+                        ),
+                    ),
+                )
 
-    @Test
-    fun test_state_source2Update_quick() {
-        test_state_source2Update(
-            verificationStrategy = CellVerificationStrategy.Quick,
-        )
-    }
+                val sourceCell2 = source2CellFactory.createStillExternally(
+                    stillValue = 'A',
+                )
 
-    private fun test_state_source3Update(
-        source1CellFactory: InertCellFactory,
-        source2CellFactory: InertCellFactory,
-        source3CellFactory: DynamicCellFactory,
-        verificationStrategy: CellVerificationStrategy,
-    ) {
-        val doUpdate = EmitterEventStream<Unit>()
+                val sourceCell3 = source3CellFactory.createStillExternally(
+                    stillValue = false,
+                )
 
-        val sourceCell1 = source1CellFactory.createInertExternally(10)
-
-        val sourceCell2 = source2CellFactory.createInertExternally('A')
-
-        val sourceCell3 = source3CellFactory.createDynamicExternally(
-            initialValue = true,
-            doUpdate = doUpdate.map { false },
-        )
-
-        val map3Cell = Cell.map3(
-            sourceCell1,
-            sourceCell2,
-            sourceCell3,
-        ) { value1, value2, value3 ->
-            "$value1:$value2:$value3"
-        }
-
-        val verifier = verificationStrategy.begin(
-            subjectCell = map3Cell,
-        )
-
-        verifier.verifyUpdates(
-            doTriggerUpdate = doUpdate,
-            expectedUpdatedValue = "10:A:false",
-        )
-    }
-
-    private fun test_state_source3Update(
-        verificationStrategy: CellVerificationStrategy,
-    ) {
-        InertCellFactory.values.forEach { source1CellFactory ->
-            InertCellFactory.values.forEach { source2CellFactory ->
-                DynamicCellFactory.values.forEach { source3CellFactory ->
-                    test_state_source3Update(
-                        source1CellFactory = source1CellFactory,
-                        source2CellFactory = source2CellFactory,
-                        source3CellFactory = source3CellFactory,
-                        verificationStrategy = verificationStrategy,
-                    )
+                Cell.map3(
+                    sourceCell1,
+                    sourceCell2,
+                    sourceCell3,
+                ) { value1, value2, value3 ->
+                    "$value1:$value2:$value3"
                 }
-            }
-        }
-    }
 
-    @Test
-    fun test_state_source3Update_passive() {
-        test_state_source3Update(
-            verificationStrategy = CellVerificationStrategy.Passive,
+            },
+            expectedTimeline = ExpectedCellTimeline(
+                expectedInitialValue = "10:A:false",
+                expectedNotificationByTick = mapOf(
+                    Tick(1) to ExpectedPlainUpdate(
+                        expectedUpdatedValue = "20:A:false",
+                    ),
+                ),
+            ),
+        )
+
+        test(
+            source2CellFactory = InertCellFactory.Const,
+            source3CellFactory = InertCellFactory.Frozen,
+        )
+
+        test(
+            source2CellFactory = InertCellFactory.Const,
+            source3CellFactory = StillCellFactory.Dynamic,
+        )
+
+        test(
+            source2CellFactory = StillCellFactory.Dynamic,
+            source3CellFactory = InertCellFactory.Frozen,
+        )
+
+        test(
+            source2CellFactory = StillCellFactory.Dynamic,
+            source3CellFactory = StillCellFactory.Dynamic,
         )
     }
 
     @Test
-    fun test_state_source3Update_active() {
-        CellVerificationStrategy.Active.values.forEach { verificationStrategy ->
-            test_state_source3Update(
-                verificationStrategy = verificationStrategy,
-            )
-        }
-    }
+    fun test_source2Dynamic_source2Updates() {
+        fun test(
+            source1CellFactory: StillCellFactory,
+            source3CellFactory: StillCellFactory,
+        ) = testCell_initiallyDynamic(
+            setup = {
+                val sourceCell1 = source1CellFactory.createStillExternally(
+                    stillValue = 10,
+                )
 
-    @Test
-    fun test_state_source3Update_quick() {
-        test_state_source3Update(
-            verificationStrategy = CellVerificationStrategy.Quick,
-        )
-    }
+                val sourceCell2 = createDynamicCellExternally(
+                    givenInitialValue = 'A',
+                    givenNotificationByTick = mapOf(
+                        Tick(2) to GivenPlainUpdate.of(
+                            givenUpdatedValue = 'B',
+                        ),
+                    ),
+                )
 
-    @Suppress("SameParameterValue")
-    private fun test_state_mixedUpdates(
-        source1CellFactory: DynamicCellFactory,
-        source2CellFactory: DynamicCellFactory,
-        source3CellFactory: DynamicCellFactory,
-        initialSource1Value: Int,
-        newSource1Value: Int?,
-        initialSource2Value: Char,
-        newSource2Value: Char?,
-        initialSource3Value: Boolean,
-        newSource3Value: Boolean?,
-    ) {
-        val doUpdate = EmitterEventStream<Unit>()
+                val sourceCell3 = source3CellFactory.createStillExternally(
+                    stillValue = false,
+                )
 
-        val sourceCell1 = source1CellFactory.createDynamicExternally(
-            initialValue = initialSource1Value,
-            doUpdate = doUpdate.mapNotNull { newSource1Value },
-        )
-
-        val sourceCell2 = source2CellFactory.createDynamicExternally(
-            initialValue = initialSource2Value,
-            doUpdate = doUpdate.mapNotNull { newSource2Value },
-        )
-
-        val sourceCell3 = source3CellFactory.createDynamicExternally(
-            initialValue = initialSource3Value,
-            doUpdate = doUpdate.mapNotNull { newSource3Value },
-        )
-
-        val map3Cell = Cell.map3(
-            sourceCell1,
-            sourceCell2,
-            sourceCell3,
-        ) { value1, value2, value3 ->
-            "$value1:$value2:$value3"
-        }
-
-        val verifier = CellVerifier.observeActively(
-            subjectCell = map3Cell,
-        )
-
-        val expectedValue1 = newSource1Value ?: initialSource1Value
-        val expectedValue2 = newSource2Value ?: initialSource2Value
-        val expectedValue3 = newSource3Value ?: initialSource3Value
-
-        verifier.verifyUpdates(
-            doTriggerUpdate = doUpdate,
-            expectedUpdatedValue = "$expectedValue1:$expectedValue2:$expectedValue3",
-        )
-    }
-
-    @Suppress("SameParameterValue")
-    private fun test_state_mixedUpdates(
-        initialSource1Value: Int,
-        newSource1Value: Int?,
-        initialSource2Value: Char,
-        newSource2Value: Char?,
-        initialSource3Value: Boolean,
-        newSource3Value: Boolean?,
-    ) {
-        DynamicCellFactory.values.forEach { source1CellFactory ->
-            DynamicCellFactory.values.forEach { source2CellFactory ->
-                DynamicCellFactory.values.forEach { source3CellFactory ->
-                    test_state_mixedUpdates(
-                        source1CellFactory = source1CellFactory,
-                        source2CellFactory = source2CellFactory,
-                        source3CellFactory = source3CellFactory,
-                        initialSource1Value = initialSource1Value,
-                        newSource1Value = newSource1Value,
-                        initialSource2Value = initialSource2Value,
-                        newSource2Value = newSource2Value,
-                        initialSource3Value = initialSource3Value,
-                        newSource3Value = newSource3Value,
-                    )
+                Cell.map3(
+                    sourceCell1,
+                    sourceCell2,
+                    sourceCell3,
+                ) { value1, value2, value3 ->
+                    "$value1:$value2:$value3"
                 }
-            }
-        }
+
+            },
+            expectedTimeline = ExpectedCellTimeline(
+                expectedInitialValue = "10:A:false",
+                expectedNotificationByTick = mapOf(
+                    Tick(2) to ExpectedPlainUpdate(
+                        expectedUpdatedValue = "10:B:false",
+                    ),
+                ),
+            ),
+        )
+
+        test(
+            source1CellFactory = InertCellFactory.Const,
+            source3CellFactory = InertCellFactory.Frozen,
+        )
+
+        test(
+            source1CellFactory = InertCellFactory.Const,
+            source3CellFactory = StillCellFactory.Dynamic,
+        )
+
+        test(
+            source1CellFactory = StillCellFactory.Dynamic,
+            source3CellFactory = InertCellFactory.Frozen,
+        )
+
+        test(
+            source1CellFactory = StillCellFactory.Dynamic,
+            source3CellFactory = StillCellFactory.Dynamic,
+        )
     }
 
     @Test
-    fun test_state_mixedUpdates() {
-        val initialSource1Value = 10
-        val initialSource2Value = 'A'
-        val initialSource3Value = true
+    fun test_source3Dynamic_source3Updates() {
+        fun test(
+            source1CellFactory: StillCellFactory,
+            source2CellFactory: StillCellFactory,
+        ) = testCell_initiallyDynamic(
+            setup = {
+                val sourceCell1 = source1CellFactory.createStillExternally(
+                    stillValue = 10,
+                )
 
-        listOf(null, 11).forEach { newSource1Value ->
-            listOf(null, 'B').forEach { newSource2Value ->
-                listOf(null, false).forEach { newSource3Value ->
-                    if (newSource1Value != null || newSource2Value != null || newSource3Value != null) {
-                        // At least one source must update
+                val sourceCell2 = source2CellFactory.createStillExternally(
+                    stillValue = 'A',
+                )
 
-                        test_state_mixedUpdates(
-                            initialSource1Value = initialSource1Value,
-                            newSource1Value = newSource1Value,
-                            initialSource2Value = initialSource2Value,
-                            newSource2Value = newSource2Value,
-                            initialSource3Value = initialSource3Value,
-                            newSource3Value = newSource3Value,
+                val sourceCell3 = createDynamicCellExternally(
+                    givenInitialValue = false,
+                    givenNotificationByTick = mapOf(
+                        Tick(3) to GivenPlainUpdate.of(
+                            givenUpdatedValue = true,
+                        ),
+                    ),
+                )
+
+                Cell.map3(
+                    sourceCell1,
+                    sourceCell2,
+                    sourceCell3,
+                ) { value1, value2, value3 ->
+                    "$value1:$value2:$value3"
+                }
+
+            },
+            expectedTimeline = ExpectedCellTimeline(
+                expectedInitialValue = "10:A:false",
+                expectedNotificationByTick = mapOf(
+                    Tick(3) to ExpectedPlainUpdate(
+                        expectedUpdatedValue = "10:A:true",
+                    ),
+                ),
+            ),
+        )
+
+        test(
+            source1CellFactory = InertCellFactory.Const,
+            source2CellFactory = InertCellFactory.Frozen,
+        )
+
+        test(
+            source1CellFactory = InertCellFactory.Const,
+            source2CellFactory = StillCellFactory.Dynamic,
+        )
+
+        test(
+            source1CellFactory = StillCellFactory.Dynamic,
+            source2CellFactory = InertCellFactory.Frozen,
+        )
+
+        test(
+            source1CellFactory = StillCellFactory.Dynamic,
+            source2CellFactory = StillCellFactory.Dynamic,
+        )
+    }
+
+    @Test
+    fun test_source1Inert_dynamicSourcesFreeze() {
+        fun test(
+            source1CellFactory: InertCellFactory,
+        ) = testCell_initiallyDynamic(
+            setup = {
+                val sourceCell1 = source1CellFactory.createInertExternally(
+                    inertValue = 10,
+                )
+
+                val sourceCell2 = createDynamicCellExternally(
+                    givenInitialValue = 'A',
+                    givenNotificationByTick = mapOf(
+                        Tick(1) to GivenJustFreeze,
+                    ),
+                )
+
+                val sourceCell3 = createDynamicCellExternally(
+                    givenInitialValue = false,
+                    givenNotificationByTick = mapOf(
+                        Tick(2) to GivenJustFreeze,
+                    ),
+                )
+
+                Cell.map3(
+                    sourceCell1,
+                    sourceCell2,
+                    sourceCell3,
+                ) { value1, value2, value3 ->
+                    "$value1:$value2:$value3"
+                }
+
+            },
+            expectedTimeline = ExpectedCellTimeline(
+                expectedInitialValue = "10:A:false",
+                expectedNotificationByTick = mapOf(
+                    Tick(3) to ExpectedJustFreeze,
+                ),
+            ),
+        )
+
+        test(
+            source1CellFactory = InertCellFactory.Const,
+        )
+
+        test(
+            source1CellFactory = InertCellFactory.Frozen,
+        )
+    }
+
+    @Test
+    fun test_source2Inert_dynamicSourcesFreeze() {
+        fun test(
+            source1CellFactory: InertCellFactory,
+        ) = testCell_initiallyDynamic(
+            setup = {
+                val sourceCell1 = createDynamicCellExternally(
+                    givenInitialValue = 10,
+                    givenNotificationByTick = mapOf(
+                        Tick(1) to GivenJustFreeze,
+                    ),
+                )
+
+                val sourceCell2 = source1CellFactory.createInertExternally(
+                    inertValue = 'A',
+                )
+
+                val sourceCell3 = createDynamicCellExternally(
+                    givenInitialValue = false,
+                    givenNotificationByTick = mapOf(
+                        Tick(1) to GivenJustFreeze,
+                    ),
+                )
+
+                Cell.map3(
+                    sourceCell1,
+                    sourceCell2,
+                    sourceCell3,
+                ) { value1, value2, value3 ->
+                    "$value1:$value2:$value3"
+                }
+
+            },
+            expectedTimeline = ExpectedCellTimeline(
+                expectedInitialValue = "10:A:false",
+                expectedNotificationByTick = mapOf(
+                    Tick(1) to ExpectedJustFreeze,
+                ),
+            ),
+        )
+
+        test(
+            source1CellFactory = InertCellFactory.Const,
+        )
+
+        test(
+            source1CellFactory = InertCellFactory.Frozen,
+        )
+    }
+
+    @Test
+    fun test_source3Inert_dynamicSourcesFreeze() {
+        fun test(
+            source1CellFactory: InertCellFactory,
+        ) = testCell_initiallyDynamic(
+            setup = {
+                val sourceCell1 = createDynamicCellExternally(
+                    givenInitialValue = 10,
+                    givenNotificationByTick = mapOf(
+                        Tick(1) to GivenFreezingUpdate.of(
+                            givenUpdatedValue = 11,
+                        ),
+                    ),
+                )
+
+                val sourceCell2 = createDynamicCellExternally(
+                    givenInitialValue = 'A',
+                    givenNotificationByTick = mapOf(
+                        Tick(2) to GivenJustFreeze,
+                    ),
+                )
+
+                val sourceCell3 = source1CellFactory.createInertExternally(
+                    inertValue = false,
+                )
+
+                Cell.map3(
+                    sourceCell1,
+                    sourceCell2,
+                    sourceCell3,
+                ) { value1, value2, value3 ->
+                    "$value1:$value2:$value3"
+                }
+
+            },
+            expectedTimeline = ExpectedCellTimeline(
+                expectedInitialValue = "10:A:false",
+                expectedNotificationByTick = mapOf(
+                    Tick(1) to ExpectedPlainUpdate(
+                        expectedUpdatedValue = "11:A:false",
+                    ),
+                    Tick(3) to ExpectedJustFreeze,
+                ),
+            ),
+        )
+
+        test(
+            source1CellFactory = InertCellFactory.Const,
+        )
+
+        test(
+            source1CellFactory = InertCellFactory.Frozen,
+        )
+    }
+
+    @Test
+    fun test_someSourcesDynamic_dynamicSourcesUpdate() {
+        fun test(
+            source1Kind: SourceKind,
+            source2Kind: SourceKind,
+            source3Kind: SourceKind,
+        ) {
+            val finalSource1Value = when (source1Kind) {
+                is SourceKind.Dynamic -> 11
+                is SourceKind.Inert -> 10
+            }
+
+            val finalSource2Value = when (source2Kind) {
+                is SourceKind.Dynamic -> 'B'
+                is SourceKind.Inert -> 'A'
+            }
+
+            testCell_initiallyDynamic(
+                setup = {
+                    val sourceCell1 = when (source1Kind) {
+                        is SourceKind.Dynamic -> createDynamicCellExternally(
+                            givenInitialValue = 10,
+                            givenNotificationByTick = mapOf(
+                                Tick(1) to GivenPlainUpdate.of(
+                                    givenUpdatedValue = 11,
+                                ),
+                            ),
                         )
+
+                        is SourceKind.Inert -> source1Kind.inertCellFactory.createInertExternally(
+                            inertValue = 10,
+                        )
+                    }
+
+                    val sourceCell2 = when (source2Kind) {
+                        is SourceKind.Dynamic -> createDynamicCellExternally(
+                            givenInitialValue = 'A',
+                            givenNotificationByTick = mapOf(
+                                Tick(2) to GivenPlainUpdate.of(
+                                    givenUpdatedValue = 'B',
+                                ),
+                            ),
+                        )
+
+                        is SourceKind.Inert -> source2Kind.inertCellFactory.createInertExternally(
+                            inertValue = 'A',
+                        )
+                    }
+
+                    val sourceCell3 = when (source3Kind) {
+                        is SourceKind.Dynamic -> createDynamicCellExternally(
+                            givenInitialValue = false,
+                            givenNotificationByTick = mapOf(
+                                Tick(3) to GivenPlainUpdate.of(
+                                    givenUpdatedValue = true,
+                                ),
+                            ),
+                        )
+
+                        is SourceKind.Inert -> source3Kind.inertCellFactory.createInertExternally(
+                            inertValue = false,
+                        )
+                    }
+
+                    Cell.map3(
+                        sourceCell1,
+                        sourceCell2,
+                        sourceCell3,
+                    ) { value1, value2, value3 ->
+                        "$value1:$value2:$value3"
+                    }
+                },
+                expectedTimeline = ExpectedCellTimeline(
+                    expectedInitialValue = "10:A:false",
+                    expectedNotificationByTick = mapOfNotNull(
+                        (Tick(1) to ExpectedPlainUpdate(
+                            expectedUpdatedValue = "11:A:false",
+                        )).takeIf { source1Kind is SourceKind.Dynamic },
+                        (Tick(2) to ExpectedPlainUpdate(
+                            expectedUpdatedValue = "$finalSource1Value:B:false",
+                        )).takeIf { source2Kind is SourceKind.Dynamic },
+                        (Tick(3) to ExpectedPlainUpdate(
+                            expectedUpdatedValue = "$finalSource1Value:$finalSource2Value:true",
+                        )).takeIf { source3Kind is SourceKind.Dynamic },
+                    ),
+                ),
+            )
+        }
+
+        test(
+            source1Kind = SourceKind.Dynamic,
+            source2Kind = SourceKind.Inert(
+                inertCellFactory = InertCellFactory.Const,
+            ),
+            source3Kind = SourceKind.Inert(
+                inertCellFactory = InertCellFactory.Frozen,
+            ),
+        )
+
+        test(
+            source1Kind = SourceKind.Inert(
+                inertCellFactory = InertCellFactory.Const,
+            ),
+            source2Kind = SourceKind.Dynamic,
+            source3Kind = SourceKind.Inert(
+                inertCellFactory = InertCellFactory.Frozen,
+            ),
+        )
+
+        test(
+            source1Kind = SourceKind.Inert(
+                inertCellFactory = InertCellFactory.Const,
+            ),
+            source2Kind = SourceKind.Inert(
+                inertCellFactory = InertCellFactory.Frozen,
+            ),
+            source3Kind = SourceKind.Dynamic,
+        )
+
+        test(
+            source1Kind = SourceKind.Dynamic,
+            source2Kind = SourceKind.Dynamic,
+            source3Kind = SourceKind.Inert(
+                inertCellFactory = InertCellFactory.Const,
+            ),
+        )
+
+        test(
+            source1Kind = SourceKind.Dynamic,
+            source2Kind = SourceKind.Inert(
+                inertCellFactory = InertCellFactory.Frozen,
+            ),
+            source3Kind = SourceKind.Dynamic,
+        )
+
+        test(
+            source1Kind = SourceKind.Inert(
+                inertCellFactory = InertCellFactory.Const,
+            ),
+            source2Kind = SourceKind.Dynamic,
+            source3Kind = SourceKind.Dynamic,
+        )
+
+        test(
+            source1Kind = SourceKind.Dynamic,
+            source2Kind = SourceKind.Dynamic,
+            source3Kind = SourceKind.Dynamic,
+        )
+    }
+
+    @Test
+    fun test_someSourcesDynamic_dynamicSourcesFreeze() {
+        fun test(
+            source1Kind: SourceKind,
+            source2Kind: SourceKind,
+            source3Kind: SourceKind,
+        ) {
+            val freezeTick = when (source3Kind) {
+                is SourceKind.Dynamic -> Tick(3)
+
+                is SourceKind.Inert -> when (source2Kind) {
+                    is SourceKind.Dynamic -> Tick(2)
+
+                    is SourceKind.Inert -> when (source1Kind) {
+                        is SourceKind.Dynamic -> Tick(1)
+
+                        is SourceKind.Inert -> null
                     }
                 }
             }
+
+            testCell_initiallyDynamic(
+                setup = {
+                    val sourceCell1 = when (source1Kind) {
+                        is SourceKind.Dynamic -> createDynamicCellExternally(
+                            givenInitialValue = 10,
+                            givenNotificationByTick = mapOf(
+                                Tick(1) to GivenJustFreeze,
+                            ),
+                        )
+
+                        is SourceKind.Inert -> source1Kind.inertCellFactory.createInertExternally(
+                            inertValue = 10,
+                        )
+                    }
+
+                    val sourceCell2 = when (source2Kind) {
+                        is SourceKind.Dynamic -> createDynamicCellExternally(
+                            givenInitialValue = 'A',
+                            givenNotificationByTick = mapOf(
+                                Tick(2) to GivenJustFreeze,
+                            ),
+                        )
+
+                        is SourceKind.Inert -> source2Kind.inertCellFactory.createInertExternally(
+                            inertValue = 'A',
+                        )
+                    }
+
+                    val sourceCell3 = when (source3Kind) {
+                        is SourceKind.Dynamic -> createDynamicCellExternally(
+                            givenInitialValue = false,
+                            givenNotificationByTick = mapOf(
+                                Tick(3) to GivenJustFreeze,
+                            ),
+                        )
+
+                        is SourceKind.Inert -> source3Kind.inertCellFactory.createInertExternally(
+                            inertValue = false,
+                        )
+                    }
+
+                    Cell.map3(
+                        sourceCell1,
+                        sourceCell2,
+                        sourceCell3,
+                    ) { value1, value2, value3 ->
+                        "$value1:$value2:$value3"
+                    }
+                },
+                expectedTimeline = ExpectedCellTimeline(
+                    expectedInitialValue = "10:A:false",
+                    expectedNotificationByTick = mapOfNotNull(
+                        freezeTick?.let {
+                            it to ExpectedJustFreeze
+                        },
+                    ),
+                ),
+            )
+
+            test(
+                source1Kind = SourceKind.Dynamic,
+                source2Kind = SourceKind.Inert(
+                    inertCellFactory = InertCellFactory.Const,
+                ),
+                source3Kind = SourceKind.Inert(
+                    inertCellFactory = InertCellFactory.Frozen,
+                ),
+            )
+
+            test(
+                source1Kind = SourceKind.Inert(
+                    inertCellFactory = InertCellFactory.Const,
+                ),
+                source2Kind = SourceKind.Dynamic,
+                source3Kind = SourceKind.Inert(
+                    inertCellFactory = InertCellFactory.Frozen,
+                ),
+            )
+
+            test(
+                source1Kind = SourceKind.Inert(
+                    inertCellFactory = InertCellFactory.Const,
+                ),
+                source2Kind = SourceKind.Inert(
+                    inertCellFactory = InertCellFactory.Frozen,
+                ),
+                source3Kind = SourceKind.Dynamic,
+            )
+
+            test(
+                source1Kind = SourceKind.Dynamic,
+                source2Kind = SourceKind.Dynamic,
+                source3Kind = SourceKind.Inert(
+                    inertCellFactory = InertCellFactory.Const,
+                ),
+            )
+
+            test(
+                source1Kind = SourceKind.Dynamic,
+                source2Kind = SourceKind.Inert(
+                    inertCellFactory = InertCellFactory.Frozen,
+                ),
+                source3Kind = SourceKind.Dynamic,
+            )
+
+            test(
+                source1Kind = SourceKind.Inert(
+                    inertCellFactory = InertCellFactory.Const,
+                ),
+                source2Kind = SourceKind.Dynamic,
+                source3Kind = SourceKind.Dynamic,
+            )
+
+            test(
+                source1Kind = SourceKind.Dynamic,
+                source2Kind = SourceKind.Dynamic,
+                source3Kind = SourceKind.Dynamic,
+            )
         }
+
+    }
+
+    @Test
+    fun test_allSourcesDynamic_allSourcesFreezeSimultaneously() {
+        fun test(
+            shouldSource1UpdateSimultaneously: Boolean,
+            shouldSource2UpdateSimultaneously: Boolean,
+            shouldSource3UpdateSimultaneously: Boolean,
+        ) {
+            val finalSource1Value = when {
+                shouldSource1UpdateSimultaneously -> 11
+                else -> 10
+            }
+
+            val finalSource2Value = when {
+                shouldSource2UpdateSimultaneously -> 'B'
+                else -> 'A'
+            }
+
+            val finalSource3Value = when {
+                shouldSource3UpdateSimultaneously -> true
+                else -> false
+            }
+
+            val expectedUpdatedValue = when {
+                shouldSource1UpdateSimultaneously || shouldSource2UpdateSimultaneously || shouldSource3UpdateSimultaneously -> "$finalSource1Value:$finalSource2Value:$finalSource3Value"
+                else -> null
+            }
+
+            testCell_initiallyDynamic(
+                setup = {
+                    val sourceCell1 = createDynamicCellExternally(
+                        givenInitialValue = 10,
+                        givenNotificationByTick = mapOfNotNull(
+                            Tick(1) to GivenFreezingNotification.of(
+                                givenUpdatedValue = 11.takeIf { shouldSource1UpdateSimultaneously },
+                            )
+                        ),
+                    )
+
+                    val sourceCell2 = createDynamicCellExternally(
+                        givenInitialValue = 'A',
+                        givenNotificationByTick = mapOfNotNull(
+                            Tick(1) to GivenFreezingNotification.of(
+                                givenUpdatedValue = 'B'.takeIf { shouldSource2UpdateSimultaneously },
+                            )
+                        ),
+                    )
+
+                    val sourceCell3 = createDynamicCellExternally(
+                        givenInitialValue = false,
+                        givenNotificationByTick = mapOfNotNull(
+                            Tick(1) to GivenFreezingNotification.of(
+                                givenUpdatedValue = true.takeIf { shouldSource3UpdateSimultaneously },
+                            )
+                        ),
+                    )
+
+                    Cell.map3(
+                        sourceCell1,
+                        sourceCell2,
+                        sourceCell3,
+                    ) { value1, value2, value3 ->
+                        "$value1:$value2:$value3"
+                    }
+
+                },
+                expectedTimeline = ExpectedCellTimeline(
+                    expectedInitialValue = "10:A:false",
+                    expectedNotificationByTick = mapOf(
+                        Tick(1) to ExpectedFreezingNotification.of(
+                            expectedUpdatedValue = expectedUpdatedValue,
+                        ),
+                    ),
+                ),
+            )
+        }
+
+        test(
+            shouldSource1UpdateSimultaneously = false,
+            shouldSource2UpdateSimultaneously = false,
+            shouldSource3UpdateSimultaneously = false,
+        )
+
+        test(
+            shouldSource1UpdateSimultaneously = true,
+            shouldSource2UpdateSimultaneously = false,
+            shouldSource3UpdateSimultaneously = false,
+        )
+
+        test(
+            shouldSource1UpdateSimultaneously = false,
+            shouldSource2UpdateSimultaneously = true,
+            shouldSource3UpdateSimultaneously = false,
+        )
+
+        test(
+            shouldSource1UpdateSimultaneously = false,
+            shouldSource2UpdateSimultaneously = false,
+            shouldSource3UpdateSimultaneously = true,
+        )
+
+        test(
+            shouldSource1UpdateSimultaneously = true,
+            shouldSource2UpdateSimultaneously = true,
+            shouldSource3UpdateSimultaneously = true,
+        )
     }
 }

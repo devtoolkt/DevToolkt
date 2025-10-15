@@ -4,7 +4,7 @@ import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.event_stream.EmitterEventStream
 
-sealed class StaticCellFactory {
+sealed class StillCellFactory {
     companion object {
         val values by lazy {
             listOf(
@@ -13,18 +13,18 @@ sealed class StaticCellFactory {
         }
     }
 
-    data object Dynamic : StaticCellFactory() {
-        override fun <ValueT> createStaticExternally(
-            staticValue: ValueT,
-        ): Cell<ValueT> = MomentContext.Companion.execute {
-            Cell.Companion.define(
-                initialValue = staticValue,
+    data object Dynamic : StillCellFactory() {
+        override fun <ValueT> createStillExternally(
+            stillValue: ValueT,
+        ): Cell<ValueT> = MomentContext.execute {
+            Cell.define(
+                initialValue = stillValue,
                 newValues = EmitterEventStream(),
             )
         }
     }
 
-    abstract fun <ValueT> createStaticExternally(
-        staticValue: ValueT,
+    abstract fun <ValueT> createStillExternally(
+        stillValue: ValueT,
     ): Cell<ValueT>
 }
