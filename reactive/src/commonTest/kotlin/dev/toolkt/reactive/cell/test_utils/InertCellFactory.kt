@@ -14,8 +14,9 @@ sealed class InertCellFactory : StillCellFactory() {
             listOf(
                 Const,
                 TransformedConst,
-                Frozen,
-                TransformedFrozen,
+                // FIXME: Figure this out and re-enable these factories
+//                Frozen,
+//                TransformedFrozen,
             )
         }
     }
