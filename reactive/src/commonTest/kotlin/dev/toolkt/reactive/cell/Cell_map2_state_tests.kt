@@ -1,7 +1,5 @@
 package dev.toolkt.reactive.cell
 
-import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenFreezingUpdate_deprecated
-import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenJustFreeze_deprecated
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenPlainUpdate
 import dev.toolkt.reactive.cell.test_utils.InertCellFactory
 import dev.toolkt.reactive.cell.test_utils.Tick
@@ -54,13 +52,13 @@ class Cell_map2_state_tests {
         setup = {
             val sourceCell1 = createDynamicCellExternally(
                 givenInitialValue = 10,
-                givenNotificationByTick = emptyMap(),
+                givenUpdateByTick = emptyMap(),
                 freezeTick = null,
             )
 
             val sourceCell2 = createDynamicCellExternally(
                 givenInitialValue = 'A',
-                givenNotificationByTick = emptyMap(),
+                givenUpdateByTick = emptyMap(),
                 freezeTick = null,
             )
 
@@ -80,7 +78,7 @@ class Cell_map2_state_tests {
         setup = {
             val sourceCell1 = createDynamicCellExternally(
                 givenInitialValue = 10,
-                givenNotificationByTick = mapOf(
+                givenUpdateByTick = mapOf(
                     Tick(1) to GivenPlainUpdate.of(
                         givenUpdatedValue = 20,
                     ),
@@ -90,7 +88,7 @@ class Cell_map2_state_tests {
 
             val sourceCell2 = createDynamicCellExternally(
                 givenInitialValue = 'A',
-                givenNotificationByTick = emptyMap(),
+                givenUpdateByTick = emptyMap(),
                 freezeTick = null,
             )
 
@@ -114,13 +112,13 @@ class Cell_map2_state_tests {
         setup = {
             val sourceCell1 = createDynamicCellExternally(
                 givenInitialValue = 10,
-                givenNotificationByTick = emptyMap(),
+                givenUpdateByTick = emptyMap(),
                 freezeTick = null,
             )
 
             val sourceCell2 = createDynamicCellExternally(
                 givenInitialValue = 'A',
-                givenNotificationByTick = mapOf(
+                givenUpdateByTick = mapOf(
                     Tick(1) to GivenPlainUpdate.of('B'),
                 ),
                 freezeTick = null,
@@ -146,7 +144,7 @@ class Cell_map2_state_tests {
         setup = {
             val sourceCell1 = createDynamicCellExternally(
                 givenInitialValue = 10,
-                givenNotificationByTick = mapOf(
+                givenUpdateByTick = mapOf(
                     Tick(1) to GivenPlainUpdate.of(20),
                 ),
                 freezeTick = null,
@@ -154,7 +152,7 @@ class Cell_map2_state_tests {
 
             val sourceCell2 = createDynamicCellExternally(
                 givenInitialValue = 'A',
-                givenNotificationByTick = mapOf(
+                givenUpdateByTick = mapOf(
                     Tick(1) to GivenPlainUpdate.of('B'),
                 ),
                 freezeTick = null,
@@ -187,11 +185,10 @@ class Cell_map2_state_tests {
 
                 val sourceCell2 = createDynamicCellExternally(
                     givenInitialValue = 'A',
-                    givenNotificationByTick = mapOf(
+                    givenUpdateByTick = mapOf(
                         Tick(1) to GivenPlainUpdate.of(
                             givenUpdatedValue = 'B',
                         ),
-                        Tick(2) to GivenJustFreeze_deprecated,
                     ),
                     freezeTick = Tick(2),
                 )
@@ -227,11 +224,11 @@ class Cell_map2_state_tests {
             setup = {
                 val sourceCell1 = createDynamicCellExternally(
                     givenInitialValue = 10,
-                    givenNotificationByTick = mapOf(
+                    givenUpdateByTick = mapOf(
                         Tick(1) to GivenPlainUpdate.of(
                             givenUpdatedValue = 20,
                         ),
-                        Tick(2) to GivenFreezingUpdate_deprecated.of(
+                        Tick(2) to GivenPlainUpdate.of(
                             givenUpdatedValue = 30,
                         ),
                     ),
@@ -272,22 +269,20 @@ class Cell_map2_state_tests {
         setup = {
             val sourceCell1 = createDynamicCellExternally(
                 givenInitialValue = 10,
-                givenNotificationByTick = mapOf(
+                givenUpdateByTick = mapOf(
                     Tick(2) to GivenPlainUpdate.of(
                         givenUpdatedValue = 20,
                     ),
-                    Tick(3) to GivenJustFreeze_deprecated,
                 ),
                 freezeTick = Tick(3),
             )
 
             val sourceCell2 = createDynamicCellExternally(
                 givenInitialValue = 'A',
-                givenNotificationByTick = mapOf(
+                givenUpdateByTick = mapOf(
                     Tick(1) to GivenPlainUpdate.of(
                         givenUpdatedValue = 'B',
                     ),
-                    Tick(2) to GivenJustFreeze_deprecated,
                 ),
                 freezeTick = Tick(2),
             )
@@ -316,18 +311,17 @@ class Cell_map2_state_tests {
         setup = {
             val sourceCell1 = createDynamicCellExternally(
                 givenInitialValue = 10,
-                givenNotificationByTick = mapOf(
+                givenUpdateByTick = mapOf(
                     Tick(2) to GivenPlainUpdate.of(20),
-                    Tick(3) to GivenFreezingUpdate_deprecated.of(30),
+                    Tick(3) to GivenPlainUpdate.of(30),
                 ),
                 freezeTick = Tick(3),
             )
 
             val sourceCell2 = createDynamicCellExternally(
                 givenInitialValue = 'A',
-                givenNotificationByTick = mapOf(
+                givenUpdateByTick = mapOf(
                     Tick(1) to GivenPlainUpdate.of('B'),
-                    Tick(2) to GivenJustFreeze_deprecated,
                 ),
                 freezeTick = Tick(2),
             )
@@ -358,18 +352,17 @@ class Cell_map2_state_tests {
         setup = {
             val sourceCell1 = createDynamicCellExternally(
                 givenInitialValue = 10,
-                givenNotificationByTick = mapOf(
+                givenUpdateByTick = mapOf(
                     Tick(1) to GivenPlainUpdate.of(20),
-                    Tick(2) to GivenJustFreeze_deprecated,
                 ),
                 freezeTick = Tick(2),
             )
 
             val sourceCell2 = createDynamicCellExternally(
                 givenInitialValue = 'A',
-                givenNotificationByTick = mapOf(
+                givenUpdateByTick = mapOf(
                     Tick(2) to GivenPlainUpdate.of('B'),
-                    Tick(3) to GivenJustFreeze_deprecated,
+                    Tick(3) to GivenPlainUpdate.of('C'),
                 ),
                 freezeTick = Tick(3),
             )
@@ -398,18 +391,17 @@ class Cell_map2_state_tests {
         setup = {
             val sourceCell1 = createDynamicCellExternally(
                 givenInitialValue = 10,
-                givenNotificationByTick = mapOf(
+                givenUpdateByTick = mapOf(
                     Tick(1) to GivenPlainUpdate.of(20),
-                    Tick(2) to GivenJustFreeze_deprecated,
                 ),
                 freezeTick = Tick(2),
             )
 
             val sourceCell2 = createDynamicCellExternally(
                 givenInitialValue = 'A',
-                givenNotificationByTick = mapOf(
+                givenUpdateByTick = mapOf(
                     Tick(2) to GivenPlainUpdate.of('B'),
-                    Tick(3) to GivenFreezingUpdate_deprecated.of('C'),
+                    Tick(3) to GivenPlainUpdate.of('C'),
                 ),
                 freezeTick = Tick(3),
             )
@@ -440,18 +432,16 @@ class Cell_map2_state_tests {
         setup = {
             val sourceCell1 = createDynamicCellExternally(
                 givenInitialValue = 10,
-                givenNotificationByTick = mapOf(
+                givenUpdateByTick = mapOf(
                     Tick(1) to GivenPlainUpdate.of(20),
-                    Tick(3) to GivenJustFreeze_deprecated,
                 ),
                 freezeTick = Tick(3),
             )
 
             val sourceCell2 = createDynamicCellExternally(
                 givenInitialValue = 'A',
-                givenNotificationByTick = mapOf(
+                givenUpdateByTick = mapOf(
                     Tick(2) to GivenPlainUpdate.of('B'),
-                    Tick(3) to GivenJustFreeze_deprecated,
                 ),
                 freezeTick = Tick(3),
             )
@@ -480,18 +470,18 @@ class Cell_map2_state_tests {
         setup = {
             val sourceCell1 = createDynamicCellExternally(
                 givenInitialValue = 10,
-                givenNotificationByTick = mapOf(
+                givenUpdateByTick = mapOf(
                     Tick(1) to GivenPlainUpdate.of(20),
-                    Tick(3) to GivenFreezingUpdate_deprecated.of(30),
+                    Tick(3) to GivenPlainUpdate.of(30),
                 ),
                 freezeTick = Tick(3),
             )
 
             val sourceCell2 = createDynamicCellExternally(
                 givenInitialValue = 'A',
-                givenNotificationByTick = mapOf(
+                givenUpdateByTick = mapOf(
                     Tick(2) to GivenPlainUpdate.of('B'),
-                    Tick(3) to GivenFreezingUpdate_deprecated.of('C'),
+                    Tick(3) to GivenPlainUpdate.of('C'),
                 ),
                 freezeTick = Tick(3),
             )
@@ -524,18 +514,17 @@ class Cell_map2_state_tests {
             setup = {
                 val sourceCell1 = createDynamicCellExternally(
                     givenInitialValue = 10,
-                    givenNotificationByTick = mapOf(
+                    givenUpdateByTick = mapOf(
                         Tick(1) to GivenPlainUpdate.of(20),
-                        Tick(3) to GivenFreezingUpdate_deprecated.of(30),
+                        Tick(3) to GivenPlainUpdate.of(30),
                     ),
                     freezeTick = Tick(3),
                 )
 
                 val sourceCell2 = createDynamicCellExternally(
                     givenInitialValue = 'A',
-                    givenNotificationByTick = mapOf(
+                    givenUpdateByTick = mapOf(
                         Tick(2) to GivenPlainUpdate.of('B'),
-                        Tick(3) to GivenJustFreeze_deprecated,
                     ),
                     freezeTick = Tick(3),
                 )
@@ -567,22 +556,21 @@ class Cell_map2_state_tests {
             setup = {
                 val sourceCell1 = createDynamicCellExternally(
                     givenInitialValue = 10,
-                    givenNotificationByTick = mapOf(
+                    givenUpdateByTick = mapOf(
                         Tick(1) to GivenPlainUpdate.of(
                             givenUpdatedValue = 20,
                         ),
-                        Tick(3) to GivenJustFreeze_deprecated,
                     ),
                     freezeTick = Tick(3),
                 )
 
                 val sourceCell2 = createDynamicCellExternally(
                     givenInitialValue = 'A',
-                    givenNotificationByTick = mapOf(
+                    givenUpdateByTick = mapOf(
                         Tick(2) to GivenPlainUpdate.of(
                             givenUpdatedValue = 'B',
                         ),
-                        Tick(3) to GivenFreezingUpdate_deprecated.of(
+                        Tick(3) to GivenPlainUpdate.of(
                             givenUpdatedValue = 'C',
                         ),
                     ),
@@ -644,11 +632,10 @@ class Cell_map2_state_tests {
         setup = {
             val sourceCell = createDynamicCellExternally(
                 givenInitialValue = 10,
-                givenNotificationByTick = mapOf(
+                givenUpdateByTick = mapOf(
                     Tick(1) to GivenPlainUpdate.of(
                         givenUpdatedValue = 20,
                     ),
-                    Tick(2) to GivenJustFreeze_deprecated,
                 ),
                 freezeTick = Tick(2),
             )
