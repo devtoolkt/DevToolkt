@@ -186,13 +186,28 @@ sealed interface EventStream<out EventT> {
  */
 fun <EventT> EventStream<EventT>.subscribe(
     handle: (EventT) -> Unit,
+): EventStream.Subscription? = subscribe(
+    object : EventStream.BasicSubscriber<EventT> {
+        override fun handleEmission(
+            emittedEvent: EventT,
+        ) {
+            handle(emittedEvent)
+        }
+
+        override fun handleTermination() {
+        }
+    },
+)
+
+fun <EventT> EventStream<EventT>.subscribe(
+    subscriber: EventStream.Subscriber<EventT>,
 ): EventStream.Subscription? = when (val vertex = this.vertex) {
     SilentEventStreamVertex -> null
 
     is DynamicEventStreamVertex -> {
         val subscriptionVertex = SubscriptionVertex(
             sourceEventStreamVertex = this.vertex,
-            handle = handle,
+            subscriber = subscriber,
         )
 
         vertex.subscribe(
@@ -207,12 +222,6 @@ fun <EventT> EventStream<EventT>.subscribe(
             }
         }
     }
-}
-
-fun <EventT> EventStream<EventT>.subscribe(
-    subscriber: EventStream.Subscriber<EventT>,
-): EventStream.Subscription? {
-    TODO()
 }
 
 fun <EventT> EventStream<EventT>.subscribe(
