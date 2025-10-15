@@ -59,8 +59,8 @@ class Cell_switch_state_outerInert_tests {
             testCell_initiallyDynamic(
                 setup = {
                     val innerCell = createDynamicCellExternally(
-                        givenInitialValue = 10,
-                        givenUpdatedValueByTick = emptyMap(),
+                        initialValue = 10,
+                        updatedValueByTick = emptyMap(),
                         freezeTick = null,
                     )
 
@@ -96,8 +96,8 @@ class Cell_switch_state_outerInert_tests {
             testCell_initiallyDynamic(
                 setup = {
                     val innerCell = createDynamicCellExternally(
-                        givenInitialValue = 10,
-                        givenUpdatedValueByTick = mapOf(
+                        initialValue = 10,
+                        updatedValueByTick = mapOf(
                             Tick(1) to 11,
                         ),
                         freezeTick = if (shouldInnerFreezeSimultaneously) Tick(1) else null,
@@ -151,8 +151,8 @@ class Cell_switch_state_outerInert_tests {
             testCell_initiallyDynamic(
                 setup = {
                     val innerCell = createDynamicCellExternally(
-                        givenInitialValue = 10,
-                        givenUpdatedValueByTick = mapOfNotNull(
+                        initialValue = 10,
+                        updatedValueByTick = mapOfNotNull(
                             finalUpdatedValue?.let {
                                 Tick(1) to it
                             },

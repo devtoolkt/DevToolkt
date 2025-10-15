@@ -50,14 +50,14 @@ class Cell_map2_state_tests {
     fun test_state_bothSourcesDynamic_noSourceUpdates() = testCell_initiallyDynamic(
         setup = {
             val sourceCell1 = createDynamicCellExternally(
-                givenInitialValue = 10,
-                givenUpdatedValueByTick = emptyMap(),
+                initialValue = 10,
+                updatedValueByTick = emptyMap(),
                 freezeTick = null,
             )
 
             val sourceCell2 = createDynamicCellExternally(
-                givenInitialValue = 'A',
-                givenUpdatedValueByTick = emptyMap(),
+                initialValue = 'A',
+                updatedValueByTick = emptyMap(),
                 freezeTick = null,
             )
 
@@ -76,16 +76,16 @@ class Cell_map2_state_tests {
     fun test_state_bothSourcesDynamic_firstSourceUpdates() = testCell_initiallyDynamic(
         setup = {
             val sourceCell1 = createDynamicCellExternally(
-                givenInitialValue = 10,
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 10,
+                updatedValueByTick = mapOf(
                     Tick(1) to 20,
                 ),
                 freezeTick = null,
             )
 
             val sourceCell2 = createDynamicCellExternally(
-                givenInitialValue = 'A',
-                givenUpdatedValueByTick = emptyMap(),
+                initialValue = 'A',
+                updatedValueByTick = emptyMap(),
                 freezeTick = null,
             )
 
@@ -108,14 +108,14 @@ class Cell_map2_state_tests {
     fun test_state_bothSourcesDynamic_secondSourceUpdates() = testCell_initiallyDynamic(
         setup = {
             val sourceCell1 = createDynamicCellExternally(
-                givenInitialValue = 10,
-                givenUpdatedValueByTick = emptyMap(),
+                initialValue = 10,
+                updatedValueByTick = emptyMap(),
                 freezeTick = null,
             )
 
             val sourceCell2 = createDynamicCellExternally(
-                givenInitialValue = 'A',
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 'A',
+                updatedValueByTick = mapOf(
                     Tick(1) to 'B',
                 ),
                 freezeTick = null,
@@ -140,16 +140,16 @@ class Cell_map2_state_tests {
     fun test_state_bothSourcesDynamic_bothSourcesUpdateSimultaneously() = testCell_initiallyDynamic(
         setup = {
             val sourceCell1 = createDynamicCellExternally(
-                givenInitialValue = 10,
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 10,
+                updatedValueByTick = mapOf(
                     Tick(1) to 20,
                 ),
                 freezeTick = null,
             )
 
             val sourceCell2 = createDynamicCellExternally(
-                givenInitialValue = 'A',
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 'A',
+                updatedValueByTick = mapOf(
                     Tick(1) to 'B',
                 ),
                 freezeTick = null,
@@ -181,8 +181,8 @@ class Cell_map2_state_tests {
                 )
 
                 val sourceCell2 = createDynamicCellExternally(
-                    givenInitialValue = 'A',
-                    givenUpdatedValueByTick = mapOf(
+                    initialValue = 'A',
+                    updatedValueByTick = mapOf(
                         Tick(1) to 'B',
                     ),
                     freezeTick = Tick(2),
@@ -218,8 +218,8 @@ class Cell_map2_state_tests {
         ) = testCell_initiallyDynamic(
             setup = {
                 val sourceCell1 = createDynamicCellExternally(
-                    givenInitialValue = 10,
-                    givenUpdatedValueByTick = mapOf(
+                    initialValue = 10,
+                    updatedValueByTick = mapOf(
                         Tick(1) to 20,
                         Tick(3) to 30,
                     ),
@@ -259,16 +259,16 @@ class Cell_map2_state_tests {
     fun test_state_bothSourcesDynamic_firstSourceJustFreezesLast() = testCell_initiallyDynamic(
         setup = {
             val sourceCell1 = createDynamicCellExternally(
-                givenInitialValue = 10,
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 10,
+                updatedValueByTick = mapOf(
                     Tick(2) to 20,
                 ),
                 freezeTick = Tick(3),
             )
 
             val sourceCell2 = createDynamicCellExternally(
-                givenInitialValue = 'A',
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 'A',
+                updatedValueByTick = mapOf(
                     Tick(1) to 'B',
                 ),
                 freezeTick = Tick(2),
@@ -297,8 +297,8 @@ class Cell_map2_state_tests {
     fun test_state_bothSourcesDynamic_firstSourceUpdatesFreezingLast() = testCell_initiallyDynamic(
         setup = {
             val sourceCell1 = createDynamicCellExternally(
-                givenInitialValue = 10,
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 10,
+                updatedValueByTick = mapOf(
                     Tick(2) to 20,
                     Tick(3) to 30,
                 ),
@@ -306,8 +306,8 @@ class Cell_map2_state_tests {
             )
 
             val sourceCell2 = createDynamicCellExternally(
-                givenInitialValue = 'A',
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 'A',
+                updatedValueByTick = mapOf(
                     Tick(1) to 'B',
                 ),
                 freezeTick = Tick(2),
@@ -338,16 +338,16 @@ class Cell_map2_state_tests {
     fun test_state_bothSourcesDynamic_secondSourceJustFreezesLast() = testCell_initiallyDynamic(
         setup = {
             val sourceCell1 = createDynamicCellExternally(
-                givenInitialValue = 10,
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 10,
+                updatedValueByTick = mapOf(
                     Tick(1) to 20,
                 ),
                 freezeTick = Tick(2),
             )
 
             val sourceCell2 = createDynamicCellExternally(
-                givenInitialValue = 'A',
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 'A',
+                updatedValueByTick = mapOf(
                     Tick(2) to 'B',
                     Tick(3) to 'C',
                 ),
@@ -377,16 +377,16 @@ class Cell_map2_state_tests {
     fun test_state_bothSourcesDynamic_secondSourceUpdatesFreezingLast() = testCell_initiallyDynamic(
         setup = {
             val sourceCell1 = createDynamicCellExternally(
-                givenInitialValue = 10,
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 10,
+                updatedValueByTick = mapOf(
                     Tick(1) to 20,
                 ),
                 freezeTick = Tick(2),
             )
 
             val sourceCell2 = createDynamicCellExternally(
-                givenInitialValue = 'A',
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 'A',
+                updatedValueByTick = mapOf(
                     Tick(2) to 'B',
                     Tick(3) to 'C',
                 ),
@@ -418,16 +418,16 @@ class Cell_map2_state_tests {
     fun test_state_bothSourcesDynamic_bothSourcesJustFreezeSimultaneously() = testCell_initiallyDynamic(
         setup = {
             val sourceCell1 = createDynamicCellExternally(
-                givenInitialValue = 10,
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 10,
+                updatedValueByTick = mapOf(
                     Tick(1) to 20,
                 ),
                 freezeTick = Tick(3),
             )
 
             val sourceCell2 = createDynamicCellExternally(
-                givenInitialValue = 'A',
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 'A',
+                updatedValueByTick = mapOf(
                     Tick(2) to 'B',
                 ),
                 freezeTick = Tick(3),
@@ -456,8 +456,8 @@ class Cell_map2_state_tests {
     fun test_state_bothSourcesDynamic_bothSourcesUpdateFreezingSimultaneously() = testCell_initiallyDynamic(
         setup = {
             val sourceCell1 = createDynamicCellExternally(
-                givenInitialValue = 10,
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 10,
+                updatedValueByTick = mapOf(
                     Tick(1) to 20,
                     Tick(3) to 30,
                 ),
@@ -465,8 +465,8 @@ class Cell_map2_state_tests {
             )
 
             val sourceCell2 = createDynamicCellExternally(
-                givenInitialValue = 'A',
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 'A',
+                updatedValueByTick = mapOf(
                     Tick(2) to 'B',
                     Tick(3) to 'C',
                 ),
@@ -500,8 +500,8 @@ class Cell_map2_state_tests {
         testCell_initiallyDynamic(
             setup = {
                 val sourceCell1 = createDynamicCellExternally(
-                    givenInitialValue = 10,
-                    givenUpdatedValueByTick = mapOf(
+                    initialValue = 10,
+                    updatedValueByTick = mapOf(
                         Tick(1) to 20,
                         Tick(3) to 30,
                     ),
@@ -509,8 +509,8 @@ class Cell_map2_state_tests {
                 )
 
                 val sourceCell2 = createDynamicCellExternally(
-                    givenInitialValue = 'A',
-                    givenUpdatedValueByTick = mapOf(
+                    initialValue = 'A',
+                    updatedValueByTick = mapOf(
                         Tick(2) to 'B',
                     ),
                     freezeTick = Tick(3),
@@ -542,16 +542,16 @@ class Cell_map2_state_tests {
         testCell_initiallyDynamic(
             setup = {
                 val sourceCell1 = createDynamicCellExternally(
-                    givenInitialValue = 10,
-                    givenUpdatedValueByTick = mapOf(
+                    initialValue = 10,
+                    updatedValueByTick = mapOf(
                         Tick(1) to 20,
                     ),
                     freezeTick = Tick(3),
                 )
 
                 val sourceCell2 = createDynamicCellExternally(
-                    givenInitialValue = 'A',
-                    givenUpdatedValueByTick = mapOf(
+                    initialValue = 'A',
+                    updatedValueByTick = mapOf(
                         Tick(2) to 'B',
                         Tick(3) to 'C',
                     ),
@@ -612,8 +612,8 @@ class Cell_map2_state_tests {
     fun test_state_sameSourceDynamic() = testCell_initiallyDynamic(
         setup = {
             val sourceCell = createDynamicCellExternally(
-                givenInitialValue = 10,
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 10,
+                updatedValueByTick = mapOf(
                     Tick(1) to 20,
                 ),
                 freezeTick = Tick(2),

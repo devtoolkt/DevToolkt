@@ -40,8 +40,8 @@ class Cell_map_state_tests {
     fun test_state_sourceDynamic_noSourceUpdates() = testCell_initiallyDynamic(
         setup = {
             val sourceCell = createDynamicCellExternally(
-                givenInitialValue = 10,
-                givenUpdatedValueByTick = emptyMap(),
+                initialValue = 10,
+                updatedValueByTick = emptyMap(),
                 freezeTick = null,
             )
 
@@ -57,8 +57,8 @@ class Cell_map_state_tests {
     fun test_state_sourceDynamic_sourceUpdates() = testCell_initiallyDynamic(
         setup = {
             val sourceCell = createDynamicCellExternally(
-                givenInitialValue = 10,
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 10,
+                updatedValueByTick = mapOf(
                     Tick(1) to 20,
                 ),
                 freezeTick = null,
@@ -80,8 +80,8 @@ class Cell_map_state_tests {
     fun test_state_sourceDynamic_sourceJustFreezes() = testCell_initiallyDynamic(
         setup = {
             val sourceCell = createDynamicCellExternally(
-                givenInitialValue = 10,
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 10,
+                updatedValueByTick = mapOf(
                     Tick(1) to 20,
                 ),
                 freezeTick = Tick(2),
@@ -104,8 +104,8 @@ class Cell_map_state_tests {
     fun test_state_sourceDynamic_sourceUpdatesFreezing() = testCell_initiallyDynamic(
         setup = {
             val sourceCell = createDynamicCellExternally(
-                givenInitialValue = 10,
-                givenUpdatedValueByTick = mapOf(
+                initialValue = 10,
+                updatedValueByTick = mapOf(
                     Tick(1) to 20,
                     Tick(2) to 30,
                 ),
