@@ -1,7 +1,7 @@
 package dev.toolkt.reactive.cell
 
-import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenFreezingUpdate
-import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenJustFreeze
+import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenFreezingUpdate_deprecated
+import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenJustFreeze_deprecated
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenPlainUpdate
 import dev.toolkt.reactive.cell.test_utils.InertCellFactory
 import dev.toolkt.reactive.cell.test_utils.Tick
@@ -44,6 +44,7 @@ class Cell_map_state_tests {
             val sourceCell = createDynamicCellExternally(
                 givenInitialValue = 10,
                 givenNotificationByTick = emptyMap(),
+                freezeTick = null,
             )
 
             sourceCell.map {
@@ -64,6 +65,7 @@ class Cell_map_state_tests {
                         givenUpdatedValue = 20,
                     ),
                 ),
+                freezeTick = null,
             )
 
             sourceCell.map {
@@ -87,8 +89,9 @@ class Cell_map_state_tests {
                     Tick(1) to GivenPlainUpdate.of(
                         givenUpdatedValue = 20,
                     ),
-                    Tick(2) to GivenJustFreeze,
+                    Tick(2) to GivenJustFreeze_deprecated,
                 ),
+                freezeTick = Tick(2),
             )
 
             sourceCell.map {
@@ -113,10 +116,11 @@ class Cell_map_state_tests {
                     Tick(1) to GivenPlainUpdate.of(
                         givenUpdatedValue = 20,
                     ),
-                    Tick(2) to GivenFreezingUpdate.of(
+                    Tick(2) to GivenFreezingUpdate_deprecated.of(
                         givenUpdatedValue = 30,
                     ),
                 ),
+                freezeTick = Tick(2),
             )
 
             sourceCell.map {

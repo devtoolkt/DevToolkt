@@ -2,8 +2,8 @@ package dev.toolkt.reactive.cell
 
 import dev.toolkt.core.utils.iterable.mapOfNotNull
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenFreezingNotification
-import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenFreezingUpdate
-import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenJustFreeze
+import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenFreezingUpdate_deprecated
+import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenJustFreeze_deprecated
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenPlainUpdate
 import dev.toolkt.reactive.cell.test_utils.InertCellFactory
 import dev.toolkt.reactive.cell.test_utils.StillCellFactory
@@ -189,6 +189,7 @@ class Cell_map3_state_tests {
                 val sourceCell = createDynamicCellExternally(
                     givenInitialValue = 10,
                     givenNotificationByTick = emptyMap(),
+                    freezeTick = null,
                 )
 
                 Cell.map3(
@@ -219,6 +220,7 @@ class Cell_map3_state_tests {
                             givenUpdatedValue = 20,
                         ),
                     ),
+                    freezeTick = null,
                 )
 
                 val sourceCell2 = source2CellFactory.createStillExternally(
@@ -285,6 +287,7 @@ class Cell_map3_state_tests {
                             givenUpdatedValue = 'B',
                         ),
                     ),
+                    freezeTick = null,
                 )
 
                 val sourceCell3 = source3CellFactory.createStillExternally(
@@ -351,6 +354,7 @@ class Cell_map3_state_tests {
                             givenUpdatedValue = true,
                         ),
                     ),
+                    freezeTick = null,
                 )
 
                 Cell.map3(
@@ -404,15 +408,17 @@ class Cell_map3_state_tests {
                 val sourceCell2 = createDynamicCellExternally(
                     givenInitialValue = 'A',
                     givenNotificationByTick = mapOf(
-                        Tick(1) to GivenJustFreeze,
+                        Tick(1) to GivenJustFreeze_deprecated,
                     ),
+                    freezeTick = Tick(1),
                 )
 
                 val sourceCell3 = createDynamicCellExternally(
                     givenInitialValue = false,
                     givenNotificationByTick = mapOf(
-                        Tick(2) to GivenJustFreeze,
+                        Tick(2) to GivenJustFreeze_deprecated,
                     ),
+                    freezeTick = Tick(2),
                 )
 
                 Cell.map3(
@@ -448,8 +454,9 @@ class Cell_map3_state_tests {
                 val sourceCell1 = createDynamicCellExternally(
                     givenInitialValue = 10,
                     givenNotificationByTick = mapOf(
-                        Tick(1) to GivenJustFreeze,
+                        Tick(1) to GivenJustFreeze_deprecated,
                     ),
+                    freezeTick = Tick(1),
                 )
 
                 val sourceCell2 = source1CellFactory.createInertExternally(
@@ -459,8 +466,9 @@ class Cell_map3_state_tests {
                 val sourceCell3 = createDynamicCellExternally(
                     givenInitialValue = false,
                     givenNotificationByTick = mapOf(
-                        Tick(1) to GivenJustFreeze,
+                        Tick(1) to GivenJustFreeze_deprecated,
                     ),
+                    freezeTick = Tick(1),
                 )
 
                 Cell.map3(
@@ -496,17 +504,19 @@ class Cell_map3_state_tests {
                 val sourceCell1 = createDynamicCellExternally(
                     givenInitialValue = 10,
                     givenNotificationByTick = mapOf(
-                        Tick(1) to GivenFreezingUpdate.of(
+                        Tick(1) to GivenFreezingUpdate_deprecated.of(
                             givenUpdatedValue = 11,
                         ),
                     ),
+                    freezeTick = Tick(1),
                 )
 
                 val sourceCell2 = createDynamicCellExternally(
                     givenInitialValue = 'A',
                     givenNotificationByTick = mapOf(
-                        Tick(2) to GivenJustFreeze,
+                        Tick(2) to GivenJustFreeze_deprecated,
                     ),
+                    freezeTick = Tick(2),
                 )
 
                 val sourceCell3 = source1CellFactory.createInertExternally(
@@ -567,6 +577,7 @@ class Cell_map3_state_tests {
                                     givenUpdatedValue = 11,
                                 ),
                             ),
+                            freezeTick = null,
                         )
 
                         is SourceKind.Inert -> source1Kind.inertCellFactory.createInertExternally(
@@ -582,6 +593,7 @@ class Cell_map3_state_tests {
                                     givenUpdatedValue = 'B',
                                 ),
                             ),
+                            freezeTick = null,
                         )
 
                         is SourceKind.Inert -> source2Kind.inertCellFactory.createInertExternally(
@@ -597,6 +609,7 @@ class Cell_map3_state_tests {
                                     givenUpdatedValue = true,
                                 ),
                             ),
+                            freezeTick = null,
                         )
 
                         is SourceKind.Inert -> source3Kind.inertCellFactory.createInertExternally(
@@ -715,8 +728,9 @@ class Cell_map3_state_tests {
                         is SourceKind.Dynamic -> createDynamicCellExternally(
                             givenInitialValue = 10,
                             givenNotificationByTick = mapOf(
-                                Tick(1) to GivenJustFreeze,
+                                Tick(1) to GivenJustFreeze_deprecated,
                             ),
+                            freezeTick = if (source1Kind is SourceKind.Dynamic && source2Kind is SourceKind.Inert && source3Kind is SourceKind.Inert) Tick(1) else null,
                         )
 
                         is SourceKind.Inert -> source1Kind.inertCellFactory.createInertExternally(
@@ -728,8 +742,9 @@ class Cell_map3_state_tests {
                         is SourceKind.Dynamic -> createDynamicCellExternally(
                             givenInitialValue = 'A',
                             givenNotificationByTick = mapOf(
-                                Tick(2) to GivenJustFreeze,
+                                Tick(2) to GivenJustFreeze_deprecated,
                             ),
+                            freezeTick = if (source2Kind is SourceKind.Dynamic && source3Kind is SourceKind.Inert) Tick(2) else null,
                         )
 
                         is SourceKind.Inert -> source2Kind.inertCellFactory.createInertExternally(
@@ -741,8 +756,9 @@ class Cell_map3_state_tests {
                         is SourceKind.Dynamic -> createDynamicCellExternally(
                             givenInitialValue = false,
                             givenNotificationByTick = mapOf(
-                                Tick(3) to GivenJustFreeze,
+                                Tick(3) to GivenJustFreeze_deprecated,
                             ),
+                            freezeTick = if (source3Kind is SourceKind.Dynamic) Tick(3) else null,
                         )
 
                         is SourceKind.Inert -> source3Kind.inertCellFactory.createInertExternally(
@@ -864,6 +880,7 @@ class Cell_map3_state_tests {
                                 givenUpdatedValue = 11.takeIf { shouldSource1UpdateSimultaneously },
                             )
                         ),
+                        freezeTick = Tick(1),
                     )
 
                     val sourceCell2 = createDynamicCellExternally(
@@ -873,6 +890,7 @@ class Cell_map3_state_tests {
                                 givenUpdatedValue = 'B'.takeIf { shouldSource2UpdateSimultaneously },
                             )
                         ),
+                        freezeTick = Tick(1),
                     )
 
                     val sourceCell3 = createDynamicCellExternally(
@@ -882,6 +900,7 @@ class Cell_map3_state_tests {
                                 givenUpdatedValue = true.takeIf { shouldSource3UpdateSimultaneously },
                             )
                         ),
+                        freezeTick = Tick(1),
                     )
 
                     Cell.map3(
