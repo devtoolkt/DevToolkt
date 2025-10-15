@@ -1,9 +1,8 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.reactive.event_stream.EventStream
-import dev.toolkt.reactive.event_stream.subscribeCollecting
+import dev.toolkt.reactive.event_stream.test_utils.subscribeCollecting
 import dev.toolkt.reactive.test_utils.ReactiveTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

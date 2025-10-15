@@ -7,15 +7,12 @@ import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.mapNotNull
 import dev.toolkt.reactive.event_stream.subscribe
 import dev.toolkt.reactive.event_stream.take
+import dev.toolkt.reactive.test_utils.DynamicTestContext
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
-interface EventStreamDynamicTestContext {
-    val onTick: EventStream<Tick>
-}
-
-context(context: EventStreamDynamicTestContext) fun <EventT : Any> createEnergicEventStreamExternally(
+context(context: DynamicTestContext) fun <EventT : Any> createEnergicEventStreamExternally(
     emittedEventByTick: Map<Tick, EventT>,
     terminationTick: Tick?,
 ): EventStream<EventT> {
@@ -33,13 +30,13 @@ context(context: EventStreamDynamicTestContext) fun <EventT : Any> createEnergic
 }
 
 fun <EventT : Any> testEventStream_initiallyEnergic(
-    setup: context(EventStreamDynamicTestContext) () -> EventStream<EventT>,
+    setup: context(DynamicTestContext) () -> EventStream<EventT>,
     expectedNotificationByTick: Map<Tick, EventStream.Notification<EventT>>,
 ) {
     val doTick = EmitterEventStream<Tick>()
 
     val subjectEventStream = with(
-        object : EventStreamDynamicTestContext {
+        object : DynamicTestContext {
             override val onTick: EventStream<Tick> = doTick
         },
     ) {
@@ -107,7 +104,6 @@ interface EventStreamInertTestContext
 
 fun <EventT : Any> testEventStream_immediatelyExhausted(
     setup: context(EventStreamInertTestContext) () -> EventStream<EventT>,
-    expectedValue: EventT,
 ) {
     val subjectEventStream = with(
         object : EventStreamInertTestContext {},
@@ -119,4 +115,10 @@ fun <EventT : Any> testEventStream_immediatelyExhausted(
         actual = subjectEventStream.subscribe {},
         message = "Expected a null subscription for an exhausted event stream",
     )
+}
+
+fun <EventT> EventStream<EventT>.subscribeCollecting(
+    targetList: MutableList<EventT>,
+): EventStream.Subscription? = this.subscribe { event ->
+    targetList.add(event)
 }

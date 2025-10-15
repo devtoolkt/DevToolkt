@@ -6,7 +6,6 @@ import dev.toolkt.reactive.cell.test_utils.Tick
 import dev.toolkt.reactive.cell.test_utils.createDynamicCellExternally
 import dev.toolkt.reactive.cell.test_utils.testCell_immediatelyInert
 import dev.toolkt.reactive.cell.test_utils.testCell_initiallyDynamic
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 @Suppress("ClassName")
@@ -36,7 +35,7 @@ class Cell_map_state_tests {
     }
 
     @Test
-    fun test_state_sourceDynamic_noSourceUpdates() = testCell_initiallyDynamic(
+    fun test_state_sourceDynamic() = testCell_initiallyDynamic(
         setup = {
             val sourceCell = createDynamicCellExternally(
                 initialValue = 10,
