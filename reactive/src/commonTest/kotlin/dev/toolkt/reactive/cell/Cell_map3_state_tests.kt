@@ -1,10 +1,6 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.core.utils.iterable.mapOfNotNull
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedFreezingNotification
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedJustFreeze
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedPlainUpdate
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenFreezingNotification
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenFreezingUpdate
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenJustFreeze
@@ -103,10 +99,8 @@ class Cell_map3_state_tests {
                 }
 
             },
-            expectedTimeline = ExpectedCellTimeline(
-                expectedInitialValue = "10:A:true",
-                expectedNotificationByTick = emptyMap(),
-            ),
+            expectedInitialValue = "10:A:true",
+            expectedNotificationByTick = emptyMap(),
         )
 
         // 1 dynamic
@@ -206,10 +200,8 @@ class Cell_map3_state_tests {
                 }
 
             },
-            expectedTimeline = ExpectedCellTimeline(
-                expectedInitialValue = "10:10:10",
-                expectedNotificationByTick = emptyMap(),
-            ),
+            expectedInitialValue = "10:10:10",
+            expectedNotificationByTick = emptyMap(),
         )
     }
 
@@ -246,12 +238,10 @@ class Cell_map3_state_tests {
                 }
 
             },
-            expectedTimeline = ExpectedCellTimeline(
-                expectedInitialValue = "10:A:false",
-                expectedNotificationByTick = mapOf(
-                    Tick(1) to ExpectedPlainUpdate(
-                        expectedUpdatedValue = "20:A:false",
-                    ),
+            expectedInitialValue = "10:A:false",
+            expectedNotificationByTick = mapOf(
+                Tick(1) to Cell.IntermediateUpdateNotification(
+                    updatedValue = "20:A:false",
                 ),
             ),
         )
@@ -310,12 +300,10 @@ class Cell_map3_state_tests {
                 }
 
             },
-            expectedTimeline = ExpectedCellTimeline(
-                expectedInitialValue = "10:A:false",
-                expectedNotificationByTick = mapOf(
-                    Tick(2) to ExpectedPlainUpdate(
-                        expectedUpdatedValue = "10:B:false",
-                    ),
+            expectedInitialValue = "10:A:false",
+            expectedNotificationByTick = mapOf(
+                Tick(2) to Cell.IntermediateUpdateNotification(
+                    updatedValue = "10:B:false",
                 ),
             ),
         )
@@ -374,12 +362,10 @@ class Cell_map3_state_tests {
                 }
 
             },
-            expectedTimeline = ExpectedCellTimeline(
-                expectedInitialValue = "10:A:false",
-                expectedNotificationByTick = mapOf(
-                    Tick(3) to ExpectedPlainUpdate(
-                        expectedUpdatedValue = "10:A:true",
-                    ),
+            expectedInitialValue = "10:A:false",
+            expectedNotificationByTick = mapOf(
+                Tick(3) to Cell.IntermediateUpdateNotification(
+                    updatedValue = "10:A:true",
                 ),
             ),
         )
@@ -438,11 +424,9 @@ class Cell_map3_state_tests {
                 }
 
             },
-            expectedTimeline = ExpectedCellTimeline(
-                expectedInitialValue = "10:A:false",
-                expectedNotificationByTick = mapOf(
-                    Tick(3) to ExpectedJustFreeze,
-                ),
+            expectedInitialValue = "10:A:false",
+            expectedNotificationByTick = mapOf(
+                Tick(3) to Cell.IsolatedFreezeNotification,
             ),
         )
 
@@ -488,11 +472,9 @@ class Cell_map3_state_tests {
                 }
 
             },
-            expectedTimeline = ExpectedCellTimeline(
-                expectedInitialValue = "10:A:false",
-                expectedNotificationByTick = mapOf(
-                    Tick(1) to ExpectedJustFreeze,
-                ),
+            expectedInitialValue = "10:A:false",
+            expectedNotificationByTick = mapOf(
+                Tick(1) to Cell.IsolatedFreezeNotification,
             ),
         )
 
@@ -540,14 +522,12 @@ class Cell_map3_state_tests {
                 }
 
             },
-            expectedTimeline = ExpectedCellTimeline(
-                expectedInitialValue = "10:A:false",
-                expectedNotificationByTick = mapOf(
-                    Tick(1) to ExpectedPlainUpdate(
-                        expectedUpdatedValue = "11:A:false",
-                    ),
-                    Tick(3) to ExpectedJustFreeze,
+            expectedInitialValue = "10:A:false",
+            expectedNotificationByTick = mapOf(
+                Tick(1) to Cell.IntermediateUpdateNotification(
+                    updatedValue = "11:A:false",
                 ),
+                Tick(3) to Cell.IsolatedFreezeNotification,
             ),
         )
 
@@ -632,19 +612,17 @@ class Cell_map3_state_tests {
                         "$value1:$value2:$value3"
                     }
                 },
-                expectedTimeline = ExpectedCellTimeline(
-                    expectedInitialValue = "10:A:false",
-                    expectedNotificationByTick = mapOfNotNull(
-                        (Tick(1) to ExpectedPlainUpdate(
-                            expectedUpdatedValue = "11:A:false",
-                        )).takeIf { source1Kind is SourceKind.Dynamic },
-                        (Tick(2) to ExpectedPlainUpdate(
-                            expectedUpdatedValue = "$finalSource1Value:B:false",
-                        )).takeIf { source2Kind is SourceKind.Dynamic },
-                        (Tick(3) to ExpectedPlainUpdate(
-                            expectedUpdatedValue = "$finalSource1Value:$finalSource2Value:true",
-                        )).takeIf { source3Kind is SourceKind.Dynamic },
-                    ),
+                expectedInitialValue = "10:A:false",
+                expectedNotificationByTick = mapOfNotNull(
+                    (Tick(1) to Cell.IntermediateUpdateNotification(
+                        updatedValue = "11:A:false",
+                    )).takeIf { source1Kind is SourceKind.Dynamic },
+                    (Tick(2) to Cell.IntermediateUpdateNotification(
+                        updatedValue = "$finalSource1Value:B:false",
+                    )).takeIf { source2Kind is SourceKind.Dynamic },
+                    (Tick(3) to Cell.IntermediateUpdateNotification(
+                        updatedValue = "$finalSource1Value:$finalSource2Value:true",
+                    )).takeIf { source3Kind is SourceKind.Dynamic },
                 ),
             )
         }
@@ -780,77 +758,74 @@ class Cell_map3_state_tests {
                         "$value1:$value2:$value3"
                     }
                 },
-                expectedTimeline = ExpectedCellTimeline(
-                    expectedInitialValue = "10:A:false",
-                    expectedNotificationByTick = mapOfNotNull(
-                        freezeTick?.let {
-                            it to ExpectedJustFreeze
-                        },
-                    ),
+                expectedInitialValue = "10:A:false",
+                expectedNotificationByTick = mapOfNotNull(
+                    freezeTick?.let {
+                        it to Cell.IsolatedFreezeNotification
+                    },
                 ),
-            )
-
-            test(
-                source1Kind = SourceKind.Dynamic,
-                source2Kind = SourceKind.Inert(
-                    inertCellFactory = InertCellFactory.Const,
-                ),
-                source3Kind = SourceKind.Inert(
-                    inertCellFactory = InertCellFactory.Frozen,
-                ),
-            )
-
-            test(
-                source1Kind = SourceKind.Inert(
-                    inertCellFactory = InertCellFactory.Const,
-                ),
-                source2Kind = SourceKind.Dynamic,
-                source3Kind = SourceKind.Inert(
-                    inertCellFactory = InertCellFactory.Frozen,
-                ),
-            )
-
-            test(
-                source1Kind = SourceKind.Inert(
-                    inertCellFactory = InertCellFactory.Const,
-                ),
-                source2Kind = SourceKind.Inert(
-                    inertCellFactory = InertCellFactory.Frozen,
-                ),
-                source3Kind = SourceKind.Dynamic,
-            )
-
-            test(
-                source1Kind = SourceKind.Dynamic,
-                source2Kind = SourceKind.Dynamic,
-                source3Kind = SourceKind.Inert(
-                    inertCellFactory = InertCellFactory.Const,
-                ),
-            )
-
-            test(
-                source1Kind = SourceKind.Dynamic,
-                source2Kind = SourceKind.Inert(
-                    inertCellFactory = InertCellFactory.Frozen,
-                ),
-                source3Kind = SourceKind.Dynamic,
-            )
-
-            test(
-                source1Kind = SourceKind.Inert(
-                    inertCellFactory = InertCellFactory.Const,
-                ),
-                source2Kind = SourceKind.Dynamic,
-                source3Kind = SourceKind.Dynamic,
-            )
-
-            test(
-                source1Kind = SourceKind.Dynamic,
-                source2Kind = SourceKind.Dynamic,
-                source3Kind = SourceKind.Dynamic,
             )
         }
 
+        test(
+            source1Kind = SourceKind.Dynamic,
+            source2Kind = SourceKind.Inert(
+                inertCellFactory = InertCellFactory.Const,
+            ),
+            source3Kind = SourceKind.Inert(
+                inertCellFactory = InertCellFactory.Frozen,
+            ),
+        )
+
+        test(
+            source1Kind = SourceKind.Inert(
+                inertCellFactory = InertCellFactory.Const,
+            ),
+            source2Kind = SourceKind.Dynamic,
+            source3Kind = SourceKind.Inert(
+                inertCellFactory = InertCellFactory.Frozen,
+            ),
+        )
+
+        test(
+            source1Kind = SourceKind.Inert(
+                inertCellFactory = InertCellFactory.Const,
+            ),
+            source2Kind = SourceKind.Inert(
+                inertCellFactory = InertCellFactory.Frozen,
+            ),
+            source3Kind = SourceKind.Dynamic,
+        )
+
+        test(
+            source1Kind = SourceKind.Dynamic,
+            source2Kind = SourceKind.Dynamic,
+            source3Kind = SourceKind.Inert(
+                inertCellFactory = InertCellFactory.Const,
+            ),
+        )
+
+        test(
+            source1Kind = SourceKind.Dynamic,
+            source2Kind = SourceKind.Inert(
+                inertCellFactory = InertCellFactory.Frozen,
+            ),
+            source3Kind = SourceKind.Dynamic,
+        )
+
+        test(
+            source1Kind = SourceKind.Inert(
+                inertCellFactory = InertCellFactory.Const,
+            ),
+            source2Kind = SourceKind.Dynamic,
+            source3Kind = SourceKind.Dynamic,
+        )
+
+        test(
+            source1Kind = SourceKind.Dynamic,
+            source2Kind = SourceKind.Dynamic,
+            source3Kind = SourceKind.Dynamic,
+        )
     }
 
     @Test
@@ -916,14 +891,11 @@ class Cell_map3_state_tests {
                     ) { value1, value2, value3 ->
                         "$value1:$value2:$value3"
                     }
-
                 },
-                expectedTimeline = ExpectedCellTimeline(
-                    expectedInitialValue = "10:A:false",
-                    expectedNotificationByTick = mapOf(
-                        Tick(1) to ExpectedFreezingNotification.of(
-                            expectedUpdatedValue = expectedUpdatedValue,
-                        ),
+                expectedInitialValue = "10:A:false",
+                expectedNotificationByTick = mapOf(
+                    Tick(1) to Cell.FreezeNotification.of(
+                        updatedValue = expectedUpdatedValue,
                     ),
                 ),
             )

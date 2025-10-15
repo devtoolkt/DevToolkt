@@ -3,7 +3,6 @@ package dev.toolkt.reactive.cell.test_utils
 import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.sample
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedUpdate
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenNotification
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenUpdate
 import dev.toolkt.reactive.cell.updatedValues
@@ -66,7 +65,8 @@ context(context: CellDynamicTestContext) fun <ValueT : Any> createDynamicCellExt
 
 fun <ValueT : Any> testCell_initiallyDynamic(
     setup: context(CellDynamicTestContext) () -> Cell<ValueT>,
-    expectedTimeline: ExpectedCellTimeline<ValueT>,
+    expectedInitialValue: ValueT,
+    expectedNotificationByTick: Map<Tick, Cell.Notification<ValueT>>,
 ) {
     val doTick = EmitterEventStream<Tick>()
 
@@ -93,15 +93,15 @@ fun <ValueT : Any> testCell_initiallyDynamic(
     val sampledInitialValue = subjectCell.sampleExternally()
 
     assertEquals(
-        expected = expectedTimeline.expectedInitialValue,
+        expected = expectedInitialValue,
         actual = sampledInitialValue,
     )
 
-    val maxTick = expectedTimeline.maxTick ?: return
+    val maxTick = expectedNotificationByTick.keys.maxByOrNull { it.t } ?: return
 
     (1..maxTick.t).forEach { t ->
         val tick = Tick(t = t)
-        val expectedNotification = expectedTimeline.expectedNotificationByTick[tick]
+        val expectedNotification = expectedNotificationByTick[tick]
 
         receivedUpdatedValues.clear()
 
@@ -118,8 +118,8 @@ fun <ValueT : Any> testCell_initiallyDynamic(
 
             else -> {
                 when (expectedNotification) {
-                    is ExpectedUpdate -> {
-                        val expectedUpdatedValue = expectedNotification.expectedUpdatedValue
+                    is Cell.UpdateNotification -> {
+                        val expectedUpdatedValue = expectedNotification.updatedValue
 
                         assertEquals(
                             expected = 1,
@@ -132,7 +132,7 @@ fun <ValueT : Any> testCell_initiallyDynamic(
                         assertEquals(
                             expected = expectedUpdatedValue,
                             actual = receivedUpdatedValue,
-                            message = "At t=${tick.t}, expected updated value ${expectedNotification.expectedUpdatedValue}, but received: $receivedUpdatedValue",
+                            message = "At t=${tick.t}, expected updated value ${expectedNotification.updatedValue}, but received: $receivedUpdatedValue",
                         )
 
                         val sampledNewValue = subjectCell.sampleExternally()

@@ -1,9 +1,5 @@
 package dev.toolkt.reactive.cell
 
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedFreezingUpdate
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedJustFreeze
-import dev.toolkt.reactive.cell.test_utils.ExpectedCellTimeline.ExpectedPlainUpdate
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenFreezingUpdate
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenJustFreeze
 import dev.toolkt.reactive.cell.test_utils.GivenCellTimeline.GivenPlainUpdate
@@ -54,10 +50,8 @@ class Cell_map_state_tests {
                 it.toString()
             }
         },
-        expectedTimeline = ExpectedCellTimeline(
-            expectedInitialValue = "10",
-            expectedNotificationByTick = emptyMap(),
-        ),
+        expectedInitialValue = "10",
+        expectedNotificationByTick = emptyMap(),
     )
 
     @Test
@@ -76,12 +70,10 @@ class Cell_map_state_tests {
                 it.toString()
             }
         },
-        expectedTimeline = ExpectedCellTimeline(
-            expectedInitialValue = "10",
-            expectedNotificationByTick = mapOf(
-                Tick(1) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "20",
-                ),
+        expectedInitialValue = "10",
+        expectedNotificationByTick = mapOf(
+            Tick(1) to Cell.IntermediateUpdateNotification(
+                updatedValue = "20",
             ),
         ),
     )
@@ -103,14 +95,12 @@ class Cell_map_state_tests {
                 it.toString()
             }
         },
-        expectedTimeline = ExpectedCellTimeline(
-            expectedInitialValue = "10",
-            expectedNotificationByTick = mapOf(
-                Tick(1) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "20",
-                ),
-                Tick(2) to ExpectedJustFreeze,
+        expectedInitialValue = "10",
+        expectedNotificationByTick = mapOf(
+            Tick(1) to Cell.IntermediateUpdateNotification(
+                updatedValue = "20",
             ),
+            Tick(2) to Cell.IsolatedFreezeNotification,
         ),
     )
 
@@ -133,15 +123,13 @@ class Cell_map_state_tests {
                 it.toString()
             }
         },
-        expectedTimeline = ExpectedCellTimeline(
-            expectedInitialValue = "10",
-            expectedNotificationByTick = mapOf(
-                Tick(1) to ExpectedPlainUpdate(
-                    expectedUpdatedValue = "20",
-                ),
-                Tick(2) to ExpectedFreezingUpdate(
-                    expectedUpdatedValue = "30",
-                ),
+        expectedInitialValue = "10",
+        expectedNotificationByTick = mapOf(
+            Tick(1) to Cell.IntermediateUpdateNotification(
+                updatedValue = "20",
+            ),
+            Tick(2) to Cell.FreezingUpdateNotification(
+                updatedFrozenValue = "30",
             ),
         ),
     )
