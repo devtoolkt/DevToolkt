@@ -480,7 +480,6 @@ class Cell_map2_state_tests {
                 "$value1:$value2"
             }
         },
-        // USE THIS AS AN EXAMPLE
         expectedInitialValue = "10:A",
         expectedNotificationByTick = mapOf(
             Tick(1) to Cell.IntermediateUpdateNotification(

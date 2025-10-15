@@ -5,6 +5,7 @@ import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.SubscriptionVertex
 import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.OperatedCell
+import dev.toolkt.reactive.cell.observe
 import dev.toolkt.reactive.cell.sample
 import dev.toolkt.reactive.cell.vertices.HoldCellVertex
 import dev.toolkt.reactive.cell.vertices.PureCellVertex
@@ -20,6 +21,80 @@ import dev.toolkt.reactive.event_stream.vertices.EventStreamVertex
 import dev.toolkt.reactive.event_stream.vertices.SilentEventStreamVertex
 
 sealed interface EventStream<out EventT> {
+    sealed interface Notification<out EventT>
+
+    sealed interface EmissionNotification<out EventT> : Notification<EventT> {
+        companion object {
+            fun <EventT : Any> of(
+                emittedEvent: EventT,
+                isTerminal: Boolean,
+            ): EmissionNotification<EventT> = when {
+                isTerminal -> TerminalEmissionNotification(
+                    emittedTerminalEvent = emittedEvent,
+                )
+
+                else -> IntermediateEmissionNotification(
+                    emittedEvent = emittedEvent,
+                )
+            }
+        }
+
+        val emittedEvent: EventT
+    }
+
+    sealed interface TerminationNotification<out EventT> : Notification<EventT> {
+        companion object {
+            fun <EventT : Any> of(
+                emittedEvent: EventT?,
+            ): TerminationNotification<EventT> = when {
+                emittedEvent != null -> TerminalEmissionNotification(
+                    emittedEvent,
+                )
+
+                else -> IsolatedTerminationNotification
+            }
+        }
+    }
+
+    data class IntermediateEmissionNotification<out EventT>(
+        override val emittedEvent: EventT,
+    ) : EmissionNotification<EventT>, TerminationNotification<EventT>
+
+    data class TerminalEmissionNotification<out EventT>(
+        val emittedTerminalEvent: EventT,
+    ) : EmissionNotification<EventT>, TerminationNotification<EventT> {
+        override val emittedEvent: EventT
+            get() = emittedTerminalEvent
+    }
+
+    data object IsolatedTerminationNotification : TerminationNotification<Nothing>
+
+    interface Subscriber<EventT> {
+        fun handleNotification(
+            notification: EventStream.Notification<EventT>,
+        )
+    }
+
+    interface BasicSubscriber<EventT> {
+        fun handleEmission(
+            emittedEvent: EventT,
+        )
+
+        fun handleTermination()
+    }
+
+    /**
+     * A subscription to an event stream.
+     */
+    interface Subscription {
+        /**
+         * Cancel the subscription.
+         *
+         * This method must be called from outside the reactive system.
+         */
+        fun cancel()
+    }
+
     /**
      * A mechanism for propagating an event into the reactive system.
      */
@@ -54,18 +129,6 @@ sealed interface EventStream<out EventT> {
          * This method will be called from within the reactive system.
          */
         fun unregister()
-    }
-
-    /**
-     * A subscription to an event stream.
-     */
-    interface Subscription {
-        /**
-         * Cancel the subscription.
-         *
-         * This method must be called from outside the reactive system.
-         */
-        fun cancel()
     }
 
     companion object {
@@ -115,6 +178,62 @@ sealed interface EventStream<out EventT> {
 
     val vertex: EventStreamVertex<EventT>
 }
+
+/**
+ * Subscribe to this event stream.
+ *
+ * This method must be called from outside the reactive system.
+ */
+fun <EventT> EventStream<EventT>.subscribe(
+    handle: (EventT) -> Unit,
+): EventStream.Subscription? = when (val vertex = this.vertex) {
+    SilentEventStreamVertex -> null
+
+    is DynamicEventStreamVertex -> {
+        val subscriptionVertex = SubscriptionVertex(
+            sourceEventStreamVertex = this.vertex,
+            handle = handle,
+        )
+
+        vertex.subscribe(
+            dependentVertex = subscriptionVertex,
+        )
+
+        object : EventStream.Subscription {
+            override fun cancel() {
+                this@subscribe.vertex.unsubscribe(
+                    dependentVertex = subscriptionVertex,
+                )
+            }
+        }
+    }
+}
+
+fun <EventT> EventStream<EventT>.subscribe(
+    subscriber: EventStream.Subscriber<EventT>,
+): EventStream.Subscription? {
+    TODO()
+}
+
+fun <EventT> EventStream<EventT>.subscribe(
+    observer: EventStream.BasicSubscriber<EventT>,
+): EventStream.Subscription? = subscribe(
+    subscriber = object : EventStream.Subscriber<EventT> {
+        override fun handleNotification(
+            notification: EventStream.Notification<EventT>,
+        ) {
+            (notification as? EventStream.EmissionNotification)?.let {
+                observer.handleEmission(
+                    emittedEvent = it.emittedEvent,
+                )
+            }
+
+            (notification as? EventStream.TerminationNotification)?.let {
+                observer.handleTermination()
+            }
+        }
+    },
+)
 
 fun <EventT, TransformedEventT> EventStream<EventT>.map(
     transform: (EventT) -> TransformedEventT,
@@ -167,7 +286,7 @@ fun <EventT, TransformedEventT> EventStream<EventT>.mapAt(
 
 fun <EventT, TransformedEventT : Any> EventStream<EventT>.mapNotNullAt(
     transform: context(MomentContext) (EventT) -> TransformedEventT?,
-): EventStream<TransformedEventT> =  OperatedEventStream(
+): EventStream<TransformedEventT> = OperatedEventStream(
     vertex = when (val vertex = this.vertex) {
         SilentEventStreamVertex -> SilentEventStreamVertex
 
@@ -213,7 +332,6 @@ context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.single():
         }
     )
 
-
 context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.take(
     count: Int,
 ): EventStream<EventT> = when {
@@ -236,10 +354,9 @@ context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.take(
     )
 }
 
-
-context(momentContext: MomentContext) fun <ValueT> EventStream<ValueT>.hold(
-    initialValue: ValueT,
-): Cell<ValueT> = OperatedCell(
+context(momentContext: MomentContext) fun <EventT> EventStream<EventT>.hold(
+    initialValue: EventT,
+): Cell<EventT> = OperatedCell(
     vertex = when (val vertex = this.vertex) {
         SilentEventStreamVertex -> PureCellVertex(
             value = initialValue,
@@ -273,34 +390,4 @@ context(momentContext: MomentContext) fun <EventT, AccT> EventStream<EventT>.acc
         accCell,
         newAccValues,
     )
-}
-
-/**
- * Subscribe to this event stream.
- *
- * This method must be called from outside the reactive system.
- */
-fun <EventT> EventStream<EventT>.subscribe(
-    handle: (EventT) -> Unit,
-): EventStream.Subscription? = when (val vertex = this.vertex) {
-    SilentEventStreamVertex -> null
-
-    is DynamicEventStreamVertex -> {
-        val subscriptionVertex = SubscriptionVertex(
-            sourceEventStreamVertex = this.vertex,
-            handle = handle,
-        )
-
-        vertex.subscribe(
-            dependentVertex = subscriptionVertex,
-        )
-
-        object : EventStream.Subscription {
-            override fun cancel() {
-                this@subscribe.vertex.unsubscribe(
-                    dependentVertex = subscriptionVertex,
-                )
-            }
-        }
-    }
 }
