@@ -20,6 +20,45 @@ import dev.toolkt.reactive.event_stream.vertices.SilentEventStreamVertex
 import dev.toolkt.reactive.event_stream.vertices.UpdatedValuesEventStreamVertex
 
 sealed interface Cell<out ValueT> {
+    sealed interface Notification<out ValueT>
+
+    sealed interface UpdateNotification<out ValueT> : Notification<ValueT> {
+        val updatedValue: ValueT
+    }
+
+    sealed interface FreezeNotification<out ValueT> : Notification<ValueT>
+
+    data class IntermediateUpdateNotification<out ValueT>(
+        override val updatedValue: ValueT,
+    ) : UpdateNotification<ValueT>, FreezeNotification<ValueT>
+
+    data class FreezingUpdateNotification<out ValueT>(
+        val finalValue: ValueT,
+    ) : UpdateNotification<ValueT>, FreezeNotification<ValueT> {
+        override val updatedValue: ValueT
+            get() = finalValue
+    }
+
+    data object IsolatedFreezeNotification : FreezeNotification<Nothing>
+
+    interface Observer<ValueT> {
+        fun handleNotification(
+            notification: Notification<ValueT>,
+        )
+    }
+
+    interface BasicObserver<ValueT> {
+        fun handleUpdate(
+            updatedValue: ValueT,
+        )
+
+        fun handleFreeze()
+    }
+
+    interface Observation {
+        fun cancel()
+    }
+
     companion object {
         fun <ValueT1, ValueT2, ResultT> map2(
             cell1: Cell<ValueT1>,
@@ -126,6 +165,32 @@ sealed interface Cell<out ValueT> {
 
     val vertex: CellVertex<ValueT>
 }
+
+fun <ValueT> Cell<ValueT>.observe(
+    observer: Cell.Observer<ValueT>,
+): Cell.Observation {
+    TODO()
+}
+
+fun <ValueT> Cell<ValueT>.observe(
+    observer: Cell.BasicObserver<ValueT>,
+): Cell.Observation = observe(
+    observer = object : Cell.Observer<ValueT> {
+        override fun handleNotification(
+            notification: Cell.Notification<ValueT>,
+        ) {
+            (notification as? Cell.UpdateNotification)?.let {
+                observer.handleUpdate(
+                    updatedValue = it.updatedValue,
+                )
+            }
+
+            (notification as? Cell.FreezeNotification)?.let {
+                observer.handleFreeze()
+            }
+        }
+    },
+)
 
 context(momentContext: MomentContext) fun <ValueT> Cell<ValueT>.sample(): ValueT = vertex.sampleOldValue(
     context = momentContext.context,
