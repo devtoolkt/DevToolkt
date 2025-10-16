@@ -120,17 +120,12 @@ fun <ValueT : Any> testCell_initiallyDynamic(
     }
 }
 
-interface CellInertTestContext
 
 fun <ValueT : Any> testCell_immediatelyInert(
-    spawn: context(CellInertTestContext) () -> Cell<ValueT>,
+    spawn: () -> Cell<ValueT>,
     expectedValue: ValueT,
 ) {
-    val subjectCell = with(
-        object : CellInertTestContext {},
-    ) {
-        spawn()
-    }
+    val subjectCell = spawn()
 
     val sampledInitialValue = subjectCell.sampleExternally()
 

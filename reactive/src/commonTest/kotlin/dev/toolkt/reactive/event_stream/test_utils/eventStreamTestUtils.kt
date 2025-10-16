@@ -101,16 +101,10 @@ fun <EventT : Any> testEventStream_initiallyEnergic(
     }
 }
 
-interface EventStreamInertTestContext
-
 fun <EventT : Any> testEventStream_immediatelyExhausted(
-    spawn: context(EventStreamInertTestContext) () -> EventStream<EventT>,
+    spawn: () -> EventStream<EventT>,
 ) {
-    val subjectEventStream = with(
-        object : EventStreamInertTestContext {},
-    ) {
-        spawn()
-    }
+    val subjectEventStream = spawn()
 
     assertNull(
         actual = subjectEventStream.subscribe {},
