@@ -10,7 +10,7 @@ import dev.toolkt.reactive.event_stream.test_utils.createEnergicEventStreamExter
 import kotlin.test.Test
 
 @Suppress("ClassName")
-class EventStream_hold_emission_tests {
+class EventStream_hold_state_tests {
     @Test
     fun test_sourceExhausted() {
         fun test(

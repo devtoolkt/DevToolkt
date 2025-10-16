@@ -349,7 +349,6 @@ class Cell_map2_state_tests {
                 initialValue = 'A',
                 updatedValueByTick = mapOf(
                     Tick(2) to 'B',
-                    Tick(3) to 'C',
                 ),
                 freezeTick = Tick(3),
             )
