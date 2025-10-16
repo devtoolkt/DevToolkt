@@ -41,6 +41,8 @@ context(context: DynamicTestContext) fun <ValueT : Any> createDynamicCellExterna
 }
 
 fun <ValueT : Any> testCell_initiallyDynamic(
+    // TODO: Split to `setup` / `spawn` (both in MomentContext?)
+    // Add negative ticks & the tick "0"
     setup: context(DynamicTestContext) () -> Cell<ValueT>,
     expectedInitialValue: ValueT,
     expectedNotificationByTick: Map<Tick, Cell.Notification<ValueT>>,
