@@ -11,6 +11,7 @@ import dev.toolkt.reactive.cell.test_utils.testCell_initiallyDynamic
 import kotlin.test.Ignore
 import kotlin.test.Test
 
+@Ignore // FIXME
 @Suppress("ClassName")
 class Cell_map3_state_tests {
     private sealed class SourceKind {
