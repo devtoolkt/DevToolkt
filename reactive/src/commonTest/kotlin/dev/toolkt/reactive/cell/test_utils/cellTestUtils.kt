@@ -43,7 +43,7 @@ context(context: DynamicTestContext) fun <ValueT : Any> createDynamicCellExterna
 fun <ValueT : Any> testCell_initiallyDynamic(
     // TODO: Split to `setup` / `spawn` (both in MomentContext?)
     // Add negative ticks & the tick "0"
-    spawn: context(DynamicTestContext) () -> Cell<ValueT>,
+    spawnSubject: context(DynamicTestContext) () -> Cell<ValueT>,
     expectedInitialValue: ValueT,
     expectedNotificationByTick: Map<Tick, Cell.Notification<ValueT>>,
 ) {
@@ -54,7 +54,7 @@ fun <ValueT : Any> testCell_initiallyDynamic(
             override val onTick: EventStream<Tick> = doTick
         },
     ) {
-        spawn()
+        spawnSubject()
     }
 
     val receivedNotifications = mutableListOf<Cell.Notification<ValueT>>()
@@ -120,12 +120,31 @@ fun <ValueT : Any> testCell_initiallyDynamic(
     }
 }
 
+fun <ConfigurationT : Any, ValueT : Any> testCell_initiallyDynamic(
+    configure: context(DynamicTestContext, MomentContext) () -> ConfigurationT,
+    spawnCell: context(MomentContext) ConfigurationT.() -> Cell<ValueT>,
+    stimulationTick: Tick = Tick(0),
+    expectedInitialValue: ValueT,
+    expectedNotificationByTick: Map<Tick, Cell.Notification<ValueT>>,
+) {
+    testCell_initiallyDynamic(
+        spawnSubject = {
+            MomentContext.execute {
+                val setup = configure()
+
+                setup.spawnCell()
+            }
+        },
+        expectedInitialValue = expectedInitialValue,
+        expectedNotificationByTick = expectedNotificationByTick,
+    )
+}
 
 fun <ValueT : Any> testCell_immediatelyInert(
-    spawn: () -> Cell<ValueT>,
+    spawnSubject: () -> Cell<ValueT>,
     expectedValue: ValueT,
 ) {
-    val subjectCell = spawn()
+    val subjectCell = spawnSubject()
 
     val sampledInitialValue = subjectCell.sampleExternally()
 

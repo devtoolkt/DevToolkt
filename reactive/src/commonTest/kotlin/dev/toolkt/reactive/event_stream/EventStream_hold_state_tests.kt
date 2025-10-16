@@ -13,12 +13,16 @@ import kotlin.test.Test
 @Ignore // FIXME
 @Suppress("ClassName")
 class EventStream_hold_state_tests {
+    private data class Configuration<SourceValueT>(
+        val sourceEventStream: EventStream<SourceValueT>,
+    )
+
     @Test
     fun test_sourceExhausted() {
         fun test(
             sourceEventStreamFactory: ExhaustedEventStreamFactory,
         ) = testCell_immediatelyInert(
-            spawn = {
+            spawnSubject = {
                 val sourceEventStream = sourceEventStreamFactory.createExternally<Int>()
 
                 MomentContext.execute {
@@ -37,53 +41,87 @@ class EventStream_hold_state_tests {
 
     @Test
     fun test_sourceEnergic() = testCell_initiallyDynamic(
-        spawn = {
+        configure = {
             val sourceEventStream = createEnergicEventStreamExternally(
                 emittedEventByTick = emptyMap(),
                 terminationTick = null,
             )
 
-            MomentContext.execute {
-                sourceEventStream.hold(initialValue = 10)
-            }
+            Configuration(
+                sourceEventStream = sourceEventStream,
+            )
+        },
+        spawnCell = {
+            sourceEventStream.hold(
+                initialValue = 10,
+            )
         },
         expectedInitialValue = 10,
         expectedNotificationByTick = emptyMap(),
     )
 
     @Test
-    fun test_sourceEnergic_sourceEmits() = testCell_initiallyDynamic(
-        spawn = {
+    fun test_sourceEnergic_sourceEmits() {
+        testCell_initiallyDynamic(
+            configure = {
+                val sourceEventStream = createEnergicEventStreamExternally(
+                    emittedEventByTick = mapOf(
+                        Tick(1) to 11,
+                    ),
+                    terminationTick = null,
+                )
+
+                Configuration(
+                    sourceEventStream = sourceEventStream,
+                )
+            },
+            spawnCell = {
+                sourceEventStream.hold(initialValue = 10)
+            },
+            expectedInitialValue = 10,
+            expectedNotificationByTick = mapOf(
+                Tick(1) to Cell.IntermediateUpdateNotification(
+                    updatedValue = 11,
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun test_sourceEnergic_sourceEmitsSimultaneously() = testCell_initiallyDynamic(
+        configure = {
             val sourceEventStream = createEnergicEventStreamExternally(
                 emittedEventByTick = mapOf(
-                    Tick(1) to 11,
+                    Tick(0) to 11,
                 ),
                 terminationTick = null,
             )
 
-            MomentContext.execute {
-                sourceEventStream.hold(initialValue = 10)
-            }
+            Configuration(
+                sourceEventStream = sourceEventStream,
+            )
+        },
+        spawnCell = {
+            sourceEventStream.hold(initialValue = 10)
         },
         expectedInitialValue = 10,
-        expectedNotificationByTick = mapOf(
-            Tick(1) to Cell.IntermediateUpdateNotification(
-                updatedValue = 11,
-            ),
-        ),
+        expectedNotificationByTick = emptyMap(),
     )
 
     @Test
     fun test_sourceEnergic_sourceJustTerminates() = testCell_initiallyDynamic(
-        spawn = {
+        configure = {
             val sourceEventStream = createEnergicEventStreamExternally(
                 emittedEventByTick = emptyMap(),
-                terminationTick = Tick(1),
+                terminationTick = null,
             )
 
-            MomentContext.execute {
-                sourceEventStream.hold(initialValue = 10)
-            }
+            Configuration(
+                sourceEventStream = sourceEventStream,
+            )
+        },
+        spawnCell = {
+            sourceEventStream.hold(initialValue = 10)
         },
         expectedInitialValue = 10,
         expectedNotificationByTick = mapOf(
@@ -93,17 +131,20 @@ class EventStream_hold_state_tests {
 
     @Test
     fun test_sourceEnergic_sourceEmitsTerminating() = testCell_initiallyDynamic(
-        spawn = {
+        configure = {
             val sourceEventStream = createEnergicEventStreamExternally(
                 emittedEventByTick = mapOf(
                     Tick(1) to 11,
                 ),
-                terminationTick = Tick(1),
+                terminationTick = null,
             )
 
-            MomentContext.execute {
-                sourceEventStream.hold(initialValue = 10)
-            }
+            Configuration(
+                sourceEventStream = sourceEventStream,
+            )
+        },
+        spawnCell = {
+            sourceEventStream.hold(initialValue = 10)
         },
         expectedInitialValue = 10,
         expectedNotificationByTick = mapOf(
