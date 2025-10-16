@@ -24,7 +24,7 @@ class Cell_switch_state_outerInert_tests {
             outerCellFactory: InertCellFactory,
             innerCellFactory: InertCellFactory,
         ) = testCell_immediatelyInert(
-            spawn = {
+            spawnSubject = {
                 val innerCell = innerCellFactory.createInertExternally(
                     inertValue = 10,
                 )
@@ -57,7 +57,7 @@ class Cell_switch_state_outerInert_tests {
             outerCellFactory: InertCellFactory,
         ) {
             testCell_initiallyDynamic(
-                spawn = {
+                spawnSubject = {
                     val innerCell = createDynamicCellExternally(
                         initialValue = 10,
                         updatedValueByTick = emptyMap(),
@@ -94,7 +94,7 @@ class Cell_switch_state_outerInert_tests {
             shouldInnerFreezeSimultaneously: Boolean,
         ) {
             testCell_initiallyDynamic(
-                spawn = {
+                spawnSubject = {
                     val innerCell = createDynamicCellExternally(
                         initialValue = 10,
                         updatedValueByTick = mapOf(
@@ -149,7 +149,7 @@ class Cell_switch_state_outerInert_tests {
             }
 
             testCell_initiallyDynamic(
-                spawn = {
+                spawnSubject = {
                     val innerCell = createDynamicCellExternally(
                         initialValue = 10,
                         updatedValueByTick = mapOfNotNull(
