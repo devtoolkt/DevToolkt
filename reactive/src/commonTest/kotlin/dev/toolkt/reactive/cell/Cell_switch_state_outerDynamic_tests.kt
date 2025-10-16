@@ -433,7 +433,11 @@ class Cell_switch_state_outerDynamic_tests {
                 setup = {
                     val initialInnerCell = createDynamicCellExternally(
                         initialValue = 10,
-                        updatedValueByTick = emptyMap(),
+                        updatedValueByTick = mapOfNotNull(
+                            finalUpdatedValue?.let {
+                                Tick(2) to it
+                            },
+                        ),
                         freezeTick = Tick(2),
                     )
 
@@ -593,7 +597,8 @@ class Cell_switch_state_outerDynamic_tests {
                         updatedValueByTick = mapOfNotNull(
                             finalUpdatedValue?.let {
                                 Tick(3) to it
-                            }),
+                            },
+                        ),
                         freezeTick = Tick(3),
                     )
 
@@ -656,7 +661,8 @@ class Cell_switch_state_outerDynamic_tests {
                         updatedValueByTick = mapOfNotNull(
                             finalUpdatedValue?.let {
                                 Tick(2) to it
-                            }),
+                            },
+                        ),
                         freezeTick = Tick(2),
                     )
 
@@ -762,7 +768,11 @@ class Cell_switch_state_outerDynamic_tests {
 
                     val newInnerCell = createDynamicCellExternally(
                         initialValue = 20,
-                        updatedValueByTick = emptyMap(),
+                        updatedValueByTick = mapOfNotNull(
+                            finalUpdatedValue?.let {
+                                Tick(2) to it
+                            },
+                        ),
                         freezeTick = Tick(2),
                     )
 
@@ -824,7 +834,8 @@ class Cell_switch_state_outerDynamic_tests {
                         updatedValueByTick = mapOfNotNull(
                             finalUpdatedValue?.let {
                                 Tick(1) to it
-                            }),
+                            },
+                        ),
                         freezeTick = Tick(1),
                     )
 
