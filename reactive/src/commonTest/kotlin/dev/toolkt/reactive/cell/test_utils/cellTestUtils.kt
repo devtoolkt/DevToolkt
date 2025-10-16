@@ -99,6 +99,14 @@ fun <ValueT : Any> testCell_initiallyDynamic(
                     actual = receivedNotifications.size,
                     message = "At t=${tick.t}, as single notification expected ($expectedNotification), but received: $receivedNotifications",
                 )
+
+                val receivedNotification = receivedNotifications.single()
+
+                assertEquals(
+                    expected = expectedNotification,
+                    actual = receivedNotification,
+                    message = "At t=${tick.t}, expected $expectedNotification, but received: $receivedNotification",
+                )
             }
 
             else -> {
@@ -109,14 +117,6 @@ fun <ValueT : Any> testCell_initiallyDynamic(
                 )
             }
         }
-
-        val receivedNotification = receivedNotifications.single()
-
-        assertEquals(
-            expected = expectedNotification,
-            actual = receivedNotification,
-            message = "At t=${tick.t}, expected $expectedNotification, but received: $receivedNotification",
-        )
     }
 }
 

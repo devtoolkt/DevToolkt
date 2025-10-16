@@ -49,15 +49,13 @@ fun <EventT : Any> testEventStream_initiallyEnergic(
     // TODO: Handle freezing
 
     assertNotNull(
-        actual = subjectEventStream.subscribe(
-            object : EventStream.Subscriber<EventT> {
-                override fun handleNotification(
-                    notification: EventStream.Notification<EventT>,
-                ) {
-                    receivedNotifications.add(notification)
-                }
+        actual = subjectEventStream.subscribe(object : EventStream.Subscriber<EventT> {
+            override fun handleNotification(
+                notification: EventStream.Notification<EventT>,
+            ) {
+                receivedNotifications.add(notification)
             }
-        ),
+        }),
         message = "Expected a non-null subscription for an energic event stream",
     )
 
@@ -79,6 +77,14 @@ fun <EventT : Any> testEventStream_initiallyEnergic(
                     actual = receivedNotifications.size,
                     message = "At t=${tick.t}, as single update expected, but received: $receivedNotifications",
                 )
+
+                val receivedNotification = receivedNotifications.single()
+
+                assertEquals(
+                    expected = expectedNotification,
+                    actual = receivedNotification,
+                    message = "At t=${tick.t}, expected $expectedNotification, but received: $receivedNotification",
+                )
             }
 
             else -> {
@@ -89,14 +95,6 @@ fun <EventT : Any> testEventStream_initiallyEnergic(
                 )
             }
         }
-
-        val receivedNotification = receivedNotifications.single()
-
-        assertEquals(
-            expected = expectedNotification,
-            actual = receivedNotification,
-            message = "At t=${tick.t}, expected $expectedNotification, but received: $receivedNotification",
-        )
     }
 }
 

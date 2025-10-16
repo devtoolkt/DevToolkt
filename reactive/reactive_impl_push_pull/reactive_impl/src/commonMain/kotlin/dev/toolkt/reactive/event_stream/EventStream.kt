@@ -5,7 +5,6 @@ import dev.toolkt.reactive.MomentContext
 import dev.toolkt.reactive.SubscriptionVertex
 import dev.toolkt.reactive.cell.Cell
 import dev.toolkt.reactive.cell.OperatedCell
-import dev.toolkt.reactive.cell.observe
 import dev.toolkt.reactive.cell.sample
 import dev.toolkt.reactive.cell.vertices.HoldCellVertex
 import dev.toolkt.reactive.cell.vertices.PureCellVertex
