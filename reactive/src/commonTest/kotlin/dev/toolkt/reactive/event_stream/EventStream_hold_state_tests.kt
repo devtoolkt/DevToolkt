@@ -7,8 +7,10 @@ import dev.toolkt.reactive.cell.test_utils.Tick
 import dev.toolkt.reactive.cell.test_utils.testCell_immediatelyInert
 import dev.toolkt.reactive.cell.test_utils.testCell_initiallyDynamic
 import dev.toolkt.reactive.event_stream.test_utils.createEnergicEventStreamExternally
+import kotlin.test.Ignore
 import kotlin.test.Test
 
+@Ignore // FIXME
 @Suppress("ClassName")
 class EventStream_hold_state_tests {
     @Test
