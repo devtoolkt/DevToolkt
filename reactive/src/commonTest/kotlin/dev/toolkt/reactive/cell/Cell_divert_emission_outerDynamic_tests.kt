@@ -377,7 +377,7 @@ class Cell_divert_emission_outerDynamic_tests {
         fun test(
             shouldInitialInnerEmitSimultaneously: Boolean,
         ) {
-            val finalEmittedValue = when {
+            val finalEmittedEvent = when {
                 shouldInitialInnerEmitSimultaneously -> 11
                 else -> null
             }
@@ -386,7 +386,7 @@ class Cell_divert_emission_outerDynamic_tests {
                 setup = {
                     val initialInnerEventStream = createEnergicEventStreamExternally(
                         emittedEventByTick = mapOfNotNull(
-                            finalEmittedValue?.let {
+                            finalEmittedEvent?.let {
                                 Tick(2) to it
                             }),
                         terminationTick = Tick(2),
@@ -402,7 +402,7 @@ class Cell_divert_emission_outerDynamic_tests {
                 },
                 expectedNotificationByTick = mapOf(
                     Tick(2) to EventStream.TerminationNotification.of(
-                        emittedEvent = finalEmittedValue,
+                        emittedEvent = finalEmittedEvent,
                     ),
                 ),
             )
@@ -428,7 +428,7 @@ class Cell_divert_emission_outerDynamic_tests {
         fun test(
             shouldInitialInnerEmitSimultaneously: Boolean,
         ) {
-            val finalEmittedValue = when {
+            val finalEmittedEvent = when {
                 shouldInitialInnerEmitSimultaneously -> 11
                 else -> null
             }
@@ -437,7 +437,7 @@ class Cell_divert_emission_outerDynamic_tests {
                 setup = {
                     val initialInnerEventStream = createEnergicEventStreamExternally(
                         emittedEventByTick = mapOfNotNull(
-                            finalEmittedValue?.let {
+                            finalEmittedEvent?.let {
                                 Tick(1) to it
                             },
                         ),
@@ -454,7 +454,7 @@ class Cell_divert_emission_outerDynamic_tests {
                 },
                 expectedNotificationByTick = mapOf(
                     Tick(1) to EventStream.TerminationNotification.of(
-                        emittedEvent = finalEmittedValue,
+                        emittedEvent = finalEmittedEvent,
                     ),
                 ),
             )
@@ -520,7 +520,7 @@ class Cell_divert_emission_outerDynamic_tests {
         fun test(
             shouldSubsequentInnerEmitSimultaneously: Boolean,
         ) {
-            val finalEmittedValue = when {
+            val finalEmittedEvent = when {
                 shouldSubsequentInnerEmitSimultaneously -> 21
                 else -> null
             }
@@ -534,7 +534,7 @@ class Cell_divert_emission_outerDynamic_tests {
 
                     val subsequentInnerEventStream = createEnergicEventStreamExternally(
                         emittedEventByTick = mapOfNotNull(
-                            finalEmittedValue?.let {
+                            finalEmittedEvent?.let {
                                 Tick(3) to it
                             },
                         ),
@@ -553,7 +553,7 @@ class Cell_divert_emission_outerDynamic_tests {
                 },
                 expectedNotificationByTick = mapOf(
                     Tick(3) to EventStream.TerminationNotification.of(
-                        emittedEvent = finalEmittedValue,
+                        emittedEvent = finalEmittedEvent,
                     ),
                 ),
             )
@@ -578,7 +578,7 @@ class Cell_divert_emission_outerDynamic_tests {
         fun test(
             shouldSubsequentInnerEmitSimultaneously: Boolean,
         ) {
-            val finalEmittedValue = when {
+            val finalEmittedEvent = when {
                 shouldSubsequentInnerEmitSimultaneously -> 21
                 else -> null
             }
@@ -592,7 +592,7 @@ class Cell_divert_emission_outerDynamic_tests {
 
                     val subsequentInnerEventStream = createEnergicEventStreamExternally(
                         emittedEventByTick = mapOfNotNull(
-                            finalEmittedValue?.let {
+                            finalEmittedEvent?.let {
                                 Tick(2) to it
                             },
                         ),
@@ -611,7 +611,7 @@ class Cell_divert_emission_outerDynamic_tests {
                 },
                 expectedNotificationByTick = mapOf(
                     Tick(2) to EventStream.TerminationNotification.of(
-                        emittedEvent = finalEmittedValue,
+                        emittedEvent = finalEmittedEvent,
                     ),
                 ),
             )
@@ -676,7 +676,7 @@ class Cell_divert_emission_outerDynamic_tests {
         fun test(
             shouldNewInnerEmitSimultaneously: Boolean,
         ) {
-            val finalEmittedValue = when {
+            val finalEmittedEvent = when {
                 shouldNewInnerEmitSimultaneously -> 21
                 else -> null
             }
@@ -690,7 +690,7 @@ class Cell_divert_emission_outerDynamic_tests {
 
                     val newInnerEventStream = createEnergicEventStreamExternally(
                         emittedEventByTick = mapOfNotNull(
-                            finalEmittedValue?.let {
+                            finalEmittedEvent?.let {
                                 Tick(2) to it
                             },
                         ),
@@ -709,7 +709,7 @@ class Cell_divert_emission_outerDynamic_tests {
                 },
                 expectedNotificationByTick = mapOf(
                     Tick(2) to EventStream.TerminationNotification.of(
-                        emittedEvent = finalEmittedValue,
+                        emittedEvent = finalEmittedEvent,
                     ),
                 ),
             )
@@ -733,7 +733,7 @@ class Cell_divert_emission_outerDynamic_tests {
         fun test(
             shouldNewInnerEmitSimultaneously: Boolean,
         ) {
-            val finalEmittedValue = when {
+            val finalEmittedEvent = when {
                 shouldNewInnerEmitSimultaneously -> 21
                 else -> null
             }
@@ -747,7 +747,7 @@ class Cell_divert_emission_outerDynamic_tests {
 
                     val newInnerEventStream = createEnergicEventStreamExternally(
                         emittedEventByTick = mapOfNotNull(
-                            finalEmittedValue?.let {
+                            finalEmittedEvent?.let {
                                 Tick(1) to it
                             },
                         ),

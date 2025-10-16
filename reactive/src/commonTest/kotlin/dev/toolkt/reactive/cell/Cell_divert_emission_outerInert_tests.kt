@@ -1,76 +1,70 @@
 package dev.toolkt.reactive.cell
 
 import dev.toolkt.core.utils.iterable.mapOfNotNull
+import dev.toolkt.reactive.cell.test_utils.ExhaustedEventStreamFactory
 import dev.toolkt.reactive.cell.test_utils.InertCellFactory
 import dev.toolkt.reactive.cell.test_utils.Tick
-import dev.toolkt.reactive.cell.test_utils.createDynamicCellExternally
-import dev.toolkt.reactive.cell.test_utils.testCell_immediatelyInert
-import dev.toolkt.reactive.cell.test_utils.testCell_initiallyDynamic
+import dev.toolkt.reactive.event_stream.EventStream
+import dev.toolkt.reactive.event_stream.test_utils.createEnergicEventStreamExternally
+import dev.toolkt.reactive.event_stream.test_utils.testEventStream_immediatelyExhausted
+import dev.toolkt.reactive.event_stream.test_utils.testEventStream_initiallyEnergic
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-/**
- * Outer cell: immediately inert
- */
 @Ignore // FIXME
 @Suppress("ClassName")
-class Cell_switch_state_outerInert_tests {
+class Cell_divert_emission_outerInert_tests {
     /**
-     * Inner cell: immediately inert
+     * Inner event stream: immediately inert
      */
     @Test
-    fun test_state_innerInert() {
+    fun test_state_innerExhausted() {
         fun test(
             outerCellFactory: InertCellFactory,
-            innerCellFactory: InertCellFactory,
-        ) = testCell_immediatelyInert(
+            innerEventStreamFactory: ExhaustedEventStreamFactory,
+        ) = testEventStream_immediatelyExhausted(
             setup = {
-                val innerCell = innerCellFactory.createInertExternally(
-                    inertValue = 10,
-                )
+                val innerEventStream = innerEventStreamFactory.createExternally<Int>()
 
                 val outerCell = outerCellFactory.createInertExternally(
-                    inertValue = innerCell,
+                    inertValue = innerEventStream,
                 )
 
-                Cell.switch(outerCell)
+                Cell.divert(outerCell)
             },
-            expectedValue = 10,
         )
 
         InertCellFactory.values.forEach { outerCellFactory ->
-            InertCellFactory.values.forEach { innerCellFactory ->
+            ExhaustedEventStreamFactory.values.forEach { innerEventStreamFactory ->
                 test(
                     outerCellFactory = outerCellFactory,
-                    innerCellFactory = innerCellFactory,
+                    innerEventStreamFactory = innerEventStreamFactory,
                 )
             }
         }
     }
 
     /**
-     * Inner cell: initially dynamic
+     * Inner event stream: initially energic
      */
     @Test
-    fun test_state_innerDynamic() {
+    fun test_state_innerEnergic() {
         fun test(
             outerCellFactory: InertCellFactory,
         ) {
-            testCell_initiallyDynamic(
+            testEventStream_initiallyEnergic(
                 setup = {
-                    val innerCell = createDynamicCellExternally(
-                        initialValue = 10,
-                        updatedValueByTick = emptyMap(),
-                        freezeTick = null,
+                    val innerEventStream = createEnergicEventStreamExternally(
+                        emittedEventByTick = emptyMap(),
+                        terminationTick = null,
                     )
 
                     val outerCell = outerCellFactory.createInertExternally(
-                        inertValue = innerCell,
+                        inertValue = innerEventStream,
                     )
 
-                    Cell.switch(outerCell)
+                    Cell.divert(outerCell)
                 },
-                expectedInitialValue = 10,
                 expectedNotificationByTick = emptyMap(),
             )
         }
@@ -83,37 +77,35 @@ class Cell_switch_state_outerInert_tests {
     }
 
     /**
-     * Inner cell: initially dynamic
+     * Inner event stream: initially energic
      *
-     * - The inner cell updates
+     * - The inner event stream emits
      */
     @Test
-    fun test_state_innerDynamic_innerUpdates() {
+    fun test_state_innerEnergic_innerUpdates() {
         fun test(
             outerCellFactory: InertCellFactory,
-            shouldInnerFreezeSimultaneously: Boolean,
+            shouldInnerTerminateSimultaneously: Boolean,
         ) {
-            testCell_initiallyDynamic(
+            testEventStream_initiallyEnergic(
                 setup = {
-                    val innerCell = createDynamicCellExternally(
-                        initialValue = 10,
-                        updatedValueByTick = mapOf(
+                    val innerEventStream = createEnergicEventStreamExternally(
+                        emittedEventByTick = mapOf(
                             Tick(1) to 11,
                         ),
-                        freezeTick = if (shouldInnerFreezeSimultaneously) Tick(1) else null,
+                        terminationTick = Tick(1).takeIf { shouldInnerTerminateSimultaneously },
                     )
 
                     val outerCell = outerCellFactory.createInertExternally(
-                        inertValue = innerCell,
+                        inertValue = innerEventStream,
                     )
 
-                    Cell.switch(outerCell)
+                    Cell.divert(outerCell)
                 },
-                expectedInitialValue = 10,
                 expectedNotificationByTick = mapOf(
-                    Tick(1) to Cell.UpdateNotification.of(
-                        updatedValue = 11,
-                        isFreezing = shouldInnerFreezeSimultaneously,
+                    Tick(1) to EventStream.EmissionNotification.of(
+                        emittedEvent = 11,
+                        isTerminal = shouldInnerTerminateSimultaneously,
                     ),
                 ),
             )
@@ -122,54 +114,52 @@ class Cell_switch_state_outerInert_tests {
         InertCellFactory.values.forEach { outerCellFactory ->
             test(
                 outerCellFactory = outerCellFactory,
-                shouldInnerFreezeSimultaneously = false,
+                shouldInnerTerminateSimultaneously = false,
             )
 
             test(
                 outerCellFactory = outerCellFactory,
-                shouldInnerFreezeSimultaneously = true,
+                shouldInnerTerminateSimultaneously = true,
             )
         }
     }
 
     /**
-     * Inner cell: initially dynamic
+     * Inner event stream: initially energic
      *
-     * - The inner cell freezes
+     * - The inner event stream terminates
      */
     @Test
-    fun test_state_innerDynamic_innerFreezes() {
+    fun test_state_innerEnergic_innerTerminates() {
         fun test(
             outerCellFactory: InertCellFactory,
             shouldInnerUpdateSimultaneously: Boolean,
         ) {
-            val finalUpdatedValue = when {
+            val finalEmittedEvent = when {
                 shouldInnerUpdateSimultaneously -> 11
                 else -> null
             }
 
-            testCell_initiallyDynamic(
+            testEventStream_initiallyEnergic(
                 setup = {
-                    val innerCell = createDynamicCellExternally(
-                        initialValue = 10,
-                        updatedValueByTick = mapOfNotNull(
-                            finalUpdatedValue?.let {
+                    val innerEventStream = createEnergicEventStreamExternally(
+                        emittedEventByTick = mapOfNotNull(
+                            finalEmittedEvent?.let {
                                 Tick(1) to it
                             },
                         ),
-                        freezeTick = Tick(1),
+                        terminationTick = Tick(1),
                     )
 
                     val outerCell = outerCellFactory.createInertExternally(
-                        inertValue = innerCell,
+                        inertValue = innerEventStream,
                     )
 
-                    Cell.switch(outerCell)
+                    Cell.divert(outerCell)
                 },
-                expectedInitialValue = 10,
                 expectedNotificationByTick = mapOf(
-                    Tick(1) to Cell.FreezeNotification.of(
-                        updatedValue = finalUpdatedValue,
+                    Tick(1) to EventStream.TerminationNotification.of(
+                        emittedEvent = finalEmittedEvent,
                     ),
                 ),
             )
@@ -188,4 +178,3 @@ class Cell_switch_state_outerInert_tests {
         }
     }
 }
-
