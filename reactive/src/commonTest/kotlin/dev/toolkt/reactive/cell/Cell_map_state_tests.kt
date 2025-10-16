@@ -16,7 +16,7 @@ class Cell_map_state_tests {
         fun test(
             sourceCellFactory: InertCellFactory,
         ) = testCell_immediatelyInert(
-            setup = {
+            spawn = {
                 val sourceCell = sourceCellFactory.createInertExternally(
                     inertValue = 10,
                 )
@@ -37,7 +37,7 @@ class Cell_map_state_tests {
 
     @Test
     fun test_state_sourceDynamic() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceCell = createDynamicCellExternally(
                 initialValue = 10,
                 updatedValueByTick = emptyMap(),
@@ -54,7 +54,7 @@ class Cell_map_state_tests {
 
     @Test
     fun test_state_sourceDynamic_sourceUpdates() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceCell = createDynamicCellExternally(
                 initialValue = 10,
                 updatedValueByTick = mapOf(
@@ -77,7 +77,7 @@ class Cell_map_state_tests {
 
     @Test
     fun test_state_sourceDynamic_sourceJustFreezes() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceCell = createDynamicCellExternally(
                 initialValue = 10,
                 updatedValueByTick = mapOf(
@@ -101,7 +101,7 @@ class Cell_map_state_tests {
 
     @Test
     fun test_state_sourceDynamic_sourceUpdatesFreezing() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceCell = createDynamicCellExternally(
                 initialValue = 10,
                 updatedValueByTick = mapOf(

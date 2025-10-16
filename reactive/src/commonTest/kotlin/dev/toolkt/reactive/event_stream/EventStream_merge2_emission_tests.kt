@@ -13,7 +13,7 @@ import kotlin.test.Test
 class EventStream_merge2_emission_tests {
     @Test
     fun test_sameSource_sourceOccurrence() = testEventStream_initiallyEnergic(
-        setup = {
+        spawn = {
             val sourceEventStream = createEnergicEventStreamExternally(
                 emittedEventByTick = mapOf(
                     Tick(1) to 11,
@@ -38,7 +38,7 @@ class EventStream_merge2_emission_tests {
         fun test(
             sourceEventStreamFactory: ExhaustedEventStreamFactory,
         ) = testEventStream_immediatelyExhausted(
-            setup = {
+            spawn = {
                 val sourceEventStream1 = sourceEventStreamFactory.createExternally<Int>()
                 val sourceEventStream2 = sourceEventStreamFactory.createExternally<Int>()
 
@@ -58,7 +58,7 @@ class EventStream_merge2_emission_tests {
 
     @Test
     fun test_bothSourcesEnergic_firstSourceEmits() = testEventStream_initiallyEnergic(
-        setup = {
+        spawn = {
             val sourceEventStream1 = createEnergicEventStreamExternally(
                 emittedEventByTick = mapOf(
                     Tick(1) to 11,
@@ -86,7 +86,7 @@ class EventStream_merge2_emission_tests {
 
     @Test
     fun test_bothSourcesEnergic_secondSourceEmits() = testEventStream_initiallyEnergic(
-        setup = {
+        spawn = {
             val sourceEventStream1 = createEnergicEventStreamExternally(
                 emittedEventByTick = emptyMap(),
                 terminationTick = null,
@@ -113,7 +113,7 @@ class EventStream_merge2_emission_tests {
 
     @Test
     fun test_bothSourcesEnergic_bothSourcesEmitSimultaneously() = testEventStream_initiallyEnergic(
-        setup = {
+        spawn = {
             val sourceEventStream1 = createEnergicEventStreamExternally(
                 emittedEventByTick = mapOf(
                     Tick(1) to 11,
@@ -145,7 +145,7 @@ class EventStream_merge2_emission_tests {
         fun test(
             source1CellFactory: ExhaustedEventStreamFactory,
         ) = testEventStream_initiallyEnergic(
-            setup = {
+            spawn = {
                 val sourceEventStream1 = source1CellFactory.createExternally<Int>()
 
                 val sourceEventStream2 = createEnergicEventStreamExternally(
@@ -180,7 +180,7 @@ class EventStream_merge2_emission_tests {
         fun test(
             source2CellFactory: ExhaustedEventStreamFactory,
         ) = testEventStream_initiallyEnergic(
-            setup = {
+            spawn = {
                 val sourceEventStream1 = createEnergicEventStreamExternally(
                     emittedEventByTick = mapOf(
                         Tick(1) to 11,
@@ -215,7 +215,7 @@ class EventStream_merge2_emission_tests {
 
     @Test
     fun test_bothSourcesEnergic_firstSourceJustTerminatesLast() = testEventStream_initiallyEnergic(
-        setup = {
+        spawn = {
             val sourceEventStream1 = createEnergicEventStreamExternally(
                 emittedEventByTick = mapOf(
                     Tick(2) to 12,
@@ -248,7 +248,7 @@ class EventStream_merge2_emission_tests {
 
     @Test
     fun test_bothSourcesEnergic_firstSourceEmitsTerminatingLast() = testEventStream_initiallyEnergic(
-        setup = {
+        spawn = {
             val sourceEventStream1 = createEnergicEventStreamExternally(
                 emittedEventByTick = mapOf(
                     Tick(2) to 12,
@@ -284,7 +284,7 @@ class EventStream_merge2_emission_tests {
 
     @Test
     fun test_bothSourcesEnergic_secondSourceJustTerminatesLast() = testEventStream_initiallyEnergic(
-        setup = {
+        spawn = {
             val sourceEventStream1 = createEnergicEventStreamExternally(
                 emittedEventByTick = mapOf(
                     Tick(1) to 11,
@@ -318,7 +318,7 @@ class EventStream_merge2_emission_tests {
 
     @Test
     fun test_bothSourcesEnergic_secondSourceEmitsTerminatingLast() = testEventStream_initiallyEnergic(
-        setup = {
+        spawn = {
             val sourceEventStream1 = createEnergicEventStreamExternally(
                 emittedEventByTick = mapOf(
                     Tick(1) to 11,
@@ -354,7 +354,7 @@ class EventStream_merge2_emission_tests {
 
     @Test
     fun test_bothSourcesEnergic_bothSourcesJustTerminateSimultaneously() = testEventStream_initiallyEnergic(
-        setup = {
+        spawn = {
             val sourceEventStream1 = createEnergicEventStreamExternally(
                 emittedEventByTick = mapOf(
                     Tick(1) to 11,
@@ -387,7 +387,7 @@ class EventStream_merge2_emission_tests {
 
     @Test
     fun test_bothSourcesEnergic_bothSourcesEmitTerminatingSimultaneously() = testEventStream_initiallyEnergic(
-        setup = {
+        spawn = {
             val sourceEventStream1 = createEnergicEventStreamExternally(
                 emittedEventByTick = mapOf(
                     Tick(1) to 11,
@@ -425,7 +425,7 @@ class EventStream_merge2_emission_tests {
     @Test
     fun test_bothSourcesEnergic_firstSourceEmitsTerminatingSecondJustTerminatesSimultaneously() =
         testEventStream_initiallyEnergic(
-            setup = {
+            spawn = {
                 val sourceEventStream1 = createEnergicEventStreamExternally(
                     emittedEventByTick = mapOf(
                         Tick(1) to 11,
@@ -462,7 +462,7 @@ class EventStream_merge2_emission_tests {
     @Test
     fun test_bothSourcesEnergic_firstSourceJustTerminatesSecondEmitsTerminatingSimultaneously() =
         testEventStream_initiallyEnergic(
-            setup = {
+            spawn = {
                 val sourceEventStream1 = createEnergicEventStreamExternally(
                     emittedEventByTick = mapOf(
                         Tick(1) to 11,

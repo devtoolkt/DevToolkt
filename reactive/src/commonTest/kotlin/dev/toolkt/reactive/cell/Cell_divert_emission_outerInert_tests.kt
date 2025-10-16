@@ -23,7 +23,7 @@ class Cell_divert_emission_outerInert_tests {
             outerCellFactory: InertCellFactory,
             innerEventStreamFactory: ExhaustedEventStreamFactory,
         ) = testEventStream_immediatelyExhausted(
-            setup = {
+            spawn = {
                 val innerEventStream = innerEventStreamFactory.createExternally<Int>()
 
                 val outerCell = outerCellFactory.createInertExternally(
@@ -53,7 +53,7 @@ class Cell_divert_emission_outerInert_tests {
             outerCellFactory: InertCellFactory,
         ) {
             testEventStream_initiallyEnergic(
-                setup = {
+                spawn = {
                     val innerEventStream = createEnergicEventStreamExternally(
                         emittedEventByTick = emptyMap(),
                         terminationTick = null,
@@ -88,7 +88,7 @@ class Cell_divert_emission_outerInert_tests {
             shouldInnerTerminateSimultaneously: Boolean,
         ) {
             testEventStream_initiallyEnergic(
-                setup = {
+                spawn = {
                     val innerEventStream = createEnergicEventStreamExternally(
                         emittedEventByTick = mapOf(
                             Tick(1) to 11,
@@ -141,7 +141,7 @@ class Cell_divert_emission_outerInert_tests {
             }
 
             testEventStream_initiallyEnergic(
-                setup = {
+                spawn = {
                     val innerEventStream = createEnergicEventStreamExternally(
                         emittedEventByTick = mapOfNotNull(
                             finalEmittedEvent?.let {

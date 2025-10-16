@@ -29,8 +29,9 @@ context(context: DynamicTestContext) fun <EventT : Any> createEnergicEventStream
     }
 }
 
+
 fun <EventT : Any> testEventStream_initiallyEnergic(
-    setup: context(DynamicTestContext) () -> EventStream<EventT>,
+    spawn: context(DynamicTestContext) () -> EventStream<EventT>,
     expectedNotificationByTick: Map<Tick, EventStream.Notification<EventT>>,
 ) {
     val doTick = EmitterEventStream<Tick>()
@@ -40,7 +41,7 @@ fun <EventT : Any> testEventStream_initiallyEnergic(
             override val onTick: EventStream<Tick> = doTick
         },
     ) {
-        setup()
+        spawn()
     }
 
     val receivedNotifications = mutableListOf<EventStream.Notification<EventT>>()
@@ -103,12 +104,12 @@ fun <EventT : Any> testEventStream_initiallyEnergic(
 interface EventStreamInertTestContext
 
 fun <EventT : Any> testEventStream_immediatelyExhausted(
-    setup: context(EventStreamInertTestContext) () -> EventStream<EventT>,
+    spawn: context(EventStreamInertTestContext) () -> EventStream<EventT>,
 ) {
     val subjectEventStream = with(
         object : EventStreamInertTestContext {},
     ) {
-        setup()
+        spawn()
     }
 
     assertNull(

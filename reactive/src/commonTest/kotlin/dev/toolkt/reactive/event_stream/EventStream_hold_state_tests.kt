@@ -18,7 +18,7 @@ class EventStream_hold_state_tests {
         fun test(
             sourceEventStreamFactory: ExhaustedEventStreamFactory,
         ) = testCell_immediatelyInert(
-            setup = {
+            spawn = {
                 val sourceEventStream = sourceEventStreamFactory.createExternally<Int>()
 
                 MomentContext.execute {
@@ -37,7 +37,7 @@ class EventStream_hold_state_tests {
 
     @Test
     fun test_sourceEnergic() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceEventStream = createEnergicEventStreamExternally(
                 emittedEventByTick = emptyMap(),
                 terminationTick = null,
@@ -53,7 +53,7 @@ class EventStream_hold_state_tests {
 
     @Test
     fun test_sourceEnergic_sourceEmits() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceEventStream = createEnergicEventStreamExternally(
                 emittedEventByTick = mapOf(
                     Tick(1) to 11,
@@ -75,7 +75,7 @@ class EventStream_hold_state_tests {
 
     @Test
     fun test_sourceEnergic_sourceJustTerminates() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceEventStream = createEnergicEventStreamExternally(
                 emittedEventByTick = emptyMap(),
                 terminationTick = Tick(1),
@@ -93,7 +93,7 @@ class EventStream_hold_state_tests {
 
     @Test
     fun test_sourceEnergic_sourceEmitsTerminating() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceEventStream = createEnergicEventStreamExternally(
                 emittedEventByTick = mapOf(
                     Tick(1) to 11,

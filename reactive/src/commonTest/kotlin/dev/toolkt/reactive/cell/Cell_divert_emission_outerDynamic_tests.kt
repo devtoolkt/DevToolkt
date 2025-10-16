@@ -25,7 +25,7 @@ class Cell_divert_emission_outerDynamic_tests {
             innerEventStreamFactory: ExhaustedEventStreamFactory,
         ) {
             testEventStream_initiallyEnergic(
-                setup = {
+                spawn = {
                     val innerCell = innerEventStreamFactory.createExternally<Int>()
 
                     val outerCell = createDynamicCellExternally(
@@ -52,7 +52,7 @@ class Cell_divert_emission_outerDynamic_tests {
      */
     @Test
     fun test_initialInnerEnergic() = testEventStream_initiallyEnergic(
-        setup = {
+        spawn = {
             val innerCell = createEnergicEventStreamExternally(
                 emittedEventByTick = emptyMap(),
                 terminationTick = null,
@@ -79,7 +79,7 @@ class Cell_divert_emission_outerDynamic_tests {
         fun test(
             shouldInitialInnerTerminateSimultaneously: Boolean,
         ) = testEventStream_initiallyEnergic(
-            setup = {
+            spawn = {
                 val innerCell = createEnergicEventStreamExternally(
                     emittedEventByTick = mapOf(
                         Tick(1) to 11,
@@ -118,7 +118,7 @@ class Cell_divert_emission_outerDynamic_tests {
             shouldOuterFreezeSimultaneously: Boolean,
             shouldOldInnerEmitSimultaneously: Boolean,
         ) = testEventStream_initiallyEnergic(
-            setup = {
+            spawn = {
                 val initialInnerEventStream = createEnergicEventStreamExternally(
                     emittedEventByTick = mapOfNotNull(
                         (Tick(1) to 11).takeIf { shouldOldInnerEmitSimultaneously },
@@ -166,7 +166,7 @@ class Cell_divert_emission_outerDynamic_tests {
             shouldOldInnerEmitSimultaneously: Boolean,
             shouldNewInnerTerminateSimultaneously: Boolean,
         ) = testEventStream_initiallyEnergic(
-            setup = {
+            spawn = {
                 val initialInnerEventStream = createEnergicEventStreamExternally(
                     emittedEventByTick = mapOfNotNull(
                         (Tick(1) to 11).takeIf { shouldOldInnerEmitSimultaneously },
@@ -222,7 +222,7 @@ class Cell_divert_emission_outerDynamic_tests {
             shouldOuterFreezeSimultaneously: Boolean,
             shouldInnerTerminateSimultaneously: Boolean,
         ) = testEventStream_initiallyEnergic(
-            setup = {
+            spawn = {
                 val initialInnerEventStream = createEnergicEventStreamExternally(
                     emittedEventByTick = emptyMap(),
                     terminationTick = null,
@@ -280,7 +280,7 @@ class Cell_divert_emission_outerDynamic_tests {
             shouldOuterFreezeSimultaneously: Boolean,
             shouldSubsequentInnerTerminateSimultaneously: Boolean,
         ) = testEventStream_initiallyEnergic(
-            setup = {
+            spawn = {
                 val initialInnerEventStream = createEnergicEventStreamExternally<Int>(
                     emittedEventByTick = emptyMap(),
                     terminationTick = null,
@@ -341,7 +341,7 @@ class Cell_divert_emission_outerDynamic_tests {
             initialInnerEventStreamFactory: ExhaustedEventStreamFactory,
         ) {
             testEventStream_initiallyEnergic(
-                setup = {
+                spawn = {
                     val initialInnerEventStream = initialInnerEventStreamFactory.createExternally<Int>()
 
                     val outerCell = createDynamicCellExternally(
@@ -383,7 +383,7 @@ class Cell_divert_emission_outerDynamic_tests {
             }
 
             testEventStream_initiallyEnergic(
-                setup = {
+                spawn = {
                     val initialInnerEventStream = createEnergicEventStreamExternally(
                         emittedEventByTick = mapOfNotNull(
                             finalEmittedEvent?.let {
@@ -434,7 +434,7 @@ class Cell_divert_emission_outerDynamic_tests {
             }
 
             testEventStream_initiallyEnergic(
-                setup = {
+                spawn = {
                     val initialInnerEventStream = createEnergicEventStreamExternally(
                         emittedEventByTick = mapOfNotNull(
                             finalEmittedEvent?.let {
@@ -479,7 +479,7 @@ class Cell_divert_emission_outerDynamic_tests {
             newInnerEventStreamFactory: ExhaustedEventStreamFactory,
         ) {
             testEventStream_initiallyEnergic(
-                setup = {
+                spawn = {
                     val initialInnerEventStream = createEnergicEventStreamExternally(
                         emittedEventByTick = emptyMap(),
                         terminationTick = null,
@@ -526,7 +526,7 @@ class Cell_divert_emission_outerDynamic_tests {
             }
 
             testEventStream_initiallyEnergic(
-                setup = {
+                spawn = {
                     val initialInnerEventStream = createEnergicEventStreamExternally<Int>(
                         emittedEventByTick = emptyMap(),
                         terminationTick = null,
@@ -584,7 +584,7 @@ class Cell_divert_emission_outerDynamic_tests {
             }
 
             testEventStream_initiallyEnergic(
-                setup = {
+                spawn = {
                     val initialInnerEventStream = createEnergicEventStreamExternally<Int>(
                         emittedEventByTick = emptyMap(),
                         terminationTick = null,
@@ -635,7 +635,7 @@ class Cell_divert_emission_outerDynamic_tests {
             newInnerEventStreamFactory: ExhaustedEventStreamFactory,
         ) {
             testEventStream_initiallyEnergic(
-                setup = {
+                spawn = {
                     val initialInnerEventStream = createEnergicEventStreamExternally(
                         emittedEventByTick = emptyMap(),
                         terminationTick = null,
@@ -682,7 +682,7 @@ class Cell_divert_emission_outerDynamic_tests {
             }
 
             testEventStream_initiallyEnergic(
-                setup = {
+                spawn = {
                     val initialInnerEventStream = createEnergicEventStreamExternally(
                         emittedEventByTick = emptyMap(),
                         terminationTick = null,
@@ -739,7 +739,7 @@ class Cell_divert_emission_outerDynamic_tests {
             }
 
             testEventStream_initiallyEnergic(
-                setup = {
+                spawn = {
                     val initialInnerEventStream = createEnergicEventStreamExternally(
                         emittedEventByTick = emptyMap(),
                         terminationTick = null,

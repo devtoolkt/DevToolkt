@@ -30,7 +30,7 @@ class Cell_map3_state_tests {
             source2CellFactory: InertCellFactory,
             source3CellFactory: InertCellFactory,
         ) = testCell_immediatelyInert(
-            setup = {
+            spawn = {
                 val sourceCell1 = source1CellFactory.createInertExternally(
                     inertValue = 10,
                 )
@@ -75,7 +75,7 @@ class Cell_map3_state_tests {
             source2CellFactory: StillCellFactory,
             source3CellFactory: StillCellFactory,
         ) = testCell_initiallyDynamic(
-            setup = {
+            spawn = {
                 val sourceCell1 = source1CellFactory.createStillExternally(
                     stillValue = 10,
                 )
@@ -156,7 +156,7 @@ class Cell_map3_state_tests {
             sourceCellFactory: InertCellFactory,
         ) {
             testCell_immediatelyInert(
-                setup = {
+                spawn = {
                     val sourceCell = sourceCellFactory.createInertExternally(
                         inertValue = 10,
                     )
@@ -183,7 +183,7 @@ class Cell_map3_state_tests {
     @Ignore // FIXME: Vertex (...) is already a dependent (...)
     fun test_sameSourceDynamic() {
         testCell_initiallyDynamic(
-            setup = {
+            spawn = {
                 val sourceCell = createDynamicCellExternally(
                     initialValue = 10,
                     updatedValueByTick = emptyMap(),
@@ -210,7 +210,7 @@ class Cell_map3_state_tests {
             source2CellFactory: StillCellFactory,
             source3CellFactory: StillCellFactory,
         ) = testCell_initiallyDynamic(
-            setup = {
+            spawn = {
                 val sourceCell1 = createDynamicCellExternally(
                     initialValue = 10,
                     updatedValueByTick = mapOf(
@@ -271,7 +271,7 @@ class Cell_map3_state_tests {
             source1CellFactory: StillCellFactory,
             source3CellFactory: StillCellFactory,
         ) = testCell_initiallyDynamic(
-            setup = {
+            spawn = {
                 val sourceCell1 = source1CellFactory.createStillExternally(
                     stillValue = 10,
                 )
@@ -332,7 +332,7 @@ class Cell_map3_state_tests {
             source1CellFactory: StillCellFactory,
             source2CellFactory: StillCellFactory,
         ) = testCell_initiallyDynamic(
-            setup = {
+            spawn = {
                 val sourceCell1 = source1CellFactory.createStillExternally(
                     stillValue = 10,
                 )
@@ -392,7 +392,7 @@ class Cell_map3_state_tests {
         fun test(
             source1CellFactory: InertCellFactory,
         ) = testCell_initiallyDynamic(
-            setup = {
+            spawn = {
                 val sourceCell1 = source1CellFactory.createInertExternally(
                     inertValue = 10,
                 )
@@ -438,7 +438,7 @@ class Cell_map3_state_tests {
         fun test(
             source1CellFactory: InertCellFactory,
         ) = testCell_initiallyDynamic(
-            setup = {
+            spawn = {
                 val sourceCell1 = createDynamicCellExternally(
                     initialValue = 10,
                     updatedValueByTick = mapOf(
@@ -488,7 +488,7 @@ class Cell_map3_state_tests {
         fun test(
             source1CellFactory: InertCellFactory,
         ) = testCell_initiallyDynamic(
-            setup = {
+            spawn = {
                 val sourceCell1 = createDynamicCellExternally(
                     initialValue = 10,
                     updatedValueByTick = mapOf(
@@ -552,7 +552,7 @@ class Cell_map3_state_tests {
             }
 
             testCell_initiallyDynamic(
-                setup = {
+                spawn = {
                     val sourceCell1 = when (source1Kind) {
                         is SourceKind.Dynamic -> createDynamicCellExternally(
                             initialValue = 10,
@@ -701,7 +701,7 @@ class Cell_map3_state_tests {
             }
 
             testCell_initiallyDynamic(
-                setup = {
+                spawn = {
                     val sourceCell1 = when (source1Kind) {
                         is SourceKind.Dynamic -> createDynamicCellExternally(
                             initialValue = 10,
@@ -844,7 +844,7 @@ class Cell_map3_state_tests {
             }
 
             testCell_initiallyDynamic(
-                setup = {
+                spawn = {
                     val sourceCell1 = createDynamicCellExternally(
                         initialValue = 10,
                         updatedValueByTick = mapOfNotNull(
