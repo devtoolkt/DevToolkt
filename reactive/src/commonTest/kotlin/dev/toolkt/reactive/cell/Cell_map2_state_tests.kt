@@ -18,7 +18,7 @@ class Cell_map2_state_tests {
             source1CellFactory: InertCellFactory,
             source2CellFactory: InertCellFactory,
         ) = testCell_immediatelyInert(
-            setup = {
+            spawn = {
                 val sourceCell1 = source1CellFactory.createInertExternally(
                     inertValue = 10,
                 )
@@ -49,7 +49,7 @@ class Cell_map2_state_tests {
 
     @Test
     fun test_state_bothSourcesDynamic_noSourceUpdates() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceCell1 = createDynamicCellExternally(
                 initialValue = 10,
                 updatedValueByTick = emptyMap(),
@@ -75,7 +75,7 @@ class Cell_map2_state_tests {
 
     @Test
     fun test_state_bothSourcesDynamic_firstSourceUpdates() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceCell1 = createDynamicCellExternally(
                 initialValue = 10,
                 updatedValueByTick = mapOf(
@@ -107,7 +107,7 @@ class Cell_map2_state_tests {
 
     @Test
     fun test_state_bothSourcesDynamic_secondSourceUpdates() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceCell1 = createDynamicCellExternally(
                 initialValue = 10,
                 updatedValueByTick = emptyMap(),
@@ -139,7 +139,7 @@ class Cell_map2_state_tests {
 
     @Test
     fun test_state_bothSourcesDynamic_bothSourcesUpdateSimultaneously() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceCell1 = createDynamicCellExternally(
                 initialValue = 10,
                 updatedValueByTick = mapOf(
@@ -176,7 +176,7 @@ class Cell_map2_state_tests {
         fun test(
             source1CellFactory: InertCellFactory,
         ) = testCell_initiallyDynamic(
-            setup = {
+            spawn = {
                 val sourceCell1 = source1CellFactory.createInertExternally(
                     inertValue = 10,
                 )
@@ -217,7 +217,7 @@ class Cell_map2_state_tests {
         fun test(
             source2CellFactory: InertCellFactory,
         ) = testCell_initiallyDynamic(
-            setup = {
+            spawn = {
                 val sourceCell1 = createDynamicCellExternally(
                     initialValue = 10,
                     updatedValueByTick = mapOf(
@@ -258,7 +258,7 @@ class Cell_map2_state_tests {
 
     @Test
     fun test_state_bothSourcesDynamic_firstSourceJustFreezesLast() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceCell1 = createDynamicCellExternally(
                 initialValue = 10,
                 updatedValueByTick = mapOf(
@@ -296,7 +296,7 @@ class Cell_map2_state_tests {
 
     @Test
     fun test_state_bothSourcesDynamic_firstSourceUpdatesFreezingLast() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceCell1 = createDynamicCellExternally(
                 initialValue = 10,
                 updatedValueByTick = mapOf(
@@ -337,7 +337,7 @@ class Cell_map2_state_tests {
 
     @Test
     fun test_state_bothSourcesDynamic_secondSourceJustFreezesLast() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceCell1 = createDynamicCellExternally(
                 initialValue = 10,
                 updatedValueByTick = mapOf(
@@ -375,7 +375,7 @@ class Cell_map2_state_tests {
 
     @Test
     fun test_state_bothSourcesDynamic_secondSourceUpdatesFreezingLast() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceCell1 = createDynamicCellExternally(
                 initialValue = 10,
                 updatedValueByTick = mapOf(
@@ -416,7 +416,7 @@ class Cell_map2_state_tests {
 
     @Test
     fun test_state_bothSourcesDynamic_bothSourcesJustFreezeSimultaneously() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceCell1 = createDynamicCellExternally(
                 initialValue = 10,
                 updatedValueByTick = mapOf(
@@ -454,7 +454,7 @@ class Cell_map2_state_tests {
 
     @Test
     fun test_state_bothSourcesDynamic_bothSourcesUpdateFreezingSimultaneously() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceCell1 = createDynamicCellExternally(
                 initialValue = 10,
                 updatedValueByTick = mapOf(
@@ -497,7 +497,7 @@ class Cell_map2_state_tests {
     @Test
     fun test_state_bothSourcesDynamic_firstSourceUpdatesFreezingSecondJustFreezesSimultaneously() =
         testCell_initiallyDynamic(
-            setup = {
+            spawn = {
                 val sourceCell1 = createDynamicCellExternally(
                     initialValue = 10,
                     updatedValueByTick = mapOf(
@@ -539,7 +539,7 @@ class Cell_map2_state_tests {
     @Test
     fun test_state_bothSourcesDynamic_firstSourceJustFreezesSecondUpdatesFreezingSimultaneously() =
         testCell_initiallyDynamic(
-            setup = {
+            spawn = {
                 val sourceCell1 = createDynamicCellExternally(
                     initialValue = 10,
                     updatedValueByTick = mapOf(
@@ -584,7 +584,7 @@ class Cell_map2_state_tests {
         fun test(
             sourceCellFactory: InertCellFactory,
         ) = testCell_immediatelyInert(
-            setup = {
+            spawn = {
                 val sourceCell = sourceCellFactory.createInertExternally(
                     inertValue = 10,
                 )
@@ -609,7 +609,7 @@ class Cell_map2_state_tests {
     @Test
     @Ignore // FIXME: Vertex (...) is already a dependent (...)
     fun test_state_sameSourceDynamic() = testCell_initiallyDynamic(
-        setup = {
+        spawn = {
             val sourceCell = createDynamicCellExternally(
                 initialValue = 10,
                 updatedValueByTick = mapOf(

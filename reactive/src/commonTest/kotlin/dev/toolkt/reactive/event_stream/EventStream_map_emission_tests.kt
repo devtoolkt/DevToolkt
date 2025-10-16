@@ -16,7 +16,7 @@ class EventStream_map_emission_tests {
         fun test(
             sourceEventStreamFactory: ExhaustedEventStreamFactory,
         ) = testEventStream_immediatelyExhausted(
-            setup = {
+            spawn = {
                 val sourceEventStream = sourceEventStreamFactory.createExternally<Int>()
 
                 sourceEventStream.map { it.toString() }
@@ -32,7 +32,7 @@ class EventStream_map_emission_tests {
 
     @Test
     fun test_sourceEnergic() = testEventStream_initiallyEnergic(
-        setup = {
+        spawn = {
             val sourceEventStream = createEnergicEventStreamExternally(
                 emittedEventByTick = emptyMap(),
                 terminationTick = null,
@@ -45,7 +45,7 @@ class EventStream_map_emission_tests {
 
     @Test
     fun test_sourceEnergic_sourceEmits() = testEventStream_initiallyEnergic(
-        setup = {
+        spawn = {
             val sourceEventStream = createEnergicEventStreamExternally(
                 emittedEventByTick = mapOf(
                     Tick(1) to 11,
@@ -64,7 +64,7 @@ class EventStream_map_emission_tests {
 
     @Test
     fun test_sourceEnergic_sourceJustTerminates() = testEventStream_initiallyEnergic(
-        setup = {
+        spawn = {
             val sourceEventStream = createEnergicEventStreamExternally(
                 emittedEventByTick = emptyMap(),
                 terminationTick = Tick(1),
@@ -79,7 +79,7 @@ class EventStream_map_emission_tests {
 
     @Test
     fun test_sourceEnergic_sourceEmitsTerminating() = testEventStream_initiallyEnergic(
-        setup = {
+        spawn = {
             val sourceEventStream = createEnergicEventStreamExternally(
                 emittedEventByTick = mapOf(
                     Tick(1) to 11,
