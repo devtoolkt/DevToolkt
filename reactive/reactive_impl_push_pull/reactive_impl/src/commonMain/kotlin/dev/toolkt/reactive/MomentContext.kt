@@ -4,6 +4,8 @@ class MomentContext internal constructor(
     val context: Transaction.ProcessingContext,
 ) : PureContext() {
     companion object {
+        context(momentContext: MomentContext) fun extract(): MomentContext = momentContext
+
         /**
          * Execute a [block] within a [MomentContext].
          *

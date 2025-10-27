@@ -51,14 +51,14 @@ sealed interface Cell<out ValueT> {
                     updatedValue,
                 )
 
-                else -> IsolatedFreezeNotification
+                else -> LateFreezeNotification
             }
         }
     }
 
     data class IntermediateUpdateNotification<out ValueT>(
         override val updatedValue: ValueT,
-    ) : UpdateNotification<ValueT>, FreezeNotification<ValueT>
+    ) : UpdateNotification<ValueT>
 
     data class FreezingUpdateNotification<out ValueT>(
         val updatedFrozenValue: ValueT,
@@ -67,7 +67,7 @@ sealed interface Cell<out ValueT> {
             get() = updatedFrozenValue
     }
 
-    data object IsolatedFreezeNotification : FreezeNotification<Nothing>
+    data object LateFreezeNotification : FreezeNotification<Nothing>
 
     interface Observer<ValueT> {
         fun handleNotification(
@@ -142,6 +142,14 @@ sealed interface Cell<out ValueT> {
                 },
             )
         }
+
+        fun <ValueT1, ValueT2, ValueT3, ValueT4, ResultT> map4(
+            cell1: Cell<ValueT1>,
+            cell2: Cell<ValueT2>,
+            cell3: Cell<ValueT3>,
+            cell4: Cell<ValueT4>,
+            transform: (ValueT1, ValueT2, ValueT3, ValueT4) -> ResultT,
+        ): Cell<ResultT> = TODO()
 
         fun <ValueT> of(
             value: ValueT,

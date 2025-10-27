@@ -13,20 +13,42 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
+interface CellVerificationContext {
+
+}
+
+interface ActiveCellVerificationContext : CellVerificationContext {
+
+}
+
+
+interface PassiveCellVerificationContext : CellVerificationContext {
+
+}
+
+
+interface CellObservationContext<ValueT> {
+
+}
+
 fun <ValueT> Cell<ValueT>.sampleExternally(): ValueT = MomentContext.execute {
     sample()
 }
 
 context(context: DynamicTestContext) fun <ValueT : Any> createDynamicCellExternally(
     initialValue: ValueT,
-    updatedValueByTick: Map<Tick, ValueT>,
-    freezeTick: Tick?,
+    updatedValueByTick: Map<TickAlike, ValueT>,
+    freezeTick: TickAlike?,
 ): Cell<ValueT> {
-    val onTickCropped = when (freezeTick) {
+    val updatedValueByProperTick = updatedValueByTick.entries.associate { (key, value) ->
+        key.asTick to value
+    }
+
+    val onTickCropped = when (val properFreezeTick = freezeTick?.asTick) {
         null -> context.onTick
 
         else -> MomentContext.execute {
-            context.onTick.take(freezeTick.t)
+            context.onTick.take(properFreezeTick.t)
         }
     }
 
@@ -34,7 +56,7 @@ context(context: DynamicTestContext) fun <ValueT : Any> createDynamicCellExterna
         Cell.define(
             initialValue = initialValue,
             newValues = onTickCropped.mapNotNull { tick ->
-                updatedValueByTick[tick]
+                updatedValueByProperTick[tick]
             },
         )
     }
@@ -118,6 +140,128 @@ fun <ValueT : Any> testCell_initiallyDynamic(
             }
         }
     }
+}
+
+interface ReactiveVerifier {
+
+}
+
+
+fun testReactiveSystem(
+    block: context(DynamicTestContext) () -> ReactiveVerifier,
+) {
+    TODO()
+}
+
+
+/**
+ * Test the cell using both active and passive verification strategies.
+ */
+fun testReactiveSystem(
+    block: context(DynamicTestContext, CellVerificationContext) () -> Unit,
+) {
+    TODO()
+}
+
+
+context(dynamicTestContext: DynamicTestContext, cellVerificationContext: ActiveCellVerificationContext) fun <ValueT> spawnInertCell(
+    tick: Tick,
+    spawn: (MomentContext) -> Cell<ValueT>,
+): Cell<ValueT> {
+    TODO()
+}
+
+sealed class ObservationMode {
+    data object Immediate : ObservationMode()
+
+    data class Delayed(
+        val observationTick: Tick,
+    ) : ObservationMode()
+}
+
+sealed class ExpectedUpdatedValue<out ValueT> {
+    data object None : ExpectedUpdatedValue<Nothing>()
+
+    data class Some<ValueT>(
+        val expectedUpdatedValue: ValueT,
+    ) : ExpectedUpdatedValue<ValueT>()
+}
+
+data class ExpectedInitialValue<ValueT>(
+    val expectedInitialValue: ValueT,
+)
+
+
+context(dynamicTestContext: DynamicTestContext) fun <ValueT> verifyCellFreezes(
+    spawnTick: Tick,
+    spawn: (MomentContext) -> Cell<ValueT>,
+    observationMode: ObservationMode = ObservationMode.Immediate,
+    expectedFreezeTick: Tick,
+): ReactiveVerifier {
+    TODO()
+}
+
+context(dynamicTestContext: DynamicTestContext) fun <ValueT> verifyCellUpdatesFreezing(
+    spawnTick: Tick,
+    spawn: (MomentContext) -> Cell<ValueT>,
+    observationMode: ObservationMode = ObservationMode.Immediate,
+    expectedFreezingUpdateTick: Tick,
+    expectedUpdatedValue: ValueT,
+): ReactiveVerifier {
+    TODO()
+}
+
+
+context(dynamicTestContext: DynamicTestContext) fun <ValueT> verifyCellUpdates(
+    spawnTick: Tick,
+    spawn: (MomentContext) -> Cell<ValueT>,
+    observationMode: ObservationMode = ObservationMode.Immediate,
+    expectedUpdateTick: Tick,
+    expectedUpdatedValue: ValueT,
+): ReactiveVerifier {
+    TODO()
+}
+
+context(dynamicTestContext: DynamicTestContext, cellVerificationContext: CellVerificationContext) fun <ValueT> spawnObservedDynamicCell(
+    tick: Tick,
+    spawn: (MomentContext) -> Cell<ValueT>,
+    block: context(CellObservationContext<ValueT>) () -> Unit,
+) {
+
+}
+
+context(dynamicTestContext: DynamicTestContext, cellVerificationContext: CellVerificationContext) fun <ValueT : Any> spawnObservedDynamicCellVerified(
+    tick: Tick,
+    spawn: (MomentContext) -> Cell<ValueT>,
+    expectedInitialValue: ValueT,
+    expectedUpdatedValue: ValueT? = null,
+    block: context(CellObservationContext<ValueT>) () -> Unit,
+) {
+
+}
+
+context(dynamicTestContext: DynamicTestContext) fun fastForward(
+    tick: Tick,
+) {
+
+}
+
+
+context(dynamicTestContext: DynamicTestContext, cellObservationContext: CellObservationContext<ValueT>) fun <ValueT : Any> verifyUpdate(
+    tick: Tick,
+    expectedUpdatedValue: ValueT?,
+    shouldExpectFreeze: Boolean,
+) {
+
+}
+
+/**
+ * Test the cell using only active verification strategies.
+ */
+fun testCellActively(
+    block: context(DynamicTestContext, ActiveCellVerificationContext) () -> Unit,
+) {
+
 }
 
 fun <ConfigurationT : Any, ValueT : Any> testCell_initiallyDynamic(

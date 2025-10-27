@@ -420,7 +420,7 @@ class Cell_map3_state_tests {
             },
             expectedInitialValue = "10:A:false",
             expectedNotificationByTick = mapOf(
-                Tick(3) to Cell.IsolatedFreezeNotification,
+                Tick(3) to Cell.LateFreezeNotification,
             ),
         )
 
@@ -470,7 +470,7 @@ class Cell_map3_state_tests {
             },
             expectedInitialValue = "10:A:false",
             expectedNotificationByTick = mapOf(
-                Tick(1) to Cell.IsolatedFreezeNotification,
+                Tick(1) to Cell.LateFreezeNotification,
             ),
         )
 
@@ -521,7 +521,7 @@ class Cell_map3_state_tests {
                 Tick(1) to Cell.IntermediateUpdateNotification(
                     updatedValue = "11:A:false",
                 ),
-                Tick(3) to Cell.IsolatedFreezeNotification,
+                Tick(3) to Cell.LateFreezeNotification,
             ),
         )
 
@@ -749,7 +749,7 @@ class Cell_map3_state_tests {
                 expectedInitialValue = "10:A:false",
                 expectedNotificationByTick = mapOfNotNull(
                     freezeTick?.let {
-                        it to Cell.IsolatedFreezeNotification
+                        it to Cell.LateFreezeNotification
                     },
                 ),
             )

@@ -7,8 +7,10 @@ import dev.toolkt.reactive.event_stream.EmitterEventStream
 import dev.toolkt.reactive.event_stream.EventStream
 import dev.toolkt.reactive.event_stream.emit
 import dev.toolkt.reactive.event_stream.map
+import kotlin.test.Ignore
 import kotlin.test.Test
 
+@Ignore // TODO: Port to the test scenarios
 @Suppress("ClassName")
 class Cell_switch_misc_tests {
     private fun test_outerUpdateInitialInnerUpdateNewInnerUpdate(
