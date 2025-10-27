@@ -400,7 +400,7 @@ class Cell_switch_state_outerDynamic_tests {
                 },
                 expectedInitialValue = 10,
                 expectedNotificationByTick = mapOf(
-                    Tick(1) to Cell.IsolatedFreezeNotification,
+                    Tick(1) to Cell.LateFreezeNotification,
                 ),
             )
         }
@@ -557,7 +557,7 @@ class Cell_switch_state_outerDynamic_tests {
                     Tick(1) to Cell.IntermediateUpdateNotification(
                         updatedValue = 20,
                     ),
-                    Tick(2) to Cell.IsolatedFreezeNotification,
+                    Tick(2) to Cell.LateFreezeNotification,
                 ),
             )
         }

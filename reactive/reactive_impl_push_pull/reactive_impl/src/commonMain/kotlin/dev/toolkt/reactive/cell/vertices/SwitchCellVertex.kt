@@ -68,9 +68,21 @@ class SwitchCellVertex<ValueT>(
         )
 
         return when (outerCellUpdate) {
-            CellVertex.NilUpdate -> oldInnerCellVertex.pullUpdateSubsequent(
-                context = context,
-            )
+            CellVertex.NilUpdate -> {
+                val currentInnerCellUpdate = oldInnerCellVertex.pullUpdateSubsequent(
+                    context = context,
+                )
+
+                when (currentInnerCellUpdate) {
+                    CellVertex.NilUpdate -> CellVertex.EffectiveUpdate(
+                        updatedValue = oldInnerCellVertex.sampleOldValue(
+                            context = context,
+                        ),
+                    )
+
+                    is CellVertex.EffectiveUpdate -> currentInnerCellUpdate
+                }
+            }
 
             is CellVertex.EffectiveUpdate -> {
                 val updatedInnerCell = outerCellUpdate.updatedValue

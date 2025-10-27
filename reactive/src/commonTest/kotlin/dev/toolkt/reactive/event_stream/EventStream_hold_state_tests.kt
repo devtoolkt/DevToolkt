@@ -125,7 +125,7 @@ class EventStream_hold_state_tests {
         },
         expectedInitialValue = 10,
         expectedNotificationByTick = mapOf(
-            Tick(1) to Cell.IsolatedFreezeNotification,
+            Tick(1) to Cell.LateFreezeNotification,
         ),
     )
 

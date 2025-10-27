@@ -95,7 +95,7 @@ class Cell_map_state_tests {
             Tick(1) to Cell.IntermediateUpdateNotification(
                 updatedValue = "20",
             ),
-            Tick(2) to Cell.IsolatedFreezeNotification,
+            Tick(2) to Cell.LateFreezeNotification,
         ),
     )
 
